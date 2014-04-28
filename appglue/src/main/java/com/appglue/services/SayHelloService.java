@@ -26,11 +26,10 @@ public class SayHelloService  extends ComposableService
 	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
 	{
 		ArrayList<Bundle> stuff = new ArrayList<Bundle>();
-		
-		for(int i = 0; i < os.size(); i++)
-		{
-			stuff.addAll(performService(os.get(i), parameters));
-		}
+
+        for (Bundle o : os) {
+            stuff.addAll(performService(o, parameters));
+        }
 		
 		return stuff;
 	}

@@ -27,10 +27,12 @@ public class WifiService extends ComposableService
 		if(worked)
 		{
 			// TODO Component success - WIFI
+            Log.d(TAG, "Did something to WiFi successfully.");
 		}
 		else
 		{
 			// TODO Component failure - WIFI
+            Log.d(TAG, "Failed at doing something to WiFi");
 		}
 		
 		return null;

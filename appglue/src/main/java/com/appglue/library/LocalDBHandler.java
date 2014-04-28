@@ -869,6 +869,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			values.put(NAME, "");
 			values.put(DESCRIPTION, "");
 			values.put(IS_RUNNING, 0);
+            values.put(SHOULD_BE_RUNNING, 1);
 			values.put(ACTIVE_OR_TIMER, 0);
 			
 			ArrayList<ServiceDescription> components = cs.getComponents();

@@ -1,11 +1,10 @@
 package com.appglue.serviceregistry;
 
-import com.appglue.description.AppDescription;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import static com.appglue.Constants.TAG;
+import android.util.Log;
 
 public class AppUninstalledReceiver extends BroadcastReceiver
 {
@@ -17,7 +16,9 @@ public class AppUninstalledReceiver extends BroadcastReceiver
 		
 		if(!action.equals("android.intent.action.PACKAGE_REMOVED"))
 			return;
-			
+
+        Log.d(TAG, "Something has been removed");
+
 		/*Bundle b = intent.getExtras();
 		int uid = b.getInt(Intent.EXTRA_UID);
         String[] packages = context.getPackageManager().getPackagesForUid(uid);

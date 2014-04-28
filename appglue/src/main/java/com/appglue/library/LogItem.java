@@ -21,16 +21,6 @@ public class LogItem
 	private String message;
 	private boolean success;
 	
-	public LogItem(long id, long compositeId, String className, String time, String message, boolean success) 
-	{
-		this.id = id;
-		this.cs = null; 
-		this.className = className;
-		this.time = time;
-		this.message = message;
-		this.success = success;
-	}
-	
 	public LogItem(Cursor c)
 	{
 		this.id = c.getLong(c.getColumnIndex(ID));
@@ -47,7 +37,7 @@ public class LogItem
 		this.message = c.getString(c.getColumnIndex(MESSAGE));
 		
 		int iSuccess = c.getInt(c.getColumnIndex(LOG_TYPE));
-		this.success = iSuccess == 1 ? true : false;
+		this.success = iSuccess == 1;
 	}
 
 	public long getId() 
@@ -73,11 +63,6 @@ public class LogItem
 	public String getTime() 
 	{
 		return time;
-	}
-
-	public void setTime(String time) 
-	{
-		this.time = time;
 	}
 
 	public String getMessage() 

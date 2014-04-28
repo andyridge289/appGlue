@@ -1,12 +1,6 @@
 package com.appglue.services;
 
-import java.util.ArrayList;
-
-import android.os.Bundle;
-
-import com.appglue.ComposableService;
-
-public class ClockService //extends ComposableService 
+public class ClockService //extends ComposableService
 {
 //	@Override
 //	public Bundle performService(Bundle input, ArrayList<Bundle> parameters) 

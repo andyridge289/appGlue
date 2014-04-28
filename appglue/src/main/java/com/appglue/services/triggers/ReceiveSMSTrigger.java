@@ -32,23 +32,17 @@ public class ReceiveSMSTrigger extends GenericTrigger
         if (bundle != null) 
         {
             Object[] pdus = (Object[]) bundle.get("pdus");
-            
-            for (int i = 0; i < pdus.length; i++) 
-            {
-                SmsMessage sms = SmsMessage.createFromPdu((byte[]) pdus[i]);
-                
-                if(number.equals(""))
-                {
-                	number = sms.getOriginatingAddress();
-                	message = sms.getDisplayMessageBody();
-                }
-                else if(sms.getOriginatingAddress().equals(number))
-                {
-                	message += sms.getDisplayMessageBody();
-                }
-                else
-                {
-                	Log.e(TAG, "Not really expecting this to happen to be honest (SMS list not from same person)");
+
+            for (Object pdu : pdus) {
+                SmsMessage sms = SmsMessage.createFromPdu((byte[]) pdu);
+
+                if (number.equals("")) {
+                    number = sms.getOriginatingAddress();
+                    message = sms.getDisplayMessageBody();
+                } else if (sms.getOriginatingAddress().equals(number)) {
+                    message += sms.getDisplayMessageBody();
+                } else {
+                    Log.e(TAG, "Not really expecting this to happen to be honest (SMS list not from same person)");
                 }
             }
         }

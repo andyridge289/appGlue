@@ -181,9 +181,12 @@
             </intent-filter>
         </receiver>
         
-       <!-- <receiver android:name=".serviceregistry.AppUninstalledReceiver" android:exported="true" >
+        <receiver android:name=".serviceregistry.AppUninstalledReceiver" android:exported="true" >
             <intent-filter>
                  <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                 <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
                  // android.intent.action.PACKAGE_ADDED
 //  android.intent.action.PACKAGE_CHANGED
 //  android.intent.action.PACKAGE_DATA_CLEARED
@@ -195,9 +198,7 @@
 //  android.intent.action.PACKAGE_REPLACED
 //  android.intent.action.PACKAGE_RESTARTED
 //  android.intent.action.PACKAGE_VERIFIED
-                 <data android:scheme="package" />
-            </intent-filter>
-        </receiver> -->
+
         
     </application>
 

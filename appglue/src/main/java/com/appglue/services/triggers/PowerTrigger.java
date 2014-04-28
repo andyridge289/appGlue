@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
 
 public class PowerTrigger extends GenericTrigger
@@ -32,6 +31,7 @@ public class PowerTrigger extends GenericTrigger
 	    else
 	    {
 	    	// Do nothing
+            Log.d(TAG, "Hit else for Receiving power connections");
 	    }
 		
 		super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);

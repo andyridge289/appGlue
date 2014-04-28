@@ -22,11 +22,11 @@ public class NotificationService extends ComposableService {
 		
 		String title = input.getString(NOTIFICATION_TITLE, "");
 		String text = input.getString(NOTIFICATION_TEXT, "");
-//		String url = input.getString(NOTIFICATION_URL, "");
 
 		NotificationManager n = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		Context context = getApplicationContext();
 
+        // TODO Find the "new" way of doing this
 		Notification notification = new Notification.Builder(context)
 				.setContentTitle(title).setContentText(text)
 				.setSmallIcon(R.drawable.ic_launcher).getNotification();
@@ -46,7 +46,6 @@ public class NotificationService extends ComposableService {
 			
 			String title = b.getString(NOTIFICATION_TITLE);
 			String text = b.getString(NOTIFICATION_TEXT);
-//			String url = b.getString(NOTIFICATION_URL, "");
 
 			Notification notification = new Notification.Builder(context)
 					.setContentTitle(title)

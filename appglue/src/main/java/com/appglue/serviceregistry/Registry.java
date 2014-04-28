@@ -1,35 +1,30 @@
 package com.appglue.serviceregistry;
 
-import static com.appglue.Constants.*;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
-import android.app.Activity;
 import android.content.Context;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.Pair;
 
-import com.appglue.ServiceIO;
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ServiceType;
+import com.appglue.ServiceIO;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalDBHandler;
 import com.appglue.library.LogItem;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.appglue.Constants.ProcessType;
+import static com.appglue.Constants.TAG;
+
 public class Registry
 {
 	public static Registry registry = null;
 	
 	private LocalDBHandler dbHandler = null; 
-	
-	private HashMap<String, ServiceDescription> inAppServices;
-	private HashMap<String, ServiceDescription> localServices;
+
 	private HashMap<String, ServiceDescription> remoteCache;
 	
 	// XXX Make the registry cache some things so we don't have to keep retrieving them
@@ -90,16 +85,6 @@ public class Registry
 		return this.remoteCache.get(className);
 	}
 	
-	public int deleteRemoteAtomics()
-	{
-		return dbHandler.deleteRemoteAtomics();
-	}
-	
-	public int deleteDeviceAtomics()
-	{
-		return dbHandler.deleteDeviceAtomics();
-	}
-	
 	public void saveComposite(CompositeService cs)
 	{
 		dbHandler.updateComposite(cs);
@@ -109,17 +94,6 @@ public class Registry
 	public ArrayList<CompositeService> atomicAtPosition(String className, int position)
 	{
 		return dbHandler.atomicAtPosition(className, position);
-	}
-	
-	public boolean initialised()
-	{
-		return dbHandler.initialiased();
-	}
-	
-	public long addAtomic(ServiceDescription sd)
-	{
-		long atomicId = dbHandler.addAtomic(sd);
-		return atomicId;
 	}
 	
 	public long addServiceFromBroadcast(ServiceDescription sd)
@@ -136,72 +110,63 @@ public class Registry
 		return dbHandler.addAtomic(sd);
 	}
 	
-	/**
-	 * This updates a service with the information that is stored in the online database that isn't in the local one.
-	 * 
-	 * @param service The name of the service to be updated
-	 * @param service	A description object reprsenting the service to be updated
-	 */
-	public void updateServiceFromLookup(ServiceDescription service)
-	{
-		dbHandler.updateServiceFromLookup(service);
-	}
-	
-	public LocalDBHandler getDBHandler()
-	{
-		return dbHandler;
-	}
-	
-	public void updateServices(Activity activity)
-	{
-		Registry registry = Registry.getInstance(activity);
-		
-		if(inAppServices == null)
-			inAppServices = new HashMap<String, ServiceDescription>();
-		
-		ArrayList<ServiceDescription> inApp = registry.getInAppServices();
-		for(int i = 0; i < inApp.size(); i++)
-		{
-			ServiceDescription sd = inApp.get(i);
-			if(!this.inAppServices.containsKey(sd.getClassName()))
-				inAppServices.put(sd.getClassName(), sd);
-		}
-		
-		if(localServices == null)
-			localServices = new HashMap<String, ServiceDescription>();
-		
-		ArrayList<ServiceDescription> local = registry.getLocalServices();
-		for(int i = 0; i < local.size(); i++)
-		{
-			ServiceDescription sd = local.get(i);
-			if(!this.localServices.containsKey(sd.getClassName()))
-				localServices.put(sd.getClassName(), sd);
-		}
-	}
-	
-	public ArrayList<ServiceDescription> getInAppServices()
-	{
-		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.IN_APP, false);
-		 
-		if(services.size() == 0)
-		{
-		
-		}
-		
-		return services;
-	}
-	
-	public ArrayList<ServiceDescription> getLocalServices()
-	{
-		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.LOCAL, false);
-		 
-		if(services.size() == 0)
-		{
-			Log.e(TAG, "No local services!");
-		}
-		
-		return services;
-	}
+//	/**
+//	 * This updates a service with the information that is stored in the online database that isn't in the local one.
+//	 *
+//	 * @param service	A description object reprsenting the service to be updated
+//	 */
+//	public void updateServiceFromLookup(ServiceDescription service)
+//	{
+//		dbHandler.updateServiceFromLookup(service);
+//	}
+//
+//	public void updateServices(Activity activity)
+//	{
+//		Registry registry = Registry.getInstance(activity);
+//
+//		if(inAppServices == null)
+//			inAppServices = new HashMap<String, ServiceDescription>();
+//
+//		ArrayList<ServiceDescription> inApp = registry.getInAppServices();
+//        for (ServiceDescription sd : inApp) {
+//            if (!this.inAppServices.containsKey(sd.getClassName()))
+//                inAppServices.put(sd.getClassName(), sd);
+//        }
+//
+//		if(localServices == null)
+//			localServices = new HashMap<String, ServiceDescription>();
+//
+//		ArrayList<ServiceDescription> local = registry.getLocalServices();
+//        for (ServiceDescription sd : local) {
+//            if (!this.localServices.containsKey(sd.getClassName()))
+//                localServices.put(sd.getClassName(), sd);
+//        }
+//	}
+//
+//	public ArrayList<ServiceDescription> getInAppServices()
+//	{
+//		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.IN_APP, false);
+//
+//		if(services.size() == 0)
+//		{
+//		    // TODO Is this a problem?
+//            Log.d(TAG, "There are no in-app services");
+//		}
+//
+//		return services;
+//	}
+//
+//	public ArrayList<ServiceDescription> getLocalServices()
+//	{
+//		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.LOCAL, false);
+//
+//		if(services.size() == 0)
+//		{
+//			Log.e(TAG, "No local services!");
+//		}
+//
+//		return services;
+//	}
 	
 	public ArrayList<ServiceDescription> getInputOnlyComponents() 
 	{	
@@ -263,12 +228,6 @@ public class Registry
 		return dbHandler.getAtomic(className);
 	}
 	
-	public ArrayList<ServiceDescription> getConverterServices()
-	{
-		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.ANY, true);
-		return services;
-	}
-	
 	public CompositeService getComposite(long compositeId)
 	{
 		if(compositeId == -1)
@@ -279,8 +238,7 @@ public class Registry
 	
 	public ArrayList<CompositeService> getComposites()
 	{
-		ArrayList<CompositeService> composites = dbHandler.getComposites();
-		return composites;
+        return dbHandler.getComposites();
 	}
 	
 	public boolean deleteComposite(CompositeService cs)
@@ -303,18 +261,18 @@ public class Registry
 		return success;
 	}
 	
-	public boolean compositeExistsWithName(String name) 
-	{
-		return dbHandler.compositeExistsWithName(name);
-	}
+//	public boolean compositeExistsWithName(String name)
+//	{
+//		return dbHandler.compositeExistsWithName(name);
+//	}
 	
 	/**
 	 * Returns an indicator of:
 	 * 		whether it should be running
 	 * 		whether it is running
 	 * 
-	 * @param id
-	 * @return
+	 * @param id The id of the service to check
+	 * @return And indication of whether the thing is running or not
 	 */
 	public Pair<Boolean, Boolean> running(long id)
 	{
@@ -361,10 +319,10 @@ public class Registry
 		return dbHandler.getComponents(ProcessType.TRIGGER);
 	}
 
-	public boolean setAppUninstalled(String packageName) 
-	{
-		return dbHandler.setAppInstalled(packageName, false);
-	}
+//	public boolean setAppUninstalled(String packageName)
+//	{
+//		return dbHandler.setAppInstalled(packageName, false);
+//	}
 	
 	public boolean success(long compositeId)
 	{

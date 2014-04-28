@@ -1,13 +1,14 @@
 package com.appglue.services.util;
 
-import java.util.ArrayList;
-
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.appglue.ComposableService;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.TAG;
 
 public class BluetoothService extends ComposableService 
 {
@@ -25,20 +26,23 @@ public class BluetoothService extends ComposableService
 		}
 		
 		boolean newState = input.getBoolean(BLUETOOTH_STATE);
-		boolean worked = false;
+		boolean worked;
 		
 		if(newState)
 			worked = bt.enable();
 		else
 			worked = bt.disable();
-		
-		if(worked)
+
+
+        if(worked)
 		{
 			// TODO Component success - Bluetooth
+            Log.d(TAG, "Succeeded at Bluetooth-ing");
 		}
 		else
 		{
 			// TODO Component failure - Bluetooth
+            Log.d(TAG, "Failed at Bluetooth-ing");
 		}
 		
 		return null;

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ActionBarSherlock/ActionBarSherlock.iml" filepath="$PROJECT_DIR$/ActionBarSherlock/ActionBarSherlock.iml" />
       <module fileurl="file://$PROJECT_DIR$/appGlue.iml" filepath="$PROJECT_DIR$/appGlue.iml" />
       <module fileurl="file://$PROJECT_DIR$/appGlueLib/appGlueLib.iml" filepath="$PROJECT_DIR$/appGlueLib/appGlueLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/appglue/appglue.iml" filepath="$PROJECT_DIR$/appglue/appglue.iml" />
