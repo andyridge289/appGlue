@@ -3,7 +3,7 @@ package com.appglue.datatypes;
 public abstract class IOType
 {
 	protected long id;
-	
+
 	protected String name;
 	protected String className;
 	
@@ -31,13 +31,13 @@ public abstract class IOType
 	{
 		return this.id;
 	}
-	
+
 	public void setID(long id)
 	{
 		this.id = id;
 	}
 
-	public String getName() 
+	public String getName()
 	{
 		return name;
 	}

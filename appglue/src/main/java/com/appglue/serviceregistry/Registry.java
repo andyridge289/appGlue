@@ -2,14 +2,11 @@ package com.appglue.serviceregistry;
 
 import static com.appglue.Constants.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Context;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.Pair;
 
@@ -19,7 +16,6 @@ import com.appglue.Constants.ServiceType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
-import com.appglue.library.LocalDBHandler;
 import com.appglue.library.LogItem;
 
 public class Registry

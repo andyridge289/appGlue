@@ -54,7 +54,7 @@ public class ServiceFactory
 		services.add(setupHelloService());
 		services.add(setupTubeService());
 		services.add(setupNotificationService());
-//		services.add(setupPebbleService());
+		services.add(setupPebbleService());
 		services.add(setupToastService());
 		services.add(setupWifiService());
 		
@@ -480,13 +480,13 @@ public class ServiceFactory
 		
 		String[] tags = { "SMS", "Text message", "Receive" };
 		
-		String recevieSMSJSON = Library.makeJSON(-1, "com.appglue", ReceiveSMSTrigger.class.getCanonicalName(),
+		String receiveSMSJSON = Library.makeJSON(-1, "com.appglue", ReceiveSMSTrigger.class.getCanonicalName(),
 				"Receive SMS",
 				"Signals a text has arrived",
 				ReceiveSMSTrigger.processType.index,
 				0, null, outputs, tags);
 
-		return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, recevieSMSJSON);
+		return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, receiveSMSJSON);
 	}
 	
 	private String setupHeadphoneTrigger()

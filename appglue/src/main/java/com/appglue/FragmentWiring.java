@@ -12,17 +12,12 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -94,7 +89,7 @@ public class FragmentWiring extends Fragment
 		first = position > 0 ? components.get(position - 1) : null;
 		second = position < components.size() ? components.get(position) : null;
 		
-		map.set(first, second, null);
+		map.set(first, second);
 		
 		LocalStorage localStorage = LocalStorage.getInstance();
 		

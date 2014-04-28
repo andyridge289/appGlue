@@ -1,4 +1,4 @@
-package com.appglue.library;
+package com.appglue.serviceregistry;
 
 import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
@@ -50,6 +50,7 @@ import java.util.Set;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -66,6 +67,8 @@ import com.appglue.datatypes.IOType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
+import com.appglue.library.AppGlueLibrary;
+import com.appglue.library.LogItem;
 
 public class LocalDBHandler extends SQLiteOpenHelper
 {
@@ -82,7 +85,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		appMap = new HashMap<String, AppDescription>();
 		
 		// Recreate the database every time for now while we are testing
-//		recreate();
+		recreate();
 	}
 	
 
@@ -290,49 +293,49 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		boolean failures = false;
-		
-		for(int i = 0; i < ios.size(); i++)
-		{
-			ContentValues values = new ContentValues();
-			ServiceIO io = ios.get(i);
-			
-			values.put(NAME, io.getName());
-			values.put(FRIENDLY_NAME, io.getFriendlyName());
-			values.put(IO_INDEX, io.getIndex());
-			values.put(DESCRIPTION, io.getDescription());
-			
-			if(!input)
-				values.put(MANDATORY, false);
-			else
-				values.put(MANDATORY, io.isMandatory());
-			
-			IOType type = io.getType();
-			if(type.getID() == -1) // Then it hasn't been validated, see if it's in the database
-			{
-				long inputId = this.getInputOutputIfExists(type.getName(), type.getClass().getCanonicalName()).getID();
-				values.put(IO_TYPE, inputId);
-			}
-			else
-			{
-				values.put(INPUT_TYPE, type.getID());				
-			}
-			
-			// So now we have the IO Type ID
-			values.put(PARENT_SERVICE, className);
-			values.put(I_OR_O, input ? 1 : 0);
-			
-			long ioId = db.insertOrThrow(TBL_SERVICEIO, null, values);
-			if(ioId == -1) 
-			{
-				failures = true;
-			}
-			else
-			{
-				boolean sampleSuccess = addSampleValues(ioId, io);
-				if(!sampleSuccess)
-					failures = true;
-			}
-		}
+
+        for (ServiceIO io1 : ios) {
+            ContentValues values = new ContentValues();
+            ServiceIO io = io1;
+
+            values.put(NAME, io.getName());
+            values.put(FRIENDLY_NAME, io.getFriendlyName());
+            values.put(IO_INDEX, io.getIndex());
+            values.put(DESCRIPTION, io.getDescription());
+
+            if (!input)
+                values.put(MANDATORY, false);
+            else
+                values.put(MANDATORY, io.isMandatory());
+
+            IOType type = io.getType();
+            if (type.getID() == -1) // Then it hasn't been validated, see if it's in the database
+            {
+                long inputId = this.getInputOutputIfExists(type.getName(), type.getClass().getCanonicalName()).getID();
+
+                if(inputId == -1)
+                {
+                    Log.e(TAG, "ID is -1 for " + io.getName());
+                }
+
+                values.put(IO_TYPE, inputId);
+            } else {
+                values.put(IO_TYPE, type.getID());
+            }
+
+            // So now we have the IO Type ID
+            values.put(PARENT_SERVICE, className);
+            values.put(I_OR_O, input ? 1 : 0);
+
+            long ioId = db.insertOrThrow(TBL_SERVICEIO, null, values);
+            if (ioId == -1) {
+                failures = true;
+            } else {
+                boolean sampleSuccess = addSampleValues(ioId, io);
+                if (!sampleSuccess)
+                    failures = true;
+            }
+        }
 		
 		return !failures;
 	}
@@ -527,12 +530,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			ArrayList<Tag> tags = getTagsForComponent(sd.getClassName());
 			sd.addTags(tags);
 			
-//			if((sd.getAverageRating() == -1f || sd.getNumReviews() == -1 || sd.getPrice() == -1f) && sd.getProcessType() != ProcessType.CONVERTER)
-//			{
-//				ExternalConnection conn = ExternalConnection.getInstance();
-//				conn.getExternalService(sd);
-//			}
-			
 			serviceList.add(sd);
 		}
 		while(c.moveToNext());
@@ -635,6 +632,13 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			String friendlyName = c.getString(c.getColumnIndex(FRIENDLY_NAME));
 			int index = c.getInt(c.getColumnIndex(IO_INDEX));
 			boolean mandatory = c.getInt(c.getColumnIndex(MANDATORY)) == 1 ? true: false;
+
+            if(c.getLong(c.getColumnIndex(IO_TYPE)) == -1)
+            {
+                Log.w(TAG, DatabaseUtils.dumpCurrentRowToString(c));
+                Log.e(TAG, "ID is empty?? " + name);
+            }
+
 			IOType type = getIOType(c.getLong(c.getColumnIndex(IO_TYPE)));
 			String description = c.getString(c.getColumnIndex(DESCRIPTION));
 			
@@ -742,13 +746,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Returns an IO if it exists, adds it if it doesn't
 	 * 
-	 * @param ioTypeName	The name of the IOType to be searched for/added
+	 * @param name	The name of the IOType to be searched for/added
+     * @param className The name of the class
 	 * @return				the IO Type
 	 */
 	public IOType getInputOutputIfExists(String name, String className)
 	{
-		
-		
 		if(className.equals(""))
 		{
 			return null;
@@ -759,6 +762,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		if(type == null)
 		{
 			long id = addInputOutput(name, className);
+
+            if(id == -1)
+            {
+                Log.w(TAG, "ID -1 for " + name + ", " + className);
+            }
+
 			type = getIOType(id);
 		}
 		
@@ -795,7 +804,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		c.moveToFirst();
 		
 		long id = c.getLong(c.getColumnIndex(ID));
-		String name = c.getString(c.getColumnIndex(NAME));
 		String className = c.getString(c.getColumnIndex(CLASSNAME));
 		
 		IOType type = IOType.Factory.getType(className);
@@ -809,20 +817,23 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Gets an IOType, given its classname
 	 * 
-	 * @param ioTypeName	The name of the class of the IOType
+	 * @param inputClassName	The name of the class of the IOType
 	 * @return				The IOType
 	 */
-	public IOType getIOType(String inputClassName)
-	{
-		SQLiteDatabase db = this.getWritableDatabase();
+	public IOType getIOType(String inputClassName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        Cursor c = db.query(TBL_IOTYPE, new String[]{ID, NAME, CLASSNAME}, CLASSNAME + "=?", new String[]{"" + inputClassName}, null, null, null);
+
+        if (c == null) {
+            Log.e(TAG, String.format("getIOType() %s: Cursor dead", inputClassName));
+            return null;
+        }
 		
-		Cursor c = db.query(TBL_IOTYPE, new String[]{ ID, NAME, CLASSNAME }, CLASSNAME + "=?", new String[] { "" + inputClassName }, null, null, null);
-		
-		if(c == null)
-			return null;
-		
-		if(c.getCount() == 0)
-			return null;
+		if(c.getCount() == 0) {
+            if(LOG) Log.w(TAG, String.format("getIOType() %s: Cursor empty", inputClassName));
+            return null;
+        }
 		
 		c.moveToFirst();
 		
@@ -839,7 +850,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Adds an IOType with the given class name
 	 * 
-	 * @param ioTypeName	The name of the IOType to be added
+	 * @param name	The name of the IOType to be added
+     * @param className the class name of the IO to be aqdded
 	 * @return				The ID of the inserted IOType
 	 */
 	public long addInputOutput(String name, String className)
@@ -1156,7 +1168,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Gets the atomic service with the given ID
 	 * 	
-	 * @param id	The ID of the service to get
+	 * @param className	The name of the class of the service to get
 	 * @return 		The service with the given ID
 	 */
 	public ServiceDescription getComponentForComposite(String className)
@@ -1823,7 +1835,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		return id != -1;
 	}
 
-	public ArrayList<LogItem> getLog() 
+	public ArrayList<LogItem> getLog()
 	{
 		ArrayList<LogItem> items = new ArrayList<LogItem>();
 		

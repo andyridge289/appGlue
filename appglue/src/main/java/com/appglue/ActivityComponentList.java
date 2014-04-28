@@ -39,9 +39,8 @@ public class ActivityComponentList extends ActionBarActivity
 {
 	private PagerAdapter adapter;
 	private ViewPager viewPager;
-	private TextView statusMessage;
-	
-	private Registry registry;
+
+    private Registry registry;
 	
 	private boolean justAList;
 	private ServiceDescription lastService;
@@ -49,13 +48,7 @@ public class ActivityComponentList extends ActionBarActivity
 	private boolean isFirst;
 	
 	private ArrayList<FragmentComponentListLocal> fragments;
-	
-//	private FragmentComponentListLocal triggers;
-//	private FragmentComponentListLocal noInput;
-//	private FragmentComponentListLocal noOutput;
-//	private FragmentComponentListLocal matching;
-//	private FragmentComponentListLocal all;
-	
+
 	private EditText search;
 	
 	private final String SHOW_ADV = "Show advanced filter";
@@ -87,12 +80,8 @@ public class ActivityComponentList extends ActionBarActivity
 		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		
 		setContentView(R.layout.activity_component_list);
-		
-		
-		
-		statusMessage = (TextView) findViewById(R.id.status_message);
-		
-		this.registry = Registry.getInstance(this);
+
+        this.registry = Registry.getInstance(this);
 		
 		Intent intent = this.getIntent();
 		
@@ -117,6 +106,16 @@ public class ActivityComponentList extends ActionBarActivity
 		}
 		else
 		{
+            if(!noTriggers)
+            {
+                Bundle args = new Bundle();
+                args.putBoolean(TRIGGERS_ONLY, true);
+                FragmentComponentListLocal triggers = new FragmentComponentListLocal();
+                triggers.setArguments(args);
+                triggers.setName("TRIGGERS");
+                fragments.add(triggers);
+            }
+
 			Bundle noInputArgs = new Bundle();
 			noInputArgs.putBoolean(HAS_INPUTS, false);
 			noInputArgs.putBoolean(HAS_OUTPUTS, true);			
@@ -488,7 +487,8 @@ public class ActivityComponentList extends ActionBarActivity
 		{
             if(fragments.get(i) == null)
             {
-                // TODO Do something
+                // TODO Do something better than this
+                return fragments.get(0);
             }
             else return fragments.get(i);
 

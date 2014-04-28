@@ -38,6 +38,8 @@ public class ActivityWiring extends FragmentActivity
 {
 	private CompositeService cs;
 	private int currentIndex;
+
+    // FIXME Only have one temp service
 	
 	private ViewPager pager;
 	private WiringPagerAdapter pagerAdapter;
@@ -281,35 +283,6 @@ public class ActivityWiring extends FragmentActivity
 		
 		else if(item.getItemId() == R.id.wiring_done)
 		{
-			// Get the connected things out of the lists and send them back
-//			FragmentWiring wiringFragment = ((FragmentWiring) pagerAdapter.getItem(pager.getCurrentItem()));
-//			
-//			if(wiringFragment != null)
-//			{
-//				ServiceDescription first = wiringFragment.getFirst();
-//				ServiceDescription second = wiringFragment.getSecond();
-//				ArrayList<Point> connections = wiringFragment.getMap().getConnections();
-//				
-//				// We should now physically connect everything!
-//				if(connections != null)
-//				{
-//					for(int i = 0; i < connections.size(); i++)
-//					{
-//						Point p = connections.get(i);
-//						
-//						// Get the output from prior
-//						ServiceIO out = first.getOutputs().get(p.x);
-//						
-//						// Get the input from current
-//						ServiceIO in = second.getInputs().get(p.y);
-//						
-//						// Plug them in to each other?
-//						out.setConnection(in);
-//						in.setConnection(out);
-//					}
-//				}
-//			}
-			
 			if(cs.getId() != -1)
 			{
 				// This means it's been saved
@@ -318,7 +291,12 @@ public class ActivityWiring extends FragmentActivity
 				if(success && LOG)
 					Log.d(TAG, "Updated " + cs.getName());
 			}
-			
+
+            // TODO The adding things placeholder needs to have some kind of highlight when you click on it
+			// TODO Component list doesn't need to have a status message
+            // TODO If it's saying choose first components, it needs to have triggers too.
+            // FIXME We're running out of memory and I'm not sure why
+
 			Intent intent = new Intent();
 			if (getParent() == null) 
 			{

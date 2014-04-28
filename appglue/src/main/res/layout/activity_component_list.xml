@@ -14,17 +14,6 @@
     	android:layout_height="0dip"
     	android:orientation="horizontal"
     	/>
-
-    <!-- <EditText
-        android:id="@+id/component_search"
-        android:layout_width="fill_parent"
-        android:layout_height="48dip"
-        android:layout_alignParentTop="true"
-        android:nextFocusUp="@id/component_search"
-        android:nextFocusLeft="@id/component_search"
-        android:text="@string/search"
-        android:textColor="@color/edit_search"
-        /> -->
     
      <LinearLayout
         android:id="@+id/component_adv_container"
@@ -94,21 +83,6 @@
 	    </HorizontalScrollView>
     
     </LinearLayout>
-    
-     <LinearLayout
-	    android:id="@+id/status_bar"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true">
-	    
-	   	<TextView
-	   	    android:id="@+id/status_message"
-	   	    android:layout_width="wrap_content"
-	   	    android:layout_height="wrap_content"
-	   	    android:text="This is a status message"
-	   	    />
-	    
-	</LinearLayout>
 
      <android.support.v4.view.ViewPager
          android:id="@+id/pager"

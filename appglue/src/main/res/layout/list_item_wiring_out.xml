@@ -52,7 +52,6 @@
 			android:visibility="gone"
 			android:src="@drawable/filter_small"
 			android:contentDescription="TODO"
-			
 			/>
     
     </LinearLayout>

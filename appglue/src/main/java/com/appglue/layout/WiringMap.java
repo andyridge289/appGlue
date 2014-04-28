@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -102,10 +103,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	private Registry registry;
 	
 	private ArrayList<Point> connections;
-	
-	private Paint paint;
-	
-	public WiringMap(Context context) 
+
+    public WiringMap(Context context)
 	{
 		super(context);
 		
@@ -153,10 +152,10 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		oIndex = -1;
 	}
 	
-	public ArrayList<Point> getConnections()
-	{
-		return connections;
-	}
+//	public ArrayList<Point> getConnections()
+//	{
+//		return connections;
+//	}
 	
 	public ServiceDescription getFirst() {
 		return first;
@@ -193,12 +192,11 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	public ArrayList<Point> getConnectionsOut(int outputIndex)
 	{
 		ArrayList<Point> points = new ArrayList<Point>();
-		
-		for(int i = 0; i < connections.size(); i++)
-		{
-			if(connections.get(i).x == outputIndex)
-				points.add(connections.get(i));
-		}
+
+        for (Point connection : connections) {
+            if (connection.x == outputIndex)
+                points.add(connection);
+        }
 		
 		return points;
 	}
@@ -206,41 +204,37 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	public ArrayList<Point> getConnectionsIn(int inputIndex)
 	{
 		ArrayList<Point> points = new ArrayList<Point>();
-		
-		for(int i = 0; i < connections.size(); i++)
-		{
-			if(connections.get(i).y == inputIndex)
-				points.add(connections.get(i));
-		}
+
+        for (Point connection : connections) {
+            if (connection.y == inputIndex)
+                points.add(connection);
+        }
 		
 		return points;
 	}
 	
 	private boolean checkConnection(int oIndex, int iIndex) {
-		
-		for(int i = 0; i < connections.size(); i++)
-		{
-			Point p = connections.get(i);
-			if(p.x == oIndex && p.y == iIndex)
-				return true;
-		}
+
+        for (Point p : connections) {
+            if (p.x == oIndex && p.y == iIndex)
+                return true;
+        }
 		
 		return false;
 	}
 	
 	private boolean inputConnection(int index) 
 	{
-		for(int i = 0; i < connections.size(); i++)
-		{
-			if(connections.get(i).y == index)
-				return true;
-		}
+        for (Point connection : connections) {
+            if (connection.y == index)
+                return true;
+        }
 		
 		return false;
 	}
 
 	
-	public void set(ServiceDescription first, ServiceDescription second, OnTouchListener gestureListener)
+	public void set(ServiceDescription first, ServiceDescription second)
 	{
 		this.first = first;
 		if(first != null)
@@ -355,7 +349,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	@Override
 	protected void dispatchDraw(Canvas canvas) 
 	{
-	    paint = new Paint();
+        Paint paint = new Paint();
 		paint.setDither(true);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeJoin(Paint.Join.ROUND);
@@ -367,12 +361,11 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		paint.setStrokeWidth(4 * scale);
 		
 		ArrayList<PathColour> paths = getPaths();
-		
-		for(int i = 0; i < paths.size(); i++)
-		{
-			paint.setColor(paths.get(i).colour);
-			canvas.drawPath(paths.get(i).p, paint);
-		}
+
+        for (PathColour path : paths) {
+            paint.setColor(path.colour);
+            canvas.drawPath(path.p, paint);
+        }
 		
 		super.dispatchDraw(canvas);
 	}
@@ -396,45 +389,45 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	private ArrayList<PathColour> getPaths()
 	{
 		ArrayList<PathColour> paths = new ArrayList<PathColour>();
-		
-		for(int i = 0; i < connections.size(); i++)
-		{
-			Path path = new Path();
-			// Need to get the class of one of the items
-			
-				
-			Point p = connections.get(i);
-			View selectedOutput = outputList.getChildAt(p.x);
-			View selectedInput = inputList.getChildAt(p.y);
-			
-			String className = first.getOutputs().get(p.x).getType().getClassName();
-			int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
-			
-			// This should be half the width of the ``tab'' you click on
-			int px = 0;//(int) ((24 + 5) * scale + 0.5); // Half the square plus the border
-			
-			// XXX Colour of connections?
-			
-			int[] layout = new int[2];
-			this.getLocationOnScreen(layout);
-			
-			int[] outputTab = new int[2];
-			selectedOutput.getLocationOnScreen(outputTab);
-			
-			// Move this left a bit to be in the middle of the input
-			float startX = outputTab[0] - layout[0] + selectedOutput.getWidth() - px;
-			float startY = outputTab[1] - layout[1] + (selectedOutput.getHeight() / 2);
-			path.moveTo(startX, startY);
-			
-			int[] inputTab = new int[2];
-			selectedInput.getLocationOnScreen(inputTab);
-			
-			float endX = inputTab[0] - layout[0] + px;
-			float endY = inputTab[1] - layout[1] + (selectedInput.getHeight() / 2);
-			path.lineTo(endX, endY);
-			
-			paths.add(new PathColour(path, col));
-		}
+
+        for (Point connection : connections)
+        {
+            Path path = new Path();
+            // Need to get the class of one of the items
+
+
+            Point p = connection;
+            View selectedOutput = outputList.getChildAt(p.x);
+            View selectedInput = inputList.getChildAt(p.y);
+
+            String className = first.getOutputs().get(p.x).getType().getClassName();
+            int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
+
+            // This should be half the width of the ``tab'' you click on
+            int px = 0;//(int) ((24 + 5) * scale + 0.5); // Half the square plus the border
+
+            // XXX Colour of connections?
+
+            int[] layout = new int[2];
+            this.getLocationOnScreen(layout);
+
+            int[] outputTab = new int[2];
+            selectedOutput.getLocationOnScreen(outputTab);
+
+            // Move this left a bit to be in the middle of the input
+            float startX = outputTab[0] - layout[0] + selectedOutput.getWidth() - px;
+            float startY = outputTab[1] - layout[1] + (selectedOutput.getHeight() / 2);
+            path.moveTo(startX, startY);
+
+            int[] inputTab = new int[2];
+            selectedInput.getLocationOnScreen(inputTab);
+
+            float endX = inputTab[0] - layout[0] + px;
+            float endY = inputTab[1] - layout[1] + (selectedInput.getHeight() / 2);
+            path.lineTo(endX, endY);
+
+            paths.add(new PathColour(path, col));
+        }
 		
 		return paths;
 	}
@@ -627,9 +620,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 				@Override
 				public void onClick(View b) 
 				{
-					if(/*iSelected != null &&*/ inputConnection(position) || first == null || !first.hasOutputs())
+					if(inputConnection(position) || first == null || !first.hasOutputs())
 					{
-						return;
+
 					}
 					else if(iSelected == null && oSelected == null)
 					{						
@@ -847,8 +840,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			
 			TextView ioType = (TextView) v.findViewById(R.id.io_type);
 			TextView ioValue = (TextView) v.findViewById(R.id.io_value);
-			
-			ImageView filterButton = (ImageView) v.findViewById(R.id.filter_button);
+
+            ImageView filterButton = (ImageView) v.findViewById(R.id.filter_button);
 			filterButton.setOnClickListener(new OnClickListener() {
 				
 				@Override
