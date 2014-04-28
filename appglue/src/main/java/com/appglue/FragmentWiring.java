@@ -1,34 +1,32 @@
 package com.appglue;
 
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.layout.WiringMap;
 import com.appglue.library.LocalStorage;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.FIRST;
+import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
 public class FragmentWiring extends Fragment
 {
@@ -40,17 +38,8 @@ public class FragmentWiring extends Fragment
 	private ServiceDescription second;
 	
 	HashMap<String, Integer> hueMap;
-	
-	private TextView firstName;
-	private TextView secondName;
-	
-	private ImageView firstIcon;
-	private ImageView secondIcon;
-	
-	private RelativeLayout firstContainer;
-	private RelativeLayout secondContainer;
-	
-	public static Fragment create(int position)
+
+    public static Fragment create(int position)
 	{
 		FragmentWiring fragment = new FragmentWiring();
 		Bundle args = new Bundle();
@@ -79,15 +68,15 @@ public class FragmentWiring extends Fragment
 		hueMap = new HashMap<String, Integer>();
 		
 		map = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
-		
-		firstName = (TextView) rootView.findViewById(R.id.first_name);
-		secondName = (TextView) rootView.findViewById(R.id.second_name);
-		
-		firstIcon = (ImageView) rootView.findViewById(R.id.first_icon);
-		secondIcon = (ImageView) rootView.findViewById(R.id.second_icon);
-		
-		firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
-		secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
+
+        TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
+        TextView secondName = (TextView) rootView.findViewById(R.id.second_name);
+
+        ImageView firstIcon = (ImageView) rootView.findViewById(R.id.first_icon);
+        ImageView secondIcon = (ImageView) rootView.findViewById(R.id.second_icon);
+
+        RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
+        RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
 		
 		ArrayList<ServiceDescription> components = ((ActivityWiring) getActivity()).getComponents();
 		
@@ -116,15 +105,13 @@ public class FragmentWiring extends Fragment
 			}
 			
 			firstContainer.setBackgroundResource(R.drawable.wiring_component);
-			firstContainer.setOnLongClickListener(new OnLongClickListener() 
-			{
-				@Override
-				public boolean onLongClick(View v) 
-				{
-					// Clicking on the first container should let you move/rename it
-					return false;
-				}
-			});
+			firstContainer.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // Clicking on the first container should let you move/rename it
+                    return false;
+                }
+            });
 		}
 		else
 		{
@@ -134,17 +121,15 @@ public class FragmentWiring extends Fragment
 			firstContainer.setBackgroundResource(R.drawable.wiring_add);
 			
 			// Make it add at this position when we click it
-			firstContainer.setOnClickListener(new OnClickListener() 
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					Intent i = new Intent(getActivity(), ActivityComponentList.class);
-					i.putExtra(POSITION, position);
-					i.putExtra(FIRST, true);
-					getActivity().startActivityForResult(i, SERVICE_REQUEST);
-				}
-			});
+			firstContainer.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), ActivityComponentList.class);
+                    i.putExtra(POSITION, position);
+                    i.putExtra(FIRST, true);
+                    getActivity().startActivityForResult(i, SERVICE_REQUEST);
+                }
+            });
 			
 		}
 		
@@ -156,15 +141,13 @@ public class FragmentWiring extends Fragment
 			secondName.setTextColor(Color.BLACK);
 			secondContainer.setBackgroundResource(R.drawable.wiring_component);
 			
-			secondContainer.setOnLongClickListener(new OnLongClickListener() 
-			{
-				@Override
-				public boolean onLongClick(View v) 
-				{
-					// Clicking on the second container should let you move/rename it
-					return false;
-				}
-			});
+			secondContainer.setOnLongClickListener(new OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // Clicking on the second container should let you move/rename it
+                    return false;
+                }
+            });
 		}
 		else
 		{
@@ -174,17 +157,15 @@ public class FragmentWiring extends Fragment
 			secondIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
 			
 			// Make it add at this position when we click it
-			secondContainer.setOnClickListener(new OnClickListener() 
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					Intent i = new Intent(getActivity(), ActivityComponentList.class);
-					i.putExtra(POSITION, position);
-					i.putExtra(FIRST, false);
-					getActivity().startActivityForResult(i, SERVICE_REQUEST);
-				}
-			});
+			secondContainer.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getActivity(), ActivityComponentList.class);
+                    i.putExtra(POSITION, position);
+                    i.putExtra(FIRST, false);
+                    getActivity().startActivityForResult(i, SERVICE_REQUEST);
+                }
+            });
 		}
 		
 		return rootView;
@@ -208,11 +189,6 @@ public class FragmentWiring extends Fragment
 	public ServiceDescription getSecond()
 	{
 		return second;
-	}
-	
-	public WiringMap getMap()
-	{
-		return map;
 	}
 	
 	public void redraw()

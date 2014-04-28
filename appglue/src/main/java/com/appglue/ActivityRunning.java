@@ -29,9 +29,8 @@ import android.widget.TextView;
 public class ActivityRunning extends Activity
 {
 	private Registry registry;
-	private ArrayList<CompositeService> runningServices;
-	
-	private RunningAdapter adapter;
+
+    private RunningAdapter adapter;
 	
 	@Override
 	public void onCreate(Bundle icicle)
@@ -39,8 +38,8 @@ public class ActivityRunning extends Activity
 		setContentView(R.layout.running);
 		
 		registry = Registry.getInstance(this);
-		
-		runningServices = registry.getIntendedRunningServices();
+
+        ArrayList<CompositeService> runningServices = registry.getIntendedRunningServices();
 		
 		ListView runningList = (ListView) findViewById(R.id.running_list);
 		adapter = new RunningAdapter(this, R.layout.running_list_item, runningServices);

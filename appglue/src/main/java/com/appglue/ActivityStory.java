@@ -1,31 +1,27 @@
 package com.appglue;
 
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
-import com.appglue.engine.CompositeService;
-import com.appglue.serviceregistry.Registry;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
+
+import com.appglue.serviceregistry.Registry;
+
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.TAG;
 
 public class ActivityStory extends Activity implements OnClickListener
 {
 	private FragmentStory storyFragment;
-	
-	private Registry registry;
-	
-	public void onCreate(Bundle icicle)
+
+    public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		setContentView(R.layout.activity_story);
-		
-		registry = Registry.getInstance(this);
+
+        Registry registry = Registry.getInstance(this);
 		
 		Intent intent = this.getIntent();
 		long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
@@ -37,16 +33,18 @@ public class ActivityStory extends Activity implements OnClickListener
 		else
 		{
 			// We need to skip this activity
+            Log.d(TAG, "It isn't -1, does this mean we need to load the last one?");
 		}
-		
+
 		storyFragment = (FragmentStory) getFragmentManager().findFragmentById(R.id.story_fragment);
 		
-		
+
 		
 	}
 	
 	public void onClick(View v)
 	{
+        storyFragment.getActivity();
 //		Intent intent = new Intent(ActivityStory.this, ActivityComponentList.class);
 //		
 //		if(v.equals(triggerLayout))

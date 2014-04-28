@@ -1,19 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.DATA;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.KEY_SERVICE_LIST;
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TEST;
-import static com.appglue.library.AppGlueConstants.*;
-
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,14 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -39,6 +21,23 @@ import com.appglue.engine.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.layout.CompositionView;
 import com.appglue.serviceregistry.Registry;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.DATA;
+import static com.appglue.Constants.DURATION;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.IS_LIST;
+import static com.appglue.Constants.KEY_SERVICE_LIST;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.TEST;
+import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
+import static com.appglue.library.AppGlueConstants.WIRE_COMPONENTS;
 
 public class ActivityCompositionCanvas extends Activity 
 {
@@ -67,7 +66,8 @@ public class ActivityCompositionCanvas extends Activity
 	
 	private ServiceDescription selected = null;
 	private int selectedIndex = -1;
-	
+
+    // Ignore lint, if these are local then we can't access it from anywhere else later
 	private ActionMode actionMode;
 	private ActionMode.Callback actionCallback = new ActionMode.Callback()
 	{
@@ -120,6 +120,7 @@ public class ActivityCompositionCanvas extends Activity
 					// Need to check what will happen to any links between components
 					if(selected.hasIncomingLinks() || selected.hasOutgoingLinks())
 					{
+                        Log.d(TAG, "Has incoming or outgoing, probably need to clear all of them");
 						// Then we need to do something to take care of this 
 					}
 					
@@ -147,6 +148,7 @@ public class ActivityCompositionCanvas extends Activity
 					// Need to check what will happen to any links between components
 					if(selected.hasIncomingLinks() || selected.hasOutgoingLinks())
 					{
+                        Log.d(TAG, "Has incoming or outgoing, probably need to clear all of them");
 						// Then we need to do something to take care of this 
 					}
 					
@@ -180,7 +182,8 @@ public class ActivityCompositionCanvas extends Activity
 					// Need to check what will happen to any links between components
 					if(selected.hasIncomingLinks() || selected.hasOutgoingLinks())
 					{
-						// Then we need to do something to take care of this 
+                        Log.d(TAG, "Has incoming or outgoing, probably need to clear all of them");
+						// TODO Then we need to do something to take care of this
 					}
 					
 					components.remove(selectedIndex);
@@ -235,10 +238,10 @@ public class ActivityCompositionCanvas extends Activity
 		this.invalidateOptionsMenu();
 	}
 	
-	public void setSelectedIndex(int index)
-	{
-		selectedIndex = index;
-	}
+//	public void setSelectedIndex(int index)
+//	{
+//		selectedIndex = index;
+//	}
 	
 	public void add()
 	{
@@ -246,14 +249,14 @@ public class ActivityCompositionCanvas extends Activity
 		startActivityForResult(i, SERVICE_REQUEST);
 	}
 	
-	public void wire(int index)
-	{
-		
-		Intent intent = new Intent(this, ActivityWiring.class);
-		intent.putExtra(INDEX, index);
-		
-		startActivityForResult(intent, WIRE_COMPONENTS);
-	}
+//	public void wire(int index)
+//	{
+//
+//		Intent intent = new Intent(this, ActivityWiring.class);
+//		intent.putExtra(INDEX, index);
+//
+//		startActivityForResult(intent, WIRE_COMPONENTS);
+//	}
 	
 	private void viewComponent(String className)
 	{
@@ -331,7 +334,7 @@ public class ActivityCompositionCanvas extends Activity
     }
 	
 	@Override
-	public void onSaveInstanceState(Bundle icicle)
+	public void onSaveInstanceState(@NotNull Bundle icicle)
 	{
 		CompositeService service = registry.getService();
 		if(service.getId() != -1)
@@ -379,27 +382,21 @@ public class ActivityCompositionCanvas extends Activity
 	{
 		ArrayList<ServiceDescription> components = registry.getService().getComponents();
 		if(LOG) Log.d(TAG, "Mandatory check " + components.size());
-		
-		for(int i = 0; i < components.size(); i++)
-		{
-			ServiceDescription component = components.get(i);
 
-			if(!component.hasInputs())
-				continue;
-			
-			ArrayList<ServiceIO> inputs = component.getInputs();
-			
-			for(int j = 0; j < inputs.size(); j++)
-			{
-				ServiceIO input = inputs.get(j);
-				if(input.isMandatory() && input.getManualValue() == null && input.getConnection() == null)
-				{
-					// If it's mandatory and both of the other 2 are null then give up!
-					return input;
-				}
-			}
-			
-		}
+        for (ServiceDescription component : components) {
+            if (!component.hasInputs())
+                continue;
+
+            ArrayList<ServiceIO> inputs = component.getInputs();
+
+            for (ServiceIO input : inputs) {
+                if (input.isMandatory() && input.getManualValue() == null && input.getConnection() == null) {
+                    // If it's mandatory and both of the other 2 are null then give up!
+                    return input;
+                }
+            }
+
+        }
 		
 		return null;
 	}
@@ -459,7 +456,7 @@ public class ActivityCompositionCanvas extends Activity
 	   					
    					// Then we need to save it
    					Log.e(TAG, "Name set to " + currentComposite.getName());
-	    			long savedId = registry.updateCurrent();
+	    			registry.updateCurrent();
 		    	}
 		    });
 		    
@@ -526,29 +523,25 @@ public class ActivityCompositionCanvas extends Activity
 //		save();
 //	}
 	
-	public void save()
-	{	
-		// Do a check if something already has that name
-		registry.updateCurrent();
-	}
+//	public void save()
+//	{
+//		// Do a check if something already has that name
+//		registry.updateCurrent();
+//	}
+//
+//	public void startActionMode(int index, ServiceDescription selected)
+//	{
+//		this.selectedIndex = index;
+//		this.selected = selected;
+//		actionMode = startActionMode(actionCallback);
+//	}
 	
-	public void startActionMode(int index, ServiceDescription selected)
-	{
-		this.selectedIndex = index;
-		this.selected = selected;
-		actionMode = startActionMode(actionCallback);
-	}
-	
-	public ActionMode getActionMode()
-	{
-		return actionMode;
-	}
-	
-	public void update()
-	{
-		long id = registry.updateCurrent();
-	}
-	
+
+//	public void update()
+//	{
+//		long id = registry.updateCurrent();
+//	}
+
 	public int getSelectedIndex()
 	{
 		return selectedIndex;

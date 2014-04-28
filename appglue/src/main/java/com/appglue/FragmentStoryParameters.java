@@ -1,12 +1,9 @@
 package com.appglue;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
@@ -20,12 +17,7 @@ import com.appglue.serviceregistry.Registry;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,22 +28,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class FragmentStoryParameters extends Fragment
 {
 	private Registry registry;
-	private CompositeService cs;
-	
-	private ServiceDescription component;
-	private ServiceDescription previous;
+
+    private ServiceDescription previous;
 	
 	private TextView nameText;
 	
@@ -60,12 +46,8 @@ public class FragmentStoryParameters extends Fragment
 
 	private LinearLayout inputContainer;
 	private LinearLayout outputContainer;
-	private boolean[] inputsSet;
-	private boolean[] outputsSet;
-	
-	private View root;
-	
-	@Override
+
+    @Override
 	public void onAttach(Activity activity)
 	{
 		super.onAttach(activity);
@@ -143,17 +125,17 @@ public class FragmentStoryParameters extends Fragment
 		super.onDetach();
 	}
 	
-	public void setData(String className, int position)
+	public void setData(int position)
 	{
 		if(registry == null)
 			registry = Registry.getInstance(getActivity());
-		
-		cs = registry.getService();
+
+        CompositeService cs = registry.getService();
 		ArrayList<ServiceDescription> components = cs.getComponents();
 		position = position == -1 ? components.size() - 1 : position;
-		component = components.get(position);
+        ServiceDescription component = components.get(position);
 		previous = position > 0 ? components.get(position - 1) : null;
-		Log.w(TAG, "Aaaaaand now position " + position);
+		Log.w(TAG, "And now position " + position);
 		
 		nameText.setText(component.getName());
 		
@@ -161,7 +143,7 @@ public class FragmentStoryParameters extends Fragment
 		{
 			// Show the list, hide the text, set the adapter
 			inputContainer.setVisibility(View.VISIBLE);
-			setupInputs(inputContainer, component.getInputs(), position);
+			setupInputs(inputContainer, component.getInputs());
 			noInputText.setVisibility(View.GONE);
 		}
 		else
@@ -193,19 +175,16 @@ public class FragmentStoryParameters extends Fragment
 	 * 
 	 *********************************/
 	
-	private void setupInputs(LinearLayout inputContainer, ArrayList<ServiceIO> inputs, int position)
+	private void setupInputs(LinearLayout inputContainer, ArrayList<ServiceIO> inputs)
 	{
-		inputsSet = new boolean[inputs.size()];
-		
 		for(int i = 0; i < inputs.size(); i++)
 		{
-			View v = setInput(inputs, i, position);
+			View v = setInput(inputs, i);
 			inputContainer.addView(v);
-			inputsSet[i] = false;
 		}
 	}
 	
-	private View setInput(ArrayList<ServiceIO> inputs, final int index, int position)
+	private View setInput(ArrayList<ServiceIO> inputs, final int index)
 	{
 		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = vi.inflate(R.layout.list_item_storyparam_input, null);
@@ -240,9 +219,9 @@ public class FragmentStoryParameters extends Fragment
 			public void onClick(View vv)
 			{
 				// Clear all the layout items
-				((Spinner) container.findViewById(R.id.param_value_spinner)).setSelected(false);
+				container.findViewById(R.id.param_value_spinner).setSelected(false);
 				((EditText) container.findViewById(R.id.param_value_text)).setText("");
-				((Spinner) container.findViewById(R.id.param_previous_spinner)).setSelected(false);
+				container.findViewById(R.id.param_previous_spinner).setSelected(false);
 				
 				doneContainer.setVisibility(View.GONE);
 				container.setVisibility(View.GONE);
@@ -300,7 +279,7 @@ public class FragmentStoryParameters extends Fragment
 		if(values == null)
 			values = new ArrayList<IOValue>();
 		
-		final boolean hasSamples = values.size() == 0 ? false : true;
+		final boolean hasSamples = values.size() != 0;
 		
 		if(!hasSamples)
 		{
@@ -310,24 +289,21 @@ public class FragmentStoryParameters extends Fragment
 		
 		if(type.equals(IOType.Factory.getType(IOType.Factory.TEXT)))
 		{
-			setupInput(item, FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
+			setupInput(item, InputType.TYPE_CLASS_TEXT,
 							  hasSamples, values, item,
-							  String.class,
-							  position, v);
+                    v);
 		}
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.NUMBER)))
 	    {
-			setupInput(item, FILTER_NUMBER_VALUES, InputType.TYPE_CLASS_NUMBER,
-					  		  hasSamples, values, item, 
-					  		  Integer.class,
-							  position, v);
+			setupInput(item, InputType.TYPE_CLASS_NUMBER,
+					  		  hasSamples, values, item,
+                    v);
 	    }
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.SET)))
 	    {
-	    	setupInput(item, FILTER_SET_VALUES, -1,
+	    	setupInput(item, -1,
     				hasSamples, values, item,
-    				Integer.class,
-					  position, v);
+                    v);
 	    }
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN)))
 		{
@@ -339,27 +315,25 @@ public class FragmentStoryParameters extends Fragment
 				values.add(new IOValue("False", false));
 			}
 			
-			setupInput(item, FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
-			  		  hasSamples, values, item, 
-			  		  Integer.class,
-					  position, v);
+			setupInput(item, InputType.TYPE_CLASS_TEXT,
+			  		  hasSamples, values, item,
+                    v);
 		}
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER)))
 		{
-			setupInput(item, FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
+			setupInput(item, InputType.TYPE_CLASS_PHONE,
 					  hasSamples, values, item,
-					  String.class,
-					  position, v);
+                    v);
 		}
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.URL)))
 		{
-			setupInput(item, FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
+			setupInput(item, InputType.TYPE_CLASS_TEXT,
 					  hasSamples, values, item,
-					  String.class,
-					  position, v);
+                    v);
 		}
 	    else
 	    {
+            Log.d(TAG, "We've hit the else FragmentStoryParameters::setInput");
 	    	// Don't know what happens here
 	    }
 		
@@ -368,9 +342,9 @@ public class FragmentStoryParameters extends Fragment
 	
 	
 	
-	private void setupInput(ServiceIO current, FilterValue[] conditions, int type,
-			boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
-			Class<? extends Object> cast, int position, View v) 
+	private void setupInput(ServiceIO current, int type,
+                            boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
+                            View v)
 	{
 		
 		final EditText valueText = (EditText) v.findViewById(R.id.param_value_text);			
@@ -383,14 +357,12 @@ public class FragmentStoryParameters extends Fragment
 		if(previous != null)
 		{
 			ArrayList<ServiceIO> outputs = previous.getOutputs();
-			
-			for(int i = 0; i < outputs.size(); i++)
-			{
-				if(outputs.get(i).getType().equals(current.getType()))
-				{
-					matching.add(outputs.get(i));
-				}
-			}
+
+            for (ServiceIO output : outputs) {
+                if (output.getType().equals(current.getType())) {
+                    matching.add(output);
+                }
+            }
 		}
 		
 		TabHost tabs = (TabHost) v.findViewById(R.id.param_tabhost);
@@ -495,11 +467,8 @@ public class FragmentStoryParameters extends Fragment
 	
 	private void setupOutputs(LinearLayout outputContainer, ArrayList<ServiceIO> outputs)
 	{
-		outputsSet = new boolean[outputs.size()];
-		
 		for(int i = 0; i < outputs.size(); i++)
 		{
-			outputsSet[i] = false;
 			View v = setupOutput(outputs, i);
 			outputContainer.addView(v);
 		}
@@ -541,7 +510,7 @@ public class FragmentStoryParameters extends Fragment
 			public void onClick(View vv)
 			{
 				// Clear all the layout items
-				((Spinner) container.findViewById(R.id.param_value_spinner)).setSelected(false);
+				container.findViewById(R.id.param_value_spinner).setSelected(false);
 				((EditText) container.findViewById(R.id.param_value_text)).setText("");
 				
 				doneContainer.setVisibility(View.GONE);
@@ -590,7 +559,7 @@ public class FragmentStoryParameters extends Fragment
 		if(values == null)
 			values = new ArrayList<IOValue>();
 		
-		final boolean hasSamples = values.size() == 0 ? false : true;
+		final boolean hasSamples = values.size() != 0;
 		
 		if(!hasSamples)
 		{
@@ -602,19 +571,19 @@ public class FragmentStoryParameters extends Fragment
 		{
 			setupOutput(FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
 							  hasSamples, values, item,
-							  String.class, v);
+                    v);
 		}
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.NUMBER)))
 	    {
 			setupOutput(FILTER_NUMBER_VALUES, InputType.TYPE_CLASS_NUMBER,
-					  		  hasSamples, values, item, 
-					  		  Integer.class, v);
+					  		  hasSamples, values, item,
+                    v);
 	    }
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.SET)))
 	    {
 	    	setupOutput(FILTER_SET_VALUES, -1,
     				hasSamples, values, item,
-    				Integer.class, v);
+                    v);
 	    }
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN)))
 		{
@@ -627,32 +596,33 @@ public class FragmentStoryParameters extends Fragment
 			}
 			
 			setupOutput(FILTER_BOOL_VALUES, -1,
-			  		  hasSamples, values, item, 
-			  		  Integer.class, v);
+			  		  hasSamples, values, item,
+                    v);
 		}
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER)))
 		{
 			setupOutput(FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
 					  hasSamples, values, item,
-					  String.class, v);
+                    v);
 		}
 		else if(type.equals(IOType.Factory.getType(IOType.Factory.URL)))
 		{
 			setupOutput(FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
 					  hasSamples, values, item,
-					  String.class, v);
+                    v);
 		}
 	    else
 	    {
 	    	// Don't know what happens here
+            Log.d(TAG, "We've hit the else, we probably shouldn't've (FragmentStoryParameters::setOutput");
 	    }
 
 		return v;
 	}
 	
 	private void setupOutput(FilterValue[] conditions, int type,
-			boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
-			Class<? extends Object> cast, View v) {
+                             boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
+                             View v) {
 
 		final Spinner valueSpinner = (Spinner) v.findViewById(R.id.param_value_spinner);
 		final Spinner conditionSpinner = (Spinner) v.findViewById(R.id.param_condition_spinner);

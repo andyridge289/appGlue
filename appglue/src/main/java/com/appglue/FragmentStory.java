@@ -5,6 +5,7 @@ import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.*;
+import static com.appglue.Constants.LOG;
 
 import com.appglue.engine.CompositeService;
 import com.appglue.serviceregistry.Registry;
@@ -23,17 +24,16 @@ import android.widget.LinearLayout;
 public class FragmentStory extends Fragment implements OnClickListener
 {
 	private LinearLayout triggerLayout;
-	private LinearLayout userLayout;
-	
-	@Override
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
 	{
         View v = inflater.inflate(R.layout.fragment_story, container, false);
         
         triggerLayout = (LinearLayout) v.findViewById(R.id.choice_trigger);
 		triggerLayout.setOnClickListener(this);
-		
-		userLayout = (LinearLayout) v.findViewById(R.id.choice_user);
+
+        LinearLayout userLayout = (LinearLayout) v.findViewById(R.id.choice_user);
 		userLayout.setOnClickListener(this);
         
         return v;
@@ -85,7 +85,8 @@ public class FragmentStory extends Fragment implements OnClickListener
 		}
 		else if(requestCode == STORY_MODE && resultCode == Activity.RESULT_CANCELED)
 		{
-			
+			// TODO Is this okay? I don't know
+            if(LOG) Log.d(TAG, "Story mode cancelled.");
 		}
 	}
 }

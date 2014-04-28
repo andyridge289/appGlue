@@ -19,6 +19,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,8 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+
+import org.jetbrains.annotations.NotNull;
 
 public class ActivityComponent extends Activity
 {
@@ -119,7 +122,7 @@ public class ActivityComponent extends Activity
 			}
 			catch (IOException e) 
 			{
-				
+				Log.w(TAG, "Tried to set Image bitmap for " + service.getName());
 			}
 		}
 		else
@@ -169,8 +172,18 @@ public class ActivityComponent extends Activity
 			{
 				try 
 				{
-				    Intent i = ActivityComponent.this.getPackageManager().getLaunchIntentForPackage(service.getApp().getPackageName());
-				    ActivityComponent.this.startActivity(i);
+                    PackageManager pm = ActivityComponent.this.getPackageManager();
+
+                    if(pm != null)
+                    {
+				        Intent i = pm.getLaunchIntentForPackage(service.getApp().getPackageName());
+				        ActivityComponent.this.startActivity(i);
+                    }
+                    else
+                    {
+                        // Do something?
+                        Log.e(TAG, "Couldn't launch app because the packagemanager is null: " + service.getApp().getPackageName());
+                    }
 				}
 				catch (Exception e) 
 				{
@@ -199,24 +212,27 @@ public class ActivityComponent extends Activity
 		{
 			View v = inflater.inflate(R.layout.example_composite, null);
 			final int index = i;
-			
-			((TextView) v.findViewById(R.id.example_name)).setText("Example " + (i + 1));
-			v.setOnClickListener(new OnClickListener() 
-			{	
-				@Override
-				public void onClick(View v) 
-				{
-					Intent intent = new Intent(ActivityComponent.this, ActivityComposite.class);
-					intent.putExtra(ID, examples.get(index).getId());
-					startActivity(intent);
-				}
-			});
-			exampleContainer.addView(v);
-			
-			if(i < examples.size() - 1)
-			{
-				inflater.inflate(R.layout.spacer_horiz, exampleContainer);
-			}
+
+            if(v != null)
+            {
+                ((TextView) v.findViewById(R.id.example_name)).setText("Example " + (i + 1));
+                v.setOnClickListener(new OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Intent intent = new Intent(ActivityComponent.this, ActivityComposite.class);
+                        intent.putExtra(ID, examples.get(index).getId());
+                        startActivity(intent);
+                    }
+                });
+                exampleContainer.addView(v);
+
+                if(i < examples.size() - 1)
+                {
+                    inflater.inflate(R.layout.spacer_horiz, exampleContainer);
+                }
+            }
 		}
 		
 		if(examples.size() == 0)
@@ -226,17 +242,24 @@ public class ActivityComponent extends Activity
 		}
 		
 		ActionBar actionBar = getActionBar();
-		actionBar.setIcon(R.drawable.ic_menu_back);
-		actionBar.setHomeButtonEnabled(true);
-		
-		if(this.atomicList)
-			actionBar.setTitle(R.string.component_title_view);
-		else
-			actionBar.setTitle(R.string.component_title_use);
+        if (actionBar != null)
+        {
+            actionBar.setIcon(R.drawable.ic_menu_back);
+            actionBar.setHomeButtonEnabled(true);
+
+            if(this.atomicList)
+                actionBar.setTitle(R.string.component_title_view);
+            else
+                actionBar.setTitle(R.string.component_title_use);
+        }
 	}
-	
+
+    /**
+     *
+     * @param icicle The Bundle into which to save all the stuff
+     */
 	@Override
-	public void onSaveInstanceState(Bundle icicle)
+	public void onSaveInstanceState(@NotNull Bundle icicle)
 	{
 		icicle.putString(CLASSNAME, service.getClassName());
 		icicle.putBoolean(JUST_A_LIST, atomicList);
@@ -244,7 +267,7 @@ public class ActivityComponent extends Activity
 	}
 	
 	@Override
-	public void onRestoreInstanceState(Bundle icicle)
+	public void onRestoreInstanceState(@NotNull Bundle icicle)
 	{
 		super.onRestoreInstanceState(icicle);
 		
@@ -254,7 +277,7 @@ public class ActivityComponent extends Activity
 		restoreState(icicle);
 	}
 	
-	private void restoreState(Bundle icicle)
+	private void restoreState(@NotNull Bundle icicle)
 	{
 		String className = icicle.getString(CLASSNAME);
 		atomicList = icicle.getBoolean(JUST_A_LIST, false);
@@ -270,10 +293,10 @@ public class ActivityComponent extends Activity
 	public void onStart()
 	{
 		super.onStart();
-		if(this.service == null)
-		{
-			
-		}
+//		if(this.service == null)
+//		{
+//			// TODO Work out what I was going to do here
+//		}
 	}
 	
 	@Override
@@ -281,19 +304,23 @@ public class ActivityComponent extends Activity
 	{
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.simple_service_menu, menu);
-	    
+
+        MenuItem useItem = menu.findItem(R.id.simple_use_button);
+        MenuItem getItem = menu.findItem(R.id.simple_get_button);
+
+        if(useItem == null || getItem == null)
+            return false;
+
 	    if(atomicList)
-	    {
-	    	menu.findItem(R.id.simple_use_button).setVisible(false);
-	    }
+            useItem.setVisible(false);
 	    
 	    if(this.type == ServiceType.REMOTE.index)
 	    {
-	    	menu.findItem(R.id.simple_use_button).setVisible(false);
+            useItem.setVisible(false);
 	    }
 	    else
 	    {
-	    	menu.findItem(R.id.simple_get_button).setVisible(false);
+	    	getItem.setVisible(false);
 	    }
 	    
 		return true;
@@ -404,9 +431,13 @@ public class ActivityComponent extends Activity
 				else
 					v = vi.inflate(R.layout.list_item_wiring_out, null);
 			}
-			
+
+            if(v == null)
+                return null;
+
 			final ServiceIO io = items.get(position);
-			
+
+
 			((TextView) v.findViewById(R.id.io_name)).setText(io.getFriendlyName());
 			((TextView) v.findViewById(R.id.io_type)).setText(io.getType().getName());
 			
