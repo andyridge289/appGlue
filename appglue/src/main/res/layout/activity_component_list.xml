@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    >
+    
+    <LinearLayout
+        android:id="@+id/dummy_layout"
+    	android:focusable="true" 
+    	android:focusableInTouchMode="true"
+    	android:layout_width="0dip" 
+    	android:layout_height="0dip"
+    	android:orientation="horizontal"
+    	/>
+
+    <!-- <EditText
+        android:id="@+id/component_search"
+        android:layout_width="fill_parent"
+        android:layout_height="48dip"
+        android:layout_alignParentTop="true"
+        android:nextFocusUp="@id/component_search"
+        android:nextFocusLeft="@id/component_search"
+        android:text="@string/search"
+        android:textColor="@color/edit_search"
+        /> -->
+    
+     <LinearLayout
+        android:id="@+id/component_adv_container"
+	    android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="vertical"
+        >
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/advanced_filter"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            />
+    
+	    <HorizontalScrollView
+	        android:layout_height="wrap_content"
+	        android:layout_width="fill_parent"
+	        android:scrollbars="horizontal">
+	        
+		    <LinearLayout
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal">
+		        
+		        <Button
+		            android:background="@drawable/hide_up"
+		            android:id="@+id/component_adv_hide"
+		            android:layout_width="32dip"
+		            android:layout_height="32dip"
+		            />
+		        
+		       	<CheckBox
+		       	    android:id="@+id/component_adv_trigger"
+		       	    android:layout_width="wrap_content"
+		       	    android:layout_height="wrap_content"
+		       	    android:textSize="12sp"
+		       	    android:text="@string/triggers"
+		       	    />
+		       	<CheckBox 
+		       	    android:id="@+id/component_adv_filter"
+		       	    android:layout_width="wrap_content"
+		       	    android:layout_height="wrap_content"
+		       	    android:textSize="12sp"
+		       	    android:text="@string/filters"
+		       	    />
+		       	<CheckBox 
+		       	    android:id="@+id/component_adv_inputs"
+		       	    android:layout_width="wrap_content"
+		       	    android:layout_height="wrap_content"
+		       	    android:textSize="12sp"
+		       	    android:text="@string/has_inputs"
+		       	    />
+		       	<CheckBox 
+		       	    android:id="@+id/component_adv_outputs"
+		       	    android:layout_width="wrap_content"
+		       	    android:layout_height="wrap_content"
+		       	    android:textSize="12sp"
+		       	    android:text="@string/has_outputs"
+		       	    />
+		       	
+		    </LinearLayout>
+		    
+	    </HorizontalScrollView>
+    
+    </LinearLayout>
+    
+     <LinearLayout
+	    android:id="@+id/status_bar"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true">
+	    
+	   	<TextView
+	   	    android:id="@+id/status_message"
+	   	    android:layout_width="wrap_content"
+	   	    android:layout_height="wrap_content"
+	   	    android:text="This is a status message"
+	   	    />
+	    
+	</LinearLayout>
+
+     <android.support.v4.view.ViewPager
+         android:id="@+id/pager"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_above="@id/status_bar"
+         android:layout_below="@id/dummy_layout" >
+
+         <android.support.v4.view.PagerTitleStrip
+             android:id="@+id/pager_title_strip"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_gravity="top"
+             android:background="#33b5e5"
+             android:paddingBottom="4dp"
+             android:paddingTop="4dp"
+             android:textColor="#fff" >
+         </android.support.v4.view.PagerTitleStrip>
+     </android.support.v4.view.ViewPager>
+	
+	
+    
+</RelativeLayout>

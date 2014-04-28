@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+ 	android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center" >
+    
+	<GridView
+		android:visibility="gone"
+	   	android:id="@+id/loadList"
+	   	android:layout_width="fill_parent"
+	  	android:layout_height="fill_parent"
+	   	android:numColumns="4"
+	   	android:verticalSpacing="10dp"
+	   	android:horizontalSpacing="10dp"
+	   	android:stretchMode="columnWidth"
+	   	android:layout_marginTop="5dip"
+	    />
+	
+	<ImageView
+        android:id="@+id/loading_spinner"
+        android:layout_width="16px"
+        android:layout_height="16px"
+        android:background="@drawable/loader"
+        />
+	
+</LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 3x51Tw0w0w0w0 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/img_run_down"
+        android:state_pressed="true"/>
+    <item android:drawable="@drawable/img_run_down"
+        android:state_focused="true"/>
+    <item android:drawable="@drawable/img_run_up"/>
+</selector>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.appglue"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="com.appglue.permission.COMPOSE_ME_PLEASE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    
+    <permission android:name="com.appglue.permission.COMPOSE_ME_PLEASE" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:allowBackup="false"
+        android:label="@string/application_name"
+        android:theme="@android:style/Theme.NoTitleBar"
+        android:name=".AppGlue" >
+        
+        <activity
+            android:name=".ActivityCompositeList"
+            android:label="@string/application_name"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:uiOptions="splitActionBarWhenNarrow" 
+            >
+            
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+        </activity>
+        
+         <activity
+            android:name=".ActivityComponentList"
+            android:theme="@style/Theme.AppCompat.Light"
+            />
+         
+        <activity
+            android:name=".ActivityStory"
+            android:theme="@style/Theme.AppCompat.Light"
+            />
+        <activity
+            android:name=".ActivityStoryParameters"
+            android:theme="@style/Theme.AppCompat.Light"
+            />
+        <activity
+            android:name=".ActivityStoryComponents"
+            android:theme="@style/Theme.AppCompat.Light"
+            />
+        
+        <activity
+            android:name=".ActivityComponent"
+            android:theme="@android:style/Theme.Holo.Light" 
+            />
+
+        <activity
+            android:name=".ActivityApp"
+            android:theme="@android:style/Theme.Holo.Light"
+            />
+        
+        <activity
+            android:name=".ActivityLog"
+            android:theme="@android:style/Theme.Holo.Light" 
+            />
+        
+        
+        
+        <activity
+            android:name=".ActivityCompositionCanvas"
+            android:theme="@style/Theme.FixedSize"
+            android:uiOptions="splitActionBarWhenNarrow"
+            />
+        
+        <activity
+            android:name=".ActivityComposite"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:uiOptions="splitActionBarWhenNarrow"
+            />
+        
+        <activity
+            android:name=".ActivityWiring"
+            android:label="@string/application_name"
+            android:theme="@android:style/Theme.Holo.Light"
+            android:screenOrientation="landscape" />
+        
+        <activity
+            android:name=".ActivityRunning"
+            android:label="@string/application_name"
+            android:theme="@android:style/Theme.Holo" >
+        </activity>
+        
+        <activity
+            android:name=".ShortcutActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <service android:name=".serviceregistry.RegistryService"/>
+        <service android:name="com.appglue.engine.TriggerService"></service>
+        <service android:name=".engine.OrchestrationService" />
+
+        <!-- Services that can be composed -->
+        <service android:name=".services.SayHelloService" />
+        <service android:name=".services.NotificationService" />
+        <service android:name=".services.ClockService" />
+        <service android:name=".services.TubeService" />
+        <service android:name=".services.ToastService" />
+        <service android:name=".services.SendSMSService" />
+        <service android:name=".services.PebbleNotification" />
+        <service android:name=".services.LocationService" />
+        <service android:name=".services.LaunchAppService" />
+        
+        <service android:name="com.appglue.services.util.WifiService" />
+        <service android:name="com.appglue.services.util.BluetoothService" />
+        <service android:name="com.appglue.services.util.AirplaneService" />
+         
+        <receiver android:name=".services.triggers.ReceiveSMSTrigger" android:exported="true" >
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+        
+        <receiver android:name=".services.triggers.PowerTrigger" android:exported="true" >
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
+        
+        <receiver android:name=".services.triggers.BluetoothTrigger" android:exported="true">
+            <intent-filter>
+                <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
+                <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
+                <action android:name="android.bluetooth.adapter.action.DISCOVERY_STARTED" />
+                <action android:name="android.bluetooth.adapter.action.SCAN_MODE_CHANGED" />
+                <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
+                    
+                <!-- Not sure what A2DP is...
+                android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED
+                android.bluetooth.a2dp.profile.action.PLAYING_STATE_CHANGED
+                
+                Device connected/disconnected
+                android.bluetooth.device.action.ACL_CONNECTED
+                android.bluetooth.device.action.ACL_DISCONNECTED
+                android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED
+            
+            //  android.bluetooth.adapter.action.LOCAL_NAME_CHANGED
+            //  android.bluetooth.device.action.BOND_STATE_CHANGED
+            //  android.bluetooth.device.action.CLASS_CHANGED
+            //  android.bluetooth.device.action.FOUND
+            //  android.bluetooth.device.action.NAME_CHANGED
+            //  android.bluetooth.device.action.UUID
+            //  android.bluetooth.devicepicker.action.DEVICE_SELECTED
+            //  android.bluetooth.devicepicker.action.LAUNCH
+            //  android.bluetooth.headset.action.VENDOR_SPECIFIC_HEADSET_EVENT
+            //  android.bluetooth.headset.profile.action.AUDIO_STATE_CHANGED
+            //  android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED
+            //  android.bluetooth.input.profile.action.CONNECTION_STATE_CHANGED
+            //  android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED
+             -->    
+                    
+            </intent-filter>
+        </receiver>
+        
+       <!-- <receiver android:name=".serviceregistry.AppUninstalledReceiver" android:exported="true" >
+            <intent-filter>
+                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                 // android.intent.action.PACKAGE_ADDED
+//  android.intent.action.PACKAGE_CHANGED
+//  android.intent.action.PACKAGE_DATA_CLEARED
+//  android.intent.action.PACKAGE_FIRST_LAUNCH
+//  android.intent.action.PACKAGE_FULLY_REMOVED
+//  android.intent.action.PACKAGE_INSTALL
+//  android.intent.action.PACKAGE_NEEDS_VERIFICATION
+//  android.intent.action.PACKAGE_REMOVED
+//  android.intent.action.PACKAGE_REPLACED
+//  android.intent.action.PACKAGE_RESTARTED
+//  android.intent.action.PACKAGE_VERIFIED
+                 <data android:scheme="package" />
+            </intent-filter>
+        </receiver> -->
+        
+    </application>
+
+</manifest>

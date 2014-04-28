@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:duplicateParentState="true"
+    android:layout_height="30dip"
+    android:orientation="vertical">
+	
+	<View
+	    android:id="@+id/io_blob"
+	    android:layout_width="20dip"
+	    android:layout_height="20dip"
+	    android:layout_centerHorizontal="true"
+	    android:duplicateParentState="true"
+	    android:background="@drawable/io_blob"
+	    android:layout_alignParentTop="true"
+	    />
+
+	<View
+	    android:id="@+id/io_stub"
+	    android:layout_width="5dip"
+	    android:layout_height="10dip"
+	    android:duplicateParentState="true"
+	    android:layout_centerHorizontal="true"
+	    android:layout_alignParentBottom="true"
+	    android:layout_below="@id/io_blob"
+	    android:background="@drawable/io_stub_on"
+	    />
+</RelativeLayout>

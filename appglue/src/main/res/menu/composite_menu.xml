@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item 
+        android:id="@+id/composite_edit"
+        android:title="Edit"
+        android:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/composite_share"
+        android:title="Share"
+        android:showAsAction="ifRoom|withText" />
+</menu>

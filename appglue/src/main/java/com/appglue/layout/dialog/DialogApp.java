@@ -1,0 +1,148 @@
+package com.appglue.layout.dialog;
+
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
+
+import java.util.List;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.appglue.ActivityWiring;
+import com.appglue.R;
+import com.appglue.ServiceIO;
+import com.appglue.layout.WiringMap;
+
+public class DialogApp extends DialogCustom
+{
+	public DialogApp(final ActivityWiring activity, WiringMap wm, final ServiceIO item) 
+	{
+		super(activity, wm, item);
+		
+		LayoutInflater inflater = activity.getLayoutInflater();		
+		final View v = inflater.inflate(R.layout.dialog_app_picker, null);
+		
+		// Get a list of the installed apps and then show them on something
+		final PackageManager pm = activity.getPackageManager();
+		final List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+		final AppChooserAdapter adapter = new AppChooserAdapter(activity, R.layout.list_item_app_selector, packages, pm);
+		
+		GridView g = (GridView) v.findViewById(R.id.app_grid);
+		g.setAdapter(adapter);
+		
+		setView(v);
+		
+		Button positiveButton = (Button) v.findViewById(R.id.dialog_app_positive);
+		Button negativeButton = (Button) v.findViewById(R.id.dialog_app_negative);
+
+		positiveButton.setOnClickListener(new View.OnClickListener() 
+		{	
+			@Override
+			public void onClick(View v) 
+			{
+				if(adapter.selectedIndex == -1)
+				{
+					if(LOG) Log.d(TAG, "No selected index");
+					cancel();
+					return;
+				}
+				
+				// The app they want to load is selectedApp.packageName
+				ApplicationInfo selected = packages.get(adapter.selectedIndex);
+				if(selected == null)
+				{
+					if(LOG) Log.d(TAG, "No selected app info");
+					cancel();
+					return;
+				}
+				
+				if(LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
+				item.setManualValue(selected.packageName);
+				item.setFilterState(ServiceIO.MANUAL_FILTER);
+				DialogApp.this.activity.setStatus("Chosen app: " + selected.packageName);
+				
+				registry.updateCurrent();
+				parent.redraw();
+				dismiss();
+			}
+		});
+		
+		setTitle("Select app");
+		
+		negativeButton.setOnClickListener(new View.OnClickListener() 
+		{	
+			@Override
+			public void onClick(View v) 
+			{
+				cancel();
+			}
+		});	
+	}	
+	
+	private class AppChooserAdapter extends ArrayAdapter<ApplicationInfo>
+	{
+		private List<ApplicationInfo> values;
+		private PackageManager pm;
+		private int selectedIndex;
+		
+		public AppChooserAdapter(Context context, int resource, List<ApplicationInfo> values, PackageManager pm)
+		{
+			super(context, resource, values);
+			
+			this.pm = pm;
+			this.values = values;
+			this.selectedIndex = -1;
+		}
+		
+		public View getView(final int position, View v, ViewGroup parent)
+		{
+			if(v == null)
+			{
+				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				v = vi.inflate(R.layout.list_item_app_selector, null);
+			}
+			
+			if(position != selectedIndex)
+			{
+				v.setBackgroundResource(R.drawable.textview_button);
+			}
+			else
+			{
+				v.setBackgroundResource(R.drawable.textview_button_focused);
+			}
+			
+			final ApplicationInfo app = values.get(position);
+			
+			TextView appName = (TextView) v.findViewById(R.id.load_list_name);
+			ImageView appIcon = (ImageView) v.findViewById(R.id.service_icon);
+			
+			// Load all the icons in the background?
+			appName.setText(app.loadLabel(pm));
+			appIcon.setImageDrawable(app.loadIcon(pm));
+			
+			v.setOnClickListener(new View.OnClickListener() 
+			{	
+				public void onClick(View v) 
+				{
+					// Unselect everything
+					selectedIndex = position;
+					notifyDataSetChanged();
+				}
+			});
+			
+			return v;
+		}
+	}
+}

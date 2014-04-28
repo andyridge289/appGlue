@@ -1,0 +1,267 @@
+package com.appglue;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.KEY_COMPOSITE;
+import static com.appglue.Constants.TAG;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.appglue.Constants.ProcessType;
+import com.appglue.Constants.ServiceType;
+import com.appglue.description.ServiceDescription;
+import com.appglue.engine.CompositeService;
+import com.appglue.library.LocalStorage;
+import com.appglue.serviceregistry.Registry;
+
+public class ActivityComposite extends Activity
+{
+	private CompositeService cs;
+	
+	private boolean edit;
+	
+	private EditText nameEdit;
+	private EditText descriptionEdit;
+	
+	private CheckBox activeCheck;
+	private CheckBox runningCheck;
+	
+	private LocalStorage localStorage;
+	private Registry registry;
+	
+	public void onCreate(Bundle icicle)
+	{
+		super.onCreate(icicle);
+		
+		Intent intent = getIntent();
+		
+		localStorage = LocalStorage.getInstance();
+		registry = Registry.getInstance(this);
+		
+		long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
+		if(compositeId == -1){ finish(); return; }
+		
+		cs = registry.getComposite(compositeId);
+		
+		edit = false;
+		
+		setup();
+		
+		ActionBar actionBar = getActionBar();
+		actionBar.setTitle("View Composite");
+		actionBar.setSubtitle(cs.getName());
+	}
+	
+	public void setup()
+	{
+		if(edit)
+		{
+			setContentView(R.layout.activity_composite_edit);
+			
+			nameEdit = (EditText) findViewById(R.id.composite_name_edit);
+			nameEdit.setText(cs.getName());
+			
+			descriptionEdit = (EditText) findViewById(R.id.composite_description_edit);
+			descriptionEdit.setText(cs.getDescription());
+			
+			ImageButton editComposition = (ImageButton) findViewById(R.id.composite_edit_composition);
+			editComposition.setOnClickListener(new OnClickListener() 
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					Intent intent = new Intent(ActivityComposite.this, ActivityCompositionCanvas.class);
+					intent.putExtra(KEY_COMPOSITE, cs.getId());
+					startActivity(intent);
+				}
+			});
+		}
+		else
+		{
+			setContentView(R.layout.activity_composite);
+			
+			TextView compositeName = (TextView) findViewById(R.id.composite_name);
+			compositeName.setText(cs.getName());
+			
+			TextView compositeDescription = (TextView) findViewById(R.id.description_text);
+			compositeDescription.setText(cs.getDescription());
+		}
+		
+		LocalStorage ls = LocalStorage.getInstance();
+		ImageView icon = (ImageView) findViewById(R.id.composite_icon);
+		
+		try 
+		{
+			String iconLocation = cs.getComponents().get(0).getApp().getIconLocation();
+			Bitmap b = ls.readIcon(iconLocation);
+			
+			if(b != null)
+				icon.setImageBitmap(b);
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		// Stuff for both
+		
+		// Do a look up in the DB to see if the composite is currently running (right now) or not
+		runningCheck = (CheckBox) findViewById(R.id.composite_running);
+		runningCheck.setChecked(registry.isCompositeRunning(cs.getId()));
+		
+		activeCheck = (CheckBox) findViewById(R.id.composite_active);
+		if(cs.getComponents().get(0).getProcessType() == ProcessType.TRIGGER)
+		{
+			activeCheck.setText("Active");
+		}
+		else
+		{
+			activeCheck.setText("On timer");
+		}
+		
+		// It doesn't matter what it is, just set the check or not
+		activeCheck.setChecked(registry.isCompositeActive(cs.getId()));
+		
+		ListView componentList = (ListView) findViewById(R.id.composite_component_list);
+		componentList.setAdapter(new CompositeComponentAdapter(this, R.layout.li_component_in_composite, cs.getComponents()));
+			
+		if(edit)
+		{
+			activeCheck.setEnabled(true);
+		}
+		else
+		{
+			activeCheck.setEnabled(false);
+		}
+		
+		// Probably need some way of killing ones that are running
+	}
+	
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		
+		if(!edit)
+			inflater.inflate(R.menu.composite_menu, menu);
+		else
+			inflater.inflate(R.menu.composite_menu_edit, menu);
+	    
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		if(item.getItemId() == R.id.composite_edit)
+		{
+			edit = true;
+			invalidateOptionsMenu();
+			setup();
+		}
+		else if(item.getItemId() == R.id.composite_edit_done)
+		{
+			edit = false;
+			invalidateOptionsMenu();
+			setup();
+		}
+		else if(item.getItemId() == R.id.composite_share)
+		{
+			// Implement sharing - Google+?
+		}
+		
+		return false;
+	}
+	
+	private class CompositeComponentAdapter extends ArrayAdapter<ServiceDescription>
+	{
+		private ArrayList<ServiceDescription> items;
+		
+		public CompositeComponentAdapter(Context context, int textViewResourceId, ArrayList<ServiceDescription> items) 
+		{
+			super(context, textViewResourceId, items);
+			
+			this.items = items;
+		}
+		
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			View v = convertView;
+			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			if(v == null)
+			{
+				v = vi.inflate(R.layout.li_component_in_composite, null);
+			}
+			
+			final ServiceDescription item = items.get(position);
+			
+			ImageView icon = (ImageView) v.findViewById(R.id.component_icon);
+			TextView name = (TextView) v.findViewById(R.id.component_name);
+			
+			try 
+			{
+				String iconLocation = cs.getComponents().get(0).getApp().getIconLocation();
+				Bitmap b = localStorage.readIcon(iconLocation);
+				
+				if(b != null)
+					icon.setImageBitmap(b);
+			}
+			catch (Exception e) 
+			{
+				icon.setImageResource(R.drawable.icon);
+			}
+			
+			name.setText(item.getName());
+			
+			if(item.hasInputs())
+				v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);
+			else
+				v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.composite_input);
+			
+			if(item.hasOutputs())
+				v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.has_io);
+			else
+				v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.composite_output);
+			
+			v.setOnClickListener(new OnClickListener()
+			{
+				@Override
+				public void onClick(View v) 
+				{
+					Intent intent = new Intent(ActivityComposite.this, ActivityComponent.class);
+					intent.putExtra(CLASSNAME, item.getClassName());
+					startActivity(intent);
+				}
+				
+			});
+			
+			return v;
+		}
+		
+	}
+}

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FillWrap"
+    android:orientation="vertical" >
+    
+     <LinearLayout
+        android:id="@+id/input_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_bar"
+        android:orientation="horizontal"
+        android:padding="0dip"
+        />
+
+    <TextView
+        android:id="@+id/story_component_name"
+        style="@style/FillWrap"
+        android:text="Component Name"
+        android:textSize="18sp" />
+    
+    
+    <LinearLayout
+        android:id="@+id/output_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/output_bar"
+        android:orientation="horizontal"
+        />
+
+</LinearLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+ 	android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center" >
+    
+    
+    <TextView
+        style="@style/FillWrap"
+        android:gravity="center_horizontal"
+        android:id="@+id/simple_list_none"
+        android:visibility="gone"
+        />
+    
+    <ImageView
+        android:id="@+id/loading_spinner"
+        android:layout_width="16px"
+        android:layout_height="16px"
+        android:background="@drawable/loader"
+        />
+
+    <ListView
+		style="@style/Fill"
+	    android:id="@+id/simple_list" 
+	    android:visibility="gone"
+	    />
+
+</LinearLayout>

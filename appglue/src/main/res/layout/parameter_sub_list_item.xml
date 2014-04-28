@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/FillWrap.Vertical"
+    android:paddingTop="10dip"
+    >
+    
+    <LinearLayout
+        style="@style/FillWrap.Horizontal"
+        android:baselineAligned="false"
+        >
+        
+		<RelativeLayout
+		    android:layout_width="0dip"
+		    android:layout_weight="0.6"
+	    	android:layout_height="wrap_content">
+		    
+		    <TextView 
+		        android:id="@+id/sub_param_requiredness"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_alignParentTop="true"
+		        android:textAllCaps="true"
+		        android:text="Mandatory"
+		        />
+		    
+		    <TextView
+		        android:id="@+id/sub_param_name_fixed"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_marginTop="5dip"
+		        android:layout_below="@id/sub_param_requiredness"
+		        android:text="Name: "
+		        />
+		    
+		    <TextView 
+		        android:id="@+id/sub_param_name"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_below="@id/sub_param_requiredness"
+		        android:layout_toRightOf="@id/sub_param_name_fixed"
+		        android:layout_marginTop="5dip"
+		        android:textStyle="bold"
+		        android:text="name"
+		        />
+		    
+		  	 <TextView 
+		        android:id="@+id/sub_param_description_fixed"
+		        android:layout_marginTop="5dip"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@id/sub_param_name"
+		        android:text="Description: "
+		        />
+		    
+		    <TextView 
+		        android:id="@+id/sub_param_description"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:textStyle="italic"
+		        android:layout_alignParentLeft="true"
+		        android:layout_below="@id/sub_param_description_fixed"
+		        android:text="description"
+		        />
+		    
+	    </RelativeLayout>
+	    
+		<LinearLayout
+		    android:layout_width="0dip"
+		    android:layout_weight="0.4"
+	    	android:layout_height="wrap_content"
+	    	android:orientation="vertical">
+		    
+		    <TextView
+		        android:id="@+id/sub_param_type"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="type"
+		        />
+		    
+		    <Button
+		        android:id="@+id/sub_param_set"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/param_set" 
+		        />
+		    
+		    <CheckBox
+		        android:id="@+id/sub_param_default"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/param_default" 
+		        />
+		</LinearLayout>
+		
+	</LinearLayout>
+	
+    <LinearLayout
+        style="@style/FillWrap.Horizontal"
+        >
+		
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dip"
+            android:layout_weight="0.3"
+            android:text="Value(s):"
+            />
+        
+        <TextView
+            android:id="@+id/sub_param_value"
+            android:layout_height="wrap_content"
+            android:layout_width="0dip"
+            android:layout_weight="0.7"
+            android:textStyle="bold"
+            android:text="Value"
+            />
+        
+    </LinearLayout>
+        
+</LinearLayout>

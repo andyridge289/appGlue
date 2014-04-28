@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/serviceList_bg"
+    android:orientation="vertical"
+    >
+    
+    <View
+		android:id="@+id/comp_item_inputs"
+        android:layout_height="12dip"
+        android:layout_width="fill_parent"
+        android:background="@drawable/composite_input"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical" 
+        />
+	
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/comp_item_border" 
+        >
+
+       <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dip"
+            android:layout_marginTop="2dip"
+            android:background="@color/white" 
+            >
+
+	        <ImageView
+	            android:id="@+id/component_icon"
+	            android:layout_width="24dip"
+	            android:layout_height="24dip"
+	            android:layout_margin="0dip"
+	            android:contentDescription="@string/cd_simple_list_item_icon"
+	            android:paddingBottom="6dip"
+	            android:paddingTop="6dip"
+	            android:src="@drawable/icon" 
+	            />
+
+            <TextView
+                android:id="@+id/component_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/service_name"
+                android:textSize="16sp"
+                android:textStyle="bold" 
+                />
+	        
+		</LinearLayout> 
+        
+    </LinearLayout>
+    
+    <View
+		android:id="@+id/comp_item_outputs"
+		android:layout_height="12dip"
+        android:layout_width="fill_parent"
+		android:background="@drawable/composite_output"
+		android:orientation="vertical" 
+		/>
+    
+</LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="@color/bg"
+    android:orientation="vertical">
+    
+    <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Name"
+        />
+    
+    <EditText
+        android:id="@+id/name_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    
+     <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        />
+    
+    <EditText
+        android:id="@+id/description_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    
+    <TextView 
+        android:id="@+id/done_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Done!"
+        android:background="@drawable/textview_button"
+		android:clickable="true"
+		android:textSize="24sp"
+		android:textColor="@color/dim_on_dark"
+		android:foreground="?android:selectableItemBackground" 
+        />
+    
+   
+</LinearLayout>

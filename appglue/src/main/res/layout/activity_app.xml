@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/single_service_bg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+        
+        <ImageView
+            android:id="@+id/app_icon"
+            android:contentDescription="@string/component_icon_contdesc"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_margin="4dip"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/icon"
+            android:paddingBottom="5dip"
+            />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/service_name"
+            android:gravity="center_horizontal"
+            android:layout_toRightOf="@id/app_icon"
+            android:paddingTop="10dip"
+            android:textSize="20sp"
+            android:textStyle="bold" 
+            />
+        
+        <TextView
+		     android:id="@+id/app_dev"
+		     android:layout_width="fill_parent"
+		     android:gravity="center_horizontal"
+		     android:layout_height="wrap_content"
+		     android:layout_toRightOf="@id/app_icon"
+		     android:layout_below="@id/app_name"
+		     android:text="@string/dev_name"
+		     android:textColor="@color/dim_text"
+		     android:paddingLeft="5dip"
+		     android:textSize="12sp" 
+		     />
+        
+    </RelativeLayout>
+
+	<TextView
+		style="@style/Simple.Title"
+       	android:text="@string/simple_title_description" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/app_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        android:text="@string/simple_service_description_text"
+        />
+
+	<TextView
+	    style="@style/Simple.Title"
+	    android:text="@string/components" >
+	</TextView>
+
+	<ListView
+	    android:id="@+id/app_component_list"
+	    android:layout_width="fill_parent"
+	    android:layout_height="match_parent" 
+	    />
+    
+</LinearLayout>

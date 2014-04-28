@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Fill"
+    android:orientation="vertical" 
+    >
+    
+    <TextView
+        style="@style/FillWrap"
+        android:text="@string/choose_a_filter_value"
+        />
+
+    <LinearLayout 
+        android:id="@+id/filter_condition_container"
+		style="@style/FillWrap.Horizontal"
+		>
+		
+        <Spinner
+            android:id="@+id/filter_condition_spinner"
+            android:layout_width="0dip"
+            android:layout_weight="4.5"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+	        android:layout_marginRight="5dip"
+	        android:textSize="12sp"
+            />
+        
+        <RadioGroup
+            android:id="@+id/filter_radio"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+			android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            	
+        	     <RadioButton
+	            	android:id="@+id/filter_radio_spinner"
+	            	android:layout_width="wrap_content"
+	            	android:layout_height="40dip"
+	            	/>
+            
+        	    <RadioButton
+		        	android:id="@+id/filter_radio_text"
+		        	android:layout_width="wrap_content"
+		        	android:layout_height="40dip"
+		        	/>
+	    
+	    </RadioGroup>
+	    
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dip"
+            android:layout_weight="4.5"
+            android:layout_height="wrap_content">
+	    
+       		<Spinner
+	            android:id="@+id/filter_value_spinner"
+	            android:layout_marginLeft="5dip"
+	            android:layout_marginRight="5dip"
+	            android:layout_width="fill_parent"
+	            android:layout_height="40dip"
+	            />
+        	
+       		<EditText
+		        android:id="@+id/filter_value_text"
+		        android:layout_marginLeft="5dip"
+		        android:layout_marginRight="5dip"
+		        android:layout_width="fill_parent"
+		        android:layout_height="40dip"
+		        android:inputType="text" 
+		        />
+         	
+       	</LinearLayout>
+    
+    </LinearLayout>
+
+   <LinearLayout
+	    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarStyle"
+	    >
+	    
+	    <Button
+	        android:id="@+id/dialog_filter_negative"
+	        android:layout_height="wrap_content"
+	        style="?android:attr/buttonBarButtonStyle"
+        	android:layout_width="0dip"
+        	android:layout_weight="1"
+        	android:text="@string/dialog_filter_negative"
+	        />
+	    
+	    <Button
+	        android:id="@+id/dialog_filter_neutral"
+	        android:layout_height="wrap_content"
+	        style="?android:attr/buttonBarButtonStyle"
+        	android:layout_width="0dip"
+        	android:layout_weight="1"
+        	android:text="@string/dialog_filter_neutral"
+	        />
+	    
+	    <Button
+	        android:id="@+id/dialog_filter_positive"
+	        android:layout_height="wrap_content"
+	        style="?android:attr/buttonBarButtonStyle"
+        	android:layout_width="0dip"
+        	android:layout_weight="1"
+        	android:text="@string/dialog_filter_positive"
+	        />
+	    
+    </LinearLayout>
+
+</LinearLayout>

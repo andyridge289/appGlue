@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group 
+        android:id="@+id/comp_context_rungroup">
+	    <item 
+	        android:id="@+id/comp_context_run"
+	        android:title="Run"
+	        android:icon="@drawable/ab_run"
+	        android:showAsAction="ifRoom|withText" />
+	   <item 
+	        android:id="@+id/comp_context_timer"
+	        android:title="Schedule"
+	        android:icon="@drawable/ab_timer"
+	        android:showAsAction="ifRoom|withText" />
+	   <item 
+        	android:id="@+id/comp_context_shortcut"
+        	android:title="Create Shortcut"
+        	android:icon="@drawable/ab_shortcut"
+        	android:showAsAction="ifRoom|withText" />
+   </group>
+   <group
+       android:id="@+id/comp_context_singlegroup">
+	   <item
+	       android:id="@+id/comp_context_view"
+	       android:title="View"
+	       android:icon="@drawable/ab_about"
+	       android:showAsAction="ifRoom|withText" />
+	   <item 
+	        android:id="@+id/comp_context_edit"
+	        android:title="Edit"
+	        android:icon="@drawable/ab_edit"
+	        android:showAsAction="ifRoom|withText" />
+	   <item 
+	        android:id="@+id/comp_context_editstory"
+	        android:title="Edit (Story)"
+	        android:showAsAction="ifRoom|withText" />
+	   </group>
+   <item 
+        android:id="@+id/comp_context_delete"
+        android:title="Delete"
+        android:icon="@drawable/ab_delete"
+        android:showAsAction="ifRoom|withText" />
+</menu>

@@ -1,0 +1,793 @@
+package com.appglue;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.appglue.datatypes.IOType;
+import com.appglue.description.ServiceDescription;
+import com.appglue.engine.CompositeService;
+import com.appglue.layout.adapter.FilterSampleAdapter;
+import com.appglue.layout.adapter.WiringFilterAdapter;
+import com.appglue.library.IOFilter;
+import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.serviceregistry.Registry;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.text.InputType;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TabHost;
+import android.widget.TabWidget;
+import android.widget.TextView;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+
+public class FragmentStoryParameters extends Fragment
+{
+	private Registry registry;
+	private CompositeService cs;
+	
+	private ServiceDescription component;
+	private ServiceDescription previous;
+	
+	private TextView nameText;
+	
+	private TextView noInputText;
+	private TextView noOutputText;
+
+	private LinearLayout inputContainer;
+	private LinearLayout outputContainer;
+	private boolean[] inputsSet;
+	private boolean[] outputsSet;
+	
+	private View root;
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+	}
+	
+	@Override
+	public void onCreate(Bundle icicle)
+	{
+		super.onCreate(icicle);
+	}
+	
+	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) 
+	{
+        View v = inflater.inflate(R.layout.fragment_story_parameters, container, false);
+        
+        nameText = (TextView) v.findViewById(R.id.story_param_name);
+        
+        noInputText = (TextView) v.findViewById(R.id.story_param_no_inputs);
+        noOutputText = (TextView) v.findViewById(R.id.story_param_no_outputs);
+        
+        inputContainer = (LinearLayout) v.findViewById(R.id.story_param_inputs);
+        outputContainer = (LinearLayout) v.findViewById(R.id.story_param_outputs);
+        
+        return v;
+    }
+	
+	@Override
+	public void onActivityCreated(Bundle icicle)
+	{
+		super.onActivityCreated(icicle);
+		
+		registry = Registry.getInstance(getActivity());
+	}
+	
+	@Override
+	public void onStart()
+	{
+		super.onStart();
+	}
+	
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+	}
+	
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+	}
+	
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+	}
+	
+	@Override
+	public void onDestroyView()
+	{
+		super.onDestroyView();
+	}
+	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+	}
+	
+	@Override
+	public void onDetach()
+	{
+		super.onDetach();
+	}
+	
+	public void setData(String className, int position)
+	{
+		if(registry == null)
+			registry = Registry.getInstance(getActivity());
+		
+		cs = registry.getService();
+		ArrayList<ServiceDescription> components = cs.getComponents();
+		position = position == -1 ? components.size() - 1 : position;
+		component = components.get(position);
+		previous = position > 0 ? components.get(position - 1) : null;
+		Log.w(TAG, "Aaaaaand now position " + position);
+		
+		nameText.setText(component.getName());
+		
+		if(component.hasInputs())
+		{
+			// Show the list, hide the text, set the adapter
+			inputContainer.setVisibility(View.VISIBLE);
+			setupInputs(inputContainer, component.getInputs(), position);
+			noInputText.setVisibility(View.GONE);
+		}
+		else
+		{
+			// Show the text, hide the list
+			inputContainer.setVisibility(View.GONE);
+			noInputText.setVisibility(View.VISIBLE);
+		}
+		
+		if(component.hasOutputs())
+		{
+			// Show the list, hide the text, set the adapter
+			outputContainer.setVisibility(View.VISIBLE);
+			setupOutputs(outputContainer, component.getOutputs());
+			noOutputText.setVisibility(View.GONE);
+		}
+		else
+		{
+			// Show the text, hide the list
+			outputContainer.setVisibility(View.GONE);
+			noOutputText.setVisibility(View.VISIBLE);
+		}
+	}
+
+	
+	/**********************************
+	 * 
+	 * LIST SHIT BELOW HERE
+	 * 
+	 *********************************/
+	
+	private void setupInputs(LinearLayout inputContainer, ArrayList<ServiceIO> inputs, int position)
+	{
+		inputsSet = new boolean[inputs.size()];
+		
+		for(int i = 0; i < inputs.size(); i++)
+		{
+			View v = setInput(inputs, i, position);
+			inputContainer.addView(v);
+			inputsSet[i] = false;
+		}
+	}
+	
+	private View setInput(ArrayList<ServiceIO> inputs, final int index, int position)
+	{
+		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		View v = vi.inflate(R.layout.list_item_storyparam_input, null);
+		
+		final ServiceIO item = inputs.get(index);
+		IOType type = item.getType();
+		
+		TextView nameText = (TextView) v.findViewById(R.id.param_input_name);
+		nameText.setText(item.getFriendlyName());
+		
+		TextView typeText = (TextView) v.findViewById(R.id.param_input_type);
+		typeText.setText(type.getName());
+		
+		final View container = v.findViewById(R.id.filter_container);
+		final Button doneButton = (Button) v.findViewById(R.id.done_button);
+		final LinearLayout doneContainer = (LinearLayout) v.findViewById(R.id.button_container);
+		final Button filterButton = (Button) v.findViewById(R.id.filter_button);
+		final Button dontFilterButton = (Button) v.findViewById(R.id.dont_filter_button);
+		
+		filterButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View vv)
+			{
+				doneContainer.setVisibility(View.VISIBLE);
+				container.setVisibility(View.VISIBLE);
+				vv.setVisibility(View.GONE);
+			}
+		});
+		
+		dontFilterButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View vv)
+			{
+				// Clear all the layout items
+				((Spinner) container.findViewById(R.id.param_value_spinner)).setSelected(false);
+				((EditText) container.findViewById(R.id.param_value_text)).setText("");
+				((Spinner) container.findViewById(R.id.param_previous_spinner)).setSelected(false);
+				
+				doneContainer.setVisibility(View.GONE);
+				container.setVisibility(View.GONE);
+				filterButton.setVisibility(View.VISIBLE);
+		
+				// Don't save anything to the object
+			}
+		});
+		
+		doneButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View vv)
+			{
+				// If we get here they chose a value
+
+				// 2 See which tab is selected - hopefully this is the same as the last one they selected?
+				TabHost tabs = (TabHost) container.findViewById(R.id.param_tabhost);
+				
+				// 3 See what the value of the corresponding textbox/spinner is
+				if(tabs.getCurrentTab() == 0)
+				{
+					// It's the sample one
+					IOValue value = (IOValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
+					item.setChosenSampleValue(value);
+					item.setFilterState(ServiceIO.SAMPLE_FILTER);
+				}
+				else if(tabs.getCurrentTab() == 1)
+				{
+					// It's the custom one
+					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
+					Object value = item.getType().fromString(sValue);
+					item.setManualValue(value);
+					item.setFilterState(ServiceIO.MANUAL_FILTER);
+				}
+				else if(tabs.getCurrentTab() == 2)
+				{
+					// It needs to be linked to a previous one.. This could be more complicated!
+					ServiceIO value = (ServiceIO) ((Spinner) container.findViewById(R.id.param_previous_spinner)).getSelectedItem();
+					Log.e(TAG, value.getFriendlyName());
+					
+					
+					// get previous output from the last component and then match them up
+					ServiceIO previousOut = previous.getOutput(value.getId());
+					item.setConnection(previousOut);
+					previousOut.setConnection(item);
+				}
+				
+				doneContainer.setVisibility(View.GONE);
+				container.setVisibility(View.GONE);
+				filterButton.setVisibility(View.VISIBLE);
+			}
+		});
+				
+		ArrayList<IOValue> values = item.getSampleValues();
+		if(values == null)
+			values = new ArrayList<IOValue>();
+		
+		final boolean hasSamples = values.size() == 0 ? false : true;
+		
+		if(!hasSamples)
+		{
+			values = new ArrayList<IOValue>();
+			values.add(new IOValue("No samples", ""));
+		}
+		
+		if(type.equals(IOType.Factory.getType(IOType.Factory.TEXT)))
+		{
+			setupInput(item, FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
+							  hasSamples, values, item,
+							  String.class,
+							  position, v);
+		}
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.NUMBER)))
+	    {
+			setupInput(item, FILTER_NUMBER_VALUES, InputType.TYPE_CLASS_NUMBER,
+					  		  hasSamples, values, item, 
+					  		  Integer.class,
+							  position, v);
+	    }
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.SET)))
+	    {
+	    	setupInput(item, FILTER_SET_VALUES, -1,
+    				hasSamples, values, item,
+    				Integer.class,
+					  position, v);
+	    }
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN)))
+		{
+			if(!hasSamples)
+			{
+				// These might need to be hard-coded as acceptable values
+				values = new ArrayList<IOValue>();
+				values.add(new IOValue("True", true));
+				values.add(new IOValue("False", false));
+			}
+			
+			setupInput(item, FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
+			  		  hasSamples, values, item, 
+			  		  Integer.class,
+					  position, v);
+		}
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER)))
+		{
+			setupInput(item, FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
+					  hasSamples, values, item,
+					  String.class,
+					  position, v);
+		}
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.URL)))
+		{
+			setupInput(item, FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
+					  hasSamples, values, item,
+					  String.class,
+					  position, v);
+		}
+	    else
+	    {
+	    	// Don't know what happens here
+	    }
+		
+		return v;
+	}
+	
+	
+	
+	private void setupInput(ServiceIO current, FilterValue[] conditions, int type,
+			boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
+			Class<? extends Object> cast, int position, View v) 
+	{
+		
+		final EditText valueText = (EditText) v.findViewById(R.id.param_value_text);			
+		final Spinner valueSpinner = (Spinner) v.findViewById(R.id.param_value_spinner);
+		final Spinner previousSpinner = (Spinner) v.findViewById(R.id.param_previous_spinner);	
+		final Spinner conditionSpinner = (Spinner) v.findViewById(R.id.param_condition_spinner);
+		
+		ArrayList<ServiceIO> matching = new ArrayList<ServiceIO>();
+		
+		if(previous != null)
+		{
+			ArrayList<ServiceIO> outputs = previous.getOutputs();
+			
+			for(int i = 0; i < outputs.size(); i++)
+			{
+				if(outputs.get(i).getType().equals(current.getType()))
+				{
+					matching.add(outputs.get(i));
+				}
+			}
+		}
+		
+		TabHost tabs = (TabHost) v.findViewById(R.id.param_tabhost);
+		tabs.setup();
+		
+		TabHost.TabSpec spec1 = tabs.newTabSpec("tag1");
+		spec1.setContent(R.id.param_value_spinner);
+	    spec1.setIndicator("Sample");
+        tabs.addTab(spec1);
+
+        TabHost.TabSpec spec2 = tabs.newTabSpec("tag2");
+        spec2.setContent(R.id.param_value_text);
+        spec2.setIndicator("Custom");
+        tabs.addTab(spec2);
+        
+        TabHost.TabSpec spec3 = tabs.newTabSpec("tag3");
+        spec3.setContent(R.id.param_previous_spinner);
+        spec3.setIndicator("Previous");
+        tabs.addTab(spec3);
+        
+        TabWidget widget = tabs.getTabWidget();
+        View sampleTab = widget.getChildTabViewAt(0);
+        View customTab = widget.getChildTabViewAt(1);
+        View previousTab = widget.getChildTabViewAt(2);
+        
+		if(matching.size() > 0)
+		{
+			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, matching));
+			tabs.setCurrentTab(2);
+		}
+		else
+		{
+			matching.add(new ServiceIO("No matching", "", null, null, false, null));
+			// It shouldn't be a sample value, because it ain't a sample. It's a ServiceIO. You tit.
+			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, matching));
+			previousSpinner.setEnabled(false);
+			
+			previousTab.setEnabled(false);
+			previousTab.setAlpha(0.2f);
+		}
+
+		if (type != -1)
+		{
+			valueText.setInputType(type);
+			tabs.setCurrentTab(1);
+		}
+		else
+		{
+			valueText.setEnabled(false);
+			customTab.setEnabled(false);
+			customTab.setAlpha(0.2f);
+		}
+
+		if (hasSamples) 
+		{
+			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, values));
+			tabs.setCurrentTab(0);
+		}
+		else 
+		{
+			// In this case we might have already added the no samples one...?
+			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, values));
+			valueSpinner.setEnabled(false);
+			sampleTab.setEnabled(false);
+			sampleTab.setAlpha(0.2f);
+		}
+		
+		
+
+		// Make it load the saved filter value
+		if (item.isFiltered() == ServiceIO.MANUAL_FILTER) 
+		{
+			String result = item.getType().toString(item.getManualValue());
+			valueText.setText(result);
+		}
+		else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) 
+		{
+			IOValue selected = item.getChosenSampleValue();
+			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
+				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
+				if (ioValue.equals(selected)) {
+					valueSpinner.setSelection(i, true);
+					break;
+				}
+			}
+		}
+
+		if (item.isFiltered() != ServiceIO.UNFILTERED && conditionSpinner != null) {
+			FilterValue fv = IOFilter.filters.get(item.getCondition());
+
+			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
+				FilterValue fv2 = (FilterValue) conditionSpinner.getItemAtPosition(i);
+				if (fv.index == fv2.index) {
+					conditionSpinner.setSelection(i, true);
+					break;
+				}
+			}
+		}
+		
+		// And now look up if anything had a type in the other service TODO ?????	
+	}
+	
+	private void setupOutputs(LinearLayout outputContainer, ArrayList<ServiceIO> outputs)
+	{
+		outputsSet = new boolean[outputs.size()];
+		
+		for(int i = 0; i < outputs.size(); i++)
+		{
+			outputsSet[i] = false;
+			View v = setupOutput(outputs, i);
+			outputContainer.addView(v);
+		}
+	}
+	
+	private View setupOutput(final ArrayList<ServiceIO> outputs, final int index)
+	{
+		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final View v = vi.inflate(R.layout.list_item_storyparam_output, null);
+	
+		final ServiceIO item = outputs.get(index);
+		IOType type = item.getType();
+		
+		final TextView nameText = (TextView) v.findViewById(R.id.param_output_name);
+		nameText.setText(item.getFriendlyName());
+		
+		TextView typeText = (TextView) v.findViewById(R.id.param_output_type);
+		typeText.setText(type.getName());
+		
+		final View container = v.findViewById(R.id.filter_container);
+		final Button doneButton = (Button) v.findViewById(R.id.done_button);
+		final LinearLayout doneContainer = (LinearLayout) v.findViewById(R.id.button_container);
+		final Button filterButton = (Button) v.findViewById(R.id.filter_button);
+		final Button dontFilterButton = (Button) v.findViewById(R.id.dont_filter_button);
+		
+		
+		filterButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View vv)
+			{
+				doneContainer.setVisibility(View.VISIBLE);
+				container.setVisibility(View.VISIBLE);
+				vv.setVisibility(View.GONE);
+			}
+		});
+		
+		dontFilterButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View vv)
+			{
+				// Clear all the layout items
+				((Spinner) container.findViewById(R.id.param_value_spinner)).setSelected(false);
+				((EditText) container.findViewById(R.id.param_value_text)).setText("");
+				
+				doneContainer.setVisibility(View.GONE);
+				container.setVisibility(View.GONE);
+				filterButton.setVisibility(View.VISIBLE);
+		
+				// Don't save anything to the object
+
+			}
+		});
+		
+		doneButton.setOnClickListener(new OnClickListener()
+		{
+			public void onClick(View vv)
+			{
+				// Save the stuff to the item
+								
+				// 2 See which tab is selected - hopefully this is the same as the last one they selected?
+				TabHost tabs = (TabHost) container.findViewById(R.id.param_tabhost);
+				
+				// 3 See what the value of the corresponding textbox/spinner is
+				if(tabs.getCurrentTab() == 0)
+				{
+					// It's the sample one
+					IOValue value = (IOValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
+					item.setChosenSampleValue(value);
+					item.setFilterState(ServiceIO.SAMPLE_FILTER);
+				}
+				else if(tabs.getCurrentTab() == 1)
+				{
+					// It's the custom one
+					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
+					Object value = item.getType().fromString(sValue);
+					item.setManualValue(value);
+					item.setFilterState(ServiceIO.MANUAL_FILTER);
+				}			
+				
+				doneContainer.setVisibility(View.GONE);
+				container.setVisibility(View.GONE);
+				filterButton.setVisibility(View.VISIBLE);
+				filterButton.setText("Edit filter");
+			}
+		});
+		
+		ArrayList<IOValue> values = item.getSampleValues();
+		if(values == null)
+			values = new ArrayList<IOValue>();
+		
+		final boolean hasSamples = values.size() == 0 ? false : true;
+		
+		if(!hasSamples)
+		{
+			values = new ArrayList<IOValue>();
+			values.add(new IOValue("No samples", ""));
+		}
+		
+		if(type.equals(IOType.Factory.getType(IOType.Factory.TEXT)))
+		{
+			setupOutput(FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
+							  hasSamples, values, item,
+							  String.class, v);
+		}
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.NUMBER)))
+	    {
+			setupOutput(FILTER_NUMBER_VALUES, InputType.TYPE_CLASS_NUMBER,
+					  		  hasSamples, values, item, 
+					  		  Integer.class, v);
+	    }
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.SET)))
+	    {
+	    	setupOutput(FILTER_SET_VALUES, -1,
+    				hasSamples, values, item,
+    				Integer.class, v);
+	    }
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN)))
+		{
+			if(!hasSamples)
+			{
+				// These might need to be hard-coded as acceptable values
+				values = new ArrayList<IOValue>();
+				values.add(new IOValue("True", true));
+				values.add(new IOValue("False", false));
+			}
+			
+			setupOutput(FILTER_BOOL_VALUES, -1,
+			  		  hasSamples, values, item, 
+			  		  Integer.class, v);
+		}
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER)))
+		{
+			setupOutput(FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
+					  hasSamples, values, item,
+					  String.class, v);
+		}
+		else if(type.equals(IOType.Factory.getType(IOType.Factory.URL)))
+		{
+			setupOutput(FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
+					  hasSamples, values, item,
+					  String.class, v);
+		}
+	    else
+	    {
+	    	// Don't know what happens here
+	    }
+
+		return v;
+	}
+	
+	private void setupOutput(FilterValue[] conditions, int type,
+			boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
+			Class<? extends Object> cast, View v) {
+
+		final Spinner valueSpinner = (Spinner) v.findViewById(R.id.param_value_spinner);
+		final Spinner conditionSpinner = (Spinner) v.findViewById(R.id.param_condition_spinner);
+		final EditText valueText = (EditText) v.findViewById(R.id.param_value_text);
+		
+		final TabHost tabs = (TabHost) v.findViewById(R.id.param_tabhost);
+		tabs.setup();
+		
+		final int SAMPLE = 0;
+		final int CUSTOM = 1;
+		
+		TabHost.TabSpec spec1 = tabs.newTabSpec("tag1");
+		spec1.setContent(R.id.param_value_spinner);
+	    spec1.setIndicator("Sample");
+        tabs.addTab(spec1);
+
+        TabHost.TabSpec spec2 = tabs.newTabSpec("tag2");
+        spec2.setContent(R.id.param_value_text);
+        spec2.setIndicator("Custom");
+        tabs.addTab(spec2);
+        
+        TabWidget widget = tabs.getTabWidget();
+        View sampleTab = widget.getChildTabViewAt(SAMPLE);
+        View customTab = widget.getChildTabViewAt(CUSTOM);
+        
+        
+		
+		if (conditionSpinner != null)
+			conditionSpinner.setAdapter(new WiringFilterAdapter(getActivity(),
+					android.R.layout.simple_dropdown_item_1line, conditions));
+
+		// FIXME This also needs to take into account what type the thing is
+		
+		if (type != -1)
+		{
+			valueText.setInputType(type);
+			tabs.setCurrentTab(1);
+		}
+		else {
+			// Hide the manual aspect
+			valueText.setEnabled(false);
+			customTab.setEnabled(false);
+			customTab.setAlpha(0.2f);
+		}
+
+		if (hasSamples) 
+		{
+			Log.e(TAG, "Pre-setting value with prior samples 1");
+			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(),
+					android.R.layout.simple_dropdown_item_1line, values));
+			tabs.setCurrentTab(0);
+		}
+		else 
+		{
+			Log.e(TAG, "Pre-setting value with prior samples 2");
+			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(),
+					android.R.layout.simple_dropdown_item_1line, values));
+			valueSpinner.setEnabled(false);
+			sampleTab.setEnabled(false);
+			sampleTab.setAlpha(0.2f);
+		}
+
+		// Make it load the saved filter value
+		if (item.isFiltered() == ServiceIO.MANUAL_FILTER) 
+		{
+
+			String result = item.getType().toString(item.getManualValue());
+			valueText.setText(result);
+		}
+		else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
+			IOValue selected = item.getChosenSampleValue();
+			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
+				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
+				if (ioValue.equals(selected)) {
+					valueSpinner.setSelection(i, true);
+					break;
+				}
+			}
+		}
+
+		if (item.isFiltered() != ServiceIO.UNFILTERED && conditionSpinner != null) {
+			FilterValue fv = IOFilter.filters.get(item.getCondition());
+
+			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
+				FilterValue fv2 = (FilterValue) conditionSpinner.getItemAtPosition(i);
+				if (fv.index == fv2.index) {
+					conditionSpinner.setSelection(i, true);
+					break;
+				}
+			}
+		}
+	}
+	
+	private class MatchingAdapter extends ArrayAdapter<ServiceIO>
+	{	
+		public MatchingAdapter(Context context, int textViewResourceId, ArrayList<ServiceIO> objects) 
+		{
+			super(context, textViewResourceId, objects);
+		}
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup viewGroup)
+		{
+			View v = convertView;
+			LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			if(v == null)
+			{
+				v = vi.inflate(android.R.layout.simple_dropdown_item_1line, null);
+			}
+			
+			ServiceIO other = getItem(position);
+			
+			TextView tv = (TextView) v.findViewById(android.R.id.text1);
+			tv.setText(other.getFriendlyName());
+			
+			return v;
+		}
+		
+		public View getDropDownView(int position, View convertView, ViewGroup parent) 
+		{
+			View v = convertView;
+			LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			if(v == null)
+			{
+				v = vi.inflate(android.R.layout.simple_dropdown_item_1line, null);
+			}
+			
+			ServiceIO other = getItem(position);
+			
+			TextView tv = (TextView) v.findViewById(android.R.id.text1);
+			tv.setText(other.getFriendlyName());
+			
+			return v;
+		}
+	}
+}

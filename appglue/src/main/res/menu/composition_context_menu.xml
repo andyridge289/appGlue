@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Move left -->
+    <group
+        android:id="@+id/composition_context_left_group"
+        >
+	    <item
+	        android:id="@+id/composition_context_left"
+	        android:title="Move left"
+	        android:icon="@drawable/ab_move_left"
+	        android:showAsAction="ifRoom|withText"
+	        />
+    </group>
+    <!-- Move right -->
+    <group
+        android:id="@+id/composition_context_right_group"
+        >
+	     <item
+	        android:id="@+id/composition_context_right"
+	        android:title="Move right"
+	        android:icon="@drawable/ab_move_right"
+	        android:showAsAction="ifRoom|withText"
+	        />
+     </group>
+    <!-- Get info -->
+     <item
+       android:id="@+id/composition_context_view"
+       android:title="View"
+       android:icon="@drawable/ab_about"
+       android:showAsAction="ifRoom|withText" 
+       />
+    <!-- Remove -->
+    <item 
+        android:id="@+id/composition_context_remove"
+        android:title="Remove"
+        android:icon="@drawable/ab_delete"
+        android:showAsAction="ifRoom|withText" 
+        />
+</menu>

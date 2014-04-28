@@ -1,0 +1,102 @@
+package com.appglue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.appglue.library.LogItem;
+import com.appglue.serviceregistry.Registry;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+public class ActivityLog extends Activity
+{
+	private ListView logList;
+	
+	// The log needs sorting out so that the thing happens
+	
+	public void onCreate(Bundle icicle)
+	{
+		super.onCreate(icicle);
+		
+		setContentView(R.layout.activity_log);
+		
+		logList = (ListView) findViewById(R.id.log_list);
+		TextView noLog = (TextView) findViewById(R.id.no_log);
+		
+		Registry registry = Registry.getInstance(this);
+		ArrayList<LogItem> log = registry.getLog();
+		
+		if(log == null || log.size() == 0)
+		{
+			logList.setVisibility(View.GONE);
+			noLog.setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			logList.setAdapter(new LogAdapter(this, R.layout.list_item_log, log));
+			noLog.setVisibility(View.GONE);
+		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu_log, menu);
+		
+		return true;
+	}
+	
+	private class LogAdapter extends ArrayAdapter<LogItem>
+	{
+		private ArrayList<LogItem> items;
+		
+		public LogAdapter(Context context, int textViewResourceId, ArrayList<LogItem> items) 
+		{
+			super(context, textViewResourceId, items);
+			
+			this.items = items;
+		}
+		
+		// Add options so that they can actually do things with the log messages
+		// Make the log look a bit nicer
+		// Implement clearing of the log
+		// Add more options to the log viewer - filtering, sorting, etc.
+		
+		@Override
+		public View getView(int position, View convertView, ViewGroup viewGroup)
+		{
+			View v = convertView;
+			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			
+			if(v == null)
+			{
+				v = vi.inflate(R.layout.list_item_log, null);
+			}
+			
+			LogItem log = items.get(position);
+			
+			TextView logTitle = (TextView) v.findViewById(R.id.log_title);
+			logTitle.setText(log.getComposite().getName());
+			
+			TextView logTime = (TextView) v.findViewById(R.id.log_time);
+			logTime.setText(log.getTime());
+			
+			TextView logMessage = (TextView) v.findViewById(R.id.log_message);
+			logMessage.setText(log.getMessage());
+			
+			return v;
+		}
+		
+	}
+}

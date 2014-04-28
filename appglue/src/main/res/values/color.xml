@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Lazy hex colours -->
+    <color name="fff">#FFF</color>
+    <color name="eee">#EEE</color>
+    <color name="ddd">#DDD</color>
+    <color name="ccc">#CCC</color>
+    <color name="bbb">#BBB</color>
+    <color name="aaa">#AAA</color>
+    <color name="hex999">#999</color>
+    <color name="hex888">#888</color>
+    <color name="hex777">#777</color>
+    <color name="hex666">#666</color>
+    <color name="hex555">#555</color>
+    <color name="hex444">#444</color>
+    <color name="hex333">#333</color>
+    <color name="hex222">#222</color>
+    <color name="hex111">#111</color>
+    <color name="hex000">#000</color>
+    
+    
+    
+    <color name="bg">#fff3f3f3</color>
+    
+    <color name="black_tl">#A000</color>
+    <color name="none">#0000</color>
+    
+    <color name="white">#FFF</color>
+        
+    <color name="active">#CFF</color>
+    <color name="done">#39F</color>
+
+    <color name="warning">#FCCA3D</color>
+    <color name="not_compatible">#A44</color>
+    <color name="red">#F00</color>
+    
+    <color name="sab_title">#EEE</color>
+    
+    
+    <color name="dim_text">#888</color>
+    <color name="dimmer_text">#AAA</color>
+    <color name="dim_on_dark">#555</color>
+    
+    <color name="ics_blue">#33B5E5</color>
+    <color name="ics_blue_tl">#AA33B5E5</color>
+    <color name="black">#000</color>
+    
+    <!-- Android colours -->
+    <color name="android_blue">#33B5E5</color>
+    <color name="android_purple">#AA66CC</color>
+    <color name="android_green">#99CC00</color>
+    <color name="android_yellow">#FFBB33</color>
+    <color name="android_red">#FF4444</color>
+    
+    <color name="android_darkblue">#0099CC</color>
+    <color name="android_darkpurple">#AA66CC</color>
+    <color name="android_darkgreen">#9933CC</color>
+    <color name="android_darkyellow">#FF8800</color>
+    <color name="android_darkred">#CC0000</color>
+    
+    <color name="android_darkerpurple">#4C0F6B</color>
+    
+    <color name="android_lightpurple">#CBA0E0</color>
+    
+    <color name="android_blue_half">#8833B5E5</color>
+    <color name="android_blue_very">#4433B5E5</color>
+    
+    <!-- Component list -->
+    <color name="comp_item_topbottom">#AAA</color>
+    <color name="comp_item_bg">#CCC</color>
+    <color name="comp_item_border">#888</color>
+    
+    <!-- Wiring -->
+    <color name="wiring_bg">#CCC</color>
+    <color name="wiring_border_old">#EEE</color>
+    <color name="wiring_border">#80EEEEEE</color>
+    
+    <!-- Colours for IO things -->
+    <color name="dull_bg">#222</color>
+    <color name="dull_fg">#666</color>
+</resources>

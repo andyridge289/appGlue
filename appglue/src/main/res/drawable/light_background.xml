@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+	<item>
+	    <bitmap android:src="@drawable/light_background_texture" android:tileMode="repeat"  />
+	</item>
+	<item>
+        <shape android:shape="rectangle">
+	    	<gradient android:startColor="#4FFF" android:centerColor="#1FFF" android:endColor="#0FFF" android:angle="270.0" android:type="linear" />
+		</shape>
+	</item>
+</layer-list>

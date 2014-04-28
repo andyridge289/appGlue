@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:layout_marginTop="5dip">
+    
+    <RelativeLayout
+        style="@style/FillWrap">
+
+	    <TextView
+	        android:id="@+id/param_output_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="IO Name"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:textSize="20sp" />
+	
+	    <TextView
+	        android:id="@+id/param_output_type"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@id/param_output_name"
+	        android:text="IO Type" />
+    
+    	<Button
+    	    android:id="@+id/filter_button"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+			android:text="Filter"
+			android:layout_alignParentRight="true"
+    	    />
+    	
+    	<LinearLayout
+    	    android:id="@+id/button_container"
+    	    android:layout_alignParentRight="true"
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:visibility="gone"
+    	    >
+    	
+	    	<Button
+	    	    android:id="@+id/dont_filter_button"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+				android:text="Don't filter"
+	    	    />
+	    	
+	    	<Button
+	    	    android:id="@+id/done_button"
+	    	    android:layout_width="wrap_content"
+	    	    android:layout_height="wrap_content"
+				android:text="Done"
+	    	    />
+    	
+    	</LinearLayout>
+    
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/filter_container"
+        style="@style/FillWrap"
+        android:layout_marginLeft="5dip"
+        android:layout_marginRight="5dip"
+        android:layout_marginBottom="5dip"
+        android:background="@color/aaa"
+        android:visibility="gone"
+        android:animateLayoutChanges="true"
+        >
+    	    	
+       <LinearLayout
+            style="@style/FillWrap"
+            android:orientation="vertical"
+            android:layout_marginLeft="2dip"
+        	android:layout_marginRight="2dip"
+        	android:layout_marginBottom="2dip"
+            android:background="#EEE"
+            
+            >
+    
+	   		<Spinner
+	         	android:id="@+id/param_condition_spinner"
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dip"
+	            android:layout_marginLeft="5dip"
+	            android:layout_marginRight="5dip"
+				/>
+
+	   		
+	   		<TabHost 
+       		    android:id="@+id/param_tabhost" 
+       		    android:layout_width="wrap_content" 
+       		    android:layout_height="wrap_content">
+       		    
+	   		    <RelativeLayout
+	   		        android:layout_width="fill_parent"
+	   		        android:layout_height="wrap_content">
+       		    
+		    		<TabWidget 
+		    		    android:id="@android:id/tabs" 
+		    		    android:layout_width="fill_parent" 
+		    		    android:layout_height="wrap_content"
+		    		    android:layout_alignParentTop="true"
+		    		    android:layout_alignParentLeft="true" />
+	    		
+				    <FrameLayout 
+				        android:id="@android:id/tabcontent" 
+				        android:layout_width="fill_parent" 
+				        android:layout_height="wrap_content"
+				        android:layout_alignParentLeft="true"
+				        android:layout_below="@android:id/tabs"
+				        android:layout_alignParentBottom="true" >
+				    
+					      <Spinner
+				        	android:id="@+id/param_value_spinner"
+				        	android:layout_width="fill_parent"
+				        	android:layout_height="40dip"
+				        	android:layout_marginLeft="5dip"
+				        	android:layout_marginRight="5dip"
+				        	
+				            />
+						
+						 <EditText
+				             android:id="@+id/param_value_text"
+				             android:layout_width="fill_parent"
+				             android:layout_height="40dip"
+				             android:layout_marginLeft="5dip"
+				             android:layout_marginRight="5dip"
+				             android:inputType="text" 
+				             />
+				    </FrameLayout>
+			    
+			    </RelativeLayout>
+  			</TabHost>
+  			
+	   		
+	   		
+	   		<!-- <LinearLayout
+	   		    android:id="@+id/button_container"
+	   		    style="@style/FillWrap">
+	   		    
+	   		    <Button
+	   		        android:layout_width="0dip"
+	   		        android:layout_height="wrap_content"
+	   		        android:layout_weight="1"
+	   		        android:text="Sample Value"
+	   		        />
+	   		    
+	   		    <Button
+	   		        android:layout_width="0dip"
+	   		        android:layout_height="wrap_content"
+	   		        android:layout_weight="1"
+	   		        android:text="Custom Value"
+	   		        />
+			 
+   		    </LinearLayout> -->
+   		    
+	   		
+				 
+   		</LinearLayout>
+		    
+	</LinearLayout>
+	 
+</LinearLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+	<TextView 
+	    android:id="@+id/sp_name_fixed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:text="Name: "
+	    />
+    
+    <TextView 
+        android:id="@+id/simple_param_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_toRightOf="@id/sp_name_fixed"
+        android:text="Param name"
+        />
+    
+    <!-- <TextView 
+	    android:id="@+id/sp_type_fixed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sp_name_fixed"
+        android:text="Name: "
+	    />
+    
+     <TextView
+        android:id="@+id/simple_param_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:layout_toRightOf="@id/sp_name_fixed"
+        android:layout_below="@id/simple_param_name"
+        android:text="Type"
+        /> -->
+    
+    <TextView
+        android:id="@+id/simple_param_requiredness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="Optional"
+        />
+    
+     <TextView 
+	    android:id="@+id/sp_values_fixed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/simple_param_name"
+        android:text="Values: "
+	    />
+    
+    <TextView 
+        android:id="@+id/simple_param_values"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/dim_on_dark"
+        android:layout_below="@id/sp_values_fixed"
+        android:text="Possible values"
+        />
+
+</RelativeLayout>
