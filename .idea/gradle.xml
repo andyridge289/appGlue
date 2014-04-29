@@ -8,7 +8,6 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/ActionBarSherlock" />
             <option value="$PROJECT_DIR$/appGlueLib" />
             <option value="$PROJECT_DIR$/appglue" />
           </set>

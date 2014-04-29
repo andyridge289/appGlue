@@ -40,7 +40,6 @@ import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
 import com.appglue.services.ServiceFactory;
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -63,6 +62,7 @@ import static com.appglue.library.AppGlueConstants.PRE_EXEC_PARAMS;
 public class ActivityCompositeList extends Activity
 {
 	// TODO Make some sort of loading page
+    // FIXME Don't show the temporary one on the composite list
 	
 	private GridView loadGrid;
 	private ImageView loader;
@@ -302,13 +302,13 @@ public class ActivityCompositeList extends Activity
 //		}
 	}
 	
-	protected void onSaveInstanceState(@NotNull Bundle icicle)
+	protected void onSaveInstanceState(Bundle icicle)
 	{
         icicle.describeContents();
 		// Not sure we need to save anything here
 	}
 	
-	protected void onRestoreInstanceState(@NotNull Bundle icicle)
+	protected void onRestoreInstanceState(Bundle icicle)
 	{
         icicle.describeContents();
 		// So we probably don't need to restore anything back
@@ -492,7 +492,7 @@ public class ActivityCompositeList extends Activity
             		Toast.makeText(ActivityCompositeList.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
         		
         		// This only works when you click on something else?
-        		composites = registry.getComposites();
+        		composites = registry.getComposites(false);
         		composites.add(CompositeService.makePlaceholder());
         		
         		if(adapter != null)
@@ -593,13 +593,14 @@ public class ActivityCompositeList extends Activity
 			
 			try 
 			{
+
 				String iconLocation = cs.getComponents().get(0).getApp().getIconLocation();
 				Bitmap b = localStorage.readIcon(iconLocation);
 				icon.setImageBitmap(b);
 			}
 			catch (Exception e) 
 			{
-				e.printStackTrace();
+				icon.setBackground(getResources().getDrawable(R.drawable.icon));
 			}
 			
 			
@@ -704,7 +705,7 @@ public class ActivityCompositeList extends Activity
                 }
             }
 
-	        ArrayList<CompositeService> composites = registry.getComposites();
+	        ArrayList<CompositeService> composites = registry.getComposites(false);
 			composites.add(CompositeService.makePlaceholder());
 			
 			return composites;

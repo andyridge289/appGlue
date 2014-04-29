@@ -30,7 +30,7 @@ public class LogItem
 		if(compositeId != -1)
 			this.cs = Registry.getInstance(null).getComposite(compositeId);
 		else
-			this.cs = new CompositeService();
+			this.cs = new CompositeService(false);
 			
 		this.className = c.getString(c.getColumnIndex(CLASSNAME));
 		this.time = c.getString(c.getColumnIndex(TIME));

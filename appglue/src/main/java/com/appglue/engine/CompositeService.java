@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import com.appglue.description.ServiceDescription;
 
-import android.os.Bundle;
+import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService 
 {
@@ -23,9 +23,12 @@ public class CompositeService
 	
 	private ArrayList<ServiceDescription> components;
 	
-	public CompositeService()
+	public CompositeService(boolean temp)
 	{
-		this.id = -1;
+        if(temp)
+            this.id = TEMP_ID;
+        else
+		    this.id = -1;
 		this.name = ""; // We know that the name can never be blank so we're good
 		this.description = "";
 		this.components = new ArrayList<ServiceDescription>();
@@ -34,7 +37,7 @@ public class CompositeService
 	
 	public CompositeService(String name, String description, ArrayList<ServiceDescription> components)
 	{
-		this();
+		this(false);
 		this.name = name;
 		this.description = description;
 		this.components = components;

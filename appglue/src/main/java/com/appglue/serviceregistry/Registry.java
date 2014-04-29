@@ -22,16 +22,18 @@ import static com.appglue.Constants.TAG;
 public class Registry
 {
 	public static Registry registry = null;
-	
-	private LocalDBHandler dbHandler = null; 
+	private LocalDBHandler dbHandler = null;
 
 	private HashMap<String, ServiceDescription> remoteCache;
-	
-	// XXX Make the registry cache some things so we don't have to keep retrieving them
-		// Save things in a variable
-		// Null the variable when something relevant changes
-		// Then do a lookup and if it ain't null just use it
-	
+
+    // XXX Make the registry cache some things so we don't have to keep retrieving them
+    // Save things in a variable
+    // Null the variable when something relevant changes
+    // Then do a lookup and if it ain't null just use it
+
+    // FIXME There should only ever be one temporary composite
+    // FIXME When you click you want to start a new one it should say there's already a temporary one if there is
+
 	private CompositeService service;
 	
 	private Registry(Context context)
@@ -39,7 +41,7 @@ public class Registry
 		dbHandler = new LocalDBHandler(context);
 		
 		remoteCache = new HashMap<String, ServiceDescription>();
-	}
+    }
 	
 	public static Registry getInstance(Context context)
 	{
@@ -59,11 +61,17 @@ public class Registry
 		this.service = this.getComposite(id);
 	}
 	
-	public void createService()
+	public void createTemp()
 	{
-		service = new CompositeService();
-	}
-	
+		service = new CompositeService(true);
+        dbHandler.resetTemp();
+  	}
+
+    public void saveTemp(String name)
+    {
+        dbHandler.saveTemp(name);
+    }
+
 	public CompositeService getService()
 	{
 		return service;
@@ -110,65 +118,7 @@ public class Registry
 		return dbHandler.addAtomic(sd);
 	}
 	
-//	/**
-//	 * This updates a service with the information that is stored in the online database that isn't in the local one.
-//	 *
-//	 * @param service	A description object reprsenting the service to be updated
-//	 */
-//	public void updateServiceFromLookup(ServiceDescription service)
-//	{
-//		dbHandler.updateServiceFromLookup(service);
-//	}
-//
-//	public void updateServices(Activity activity)
-//	{
-//		Registry registry = Registry.getInstance(activity);
-//
-//		if(inAppServices == null)
-//			inAppServices = new HashMap<String, ServiceDescription>();
-//
-//		ArrayList<ServiceDescription> inApp = registry.getInAppServices();
-//        for (ServiceDescription sd : inApp) {
-//            if (!this.inAppServices.containsKey(sd.getClassName()))
-//                inAppServices.put(sd.getClassName(), sd);
-//        }
-//
-//		if(localServices == null)
-//			localServices = new HashMap<String, ServiceDescription>();
-//
-//		ArrayList<ServiceDescription> local = registry.getLocalServices();
-//        for (ServiceDescription sd : local) {
-//            if (!this.localServices.containsKey(sd.getClassName()))
-//                localServices.put(sd.getClassName(), sd);
-//        }
-//	}
-//
-//	public ArrayList<ServiceDescription> getInAppServices()
-//	{
-//		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.IN_APP, false);
-//
-//		if(services.size() == 0)
-//		{
-//		    // TODO Is this a problem?
-//            Log.d(TAG, "There are no in-app services");
-//		}
-//
-//		return services;
-//	}
-//
-//	public ArrayList<ServiceDescription> getLocalServices()
-//	{
-//		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.LOCAL, false);
-//
-//		if(services.size() == 0)
-//		{
-//			Log.e(TAG, "No local services!");
-//		}
-//
-//		return services;
-//	}
-	
-	public ArrayList<ServiceDescription> getInputOnlyComponents() 
+	public ArrayList<ServiceDescription> getInputOnlyComponents()
 	{	
 		ArrayList<ServiceDescription> components = getAllDeviceServices();
 		
@@ -236,9 +186,9 @@ public class Registry
 			return dbHandler.getComposite(compositeId);
 	}
 	
-	public ArrayList<CompositeService> getComposites()
+	public ArrayList<CompositeService> getComposites(boolean includeTemp)
 	{
-        return dbHandler.getComposites();
+        return dbHandler.getComposites(includeTemp);
 	}
 	
 	public boolean deleteComposite(CompositeService cs)
@@ -256,7 +206,9 @@ public class Registry
 	{
 		// Reset the current composite and then reset it in the database.
 		boolean success = dbHandler.deleteComposite(service);
-		service = new CompositeService();
+
+        service = new CompositeService(true);
+        dbHandler.resetTemp();
 		
 		return success;
 	}

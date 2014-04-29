@@ -9,10 +9,13 @@ public class AppGlueLibrary
 		int length = cols.length - 1;
 		for(int i = 0; i < length; i++)
 		{
-			createTable.append(String.format("%s %s,", cols[i][0], cols[i][1]));
+//            if(cols[i].length > 2)
+//                createTable.append(String.format("%s %s REFERENCES %s(%s) %s,  ", cols[i][0], cols[i][1], cols[i][2], cols[i][3], cols[i][4]));
+//            else
+			    createTable.append(String.format("%s %s,", cols[i][0], cols[i][1]));
 		}
 		createTable.append(String.format("%s %s)", cols[length][0], cols[length][1]));
-	
+
 		return createTable.toString();
 	}
 	

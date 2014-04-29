@@ -94,27 +94,11 @@
 	    </HorizontalScrollView>
     
     </LinearLayout>
-    
-     <LinearLayout
-	    android:id="@+id/status_bar"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentBottom="true">
-	    
-	   	<TextView
-	   	    android:id="@+id/status_message"
-	   	    android:layout_width="wrap_content"
-	   	    android:layout_height="wrap_content"
-	   	    android:text="This is a status message"
-	   	    />
-	    
-	</LinearLayout>
 
      <android.support.v4.view.ViewPager
          android:id="@+id/pager"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_above="@id/status_bar"
          android:layout_below="@id/dummy_layout" >
 
          <android.support.v4.view.PagerTitleStrip
