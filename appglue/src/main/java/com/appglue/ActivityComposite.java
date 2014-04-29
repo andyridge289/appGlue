@@ -1,20 +1,10 @@
 package com.appglue;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.KEY_COMPOSITE;
-import static com.appglue.Constants.TAG;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +15,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,25 +23,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.Constants.ProcessType;
-import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.KEY_COMPOSITE;
 
 public class ActivityComposite extends Activity
 {
 	private CompositeService cs;
 	
 	private boolean edit;
-	
-	private EditText nameEdit;
-	private EditText descriptionEdit;
-	
-	private CheckBox activeCheck;
-	private CheckBox runningCheck;
-	
-	private LocalStorage localStorage;
+
+    private LocalStorage localStorage;
 	private Registry registry;
 	
 	public void onCreate(Bundle icicle)
@@ -74,8 +63,11 @@ public class ActivityComposite extends Activity
 		setup();
 		
 		ActionBar actionBar = getActionBar();
-		actionBar.setTitle("View Composite");
-		actionBar.setSubtitle(cs.getName());
+        if (actionBar != null) {
+            actionBar.setTitle("View Composite"); // XXX Extract this as a string
+            actionBar.setSubtitle(cs.getName());
+        }
+
 	}
 	
 	public void setup()
@@ -83,11 +75,11 @@ public class ActivityComposite extends Activity
 		if(edit)
 		{
 			setContentView(R.layout.activity_composite_edit);
-			
-			nameEdit = (EditText) findViewById(R.id.composite_name_edit);
+
+            EditText nameEdit = (EditText) findViewById(R.id.composite_name_edit);
 			nameEdit.setText(cs.getName());
-			
-			descriptionEdit = (EditText) findViewById(R.id.composite_description_edit);
+
+            EditText descriptionEdit = (EditText) findViewById(R.id.composite_description_edit);
 			descriptionEdit.setText(cs.getDescription());
 			
 			ImageButton editComposition = (ImageButton) findViewById(R.id.composite_edit_composition);
@@ -132,10 +124,10 @@ public class ActivityComposite extends Activity
 		// Stuff for both
 		
 		// Do a look up in the DB to see if the composite is currently running (right now) or not
-		runningCheck = (CheckBox) findViewById(R.id.composite_running);
+        CheckBox runningCheck = (CheckBox) findViewById(R.id.composite_running);
 		runningCheck.setChecked(registry.isCompositeRunning(cs.getId()));
-		
-		activeCheck = (CheckBox) findViewById(R.id.composite_active);
+
+        CheckBox activeCheck = (CheckBox) findViewById(R.id.composite_active);
 		if(cs.getComponents().get(0).getProcessType() == ProcessType.TRIGGER)
 		{
 			activeCheck.setText("Active");
@@ -192,6 +184,7 @@ public class ActivityComposite extends Activity
 		else if(item.getItemId() == R.id.composite_share)
 		{
 			// Implement sharing - Google+?
+            Log.d(TAG, "Sharing not implemented yet");
 		}
 		
 		return false;
@@ -217,7 +210,10 @@ public class ActivityComposite extends Activity
 			{
 				v = vi.inflate(R.layout.li_component_in_composite, null);
 			}
-			
+
+            if(v == null)
+                return null;
+
 			final ServiceDescription item = items.get(position);
 			
 			ImageView icon = (ImageView) v.findViewById(R.id.component_icon);

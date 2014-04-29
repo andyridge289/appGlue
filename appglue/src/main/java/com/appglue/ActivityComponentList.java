@@ -1,10 +1,5 @@
 package com.appglue;
 
-import static com.appglue.library.AppGlueConstants.*;
-import static com.appglue.Constants.*;
-
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,31 +19,42 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.serviceregistry.Registry;
 
-import android.support.v7.app.ActionBar;
-//import android.support.
-import android.support.v7.app.ActionBarActivity;
+import java.util.ArrayList;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.LAST_CLASSNAME;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.RESULT;
+import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.CREATE_NEW;
+import static com.appglue.library.AppGlueConstants.FIRST;
+import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
+import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
+import static com.appglue.library.AppGlueConstants.MARKET_LOOKUP;
+import static com.appglue.library.AppGlueConstants.MATCHING;
+import static com.appglue.library.AppGlueConstants.NOT_SET;
+import static com.appglue.library.AppGlueConstants.SUCCESS;
+import static com.appglue.library.AppGlueConstants.TRIGGERS_ONLY;
 
 public class ActivityComponentList extends ActionBarActivity
 {
 	private PagerAdapter adapter;
 	private ViewPager viewPager;
 
-    private Registry registry;
-	
-	private boolean justAList;
-	private ServiceDescription lastService;
-	private int position;
+    private boolean justAList;
+    private int position;
 	private boolean isFirst;
 	
 	private ArrayList<FragmentComponentListLocal> fragments;
-
+	
 	private EditText search;
 	
 	private final String SHOW_ADV = "Show advanced filter";
@@ -59,21 +65,18 @@ public class ActivityComponentList extends ActionBarActivity
 	public static final int FLAG_NOOUTPUT = 2;
 	public static final int FLAG_MATCHING = 3;
 	public static final int FLAG_ALL = 4;
-	
-	private boolean triggersOnly = false;
-	private boolean noTriggers = false;
-	
-	// Flags for filtering
+
+    // Flags for filtering
 	private boolean fTRIGGER = false;
 	private boolean fFILTER = false;
 	private boolean fHAS_INPUT = false;
 	private boolean fMATCHING = false;
 	private boolean fHAS_OUTPUT = false;
+    private boolean fSHOW = true;
 	
 	private boolean fDEFAULT_SEARCH = true;
-	private boolean fSHOW = true;
-	
-	public void onCreate(Bundle icicle)
+
+    public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		
@@ -81,14 +84,13 @@ public class ActivityComponentList extends ActionBarActivity
 		
 		setContentView(R.layout.activity_component_list);
 
-        this.registry = Registry.getInstance(this);
+        Registry registry = Registry.getInstance(this);
 		
 		Intent intent = this.getIntent();
 		
 		// This is the stuff for story mode
-		triggersOnly = intent.getBooleanExtra(TRIGGERS_ONLY, false);
-		noTriggers = intent.getBooleanExtra(NO_TRIGGERS, false);
-		
+        boolean triggersOnly = intent.getBooleanExtra(TRIGGERS_ONLY, false);
+
 		justAList = intent.getBooleanExtra(JUST_A_LIST, false);
 		position = intent.getIntExtra(POSITION, -1);
 		isFirst = intent.getBooleanExtra(FIRST, false);
@@ -106,16 +108,6 @@ public class ActivityComponentList extends ActionBarActivity
 		}
 		else
 		{
-            if(!noTriggers)
-            {
-                Bundle args = new Bundle();
-                args.putBoolean(TRIGGERS_ONLY, true);
-                FragmentComponentListLocal triggers = new FragmentComponentListLocal();
-                triggers.setArguments(args);
-                triggers.setName("TRIGGERS");
-                fragments.add(triggers);
-            }
-
 			Bundle noInputArgs = new Bundle();
 			noInputArgs.putBoolean(HAS_INPUTS, false);
 			noInputArgs.putBoolean(HAS_OUTPUTS, true);			
@@ -168,11 +160,13 @@ public class ActivityComponentList extends ActionBarActivity
 		}
 		
 		String lastServiceName = intent.getStringExtra(LAST_CLASSNAME);
-		
-		if(lastServiceName != null)
+
+        ServiceDescription lastService;
+        if(lastServiceName != null)
 			lastService = registry.getAtomic(lastServiceName);
 		
-		// Setup the searchbar
+		// Setup the search bar
+        // TODO I think it was this that was throwing all of those log messages about the input connection being dead
 //		search = (EditText) findViewById(R.id.component_search);
 //		search.setOnFocusChangeListener(new View.OnFocusChangeListener() 
 //		{
@@ -284,6 +278,8 @@ public class ActivityComponentList extends ActionBarActivity
 				adapter.notifyDataSetChanged();
 			}
 		});
+
+
 		
 		findViewById(R.id.component_adv_hide).setOnClickListener(new OnClickListener() 
 		{
@@ -315,7 +311,8 @@ public class ActivityComponentList extends ActionBarActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		if(fSHOW)
+
+        if(fSHOW)
 			menu.add(SHOW_ADV).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		else
 			menu.add(HIDE_ADV).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -360,17 +357,7 @@ public class ActivityComponentList extends ActionBarActivity
 	{
 		return justAList;
 	}
-	
-	public ServiceDescription getLastService()
-	{
-		return lastService;
-	}
-	
-	public boolean isComponentList()
-	{
-		return justAList;
-	}
-	
+
 	public boolean isTriggerSet()
 	{
 		return fTRIGGER;
@@ -487,7 +474,7 @@ public class ActivityComponentList extends ActionBarActivity
 		{
             if(fragments.get(i) == null)
             {
-                // TODO Do something better than this
+                // TODO Do something
                 return fragments.get(0);
             }
             else return fragments.get(i);

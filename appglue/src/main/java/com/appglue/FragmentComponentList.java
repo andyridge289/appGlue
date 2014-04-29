@@ -1,7 +1,5 @@
 package com.appglue;
 
-import java.util.ArrayList;
-
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,9 +10,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
 
 public class FragmentComponentList extends Fragment
 {
@@ -23,7 +22,8 @@ public class FragmentComponentList extends Fragment
 	protected ImageView loader;
 	
 	protected ActivityComponentList parent;
-	
+
+    // TODO Apparently adapter is never assigned, this is a problem
 	private AdapterComponentList adapter;
 	
 	protected Registry registry;
@@ -97,17 +97,17 @@ public class FragmentComponentList extends Fragment
 		return name;
 	}
 	
-	public void update(ArrayList<ServiceDescription> components)
-	{
-		this.services = components;
-		adapter.clear();
-		
-		adapter = new AdapterComponentList(parent, R.layout.component_list_item, services);
-		serviceListView.setAdapter(adapter);
-	}
+//	public void update(ArrayList<ServiceDescription> components)
+//	{
+//		this.services = components;
+//		adapter.clear();
+//
+//		adapter = new AdapterComponentList(parent, R.layout.component_list_item, services);
+//		serviceListView.setAdapter(adapter);
+//	}
 	
 	public AdapterComponentList getAdapter()
 	{
 		return adapter;
-	}		
+	}
 }

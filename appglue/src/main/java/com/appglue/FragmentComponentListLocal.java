@@ -132,66 +132,57 @@ public class FragmentComponentListLocal extends FragmentComponentList
 							else
 								services = registry.getAllDeviceServices();
 						}
-						else if(prior == null && next != null)
-						{
-							// Prior is dead, next is alive, just use nexts inputs
-							
-							// IF there's nothing to match, just get everything
-							if(next.hasInputs())
-								services = registry.getMatchingForInputs(next);
-							else
-								services = registry.getAllDeviceServices();
-						}
-						else
-						{
-							// Both are alive, so get them based on the outputs and then filter on the inputs
-							if(prior.hasOutputs())
-							{
-								services = registry.getMatchingForOutputs(prior);
-								
-								// So here we have a list of services whose inputs match the outputs of the prior one
-								
-								if(next.hasInputs())
-								{
-									// We need to find the types of the inputs of the next one and compare these with the outputs we've got in our service list
-									
-									// Then filter it based on the inputs of the other one
-									ArrayList<ServiceIO> nextInputs = next.getInputs();
-									HashMap<String, Long> types = new HashMap<String, Long>();
-									for(int i = 0; i < nextInputs.size(); i++)
-									{
-										IOType type = nextInputs.get(i).getType();
-										if(!types.containsKey(type.getClassName()))
-											types.put(type.getClassName(), type.getID());
-									}
-									
-									for(int i = 0; i < services.size(); )
-									{
-										ArrayList<ServiceIO> outputs = services.get(i).getOutputs();
-										boolean match = false;
-										
-										for(int j = 0; j < outputs.size(); j++)
-										{
-											if(types.containsKey(outputs.get(j).getType().getClassName()))
-												match = true;
-										}
-										
-										if(match)
-											i++;
-										else
-											services.remove(i);
-									}
-								}
-							}		
-							else if(next.hasInputs())
-							{
-								services = registry.getMatchingForInputs(next);
-							}
-							else
-								services = registry.getAllDeviceServices();
-							
-							
-						}
+						else {
+                            if (prior == null && next != null) {
+                                // Prior is dead, next is alive, just use nexts inputs
+
+                                // IF there's nothing to match, just get everything
+                                if (next.hasInputs())
+                                    services = registry.getMatchingForInputs(next);
+                                else
+                                    services = registry.getAllDeviceServices();
+                            } else {
+                                // Both are alive, so get them based on the outputs and then filter on the inputs
+                                if (prior.hasOutputs()) {
+                                    services = registry.getMatchingForOutputs(prior);
+
+                                    // So here we have a list of services whose inputs match the outputs of the prior one
+
+                                    if (next.hasInputs()) {
+                                        // We need to find the types of the inputs of the next one and compare these with the outputs we've got in our service list
+
+                                        // Then filter it based on the inputs of the other one
+                                        ArrayList<ServiceIO> nextInputs = next.getInputs();
+                                        HashMap<String, Long> types = new HashMap<String, Long>();
+                                        for (ServiceIO nextInput : nextInputs) {
+                                            IOType type = nextInput.getType();
+                                            if (!types.containsKey(type.getClassName()))
+                                                types.put(type.getClassName(), type.getID());
+                                        }
+
+                                        for (int i = 0; i < services.size(); ) {
+                                            ArrayList<ServiceIO> outputs = services.get(i).getOutputs();
+                                            boolean match = false;
+
+                                            for (ServiceIO output : outputs) {
+                                                if (types.containsKey(output.getType().getClassName()))
+                                                    match = true;
+                                            }
+
+                                            if (match)
+                                                i++;
+                                            else
+                                                services.remove(i);
+                                        }
+                                    }
+                                } else if (next.hasInputs()) {
+                                    services = registry.getMatchingForInputs(next);
+                                } else
+                                    services = registry.getAllDeviceServices();
+
+
+                            }
+                        }
 					}
 				}
 			}

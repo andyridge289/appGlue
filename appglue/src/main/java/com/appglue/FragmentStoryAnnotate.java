@@ -1,31 +1,17 @@
 package com.appglue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
-import com.appglue.description.ServiceDescription;
-import com.appglue.engine.CompositeService;
-import com.appglue.serviceregistry.Registry;
-
-import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import com.appglue.engine.CompositeService;
+import com.appglue.serviceregistry.Registry;
 
 public class FragmentStoryAnnotate extends Fragment implements OnClickListener
 {

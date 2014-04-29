@@ -1,21 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.DATA;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.RUN_NOW;
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TEST;
-import static com.appglue.library.AppGlueConstants.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -43,26 +27,42 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
-import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.engine.OrchestrationService;
-import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
 import com.appglue.services.ServiceFactory;
-import com.appglue.services.triggers.HeadphoneTrigger;
+
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.DATA;
+import static com.appglue.Constants.DURATION;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.IS_LIST;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.RUN_NOW;
+import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.TEST;
+import static com.appglue.library.AppGlueConstants.CREATE_NEW;
+import static com.appglue.library.AppGlueConstants.EDIT_PARAMS;
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
+import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
+import static com.appglue.library.AppGlueConstants.PRE_EXEC_PARAMS;
 
 public class ActivityCompositeList extends Activity
 {
-	// XXX Make some sort of loading page 
+	// TODO Make some sort of loading page
 	
 	private GridView loadGrid;
 	private ImageView loader;
@@ -166,10 +166,9 @@ public class ActivityCompositeList extends Activity
 					
 				case R.id.comp_context_delete:
 					ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
-					for(int i = 0; i < selected.size(); i++)
-					{
-						killList.add(composites.get(selected.get(i)));
-					}
+                    for (Integer aSelected : selected) {
+                        killList.add(composites.get(aSelected));
+                    }
 					delete(killList);
 					break;
 			}
@@ -272,7 +271,8 @@ public class ActivityCompositeList extends Activity
 	{
 		if(actionMode != null)
 		{
-		
+		    // TODO NEed to address this somehow - probably by removing the action mode
+            Log.d(TAG, "Back pressed during action mode");
 		}
 		
 		super.onBackPressed();
@@ -302,14 +302,16 @@ public class ActivityCompositeList extends Activity
 //		}
 	}
 	
-	protected void onSaveInstanceState(Bundle icicle)
+	protected void onSaveInstanceState(@NotNull Bundle icicle)
 	{
-		
+        icicle.describeContents();
+		// Not sure we need to save anything here
 	}
 	
-	protected void onRestoreInstanceState(Bundle icicle)
+	protected void onRestoreInstanceState(@NotNull Bundle icicle)
 	{
-		
+        icicle.describeContents();
+		// So we probably don't need to restore anything back
 	}
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)
@@ -326,6 +328,7 @@ public class ActivityCompositeList extends Activity
 		else if(requestCode == EDIT_PARAMS && resultCode == Activity.RESULT_OK)
 		{
 			// Not sure we actually need to do anything do we?
+            if(LOG) Log.d(TAG, "Edit params OKAY result!");
 		}
 		else if(requestCode == PLAY_SERVICES)
 		{
@@ -344,6 +347,7 @@ public class ActivityCompositeList extends Activity
 		}
 		else
 		{
+            Log.w(TAG, "Play services FAIL");
 			// It didn't go okay?
 		}	
 	}
@@ -375,9 +379,15 @@ public class ActivityCompositeList extends Activity
 		LayoutInflater inflater = getLayoutInflater();
 		View layout = inflater.inflate(R.layout.dialog_timer, null);
 		builder.setView(layout);
+
+        if(layout == null)
+            return;
 			
 		final EditText numeralEdit = (EditText) layout.findViewById(R.id.timer_edit_numerals);
 		final CheckBox runNowCheck = (CheckBox) layout.findViewById(R.id.timer_run_now);
+
+        if(numeralEdit == null || runNowCheck == null)
+            return;
 
 		final Spinner intervalSpinner = (Spinner) layout.findViewById(R.id.timer_spinner_intervals);
 		ArrayAdapter<CharSequence> intervalAdapter = ArrayAdapter.createFromResource(this, R.array.time_array, R.layout.dialog_spinner_dropdown);
@@ -392,7 +402,7 @@ public class ActivityCompositeList extends Activity
 				// Get the things of each of the spinners and work out the duration
 	    		long numeral = Integer.parseInt(numeralEdit.getText().toString());
 	    		int intervalIndex = intervalSpinner.getSelectedItemPosition();
-	    		Interval interval = null;
+	    		Interval interval;
 	    		
 	    		if(intervalIndex == Interval.SECONDS.index)
 	    		{
@@ -449,11 +459,11 @@ public class ActivityCompositeList extends Activity
 	
 	private void editStory(CompositeService cs)
 	{
-		// F
-//		Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
-//		if(LOG) Log.d(TAG, "Putting id for edit " + cs.getId());
-//		intent.putExtra(COMPOSITE_ID, cs.getId());
-//		startActivity(intent);
+		// TODO NEed to make this edit from the story rather than the Wiring
+		Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
+		if(LOG) Log.d(TAG, "Putting id for edit " + cs.getId());
+		intent.putExtra(COMPOSITE_ID, cs.getId());
+		startActivity(intent);
 	}
 	
 	private void delete(final ArrayList<CompositeService> csList)
@@ -470,13 +480,11 @@ public class ActivityCompositeList extends Activity
             public void onClick(DialogInterface dialog, int which) 
             {
             	boolean fail = false;
-            	for(int i = 0; i < csList.size(); i++)
-            	{
-	            	if(!registry.deleteComposite(csList.get(i)))
-	            	{
-	            		fail = true;
-	            	}
-            	}
+                for (CompositeService aCsList : csList) {
+                    if (!registry.deleteComposite(aCsList)) {
+                        fail = true;
+                    }
+                }
             	
             	if(fail)
 	            	Toast.makeText(ActivityCompositeList.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
@@ -545,18 +553,21 @@ public class ActivityCompositeList extends Activity
 			{
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.composite_list_item_new, null);
-				
-				v.setOnClickListener(new OnClickListener() 
-				{	
-					@Override
-					public void onClick(View v) 
-					{
-						Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
-						intent.putExtra(CREATE_NEW, true);
-						startActivity(intent);
-					}
-				});
-				
+
+                if(v != null)
+                {
+                    v.setOnClickListener(new OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
+                            intent.putExtra(CREATE_NEW, true);
+                            startActivity(intent);
+                        }
+                    });
+                }
+
 				return v;
 			}
 			
@@ -566,7 +577,8 @@ public class ActivityCompositeList extends Activity
 				v = vi.inflate(R.layout.list_item_app_selector, null);
 			}
 			
-			// Name text is null....
+			if(v == null)
+                return null;
 			
 			TextView nameText = (TextView) v.findViewById(R.id.load_list_name);
 			if(nameText == null) // This way it doesn't die, but this way of fixing it doesn't seem to be a problem...
@@ -641,11 +653,10 @@ public class ActivityCompositeList extends Activity
 						else
 						{
 							// Dno, it's probably zero now
+                            if(LOG) Log.d(TAG, "There's nothing left in the action mode");
 						}
 						
-						// The menu needs to have different things depending on how many are selected.
-						
-						return;
+						// The menu needs to have different things depending on how many are selected
 					}
 					else
 					{
@@ -673,23 +684,26 @@ public class ActivityCompositeList extends Activity
 			}
 			
 			ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-		       
-			boolean registryRunning = false;
-	        
-			for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) 
-	        {
-	            if (RegistryService.class.getCanonicalName().equals(service.service.getClassName())) 
-	            {
-	            	registryRunning = true;
-	            }
-	        }
-			
-	        if(!registryRunning)
-	        {
-	        	Intent registryIntent = new Intent(ActivityCompositeList.this, RegistryService.class);
-	        	startService(registryIntent);
-	        }
-	        
+
+            if(manager != null)
+            {
+                boolean registryRunning = false;
+
+                for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE))
+                {
+                    if (RegistryService.class.getCanonicalName().equals(service.service.getClassName()))
+                    {
+                        registryRunning = true;
+                    }
+                }
+
+                if(!registryRunning)
+                {
+                    Intent registryIntent = new Intent(ActivityCompositeList.this, RegistryService.class);
+                    startService(registryIntent);
+                }
+            }
+
 	        ArrayList<CompositeService> composites = registry.getComposites();
 			composites.add(CompositeService.makePlaceholder());
 			
@@ -706,8 +720,6 @@ public class ActivityCompositeList extends Activity
 			
 			loader.setVisibility(View.GONE);
 			loadGrid.setVisibility(View.VISIBLE);
-			
-			return;
 		}
 	}
 }

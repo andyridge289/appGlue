@@ -48,12 +48,10 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 	private void cloneItems()
 	{
 		originalItems = new ArrayList<ServiceDescription>();
-		int size = items.size();
-		
-		for(int i = 0; i < size; i++)
-		{
-			originalItems.add(items.get(i));
-		}
+
+        for (ServiceDescription item : items) {
+            originalItems.add(item);
+        }
 	}
 	
 	@Override
@@ -68,10 +66,10 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 	@Override
     public ServiceDescription getItem(int item) 
 	{
-		ServiceDescription gi = null;
+		ServiceDescription gi;
         synchronized(lock) 
         {
-                gi = items != null ? items.get(item) : null;
+            gi = items != null ? items.get(item) : null;
         }
         return gi;
     }
@@ -87,7 +85,7 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 			v = vi.inflate(R.layout.component_list_item, null);
 		}
 		
-		ServiceDescription sd = null;
+		ServiceDescription sd;
 		synchronized(lock)
 		{	
 			sd = items.get(position);
@@ -201,37 +199,28 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 					}
 					else
 					{
-						for(int i = 0; i < localItems.size(); i++)
-						{
-							ServiceDescription sd = localItems.get(i);
+                        for (ServiceDescription sd : localItems) {
+                            // Work out whether we should add it or not
+                            if (parent.isTriggerSet() && sd.getProcessType() == ProcessType.TRIGGER) {
+                                // It doesn't matter what the other ones are set, it needs to be in there anyway
+                                filteredItems.add(sd);
+                                continue;
+                            }
 
-							// Work out whether we should add it or not
-							if(parent.isTriggerSet() && sd.getProcessType() == ProcessType.TRIGGER)
-							{
-								// It doesn't matter what the other ones are set, it needs to be in there anyway
-								filteredItems.add(sd);
-								continue;
-							}
-							
-							if(parent.isFilterSet() && sd.getProcessType() == ProcessType.FILTER)
-							{
-								filteredItems.add(sd);
-								continue;
-							}
-							
-							if(parent.hasInputSet() && sd.hasInputs())
-							{
-								filteredItems.add(sd);
-								continue;
-							}
-							
-							if(parent.hasOutputSet() && sd.hasOutputs())
-							{
-								filteredItems.add(sd);
-								continue;
-							}
+                            if (parent.isFilterSet() && sd.getProcessType() == ProcessType.FILTER) {
+                                filteredItems.add(sd);
+                                continue;
+                            }
 
-						}
+                            if (parent.hasInputSet() && sd.hasInputs()) {
+                                filteredItems.add(sd);
+                                continue;
+                            }
+
+                            if (parent.hasOutputSet() && sd.hasOutputs()) {
+                                filteredItems.add(sd);
+                            }
+                        }
 
 					}
 					
@@ -249,16 +238,12 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 					final ArrayList<ServiceDescription> filteredItems = new ArrayList<ServiceDescription>();
 					final ArrayList<ServiceDescription> localItems = new ArrayList<ServiceDescription>();
 					localItems.addAll(originalItems);
-					int count = localItems.size();
-					
-					for(int i = 0; i < count; i++)
-					{
-						ServiceDescription item = localItems.get(i);
-						if(matches(item, data))
-						{
-							filteredItems.add(item);
-						}
-					}
+
+                    for (ServiceDescription item : localItems) {
+                        if (matches(item, data)) {
+                            filteredItems.add(item);
+                        }
+                    }
 				
 					results.values = filteredItems;
 					results.count = filteredItems.size();
@@ -281,15 +266,13 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 			
 			ArrayList<Tag> tags = item.getTags();
 			Log.w(TAG, item.getName() + " has " + tags.size() + " tags");
-			for(int j = 0; j < tags.size(); j++)
-			{
-				String tagName = tags.get(j).getName().toLowerCase(Locale.US);
-				Log.d(TAG, "Comparing " + tagName + " to " + term);
-				if(tagName.contains(term))
-				{
-					return true;
-				}
-			}
+            for (Tag tag : tags) {
+                String tagName = tag.getName().toLowerCase(Locale.US);
+                Log.d(TAG, "Comparing " + tagName + " to " + term);
+                if (tagName.contains(term)) {
+                    return true;
+                }
+            }
 			
 			
 			return false;
@@ -303,11 +286,10 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 			{
 				final ArrayList<ServiceDescription> localItems = (ArrayList<ServiceDescription>) results.values;
 				clear();
-				
-				for(int i = 0; i < localItems.size(); i++)
-				{
-					AdapterComponentList.this.add(localItems.get(i));
-				}
+
+                for (ServiceDescription localItem : localItems) {
+                    AdapterComponentList.this.add(localItem);
+                }
 			}
 			
 			notifyDataSetChanged();

@@ -1,10 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
-import com.appglue.serviceregistry.Registry;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,26 +7,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.TAG;
 
 public class ActivityStoryParameters extends Activity
 {
-	private FragmentStoryParameters parameterFragment;	
-	
-	public void onCreate(Bundle icicle)
+
+    public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		setContentView(R.layout.activity_story_parameters);
 		
 		Intent intent = this.getIntent();
-		String className = intent.getStringExtra(CLASSNAME);
-		int position = intent.getIntExtra(POSITION, -1);
+        int position = intent.getIntExtra(POSITION, -1);
 		Log.w(TAG, "Creating parameters for position " + position);
-		
-		parameterFragment = (FragmentStoryParameters) getFragmentManager().findFragmentById(R.id.story_fragment_parameters);
-		parameterFragment.setData(className, position);
+
+        FragmentStoryParameters parameterFragment = (FragmentStoryParameters) getFragmentManager().findFragmentById(R.id.story_fragment_parameters);
+		parameterFragment.setData(position);
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu)

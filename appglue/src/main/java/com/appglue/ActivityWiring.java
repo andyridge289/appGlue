@@ -1,16 +1,10 @@
 package com.appglue;
 
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentActivity;
@@ -20,27 +14,32 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
-import com.appglue.layout.DepthPageTransformer;
 import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.CREATE_NEW;
+import static com.appglue.library.AppGlueConstants.FIRST;
+import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
 public class ActivityWiring extends FragmentActivity
 {
 	private CompositeService cs;
-	private int currentIndex;
 
-    // FIXME Only have one temp service
-	
 	private ViewPager pager;
 	private WiringPagerAdapter pagerAdapter;
 	private TextView status;
@@ -51,9 +50,8 @@ public class ActivityWiring extends FragmentActivity
 	public static final int MODE_SETTING = 1;
 	
 	private int mode = MODE_SETTING;
-	private Button modeButton;
-	
-	private TextView csNameText;
+
+    private TextView csNameText;
 	private EditText csNameEdit;
 	private Button csNameSet;
 	
@@ -69,15 +67,23 @@ public class ActivityWiring extends FragmentActivity
 		
 		Intent extras = this.getIntent();
 		long compositeId = extras.getLongExtra(COMPOSITE_ID, -1);
-		
+
 		registry = Registry.getInstance(this);
-		cs = registry.getService();
-		
-		if(cs == null)
-		{
-			registry.createService();
+
+		if(compositeId == -1)
+        {
 			cs = registry.getService();
-		}
+		
+            if(cs == null)
+            {
+                registry.createService();
+                cs = registry.getService();
+            }
+        }
+        else
+        {
+            cs = registry.getComposite(compositeId);
+        }
 		
 		status = (TextView) findViewById(R.id.status);
 		
@@ -144,22 +150,20 @@ public class ActivityWiring extends FragmentActivity
 				
 			}
 		});
-		
-		modeButton = (Button) findViewById(R.id.change_mode);
+
+        Button modeButton = (Button) findViewById(R.id.change_mode);
 		modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
-		modeButton.setOnClickListener(new OnClickListener() 
-		{
-			@Override
-			public void onClick(View v) 
-			{
-				if(mode == MODE_WIRING)
-					mode = MODE_SETTING;
-				else
-					mode = MODE_WIRING;  
-				
-				redraw();
-			}
-		});
+		modeButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mode == MODE_WIRING)
+                    mode = MODE_SETTING;
+                else
+                    mode = MODE_WIRING;
+
+                redraw();
+            }
+        });
 		
 		Intent intent = this.getIntent();
 		int index = intent.getIntExtra(INDEX, -1);
@@ -227,19 +231,9 @@ public class ActivityWiring extends FragmentActivity
 		}
 	}
 	
-	public int getCurrentIndex()
-	{
-		return currentIndex;
-	}
-	
 	public ArrayList<ServiceDescription> getComponents()
 	{
 		return cs.getComponents();
-	}
-	
-	public int getNumComponents()
-	{
-		return this.cs.getComponents().size();
 	}
 	
 	public int getMode()
@@ -283,20 +277,45 @@ public class ActivityWiring extends FragmentActivity
 		
 		else if(item.getItemId() == R.id.wiring_done)
 		{
+			// Get the connected things out of the lists and send them back
+//			FragmentWiring wiringFragment = ((FragmentWiring) pagerAdapter.getItem(pager.getCurrentItem()));
+//			
+//			if(wiringFragment != null)
+//			{
+//				ServiceDescription first = wiringFragment.getFirst();
+//				ServiceDescription second = wiringFragment.getSecond();
+//				ArrayList<Point> connections = wiringFragment.getMap().getConnections();
+//				
+//				// We should now physically connect everything!
+//				if(connections != null)
+//				{
+//					for(int i = 0; i < connections.size(); i++)
+//					{
+//						Point p = connections.get(i);
+//						
+//						// Get the output from prior
+//						ServiceIO out = first.getOutputs().get(p.x);
+//						
+//						// Get the input from current
+//						ServiceIO in = second.getInputs().get(p.y);
+//						
+//						// Plug them in to each other?
+//						out.setConnection(in);
+//						in.setConnection(out);
+//					}
+//				}
+//			}
+			
 			if(cs.getId() != -1)
 			{
 				// This means it's been saved
 				boolean success = registry.updateWiring(cs);
-				
+
+                // Don't simplify this, just because log is true now doesn't mean that it always will be
 				if(success && LOG)
 					Log.d(TAG, "Updated " + cs.getName());
 			}
-
-            // TODO The adding things placeholder needs to have some kind of highlight when you click on it
-			// TODO Component list doesn't need to have a status message
-            // TODO If it's saying choose first components, it needs to have triggers too.
-            // FIXME We're running out of memory and I'm not sure why
-
+			
 			Intent intent = new Intent();
 			if (getParent() == null) 
 			{

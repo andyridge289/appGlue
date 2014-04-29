@@ -1,36 +1,21 @@
 package com.appglue;
 
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
-import com.appglue.serviceregistry.Registry;
-
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.LinearLayout;
 
 public class ActivityStoryComponents extends Activity
 {
-	private FragmentStoryComponents componentFragment;	
-	private Registry registry;
-	
-	public void onCreate(Bundle icicle)
+    public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		setContentView(R.layout.activity_story_components);
-		
-		registry = Registry.getInstance(this);
-		
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
 		FragmentStoryComponents newFragment = new FragmentStoryComponents();
 		ft.add(R.id.fragment_story_component_container, newFragment);

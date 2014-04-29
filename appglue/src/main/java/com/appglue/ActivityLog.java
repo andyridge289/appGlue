@@ -1,11 +1,5 @@
 package com.appglue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.appglue.library.LogItem;
-import com.appglue.serviceregistry.Registry;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,19 +12,23 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.appglue.library.LogItem;
+import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
+
 public class ActivityLog extends Activity
 {
-	private ListView logList;
-	
-	// The log needs sorting out so that the thing happens
+
+    // The log needs sorting out so that the thing happens
 	
 	public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		
 		setContentView(R.layout.activity_log);
-		
-		logList = (ListView) findViewById(R.id.log_list);
+
+        ListView logList = (ListView) findViewById(R.id.log_list);
 		TextView noLog = (TextView) findViewById(R.id.no_log);
 		
 		Registry registry = Registry.getInstance(this);
