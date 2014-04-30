@@ -9,6 +9,7 @@ import com.appglue.ComposableService;
 import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.LOG;
 
 public class BluetoothService extends ComposableService 
 {
@@ -21,7 +22,8 @@ public class BluetoothService extends ComposableService
 		
 		if(bt == null)
 		{
-			// TODO Component failure - Bluetooth
+			// Component failure - Bluetooth
+            super.fail("Bluetooth failure, couldn't get default adapter");
 			return null;
 		}
 		
@@ -36,13 +38,13 @@ public class BluetoothService extends ComposableService
 
         if(worked)
 		{
-			// TODO Component success - Bluetooth
-            Log.d(TAG, "Succeeded at Bluetooth-ing");
+			// Component success - Bluetooth
+            if(LOG) Log.d(TAG, "Succeeded at Bluetooth-ing");
 		}
 		else
 		{
-			// TODO Component failure - Bluetooth
-            Log.d(TAG, "Failed at Bluetooth-ing");
+            super.fail("Bluetooth failure, unable to change state of adapter");
+            return null;
 		}
 		
 		return null;

@@ -203,7 +203,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		cv.put(VALUE, false);
 		db.insert(TBL_IO_SAMPLES, null, cv);
 
-        // FIXME This is where we initialise the temporary Composite
+        // This is where we initialise the temporary Composite
         cv = new ContentValues();
         cv.put(ID, TEMP_ID);
         cv.put(NAME, "temp");

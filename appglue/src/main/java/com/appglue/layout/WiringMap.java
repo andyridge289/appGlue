@@ -61,6 +61,7 @@ import com.appglue.IOValue;
 import com.appglue.R;
 import com.appglue.ServiceIO;
 import com.appglue.datatypes.IOType;
+import com.appglue.datatypes.Set;
 import com.appglue.description.ServiceDescription;
 import com.appglue.layout.dialog.DialogApp;
 import com.appglue.layout.dialog.DialogConnection;
@@ -332,14 +333,14 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		for(int i = 0; i < ios.size(); i++)
 		{
 			IOType type = ios.get(i).getType();
-			if(type.getClass().getCanonicalName().equals(previous))
+
+			if(type.getClass().getCanonicalName().equals(previous) && !type.getClass().getCanonicalName().equals(Set.class.getCanonicalName()))
 				continue;
 			
 			previous = type.getClass().getCanonicalName();
 			distinctTypes.add(type);
 		}
-		
-		// TODO Need to have another identifier for random sets that are number types but actually are only compatible with themselves..
+
 		if(distinctTypes.size() == 0)
 			return;
 		
@@ -879,8 +880,6 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			else
 			{
 				FilterValue fv = IOFilter.filters.get(item.getCondition());
-				
-				// FIXME Apparently fv is null when we tried to create a normal one with just HelloService in it
 				
 				ioType.setText(item.getType().getName() + ": " + fv.text + " ");
 	    		

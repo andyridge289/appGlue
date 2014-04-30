@@ -648,8 +648,7 @@ public class FragmentStoryParameters extends Fragment
         View sampleTab = widget.getChildTabViewAt(SAMPLE);
         View customTab = widget.getChildTabViewAt(CUSTOM);
         
-        
-		
+
 		if (conditionSpinner != null)
 			conditionSpinner.setAdapter(new WiringFilterAdapter(getActivity(),
 					android.R.layout.simple_dropdown_item_1line, conditions));

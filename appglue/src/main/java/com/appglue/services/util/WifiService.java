@@ -1,6 +1,7 @@
 package com.appglue.services.util;
 
 import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.LOG;
 
 import java.util.ArrayList;
 
@@ -26,13 +27,14 @@ public class WifiService extends ComposableService
 		
 		if(worked)
 		{
-			// TODO Component success - WIFI
-            Log.d(TAG, "Did something to WiFi successfully.");
+			// Component success - WIFI
+            if(LOG) Log.d(TAG, "Did something to WiFi successfully.");
 		}
 		else
 		{
-			// TODO Component failure - WIFI
-            Log.d(TAG, "Failed at doing something to WiFi");
+			// Component failure - WIFI
+            super.fail("WiFi failure, couldn't change state of adapter");
+            return null;
 		}
 		
 		return null;

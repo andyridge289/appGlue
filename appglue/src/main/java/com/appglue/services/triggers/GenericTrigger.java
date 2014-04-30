@@ -23,14 +23,33 @@ import static com.appglue.Constants.TAG;
 public abstract class GenericTrigger extends BroadcastReceiver 
 {
 	public static ProcessType processType = ProcessType.TRIGGER;
-	
+
+    private boolean fail = false;
+    private String error = "";
+
+    protected void fail(Context context, String message)
+    {
+        fail = true;
+        error = message;
+        trigger(context, null, null, false, 0);
+    }
+
 	@Override
 	public abstract void onReceive(Context context, Intent arg1);
 
 	// I don't know whether it's more work to do this or to farm off the information to a worker thread. The DB Lookup could slow us down, but I might have to do that from the main thread anyway..
 	public void trigger(Context context, String className, Bundle data, boolean isList, int duration)
 	{
-		Registry registry = Registry.getInstance(context);
+        Registry registry = Registry.getInstance(context);
+
+        if(fail)
+        {
+            // There has been a failure in executing the trigger, so don't start. Just record it to the log
+            // The compositeId is -1 because nothing actually started.
+            registry.fail(-1L, this.getClass().getCanonicalName(), error);
+            return;
+        }
+
 		ArrayList<CompositeService> services = registry.atomicAtPosition(className, 0);
 		
 		if(services == null)

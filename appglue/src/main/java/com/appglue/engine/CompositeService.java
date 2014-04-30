@@ -48,23 +48,18 @@ public class CompositeService
 		return new CompositeService(NEW_COMPOSITE_PLACEHOLER, "Nothing", "Nothing", null, false);
 	}
 	
-	public CompositeService(long id)
-	{
-		
-	}
-	
 	public CompositeService(long id, String name, String description, boolean shouldBeRunning)
 	{
+        this(false);
 		this.id = id;
 		this.name = name;
-		this.components = null;
 		this.description = description;
-		
 		this.shouldBeRunning = shouldBeRunning;
 	}
 	
 	public CompositeService(long id, String name, String description, ArrayList<ServiceDescription> services, boolean shouldBeRunning)
 	{
+        this(false);
 		this.id = id;
 		this.name = name;
 		this.components = services;
@@ -75,6 +70,7 @@ public class CompositeService
 	
 	public CompositeService(long id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval)
 	{
+        this(false);
 		this.id = id;
 		this.name = name;
 		this.components = services;
@@ -88,6 +84,7 @@ public class CompositeService
 	
 	public CompositeService(ArrayList<ServiceDescription> orchestration)
 	{
+        this(false);
 		// Generate a random name
 		this.id = -1;
 		this.name = "Random Service";

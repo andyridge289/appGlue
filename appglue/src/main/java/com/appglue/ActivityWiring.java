@@ -2,8 +2,10 @@ package com.appglue;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -65,25 +67,101 @@ public class ActivityWiring extends FragmentActivity
 		actionBar.setTitle(R.string.comp_title);
 		
 		Intent extras = this.getIntent();
-		long compositeId = extras.getLongExtra(COMPOSITE_ID, -1);
+		final long compositeId = extras.getLongExtra(COMPOSITE_ID, -1);
 
 		registry = Registry.getInstance(this);
 
-		if(compositeId == -1)
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setOnPageChangeListener(new OnPageChangeListener()
         {
-			cs = registry.getService();
-		
-            if(cs == null)
+            @Override
+            public void onPageSelected(int arg0)
             {
-                registry.createTemp();
-                cs = registry.getService();
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0)
+            {
+
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2)
+            {
+
+            }
+        });
+
+        if(compositeId == -1)
+        {
+            // They are creating a new one
+
+            if(registry.tempExists())
+            {
+                // There is stuff in the temp -- they might want to save it
+                AlertDialog.Builder keepTemp = new AlertDialog.Builder(this);
+                keepTemp.setMessage("You have a saved draft, do you want to carry on with it, or start again?");
+                keepTemp.setCancelable(true);
+                keepTemp.setPositiveButton("Keep draft",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cs = registry.getTemp();
+                                finishWiringSetup();
+                            }
+                        });
+                keepTemp.setNegativeButton("Start new",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cs = registry.createTemp();
+                                finishWiringSetup();
+                            }
+                        });
+
+                keepTemp.create().show();
+            }
+            else
+            {
+                // There isn't stuff in the temp, just use that
+                cs = registry.createTemp();
+                finishWiringSetup();
             }
         }
         else
         {
-            cs = registry.getComposite(compositeId);
+            if(registry.tempExists())
+            {
+                AlertDialog.Builder keepTemp = new AlertDialog.Builder(this);
+                keepTemp.setMessage("You have a saved draft, do you want to save it?");
+                keepTemp.setCancelable(true);
+                keepTemp.setPositiveButton("Save draft",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                registry.saveTemp("Saved draft");
+                                finishWiringSetup();
+                            }
+                        });
+                keepTemp.setNegativeButton("Discard draft",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                registry.createTemp();
+                                cs = registry.getComposite(compositeId);
+                                finishWiringSetup();
+                            }
+                        });
+
+                keepTemp.create().show();
+            }
+            else
+            {
+                cs = registry.getComposite(compositeId);
+                finishWiringSetup();
+            }
         }
-		
+    }
+
+    private void finishWiringSetup()
+    {
 		status = (TextView) findViewById(R.id.status);
 		
 		csNameText = (TextView) findViewById(R.id.cs_name);
@@ -128,28 +206,6 @@ public class ActivityWiring extends FragmentActivity
 			}
 		});
 
-		pager = (ViewPager) findViewById(R.id.pager);	
-		pager.setOnPageChangeListener(new OnPageChangeListener() 
-		{
-			@Override
-			public void onPageSelected(int arg0) 
-			{
-				invalidateOptionsMenu();
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int arg0) 
-			{
-				
-			}
-
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) 
-			{
-				
-			}
-		});
-
         Button modeButton = (Button) findViewById(R.id.change_mode);
 		modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
 		modeButton.setOnClickListener(new OnClickListener() {
@@ -167,8 +223,6 @@ public class ActivityWiring extends FragmentActivity
 		Intent intent = this.getIntent();
 		int index = intent.getIntExtra(INDEX, -1);
 		boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
-		
-		Log.d(TAG, "Create new: " + createNew);
 		
 		if(createNew)
 		{
@@ -323,6 +377,7 @@ public class ActivityWiring extends FragmentActivity
                 Log.d(TAG, "Updated " + cs.getName());
         }
 
+        // FIXME If they do decide to save it, this should also clear out the temp so that they don't get pestered at the beginning of the next thing
         // FIXME It needs to move to the right place when you add a new component to the wiring page
         // FIXME Click on the status message to view more status messages
 
@@ -390,6 +445,8 @@ public class ActivityWiring extends FragmentActivity
 		public WiringPagerAdapter(FragmentManager fragmentManager)
 		{
 			super(fragmentManager);
+
+            // FIXME cs is null at this point, probably because we've not gone through the setup properly?
 			fragments = new Fragment[cs.getComponents().size() + 1];
 		}
 

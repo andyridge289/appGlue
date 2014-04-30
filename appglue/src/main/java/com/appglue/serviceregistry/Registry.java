@@ -19,6 +19,8 @@ import java.util.HashMap;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
 
+import static com.appglue.library.AppGlueConstants.TEMP_ID;
+
 public class Registry
 {
 	public static Registry registry = null;
@@ -31,9 +33,7 @@ public class Registry
     // Null the variable when something relevant changes
     // Then do a lookup and if it ain't null just use it
 
-    // FIXME There should only ever be one temporary composite
-    // FIXME When you click you want to start a new one it should say there's already a temporary one if there is
-
+    // This is whatever the current service being edited (or the last one to be edited).
 	private CompositeService service;
 	
 	private Registry(Context context)
@@ -61,11 +61,25 @@ public class Registry
 		this.service = this.getComposite(id);
 	}
 	
-	public void createTemp()
+	public CompositeService createTemp()
 	{
-		service = new CompositeService(true);
         dbHandler.resetTemp();
+
+        service = new CompositeService(true);
+        return service;
   	}
+
+    public CompositeService getTemp()
+    {
+        service = getComposite(TEMP_ID);
+        return service;
+    }
+
+    public boolean tempExists()
+    {
+        CompositeService cs = dbHandler.getComposite(TEMP_ID);
+        return cs.getComponents().size() > 0;
+    }
 
     public void saveTemp(String name)
     {
