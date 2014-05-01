@@ -1,12 +1,13 @@
 package com.appglue;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
-
+import static com.appglue.library.AppGlueConstants.PREFS;
 
 public class FragmentSettings extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener
 {
@@ -16,7 +17,7 @@ public class FragmentSettings extends PreferenceFragment implements SharedPrefer
 
         addPreferencesFromResource(R.xml.preferences);
 
-        SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 
         // Sorts out the showing notifications preference.
         boolean notifications = prefs.getBoolean(getResources().getString(R.string.prefs_notifications), false);

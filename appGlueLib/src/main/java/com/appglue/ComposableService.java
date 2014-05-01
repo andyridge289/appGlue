@@ -48,9 +48,10 @@ public abstract class ComposableService extends Service
     
     protected boolean isList = false;
     protected boolean wait = false;
+
     private boolean fail = false;
-    private String error = "";
-    
+    private Bundle failureBundle = null;
+
     private static final boolean LOG = false;
     
     public static ProcessType processType = ProcessType.NORMAL;
@@ -86,7 +87,8 @@ public abstract class ComposableService extends Service
     protected void fail(String message)
     {
         this.fail = true;
-        this.error = message;
+        failureBundle = new Bundle();
+        failureBundle.putString(ERROR, message);
     }
 
     public void send(Object o)
@@ -174,9 +176,7 @@ public abstract class ComposableService extends Service
             {
             	Bundle b = new Bundle();
             	ArrayList<Bundle> bs = new ArrayList<Bundle>();
-            	Bundle errorBundle = new Bundle();
-            	errorBundle.putString(ComposableService.TEXT, error);
-            	bs.add(errorBundle);
+            	bs.add(failureBundle);
             	b.putParcelableArrayList(ComposableService.INPUT, bs);
             	returnMessage.setData(b);
             } 

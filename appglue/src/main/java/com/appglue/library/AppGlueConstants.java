@@ -244,4 +244,6 @@ public class AppGlueConstants
 	};
 	
 	public static final String FIRST = "first";
+
+    public static final String PREFS = "appGlue_prefs";
 }

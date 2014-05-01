@@ -3,15 +3,19 @@ package com.appglue.engine;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
+import static com.appglue.library.AppGlueConstants.PREFS;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -22,7 +26,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -72,7 +75,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
     	this.index = 0;
     	this.test = test;
     	
-    	this.messageReceiver = new Messenger(new IncomingHandler(this, context));
+    	this.messageReceiver = new Messenger(new IncomingHandler(this));
     	this.message = null;
     }
     
@@ -97,8 +100,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
         }
         catch (RemoteException e) 
         {
+            // TODO Add something to the log to say that it failed, and do something more graceful than just printing a stack trace.
         	e.printStackTrace();
-        	return;
         }
 	}
 
@@ -149,7 +152,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
 	 * 
 	 * Also get the parameters if we have any
 	 * 
-	 * @param service
+	 * @param service The service to be bound
 	 */
 	private void doBindService(ServiceDescription service) 
     {
@@ -159,7 +162,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
 //		if(!registry.shouldBeRunning(cs.getId()))
 //    	{
 //			if(LOG) Log.w(TAG, "Stoppped prematurely");
-//    		// XXX Indicate that we've stopped prematurely
+//    		// FIXME Put all these should be running checks back in
+//          // TODO Indicate that we've stopped prematurely in the log
 //			registry.finishComposite(cs.getId());
 //			return;
 //    	}
@@ -184,23 +188,17 @@ public class OrchestrationServiceConnection implements ServiceConnection
 				else
 				{
 					ArrayList<Bundle> removed = filterValues.getParcelableArrayList(FILTER_REMOVED);
-					
-					for(int i = 0; i < removed.size(); i++)
-					{
-						Bundle b = removed.get(i);
-						ServiceDescription currentComponent = cs.getComponents().get(index - 1); // Need to get the last index because we've moved on
-						long outputId = b.getLong(FILTER_OUTPUTID);
-						ServiceIO io = currentComponent.getOutput(outputId);
-						
-						registry.filter(cs, currentComponent, io, b.getString(FILTER_CONDITION), b.getString(FILTER_VALUE));
-					}
+
+                    for (Bundle b : removed) {
+                        ServiceDescription currentComponent = cs.getComponents().get(index - 1); // Need to get the last index because we've moved on
+                        long outputId = b.getLong(FILTER_OUTPUTID);
+                        ServiceIO io = currentComponent.getOutput(outputId);
+
+                        registry.filter(cs, currentComponent, io, b.getString(FILTER_CONDITION), b.getString(FILTER_VALUE));
+                    }
 					return;
 				}
 			}
-			else
-			{
-				// We can just carry on, we don't need to check
-			}	
 			
 			if(LOG) Log.w(TAG, "Pre-mapping of outputs " + System.currentTimeMillis());
 			messageData = this.mapOutputs(messageData, service);
@@ -272,45 +270,45 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		{
 			Bundle data = messageData.get(i);
 			boolean fail = false;
-			
+
 			for(int j = 0; j < outputs.size(); j++)
-			{	
-				ServiceIO output = outputs.get(i);
-				
+			{
+				ServiceIO output = outputs.get(i); // FIXME Should this be I or J?
+
 				if(output.isFiltered() == ServiceIO.UNFILTERED) // We don't need to worry if the output doesn't need to be filtered
 					continue;
-				
+
 				// Now we know we need to filter it
 				FilterValue fv = IOFilter.filters.get(output.getCondition());
-				Object first = data.get(output.getName());				
+				Object first = data.get(output.getName());
 				Object value = null;
-				
+
 				// At this point we have an object that is the thing we need. Do we need to make it into something else we can deal with?
-				
+
 				if(output.isFiltered() == ServiceIO.MANUAL_FILTER)
 					value = output.getManualValue();
 				else if(output.isFiltered() == ServiceIO.SAMPLE_FILTER)
 					value = output.getChosenSampleValue().value;
-				
+
 				if(value == null) // Something has gone very very wrong
 				{
 					Log.e(TAG, "Filter value is dead, you've done something rather stupid");
 					continue;
 				}
-				
+
 				if(first == null)
 				{
 					Log.e(TAG, "No value from the component... What have you done...");
 					continue;
 				}
-				
-				try 
+
+				try
 				{
 					// Need to test LOTS of these - unit test time me thinks...
 					// This returns whether it PASSES the test, so we need to filter it if it doesn't
 					Boolean result = (Boolean) fv.method.invoke(null, first, value);
-				
-					
+
+
 					if(result)
 					{
 						retained.add(data);
@@ -322,17 +320,17 @@ public class OrchestrationServiceConnection implements ServiceConnection
 							Log.e(TAG, "Filter " + output.getName() + ": The answer is No -- " + first + " ?? " + value + "(" +  output.getChosenSampleValue().name + ")");
 						else
 							Log.e(TAG, "Filter " + output.getName() + ": The answer is No -- " + first + " ?? " + value);
-						
+
 						// Put the name of the condition that failed, and the value that should have been set
 						data.putLong(FILTER_OUTPUTID, output.getId());
 						data.putString(FILTER_VALUE, first.toString());
 						data.putString(FILTER_CONDITION, fv.text);
-						
+
 						filtered.add(data);
 						fail = true;
 						break;
 					}
-				} 
+				}
 				catch (IllegalArgumentException e) {
 					Log.e(TAG, "Wrong arguments.");
 					e.printStackTrace();
@@ -366,36 +364,33 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		
 		// Go through the inputs and input any manual values that are there
 		Bundle manualBundle = new Bundle();
-		for(int i = 0; i < inputs.size(); i++)
-		{
-			ServiceIO input = inputs.get(i);
-			if(input.isFiltered() != ServiceIO.UNFILTERED)
-			{	
-				// Then add it to the input list
-				String name = input.getName();
-				Object value = null;
-				
-				if(input.isFiltered() == ServiceIO.MANUAL_FILTER)
-					value = input.getManualValue();
-				else if(input.isFiltered() == ServiceIO.SAMPLE_FILTER)
-					value = input.getChosenSampleValue().value;
-					
-				Class<? extends Object> theClass = value.getClass();
+        for (ServiceIO input : inputs) {
+            if (input.isFiltered() != ServiceIO.UNFILTERED) {
+                // Then add it to the input list
+                String name = input.getName();
+                Object value = null;
 
-				if(theClass.equals(String.class))
-					manualBundle.putString(name, (String) value);
-				else if(theClass.equals(Integer.class))
-					manualBundle.putInt(name, (Integer) value);
-				else if(theClass.equals(Float.class))
-					manualBundle.putFloat(name, (Float) value);
-				else if(theClass.equals(Double.class))
-					manualBundle.putDouble(name, (Double) value);
-				else if(theClass.equals(Boolean.class))
-					manualBundle.putBoolean(name, (Boolean) value);
-				
+                if (input.isFiltered() == ServiceIO.MANUAL_FILTER)
+                    value = input.getManualValue();
+                else if (input.isFiltered() == ServiceIO.SAMPLE_FILTER)
+                    value = input.getChosenSampleValue().value;
+
+                Class<?> theClass = value.getClass();
+
+                if (theClass.equals(String.class))
+                    manualBundle.putString(name, (String) value);
+                else if (theClass.equals(Integer.class))
+                    manualBundle.putInt(name, (Integer) value);
+                else if (theClass.equals(Float.class))
+                    manualBundle.putFloat(name, (Float) value);
+                else if (theClass.equals(Double.class))
+                    manualBundle.putDouble(name, (Double) value);
+                else if (theClass.equals(Boolean.class))
+                    manualBundle.putBoolean(name, (Boolean) value);
+
 //				if(LOG) Log.d(TAG, "Added manual for " + input.getName() + " " + theClass.getCanonicalName());
-			}
-		}
+            }
+        }
 		
 		if(!manualBundle.isEmpty())
 			newList.add(manualBundle);
@@ -417,65 +412,50 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		{
 			outputList = (ArrayList<Bundle>) o;
 		}
-		
-		for(int i = 0; i < outputList.size(); i++)
-		{
-			// Get the old bundle and make a new one 
+
+        for (Bundle anOutputList : outputList) {
+            // Get the old bundle and make a new one
 //			Bundle outputBundle = outputList.get(i);
-			Bundle newBundle = new Bundle();
-			
-			for(int j = 0; j < inputs.size(); j++)
-			{
-				ServiceIO input = inputs.get(j);
-				ServiceIO output = input.getConnection();
-				if(output == null) continue; // This means that they haven't provided an input for this
-				
-				// Find its type
-//				String typeName = input.getType().getClassName();
-				Object thing = outputList.get(i).get(output.getName());
-				if(thing == null){ Log.e(TAG, "Thing dead " + output.getName()); continue; }
-				
-				Class<? extends Object> theClass = thing.getClass();
-				if(theClass.equals(Bundle.class))
-				{
-					// This shouldn't happen yet because they're not supported yet
-					Log.d(TAG, "Bundles not supported yet - there aren't any complex types.");
-				}
-				else if(theClass.equals(ArrayList.class))
-				{
-					// Just blindly add the list, the unerlying type should know what it's looking
-					// for as this service only knows the name of the I/O itself...
-					ArrayList<Bundle> stuff = (ArrayList<Bundle>) thing;
-					newBundle.putParcelableArrayList(input.getName(), stuff);
-				}
-				else if(theClass.equals(String.class))
-				{
-					newBundle.putString(input.getName(), (String) thing);
-				}
-				else if(theClass.equals(Integer.class))
-				{
-					newBundle.putInt(input.getName(), (Integer) thing);
-				}
-				else if(theClass.equals(Float.class))
-				{
-					newBundle.putFloat(input.getName(), (Float) thing);
-				}
-				else if(theClass.equals(Double.class))
-				{
-					newBundle.putDouble(input.getName(), (Double) thing);
-				}
-				else if(theClass.equals(Boolean.class))
-				{
-					newBundle.putBoolean(input.getName(), (Boolean) thing);
-				}
-				else
-				{
-					Log.e(TAG, "Unexpected class type to add to bundle" + theClass.getCanonicalName());
-				}
-			}
-			
-			newList.add(newBundle);
-		}
+            Bundle newBundle = new Bundle();
+
+            for (ServiceIO input : inputs) {
+                ServiceIO output = input.getConnection();
+                if (output == null)
+                    continue; // This means that they haven't provided an input for this
+
+                // Find its type
+                Object thing = anOutputList.get(output.getName());
+                if (thing == null) {
+                    Log.e(TAG, "Thing dead " + output.getName());
+                    continue;
+                }
+
+                Class<?> theClass = thing.getClass();
+                if (theClass.equals(Bundle.class)) {
+                    // This shouldn't happen yet because they're not supported yet
+                    Log.d(TAG, "Bundles not supported yet - there aren't any complex types.");
+                } else if (theClass.equals(ArrayList.class)) {
+                    // Just blindly add the list, the underlying type should know what it's looking
+                    // for as this service only knows the name of the I/O itself...
+                    ArrayList<Bundle> stuff = (ArrayList<Bundle>) thing;
+                    newBundle.putParcelableArrayList(input.getName(), stuff);
+                } else if (theClass.equals(String.class)) {
+                    newBundle.putString(input.getName(), (String) thing);
+                } else if (theClass.equals(Integer.class)) {
+                    newBundle.putInt(input.getName(), (Integer) thing);
+                } else if (theClass.equals(Float.class)) {
+                    newBundle.putFloat(input.getName(), (Float) thing);
+                } else if (theClass.equals(Double.class)) {
+                    newBundle.putDouble(input.getName(), (Double) thing);
+                } else if (theClass.equals(Boolean.class)) {
+                    newBundle.putBoolean(input.getName(), (Boolean) thing);
+                } else {
+                    Log.e(TAG, "Unexpected class type to add to bundle" + theClass.getCanonicalName());
+                }
+            }
+
+            newList.add(newBundle);
+        }
 		
 		bundle.putParcelableArrayList(ComposableService.INPUT, newList);
 		return bundle;
@@ -504,7 +484,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
     {
     	private OrchestrationServiceConnection osc;
     	
-    	private IncomingHandler(OrchestrationServiceConnection osc, Context context)
+    	private IncomingHandler(OrchestrationServiceConnection osc)
     	{
     		super(Looper.getMainLooper());
     		
@@ -552,22 +532,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         			osc.registry.success(osc.cs.getId());
         		else if(!osc.test)
         			osc.registry.fail(osc.cs.getId(), components.get(osc.index).getClassName(), "Failed on the last one, that's not so good");
-        		
-//        		if (osc.lock.isHeldByCurrentThread()) 
-//        		{
-//        			Log.w(TAG, "Current thread has the lock, unlocking");
-//        		    osc.lock.unlock();
-//        		}
-//        		else if(osc.lock.isLocked())
-//        		{
-//        			Log.e(TAG, "Other thread has the lock, probably not worth trying unlocking");
-//        		}
-//        		else
-//        		{
-//        			Log.e(TAG, "Not locked??");
-//        			// It's not locked, we're fine
-//        		}
-        		
+
         		return null;
         	}
         	
@@ -584,10 +549,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         
             		osc.incrementIndex();
             		ServiceDescription next = components.get(osc.index);
-            		
-////                		if(osc.test)
-////                    		((ActivityComposition) osc.context).setActiveService(osc.index);
-//            		
+
                 	// Create the new register message and bind the service
             		osc.message = Message.obtain(null, ComposableService.MSG_OBJECT);
             		osc.message.replyTo = osc.messageReceiver;
@@ -607,9 +569,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 	osc.incrementIndex();
                 	ServiceDescription next = components.get(osc.index);
                 	
-//                	if(osc.test)
-//                		((ActivityComposition) osc.context).setActiveService(osc.index);
-                	
                 	if(next != null)
                 	{
                 		osc.message = Message.obtain(null, ComposableService.MSG_LIST);
@@ -627,38 +586,44 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 	 
                 case ComposableService.MSG_FAIL:
 
-                    // FIXME Need to work out exactly what I'm going to do if these things fail.
-                    // Might be time to have some settings. Always record them ot the log, but show a notification on occasion
+                    // Unbind the service that failed
+                    osc.doUnbindService();
+
+                    // Add the failure to the failure log
+                    Bundle b = m.getData();
+                    ArrayList<Bundle> dummyList = b.getParcelableArrayList(ComposableService.INPUT);
+                    Bundle errorBundle = dummyList.get(0);
+                    Registry.getInstance(context).fail(osc.cs.getId(), osc.cs.getComponents().get(osc.index).getClassName(), errorBundle.getString(ComposableService.ERROR));
+
+                    SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+
+                    // Sorts out the showing notifications preference.
+                    if(prefs.getBoolean(context.getResources().getString(R.string.prefs_notifications), false)) {
+
+                        // Notify the user that there has been a failure
+                        NotificationManager n = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                        Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
+
+                    	Intent intent = new Intent(context, ActivityLog.class);
+                	    PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+                                context)
+                                .setContentText(String.format("%s failed", osc.cs.getName()))
+                                .setContentTitle("AppGlue Error")
+                                .setSmallIcon(R.drawable.icon)
+                                .setAutoCancel(true)
+                                .setLargeIcon(largeIcon)
+                                .setPriority(NotificationCompat.PRIORITY_MIN)
+                                .setVibrate(null)
+                                .setTicker(String.format("AppGlue: %s failed", osc.cs.getName()))
+                				.setContentIntent(pendingIntent);
+
+                        Notification notification = notificationBuilder.build();
+                        n.notify(this.hashCode(), notification);
+                    }
 
 
-                	// Unbind the service that failed
-                	osc.doUnbindService();
-                	
-                	// Notify the user that there has been a failure
-                	NotificationManager n = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                	Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
-
-//                	Intent intent = new Intent(context, ActivityLog.class);
-//                	PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            		NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
-            				context)
-            				.setContentText(String.format("%s failed", osc.cs.getName()))
-            				.setContentTitle("AppGlue Error")
-            				.setSmallIcon(R.drawable.icon)
-            				.setAutoCancel(true)
-            				.setLargeIcon(largeIcon)
-            				.setPriority(NotificationCompat.PRIORITY_MIN)
-            				.setVibrate(null)
-            				.setTicker(String.format("AppGlue: %s failed", osc.cs.getName()));
-//            				.setContentIntent(pendingIntent);
-
-            		Notification notification=notificationBuilder.build();
-            		n.notify(this.hashCode(), notification);
-
-//            		// Add the failure to the failure log
-//            		Registry.getInstance(context).fail(osc.cs.getId(), services.get(osc.index).getClassName(), "");
-////            		osc.lock.unlock();
                 	break;
                     
                 default:
