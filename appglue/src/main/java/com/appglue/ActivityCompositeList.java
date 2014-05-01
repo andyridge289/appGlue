@@ -257,6 +257,10 @@ public class ActivityCompositeList extends Activity
 		{
 			intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
 		}
+        else if(item.getItemId() == R.id.comp_list_settings)
+        {
+            intent = new Intent(ActivityCompositeList.this, ActivitySettings.class);
+        }
 		
 		startActivity(intent);
 		return true;

@@ -27,5 +27,10 @@
         android:title="Add new Story"
         android:showAsAction="never"
         />
+    <item
+        android:id="@+id/comp_list_settings"
+        android:title="Settings"
+        android:showAsAction="never"
+        />
     
 </menu>

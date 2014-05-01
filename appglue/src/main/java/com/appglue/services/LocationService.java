@@ -79,9 +79,8 @@ public class LocationService extends ComposableService //implements GooglePlaySe
 			
 			if(addresses == null || addresses.size() == 0)
 			{
-				fail = true;
-				error = "I can't find your address, try again later";
-//				lc.disconnect();
+                super.fail("I can't find your address, try again later");
+//			lc.disconnect();
 //				super.send  (null);
 				return;
 			}

@@ -83,7 +83,7 @@ public class FragmentWiring extends Fragment
 		first = position > 0 ? components.get(position - 1) : null;
 		second = position < components.size() ? components.get(position) : null;
 		
-		map.set(first, second, null);
+		map.set(first, second);
 		
 		LocalStorage localStorage = LocalStorage.getInstance();
 		

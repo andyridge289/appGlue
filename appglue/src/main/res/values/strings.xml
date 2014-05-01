@@ -163,4 +163,5 @@
     <string name="wiring_menu_next">Next</string>
     <string name="wiring_menu_previous">Previous</string>
     <string name="param_cancel">I changed my mind..</string>
+    <string name="prefs_notifications">prefs_notifications</string>
 </resources>

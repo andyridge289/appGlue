@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -628,6 +629,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
                     // FIXME Need to work out exactly what I'm going to do if these things fail.
                     // Might be time to have some settings. Always record them ot the log, but show a notification on occasion
+
 
                 	// Unbind the service that failed
                 	osc.doUnbindService();

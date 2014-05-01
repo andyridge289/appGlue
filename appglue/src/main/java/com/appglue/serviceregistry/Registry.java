@@ -10,7 +10,7 @@ import com.appglue.ServiceIO;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
-import com.appglue.library.LocalDBHandler;
+import com.appglue.serviceregistry.LocalDBHandler;
 import com.appglue.library.LogItem;
 
 import java.util.ArrayList;

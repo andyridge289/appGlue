@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="@string/prefs_notifications"
+        android:summary="You get an Android notification when a composite doesn't execute properly."
+        android:title="Notifications of failed composite execution"
+        android:defaultValue="false"
+        />
+</PreferenceScreen>

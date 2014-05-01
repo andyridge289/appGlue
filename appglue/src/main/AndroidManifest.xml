@@ -104,7 +104,13 @@
             android:label="@string/application_name"
             android:theme="@android:style/Theme.Holo" >
         </activity>
-        
+
+        <activity
+            android:name=".ActivitySettings"
+            android:label="appGlue"
+            android:theme="@android:style/Theme.Holo.Light"/>
+
+
         <activity
             android:name=".ShortcutActivity" >
             <intent-filter>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <header
+        android:fragment="com.appglue.FragmentSettings"
+        android:icon="@drawable/ab_about"
+        android:title="Some Settings"
+        android:summary="Like I said, some settings"
+        />
+</preference-headers>
