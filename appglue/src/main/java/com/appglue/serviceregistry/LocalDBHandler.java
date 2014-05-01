@@ -1,11 +1,11 @@
 package com.appglue.serviceregistry;
 
 import static com.appglue.Constants.AVG_RATING;
+import static com.appglue.library.AppGlueConstants.TEMP_ID;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.COMPOSITE_ID;
 import static com.appglue.Constants.DB_NAME;
 import static com.appglue.Constants.DB_VERSION;
-import static com.appglue.Constants.DELIMITER;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ICON;
@@ -24,19 +24,13 @@ import static com.appglue.Constants.NUM_RATINGS;
 import static com.appglue.Constants.OUTPUT_CLASSNAME;
 import static com.appglue.Constants.OUTPUT_IO_ID;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PARAMETER_ID;
-import static com.appglue.Constants.PARAM_REQUIREDNESS;
-import static com.appglue.Constants.PARAM_TYPE;
 import static com.appglue.Constants.PARENT_SERVICE;
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.POSS_SYSTEM;
-import static com.appglue.Constants.POSS_USER;
 import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.USE_DEFAULT;
 import static com.appglue.Constants.VALUE;
 import static com.appglue.library.AppGlueConstants.*;
 
@@ -73,6 +67,7 @@ import com.appglue.library.LogItem;
 public class LocalDBHandler extends SQLiteOpenHelper
 {
 	private HashMap<String, AppDescription> appMap;
+
 	
 	/**
 	 * Creates a new class to handle all the database crap
@@ -99,6 +94,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	{
 		create(db);
 	}
+
+    @Override
+    public void onConfigure(SQLiteDatabase db)
+    {
+        db.setForeignKeyConstraintsEnabled(true);
+    }
 	
 	
 	/**
@@ -139,41 +140,47 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 */
 	private void create(SQLiteDatabase db)
 	{
+        // None of these should have foreign keys
 		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE));
 		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE, COLS_COMPOSITE));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_ATOMIC));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_ATOMIC, COLS_ATOMIC));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_APP));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_APP, COLS_APP));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_HAS_ATOMIC));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE_HAS_ATOMIC, COLS_COMPOSITE_HAS_ATOMIC));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IOTYPE));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_IOTYPE, COLS_IOTYPE));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SERVICEIO));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_SERVICEIO, COLS_SERVICEIO));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IO_SAMPLES));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_IO_SAMPLES, COLS_IO_SAMPLES));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_IOCONNECTION));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE_IOCONNECTION, COLS_COMPOSITE_IOCONNECTION));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_FILTER));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_APP));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_APP, COLS_APP));
+
+		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPONENT));
+		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPONENT, COLS_COMPONENT));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IOTYPE));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_IOTYPE, COLS_IOTYPE));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_TAG));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_TAG, COLS_TAG));
+
+        // references Component
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SERVICEIO));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_SERVICEIO, COLS_SERVICEIO));
+
+        // references ServiceIO
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IO_SAMPLES));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_IO_SAMPLES, COLS_IO_SAMPLES));
+
+        // references Composite and component
+		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_HAS_COMPONENT));
+		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE_HAS_COMPONENT, COLS_COMPOSITE_HAS_COMPONENT));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_EXECUTION_LOG));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_EXECUTION_LOG, COLS_EXECUTION_LOG));
+
+        // references Component and Tag
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPONENT_HAS_TAG));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_COMPONENT_HAS_TAG, COLS_COMPONENT_HAS_TAG));
+
+        // references Component, composite and ServiceIO
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_IOCONNECTION));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE_IOCONNECTION, COLS_COMPOSITE_IOCONNECTION));
+
+     	db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_FILTER));
 		db.execSQL(AppGlueLibrary.createTableString(TBL_FILTER, COLS_FILTER));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_EXECUTION_LOG));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_EXECUTION_LOG, COLS_EXECUTION_LOG));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_TAG));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_TAG, COLS_TAG));
-		
-		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPONENT_HAS_TAG));
-		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPONENT_HAS_TAG, COLS_COMPONENT_HAS_TAG));
 		
 		postCreateInsert(db);
 	}	
@@ -182,6 +189,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * Anything that needs to be put in the database without making a component do it.
 	 * IO Samples:
 	 * 	Boolean
+     *
+     * 	Also initialise the temporary composite
 	 * 
 	 * @param db
 	 */
@@ -196,7 +205,59 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		cv.put(NAME, "False");
 		cv.put(VALUE, false);
 		db.insert(TBL_IO_SAMPLES, null, cv);
+
+        // This is where we initialise the temporary Composite
+        cv = new ContentValues();
+        cv.put(ID, TEMP_ID);
+        cv.put(NAME, "temp");
+        cv.put(DESCRIPTION, "This is ALWAYS the temporary composite");
+        cv.put(ACTIVE_OR_TIMER, 1);
+        cv.put(IS_RUNNING, 0);
+        cv.put(SHOULD_BE_RUNNING, 1);
+        cv.put(NUMERAL, -1);
+        cv.put(INTERVAL, -1);
+        db.insert(TBL_COMPOSITE, null, cv);
 	}
+
+    public void saveTemp(String name)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(NAME, name);
+        cv.put(DESCRIPTION, "You haven't entered a description yet");
+        cv.put(ACTIVE_OR_TIMER, 1);
+        cv.put(IS_RUNNING, 0);
+        cv.put(SHOULD_BE_RUNNING, 1);
+        cv.put(NUMERAL, -1);
+        cv.put(INTERVAL, -1);
+        long id = db.insert(TBL_COMPOSITE, null, cv);
+
+        cv = new ContentValues();
+        cv.put(COMPOSITE_ID, id);
+
+        String[] tables = new String[] { TBL_COMPOSITE_HAS_COMPONENT, TBL_EXECUTION_LOG, TBL_COMPOSITE_IOCONNECTION, TBL_FILTER };
+
+        for(String table : tables)
+            db.update(table, cv, COMPOSITE_ID + " = ?", new String[]{ "" + TEMP_ID });
+    }
+
+    /**
+     * Delete all of the stuff in the other tables that references the TEMP.
+     */
+    public void resetTemp()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] sqls = new String[]{
+            String.format("DELETE FROM `%s` WHERE %s = %d", TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID, TEMP_ID),
+            String.format("DELETE FROM `%s` WHERE %s = %d", TBL_EXECUTION_LOG, COMPOSITE_ID, TEMP_ID),
+            String.format("DELETE FROM `%s` WHERE %s = %d", TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID, TEMP_ID),
+            String.format("DELETE FROM `%s` WHERE %s = %d", TBL_FILTER, COMPOSITE_ID, TEMP_ID)
+        };
+
+        for(String sql : sqls)
+            db.rawQuery(sql, null);
+    }
 	
 	public boolean initialiased()
 	{
@@ -247,7 +308,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		try
 		{
-			retval = db.insertOrThrow(TBL_ATOMIC, null, values);
+			retval = db.insertOrThrow(TBL_COMPONENT, null, values);
 			
 			addApp(sd);
 			
@@ -437,7 +498,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		SQLiteDatabase db = this.getReadableDatabase();
 		
-		String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_ATOMIC, PACKAGENAME, packageName);
+		String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT, PACKAGENAME, packageName);
 		Cursor c = db.rawQuery(query, null);
 		
 		if(c == null || c.getCount() == 0)
@@ -478,7 +539,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		args.put(NUM_RATINGS, service.getNumReviews());
 		args.put(PRICE, service.getPrice());
 		
-		int retval = db.update(TBL_ATOMIC, args, strFilter, null);
+		int retval = db.update(TBL_COMPONENT, args, strFilter, null);
 		
 		if(retval == 0)
 		{
@@ -497,7 +558,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		ArrayList<ServiceDescription> serviceList = new ArrayList<ServiceDescription>();
 		SQLiteDatabase db = this.getReadableDatabase();
 		
-		Cursor c = db.query(TBL_ATOMIC, null,
+		Cursor c = db.query(TBL_COMPONENT, null,
 				PROCESS_TYPE + " = ?", new String[] { "" + ProcessType.TRIGGER.index },
 				null, null, null, null);
 		
@@ -549,13 +610,13 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		String typeString = "";
 		
 		if(type == ServiceType.LOCAL)
-			typeString = String.format(" WHERE %s.%s = %s", TBL_ATOMIC, SERVICE_TYPE, ServiceType.LOCAL.index);
+			typeString = String.format(" WHERE %s.%s = %s", TBL_COMPONENT, SERVICE_TYPE, ServiceType.LOCAL.index);
 		else if(type == ServiceType.IN_APP)
-			typeString = String.format(" WHERE %s.%s = %s", TBL_ATOMIC, SERVICE_TYPE, ServiceType.IN_APP.index);
+			typeString = String.format(" WHERE %s.%s = %s", TBL_COMPONENT, SERVICE_TYPE, ServiceType.IN_APP.index);
 		else if(type == ServiceType.DEVICE)
-			typeString = String.format(" WHERE %s.%s = %s OR %s.%s = %s", TBL_ATOMIC, SERVICE_TYPE, ServiceType.LOCAL.index, TBL_ATOMIC, SERVICE_TYPE, ServiceType.IN_APP.index);
+			typeString = String.format(" WHERE %s.%s = %s OR %s.%s = %s", TBL_COMPONENT, SERVICE_TYPE, ServiceType.LOCAL.index, TBL_COMPONENT, SERVICE_TYPE, ServiceType.IN_APP.index);
 		
-		String query = String.format("SELECT * FROM %s %s", TBL_ATOMIC, typeString);
+		String query = String.format("SELECT * FROM %s %s", TBL_COMPONENT, typeString);
 		
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);
@@ -727,14 +788,14 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		
-		return db.delete(TBL_ATOMIC, "? = ?", new String[] { SERVICE_TYPE, "" + ServiceType.REMOTE.index });
+		return db.delete(TBL_COMPONENT, "? = ?", new String[] { SERVICE_TYPE, "" + ServiceType.REMOTE.index });
 	}
 	
 	public int deleteDeviceAtomics()
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		
-		return db.delete(TBL_ATOMIC, SERVICE_TYPE + " = ?", new String[] { "" + ServiceType.LOCAL.index });
+		return db.delete(TBL_COMPONENT, SERVICE_TYPE + " = ?", new String[] { "" + ServiceType.LOCAL.index });
 	}
 	
 	
@@ -881,6 +942,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			values.put(NAME, "");
 			values.put(DESCRIPTION, "");
 			values.put(IS_RUNNING, 0);
+            values.put(SHOULD_BE_RUNNING, 1);
 			values.put(ACTIVE_OR_TIMER, 0);
 			
 			ArrayList<ServiceDescription> components = cs.getComponents();
@@ -951,7 +1013,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					Log.d(TAG, "Updated " + ret + " rows for " + cs.getId() + "(" + cs.getName() + ")");
 			
 			// Clear the atomic table for that component, then add all the components
-			int num = db.delete(TBL_COMPOSITE_HAS_ATOMIC, COMPOSITE_ID + " = ?", new String[]{ "" + cs.getId() });
+			int num = db.delete(TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID + " = ?", new String[]{ "" + cs.getId() });
 			for(int i = 0; i < components.size(); i++)
 			{
 				long linkId = this.addCompositeHasAtomic(cs.getId(), components.get(i).getClassName(), i);
@@ -1031,35 +1093,24 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		return allSuccess;
 	}
-	
-//	public boolean updateCompositeDetails(long id, String name, String description)
-//	{
-//		SQLiteDatabase db = this.getReadableDatabase();
-//		
-//		String strFilter = ID + "=" + id;
-//		ContentValues args = new ContentValues();
-//		
-//		args.put(NAME, name);
-//		args.put(DESCRIPTION, description);
-//		int numRows = db.update(TBL_COMPOSITE, args, strFilter, null);
-//		
-//		if(numRows == 0)
-//			return false;
-//		else
-//			return true;
-//	}
-	
+
 	/***
 	 * Get all of the composites!
 	 * 
 	 * @return All of the composites
+     * @param includeTemp
 	 */
-	public ArrayList<CompositeService> getComposites()
+	public ArrayList<CompositeService> getComposites(boolean includeTemp)
 	{
 		ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
 		SQLiteDatabase db = this.getWritableDatabase();
 
-		Cursor c = db.query(TBL_COMPOSITE, new String[] { ID },	null, null, null, null, null);
+		Cursor c;
+
+        if(includeTemp)
+            c = db.query(TBL_COMPOSITE, new String[] { ID }, null, null, null, null, null);
+        else
+            c = db.query(TBL_COMPOSITE, new String[] { ID }, ID + " <> ?", new String[] { "" + TEMP_ID }, null, null, null);
 		
 		if(c == null)
 			return composites;
@@ -1072,6 +1123,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			do
 			{
 				long id = c.getLong(c.getColumnIndex(ID));
+
+
 				composites.add(getComposite(id));
 			}
 			while(c.moveToNext());
@@ -1129,7 +1182,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		ArrayList<ServiceDescription> components = new ArrayList<ServiceDescription>();
 		SQLiteDatabase db = this.getReadableDatabase();
 		
-		Cursor c = db.query(TBL_COMPOSITE_HAS_ATOMIC, null,
+		Cursor c = db.query(TBL_COMPOSITE_HAS_COMPONENT, null,
 				 			COMPOSITE_ID + " = ?", new String[] { "" + cs.getId() },
 							null, null, POSITION, null);
 		
@@ -1174,7 +1227,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	public ServiceDescription getComponentForComposite(String className)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor c = db.query(TBL_ATOMIC, null,
+		Cursor c = db.query(TBL_COMPONENT, null,
 	 			CLASSNAME + " = ?", new String[] { className },
 				null, null, null, null);
 		
@@ -1310,7 +1363,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		SQLiteDatabase db = this.getWritableDatabase();
 		int status = db.delete(TBL_COMPOSITE, ID + "=?", new String[] { "" + id });
-		status = db.delete(TBL_COMPOSITE_HAS_ATOMIC, ID +"=?", new String[]{ "" + id });
+		status = db.delete(TBL_COMPOSITE_HAS_COMPONENT, ID +"=?", new String[]{ "" + id });
 		status = db.delete(TBL_COMPOSITE_IOCONNECTION, ID + "=?", new String[] { "" + id });
 		status = db.delete(TBL_FILTER, ID + "=?", new String[] { "" + id });
 		
@@ -1472,7 +1525,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		values.put(CLASSNAME, className);
 		values.put(POSITION, position);
 		
-		return db.insert(TBL_COMPOSITE_HAS_ATOMIC, null, values);
+		return db.insert(TBL_COMPOSITE_HAS_COMPONENT, null, values);
 	}
 
 	public boolean compositeExistsWithName(String name) 
@@ -1731,7 +1784,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
 		
-		String sql = String.format("SELECT DISTINCT %s FROM %s WHERE %s = '%s' AND %s = %s", COMPOSITE_ID, TBL_COMPOSITE_HAS_ATOMIC, CLASSNAME, className, POSITION, position);
+		String sql = String.format("SELECT DISTINCT %s FROM %s WHERE %s = '%s' AND %s = %s", COMPOSITE_ID, TBL_COMPOSITE_HAS_COMPONENT, CLASSNAME, className, POSITION, position);
 
 		Cursor c = db.rawQuery(sql, null);
 		
@@ -1868,7 +1921,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 	public ServiceDescription getAtomic(String className) 
 	{
-String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_ATOMIC, CLASSNAME, className);
+String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT, CLASSNAME, className);
 		
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);

@@ -1,19 +1,18 @@
 package com.appglue.services;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import com.appglue.ComposableService;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 //import com.google.android.gms.common.ConnectionResult;
 //import com.google.android.gms.common.GooglePlayServicesClient;
 //import com.google.android.gms.location.LocationClient;
@@ -44,6 +43,7 @@ public class LocationService extends ComposableService //implements GooglePlaySe
 	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
 	{
 		// This doesn't need to be performed for a list
+
 		return null;
 	}
 	
@@ -72,7 +72,7 @@ public class LocationService extends ComposableService //implements GooglePlaySe
 		}
 		
 		Geocoder g = new Geocoder(this, Locale.getDefault());
-		List<Address> addresses = null;
+		List<Address> addresses;
 		try 
 		{
 			addresses = g.getFromLocation(latitude, longitude, 1);
@@ -104,8 +104,7 @@ public class LocationService extends ComposableService //implements GooglePlaySe
 //		lc.disconnect();
 		
 //		super.send  (b);
-		return;
-	}
+    }
 
 //	@Override
 //	public void onDisconnected() 

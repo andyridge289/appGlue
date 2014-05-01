@@ -92,21 +92,15 @@ public class ServiceFactory
 		
 		String all = setupServiceList(appData, services);
 		ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, app);
-		
-		for(int i = 0; i < serviceList.size(); i++)
-		{
-			ServiceDescription sd = serviceList.get(i);
-			
-			long atomicId = registry.addService(sd);
-			
-			if(atomicId == -1)
-			{
-				// Then something has gone wrong
-			}
-			
-			if(sd.getProcessType() == ProcessType.CONVERTER)
-				continue;
-		}
+
+        for (ServiceDescription sd : serviceList) {
+            long atomicId = registry.addService(sd);
+
+            if (atomicId == -1) {
+                // TODO Then something has gone wrong
+                Log.d(TAG, "The atomic ID is -1, apparently this is bad");
+            }
+        }
 	}
 
 	private String setupComposer()
@@ -200,12 +194,11 @@ public class ServiceFactory
 				BluetoothService.processType.index,
 				0,
 				inputs, new ArrayList<ServiceIO>(), tags);
-		
-		String stuff = String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, btJSON);
-		return stuff;
+
+        return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, btJSON);
 	}
 	
-	// XXX Need to make sure allll the text is escaped
+	// TODO Need to make sure allll the text is escaped
 	
 	private String setupWifiService()
 	{

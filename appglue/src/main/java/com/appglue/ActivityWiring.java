@@ -2,8 +2,10 @@ package com.appglue;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
@@ -29,7 +31,6 @@ import java.util.ArrayList;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.COMPOSITE_ID;
 import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
@@ -66,25 +67,101 @@ public class ActivityWiring extends FragmentActivity
 		actionBar.setTitle(R.string.comp_title);
 		
 		Intent extras = this.getIntent();
-		long compositeId = extras.getLongExtra(COMPOSITE_ID, -1);
+		final long compositeId = extras.getLongExtra(COMPOSITE_ID, -1);
 
 		registry = Registry.getInstance(this);
 
-		if(compositeId == -1)
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setOnPageChangeListener(new OnPageChangeListener()
         {
-			cs = registry.getService();
-		
-            if(cs == null)
+            @Override
+            public void onPageSelected(int arg0)
             {
-                registry.createService();
-                cs = registry.getService();
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int arg0)
+            {
+
+            }
+
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2)
+            {
+
+            }
+        });
+
+        if(compositeId == -1)
+        {
+            // They are creating a new one
+
+            if(registry.tempExists())
+            {
+                // There is stuff in the temp -- they might want to save it
+                AlertDialog.Builder keepTemp = new AlertDialog.Builder(this);
+                keepTemp.setMessage("You have a saved draft, do you want to carry on with it, or start again?");
+                keepTemp.setCancelable(true);
+                keepTemp.setPositiveButton("Keep draft",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cs = registry.getTemp();
+                                finishWiringSetup();
+                            }
+                        });
+                keepTemp.setNegativeButton("Start new",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                cs = registry.createTemp();
+                                finishWiringSetup();
+                            }
+                        });
+
+                keepTemp.create().show();
+            }
+            else
+            {
+                // There isn't stuff in the temp, just use that
+                cs = registry.createTemp();
+                finishWiringSetup();
             }
         }
         else
         {
-            cs = registry.getComposite(compositeId);
+            if(registry.tempExists())
+            {
+                AlertDialog.Builder keepTemp = new AlertDialog.Builder(this);
+                keepTemp.setMessage("You have a saved draft, do you want to save it?");
+                keepTemp.setCancelable(true);
+                keepTemp.setPositiveButton("Save draft",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                registry.saveTemp("Saved draft");
+                                finishWiringSetup();
+                            }
+                        });
+                keepTemp.setNegativeButton("Discard draft",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                registry.createTemp();
+                                cs = registry.getComposite(compositeId);
+                                finishWiringSetup();
+                            }
+                        });
+
+                keepTemp.create().show();
+            }
+            else
+            {
+                cs = registry.getComposite(compositeId);
+                finishWiringSetup();
+            }
         }
-		
+    }
+
+    private void finishWiringSetup()
+    {
 		status = (TextView) findViewById(R.id.status);
 		
 		csNameText = (TextView) findViewById(R.id.cs_name);
@@ -129,28 +206,6 @@ public class ActivityWiring extends FragmentActivity
 			}
 		});
 
-		pager = (ViewPager) findViewById(R.id.pager);	
-		pager.setOnPageChangeListener(new OnPageChangeListener() 
-		{
-			@Override
-			public void onPageSelected(int arg0) 
-			{
-				invalidateOptionsMenu();
-			}
-
-			@Override
-			public void onPageScrollStateChanged(int arg0) 
-			{
-				
-			}
-
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) 
-			{
-				
-			}
-		});
-
         Button modeButton = (Button) findViewById(R.id.change_mode);
 		modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
 		modeButton.setOnClickListener(new OnClickListener() {
@@ -168,8 +223,6 @@ public class ActivityWiring extends FragmentActivity
 		Intent intent = this.getIntent();
 		int index = intent.getIntExtra(INDEX, -1);
 		boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
-		
-		Log.d(TAG, "Create new: " + createNew);
 		
 		if(createNew)
 		{
@@ -277,55 +330,7 @@ public class ActivityWiring extends FragmentActivity
 		
 		else if(item.getItemId() == R.id.wiring_done)
 		{
-			// Get the connected things out of the lists and send them back
-//			FragmentWiring wiringFragment = ((FragmentWiring) pagerAdapter.getItem(pager.getCurrentItem()));
-//			
-//			if(wiringFragment != null)
-//			{
-//				ServiceDescription first = wiringFragment.getFirst();
-//				ServiceDescription second = wiringFragment.getSecond();
-//				ArrayList<Point> connections = wiringFragment.getMap().getConnections();
-//				
-//				// We should now physically connect everything!
-//				if(connections != null)
-//				{
-//					for(int i = 0; i < connections.size(); i++)
-//					{
-//						Point p = connections.get(i);
-//						
-//						// Get the output from prior
-//						ServiceIO out = first.getOutputs().get(p.x);
-//						
-//						// Get the input from current
-//						ServiceIO in = second.getInputs().get(p.y);
-//						
-//						// Plug them in to each other?
-//						out.setConnection(in);
-//						in.setConnection(out);
-//					}
-//				}
-//			}
-			
-			if(cs.getId() != -1)
-			{
-				// This means it's been saved
-				boolean success = registry.updateWiring(cs);
-
-                // Don't simplify this, just because log is true now doesn't mean that it always will be
-				if(success && LOG)
-					Log.d(TAG, "Updated " + cs.getName());
-			}
-			
-			Intent intent = new Intent();
-			if (getParent() == null) 
-			{
-			    setResult(Activity.RESULT_OK, intent);
-			}
-			else 
-			{
-			    getParent().setResult(Activity.RESULT_OK, intent);
-			}
-			finish();
+			saveDialog();
 		}
 		else if(item.getItemId() == R.id.wiring_previous)
 		{
@@ -338,7 +343,56 @@ public class ActivityWiring extends FragmentActivity
 		
 		return true;
 	}
-	
+
+
+    private void saveDialog()
+    {
+        if(cs.getId() == 1)
+        {
+            // Then it's the temp, we should save it
+            String name = csNameEdit.getText().toString();
+
+            if(name.equals("Temp name"))
+            {
+                String tempName = "";
+                for(ServiceDescription sd : cs.getComponents())
+                    tempName += sd.getName() + "  ";
+
+                name = tempName;
+            }
+
+            registry.saveTemp(name);
+        }
+        else if(cs.getId() == -1)
+        {
+            // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
+            // TODO Probably the same as the above, but I'm not really sure...
+            Log.d(TAG, "the CS is -1, this might be bad.");
+        }
+        else
+        {
+            // We're just updating one that already exists
+            boolean success = registry.updateWiring(cs);
+            if(success)
+                Log.d(TAG, "Updated " + cs.getName());
+        }
+
+        // FIXME If they do decide to save it, this should also clear out the temp so that they don't get pestered at the beginning of the next thing
+        // FIXME It needs to move to the right place when you add a new component to the wiring page
+        // FIXME Click on the status message to view more status messages
+
+
+        Intent intent = new Intent();
+        if (getParent() == null)
+        {
+            setResult(Activity.RESULT_OK, intent);
+        }
+        else
+        {
+            getParent().setResult(Activity.RESULT_OK, intent);
+        }
+        finish();
+    }
 	
 	/**
 	 * Whatever happens, update the current one
@@ -391,6 +445,8 @@ public class ActivityWiring extends FragmentActivity
 		public WiringPagerAdapter(FragmentManager fragmentManager)
 		{
 			super(fragmentManager);
+
+            // FIXME cs is null at this point, probably because we've not gone through the setup properly?
 			fragments = new Fragment[cs.getComponents().size() + 1];
 		}
 

@@ -1,12 +1,34 @@
 package com.appglue.library;
 
-import static com.appglue.Constants.*;
-
-import java.util.HashMap;
-
 import com.appglue.library.IOFilter.FilterValue;
 
-import android.util.Log;
+import static com.appglue.Constants.AVG_RATING;
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.DESCRIPTION;
+import static com.appglue.Constants.DEVELOPER;
+import static com.appglue.Constants.FRIENDLY_NAME;
+import static com.appglue.Constants.ICON;
+import static com.appglue.Constants.ID;
+import static com.appglue.Constants.INPUT_CLASSNAME;
+import static com.appglue.Constants.INPUT_IO_ID;
+import static com.appglue.Constants.INSTALLED;
+import static com.appglue.Constants.IO_INDEX;
+import static com.appglue.Constants.IO_TYPE;
+import static com.appglue.Constants.I_OR_O;
+import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.NUM_RATINGS;
+import static com.appglue.Constants.OUTPUT_CLASSNAME;
+import static com.appglue.Constants.OUTPUT_IO_ID;
+import static com.appglue.Constants.PACKAGENAME;
+import static com.appglue.Constants.PARENT_SERVICE;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.PRICE;
+import static com.appglue.Constants.PROCESS_TYPE;
+import static com.appglue.Constants.SAMPLE_VALUE;
+import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.VALUE;
 
 public class AppGlueConstants 
 {
@@ -16,11 +38,10 @@ public class AppGlueConstants
 	public static final String MATCHING = "matching";
 	
 	// Database tables
-	public static final String TBL_ATOMIC = "atomic";
+	public static final String TBL_COMPONENT = "atomic";
 	public static final String TBL_COMPOSITE = "composite";
 	public static final String TBL_APP = "app";
-	public static final String TBL_PARAMETER = "parameter";
-	public static final String TBL_COMPOSITE_HAS_ATOMIC = "composite_has_atomic";
+	public static final String TBL_COMPOSITE_HAS_COMPONENT = "composite_has_atomic";
 	public static final String TBL_FILTER = "filter_values";
 	public static final String TBL_IO_SAMPLES = "io_samples";
 		
@@ -37,6 +58,8 @@ public class AppGlueConstants
 	
 	public static final String TRIGGERS_ONLY = "triggers_only";
 	public static final String NO_TRIGGERS = "no_triggers";
+
+    public static final int TEMP_ID = 1;
 	
 	public static final int SERVICE_REQUEST = 100;
 	public static final int PRE_EXEC_PARAMS = 101;
@@ -50,23 +73,6 @@ public class AppGlueConstants
 	
 	public static final int PLAY_SERVICES = 108;
 	public static final int STORY_MODE = 109;
-	
-//	public static enum Param
-//	{
-//		NUMBER(0, "Number"),
-//		STRING(1, "String"),
-//		ONE_SET(2, "One set"),
-//		MANY_SET(3, "Many set");
-//		
-//		public int index;
-//		public String name;
-//		
-//		Param(int index, String name)
-//		{
-//			this.index = index;
-//			this.name = name;
-//		}
-//	};
 	
 	public static final FilterValue[] FILTER_STRING_VALUES = new FilterValue[]
 	{ 
@@ -96,7 +102,8 @@ public class AppGlueConstants
 	public static final String ACTIVE_OR_TIMER = "should";
 	public static final String NUMERAL = "numeral";
 	public static final String INTERVAL = "interval";
-	
+
+
 	public static final String[][] COLS_COMPOSITE = new String[][]
 	{
 		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
@@ -109,7 +116,7 @@ public class AppGlueConstants
 		{ INTERVAL, "INTEGER" }
 	};
 	
-	public static final String[][] COLS_ATOMIC = new String[][]
+	public static final String[][] COLS_COMPONENT = new String[][]
 	{
 		{ CLASSNAME, "TEXT PRIMARY KEY" },
 		{ NAME, "TEXT" }, 
@@ -121,6 +128,21 @@ public class AppGlueConstants
 		{ SERVICE_TYPE, "INTEGER" }, 
 		{ PROCESS_TYPE, "INTEGER" }
 	};
+
+    public static final String[][] COLS_TAG = new String[][]
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { NAME, "TEXT" }
+    };
+
+
+    public static final String[][] COLS_COMPOSITE_HAS_COMPONENT = new String[][]
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID, },
+        { CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
+        { POSITION, "INT" }
+    };
 	
 	public static final String[][] COLS_SERVICEIO = new String[][]
 	{
@@ -130,11 +152,22 @@ public class AppGlueConstants
 		{ IO_INDEX, "INTEGER" },
 		{ IO_TYPE, "INTEGER" },
 		{ DESCRIPTION, "TEXT" },
-		{ PARENT_SERVICE, "TEXT" },
+		{ PARENT_SERVICE, "TEXT", TBL_COMPONENT, CLASSNAME },
 		{ MANDATORY, "TINYINT" },
 		{ I_OR_O, "INTEGER" }
 	};
-	
+
+    // Links between the output of one component in a composite and the input to another
+    public static final String[][] COLS_COMPOSITE_IOCONNECTION = new String[][]
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID },
+        { OUTPUT_CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
+        { OUTPUT_IO_ID, "INTEGER", TBL_SERVICEIO, ID },
+        { INPUT_CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
+        { INPUT_IO_ID, "INTEGER", TBL_SERVICEIO, ID }
+    };
+
 	public static final String[][] COLS_IOTYPE = new String[][]
 	{
 		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
@@ -149,7 +182,7 @@ public class AppGlueConstants
 	public static final String[][] COLS_IO_SAMPLES = new String[][]
 	{
 		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-		{ SERVICE_IO, "INTEGER" }, 
+		{ SERVICE_IO, "INTEGER", TBL_SERVICEIO, ID },
 		{ NAME, "TEXT" },
 		{ VALUE, "TEXT" }
 	};
@@ -162,9 +195,9 @@ public class AppGlueConstants
 	public static final String[][] COLS_FILTER = new String[][]
 	{
 		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-		{ SERVICE_IO, "INTEGER" }, // Need the ServiceIO that it relates to, we can use a join to find the type
-		{ CLASSNAME, "INTEGER "}, // Keep track of the atomic as well just in case!
-		{ COMPOSITE_ID, "INTEGER" }, // Need to keep track of which composite has these values
+		{ SERVICE_IO, "INTEGER", TBL_SERVICEIO, ID }, // Need the ServiceIO that it relates to, we can use a join to find the type
+		{ CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME }, // Keep track of the atomic as well just in case!
+		{ COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID }, // Need to keep track of which composite has these values
 		{ FILTER_STATE, "INTEGER" },
 		{ MANUAL_VALUE, "TEXT" }, // The value could be anything, better just set it as text so we can do some clever stuff at some point
 		{ SAMPLE_VALUE, "INTEGER DEFAULT '-1'" }, // This needs to be a reference to the iovalue table
@@ -180,24 +213,7 @@ public class AppGlueConstants
 		{ DEVELOPER, "TEXT" },
 		{ INSTALLED, "TINYINT" }
 	};
-	
-	public static final String[][] COLS_COMPOSITE_HAS_ATOMIC = new String[][]
-    {
-		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" }, 
-		{ COMPOSITE_ID, "INTEGER" }, 
-		{ CLASSNAME, "TEXT" }, 
-		{ POSITION, "INT" }
-    };
-	
-	public static final String[][] COLS_COMPOSITE_IOCONNECTION = new String[][]
-	{
-		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-		{ COMPOSITE_ID, "INTEGER" },
-		{ OUTPUT_CLASSNAME, "TEXT" },
-		{ OUTPUT_IO_ID, "INTEGER" },
-		{ INPUT_CLASSNAME, "TEXT" },
-		{ INPUT_IO_ID, "INTEGER" }
-	};
+
 	
 	public static final String TIME = "time";
 	public static final String MESSAGE = "message";
@@ -206,8 +222,8 @@ public class AppGlueConstants
 	public static final String[][] COLS_EXECUTION_LOG = new String[][]
 	{
 		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-		{ COMPOSITE_ID, "INTEGER" },
-		{ CLASSNAME, "TEXT" },
+		{ COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID },
+		{ CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
 		{ TIME, "TEXT" },
 		{ MESSAGE, "TEXT" },
 		{ LOG_TYPE, "INTEGER" }
@@ -216,11 +232,7 @@ public class AppGlueConstants
 	public static final String HAS_INPUTS = "has_inputs";
 	public static final String HAS_OUTPUTS = "has_outputs";
 	
-	public static final String[][] COLS_TAG = new String[][]
-	{
-		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-		{ NAME, "TEXT" }
-	};
+
 	
 	public static final String TAG_ID = "tag_id";
 	

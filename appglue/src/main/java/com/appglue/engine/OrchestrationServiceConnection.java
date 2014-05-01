@@ -625,7 +625,10 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 	break;
                 	 
                 case ComposableService.MSG_FAIL:
-                	
+
+                    // FIXME Need to work out exactly what I'm going to do if these things fail.
+                    // Might be time to have some settings. Always record them ot the log, but show a notification on occasion
+
                 	// Unbind the service that failed
                 	osc.doUnbindService();
                 	

@@ -47,10 +47,9 @@ public class PebbleNotification extends ComposableService
 	@Override
 	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
 	{
-		for(int i = 0; i < os.size(); i++)
-		{
-			performService(os.get(i), parameters);
-		}
+        for (Bundle o : os) {
+            performService(o, parameters);
+        }
 		
 		return null;
 	}

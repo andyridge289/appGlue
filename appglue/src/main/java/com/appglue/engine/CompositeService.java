@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import com.appglue.description.ServiceDescription;
 
-import android.os.Bundle;
+import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService 
 {
@@ -23,9 +23,12 @@ public class CompositeService
 	
 	private ArrayList<ServiceDescription> components;
 	
-	public CompositeService()
+	public CompositeService(boolean temp)
 	{
-		this.id = -1;
+        if(temp)
+            this.id = TEMP_ID;
+        else
+		    this.id = -1;
 		this.name = ""; // We know that the name can never be blank so we're good
 		this.description = "";
 		this.components = new ArrayList<ServiceDescription>();
@@ -34,7 +37,7 @@ public class CompositeService
 	
 	public CompositeService(String name, String description, ArrayList<ServiceDescription> components)
 	{
-		this();
+		this(false);
 		this.name = name;
 		this.description = description;
 		this.components = components;
@@ -45,23 +48,18 @@ public class CompositeService
 		return new CompositeService(NEW_COMPOSITE_PLACEHOLER, "Nothing", "Nothing", null, false);
 	}
 	
-	public CompositeService(long id)
-	{
-		
-	}
-	
 	public CompositeService(long id, String name, String description, boolean shouldBeRunning)
 	{
+        this(false);
 		this.id = id;
 		this.name = name;
-		this.components = null;
 		this.description = description;
-		
 		this.shouldBeRunning = shouldBeRunning;
 	}
 	
 	public CompositeService(long id, String name, String description, ArrayList<ServiceDescription> services, boolean shouldBeRunning)
 	{
+        this(false);
 		this.id = id;
 		this.name = name;
 		this.components = services;
@@ -72,6 +70,7 @@ public class CompositeService
 	
 	public CompositeService(long id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval)
 	{
+        this(false);
 		this.id = id;
 		this.name = name;
 		this.components = services;
@@ -85,6 +84,7 @@ public class CompositeService
 	
 	public CompositeService(ArrayList<ServiceDescription> orchestration)
 	{
+        this(false);
 		// Generate a random name
 		this.id = -1;
 		this.name = "Random Service";

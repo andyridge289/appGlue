@@ -1,19 +1,6 @@
 package com.appglue.serviceregistry;
 
 
-import static com.appglue.Constants.ICON;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.JSON_APP;
-import static com.appglue.Constants.JSON_SERVICE;
-import static com.appglue.Constants.TAG;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -23,11 +10,23 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 import com.appglue.services.triggers.HeadphoneTrigger;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static com.appglue.Constants.ICON;
+import static com.appglue.Constants.JSON_APP;
+import static com.appglue.Constants.JSON_SERVICE;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
 
 /***
  * This is the background service that is started when the app starts which listens for ComposableServices
@@ -37,8 +36,7 @@ import com.appglue.services.triggers.HeadphoneTrigger;
  */
 public class RegistryService extends Service
 {
-	private Receiver receiver;
-	private Registry registry = null;
+    private Registry registry = null;
 
 	@Override
 	public IBinder onBind(Intent arg0) 
@@ -54,7 +52,7 @@ public class RegistryService extends Service
 			registry = Registry.getInstance(this.getApplicationContext());
 		
 		IntentFilter filter = new IntentFilter("com.appglue.IM_A_COMPOSABLE_SERVICE");
-        receiver = new Receiver();
+        Receiver receiver = new Receiver();
         this.registerReceiver(receiver, filter);
         
         HeadphoneTrigger h = new HeadphoneTrigger();
@@ -78,7 +76,7 @@ public class RegistryService extends Service
 			String json = intent.getStringExtra(JSON_SERVICE);			
 			String icon = intent.getStringExtra(ICON);
 			
-			ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
+			ArrayList<ServiceDescription> services;
 			try 
 			{
 				
@@ -111,31 +109,22 @@ public class RegistryService extends Service
 				Log.e(TAG, "Broadcast failed - bad parsing: " + e.getLocalizedMessage());
 				return;
 			}
-			
-			for(int i = 0; i < services.size(); i++)
-			{
-				ServiceDescription sd = services.get(i);
-				
-				long atomicId = registry.addServiceFromBroadcast(sd);
-				
-				// -1 = Fail
-				// 0 = Already there, do nothing
-				// Otherwise its just the ID
-				if(atomicId == -1)
-				{
-					Toast.makeText(RegistryService.this, String.format("Failed to add device service: %s", sd.getName()), Toast.LENGTH_SHORT).show();
-				}
-				else if(atomicId != 0)
-				{
-					Toast.makeText(RegistryService.this, String.format("Added new device service: %s", sd.getName()), Toast.LENGTH_SHORT).show();
-				}
-				
-				if(sd.getProcessType() == ProcessType.CONVERTER)
-					continue;
-				
+
+            for (ServiceDescription sd : services) {
+                long atomicId = registry.addServiceFromBroadcast(sd);
+
+                // -1 = Fail
+                // 0 = Already there, do nothing
+                // Otherwise its just the ID
+                if (atomicId == -1) {
+                    Toast.makeText(RegistryService.this, String.format("Failed to add device service: %s", sd.getName()), Toast.LENGTH_SHORT).show();
+                } else if (atomicId != 0) {
+                    Toast.makeText(RegistryService.this, String.format("Added new device service: %s", sd.getName()), Toast.LENGTH_SHORT).show();
+                }
+
 //				ExternalConnection conn = ExternalConnection.getInstance();
 //				conn.getExternalService(sd);
-			}
+            }
 		}
     }
 }

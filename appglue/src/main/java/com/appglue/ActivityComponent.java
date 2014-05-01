@@ -43,8 +43,6 @@ import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ActivityComponent extends Activity
 {
 	private ServiceDescription service;
@@ -259,7 +257,7 @@ public class ActivityComponent extends Activity
      * @param icicle The Bundle into which to save all the stuff
      */
 	@Override
-	public void onSaveInstanceState(@NotNull Bundle icicle)
+	public void onSaveInstanceState(Bundle icicle)
 	{
 		icicle.putString(CLASSNAME, service.getClassName());
 		icicle.putBoolean(JUST_A_LIST, atomicList);
@@ -267,7 +265,7 @@ public class ActivityComponent extends Activity
 	}
 	
 	@Override
-	public void onRestoreInstanceState(@NotNull Bundle icicle)
+	public void onRestoreInstanceState(Bundle icicle)
 	{
 		super.onRestoreInstanceState(icicle);
 		
@@ -277,7 +275,7 @@ public class ActivityComponent extends Activity
 		restoreState(icicle);
 	}
 	
-	private void restoreState(@NotNull Bundle icicle)
+	private void restoreState(Bundle icicle)
 	{
 		String className = icicle.getString(CLASSNAME);
 		atomicList = icicle.getBoolean(JUST_A_LIST, false);

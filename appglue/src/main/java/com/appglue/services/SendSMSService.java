@@ -120,11 +120,10 @@ public class SendSMSService extends ComposableService
 		}
 		
 		StringBuilder text = new StringBuilder();
-		
-		for(int i = 0; i < os.size(); i++)
-		{
-			text.append(os.get(i).getString(ComposableService.TEXT) + "; ");
-		}
+
+        for (Bundle o : os) {
+            text.append(o.getString(ComposableService.TEXT)).append("; ");
+        }
 		
 		String msg = text.toString();
 		if(msg.length() > 160)

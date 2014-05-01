@@ -48,8 +48,8 @@ public abstract class ComposableService extends Service
     
     protected boolean isList = false;
     protected boolean wait = false;
-    protected boolean fail = false;
-    protected String error = "";
+    private boolean fail = false;
+    private String error = "";
     
     private static final boolean LOG = false;
     
@@ -83,9 +83,15 @@ public abstract class ComposableService extends Service
     public abstract ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters);
     public abstract ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters);
 
+    protected void fail(String message)
+    {
+        this.fail = true;
+        this.error = message;
+    }
+
     public void send(Object o)
     {
-        // FIXME NEed to re-implement this. Think I must have deleted it when I gave up with Play Services.
+        // FIXME Need to re-implement this. Think I must have deleted it when I gave up with Play Services.
     }
 
     class Async extends AsyncTask<Message, Void, Message>

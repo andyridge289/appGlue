@@ -88,7 +88,6 @@
          android:id="@+id/pager"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
-         android:layout_above="@id/status_bar"
          android:layout_below="@id/dummy_layout" >
 
          <android.support.v4.view.PagerTitleStrip

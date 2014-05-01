@@ -22,7 +22,6 @@ import com.appglue.engine.OrchestrationService;
 import com.appglue.layout.CompositionView;
 import com.appglue.serviceregistry.Registry;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -334,7 +333,7 @@ public class ActivityCompositionCanvas extends Activity
     }
 	
 	@Override
-	public void onSaveInstanceState(@NotNull Bundle icicle)
+	public void onSaveInstanceState(Bundle icicle)
 	{
 		CompositeService service = registry.getService();
 		if(service.getId() != -1)

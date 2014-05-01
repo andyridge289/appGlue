@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.appglue"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -115,7 +114,7 @@
         </activity>
         
         <service android:name=".serviceregistry.RegistryService"/>
-        <service android:name="com.appglue.engine.TriggerService"></service>
+        <!--<service android:name="com.appglue.engine.TriggerService"></service>-->
         <service android:name=".engine.OrchestrationService" />
 
         <!-- Services that can be composed -->
@@ -131,7 +130,7 @@
         
         <service android:name="com.appglue.services.util.WifiService" />
         <service android:name="com.appglue.services.util.BluetoothService" />
-        <service android:name="com.appglue.services.util.AirplaneService" />
+        <!--<service android:name="com.appglue.services.util.AirplaneService" />-->
          
         <receiver android:name=".services.triggers.ReceiveSMSTrigger" android:exported="true" >
             <intent-filter android:priority="999">
@@ -181,9 +180,12 @@
             </intent-filter>
         </receiver>
         
-       <!-- <receiver android:name=".serviceregistry.AppUninstalledReceiver" android:exported="true" >
+        <receiver android:name=".serviceregistry.AppUninstalledReceiver" android:exported="true" >
             <intent-filter>
                  <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                 <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
                  // android.intent.action.PACKAGE_ADDED
 //  android.intent.action.PACKAGE_CHANGED
 //  android.intent.action.PACKAGE_DATA_CLEARED
@@ -195,9 +197,7 @@
 //  android.intent.action.PACKAGE_REPLACED
 //  android.intent.action.PACKAGE_RESTARTED
 //  android.intent.action.PACKAGE_VERIFIED
-                 <data android:scheme="package" />
-            </intent-filter>
-        </receiver> -->
+
         
     </application>
 

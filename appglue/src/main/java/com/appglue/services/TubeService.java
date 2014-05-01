@@ -34,10 +34,8 @@ public class TubeService extends ComposableService
 	public static final String LINE_STATUS = "line_status";
 	public static final String LINE_MESSAGE = "line_message";
 	public static final String LINE_URL = "line_url";
-	
-	private final String url = "http://people.bath.ac.uk/ar289/services/tube/tube_status.php";
-	
-	private String getFromURL(String url, ArrayList<Bundle> parameters) throws ClientProtocolException, IOException
+
+    private String getFromURL(String url, ArrayList<Bundle> parameters) throws ClientProtocolException, IOException
 	{		
 		if(parameters == null)
 		{
@@ -46,23 +44,19 @@ public class TubeService extends ComposableService
 		else
 		{			
 			ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
-		
-			for(int i = 0; i < parameters.size(); i++)
-			{
-				Bundle b = parameters.get(i);
-				String name = b.getString(NAME);
-				String[] values = b.getStringArray(VALUE);
-				String value = "";
-				for(int j = 0; j < values.length; j++)
-				{
-					value += values[j];
-				}
-				
-				postData.add(new BasicNameValuePair(name, value));
-			}
-			
-			String postReturn = Network.httpPost(url, postData);
-			return postReturn;
+
+            for (Bundle b : parameters) {
+                String name = b.getString(NAME);
+                String[] values = b.getStringArray(VALUE);
+                String value = "";
+                for (String value1 : values) {
+                    value += value1;
+                }
+
+                postData.add(new BasicNameValuePair(name, value));
+            }
+
+            return Network.httpPost(url, postData);
 		}
 	}
 	
@@ -73,7 +67,8 @@ public class TubeService extends ComposableService
 		
 		try
 		{
-			output = getFromURL(url, parameters);
+            String url = "http://people.bath.ac.uk/ar289/services/tube/tube_status.php";
+            output = getFromURL(url, parameters);
 		}
 		catch (ClientProtocolException e) 
 		{
@@ -89,17 +84,17 @@ public class TubeService extends ComposableService
 		if(fail)
 		{
 			ArrayList<Bundle> deadLines = new ArrayList<Bundle>();
-			deadLines.add(this.makeBundle(-1, "No network!", "failure", null, ""));
+			deadLines.add(this.makeBundle("No network!", "failure", null, ""));
 			
 			isList = true;
 			
 			return deadLines;
 		}
 		
-		return processOutput(output, parameters);
+		return processOutput(output);
 	}
 
-	public ArrayList<Bundle> processOutput(String s, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> processOutput(String s)
 	{
 		try 
 		{
@@ -110,9 +105,8 @@ public class TubeService extends ComposableService
 			for(int i = 0; i < lines.length(); i++)
 			{
 				JSONObject jsonLine = lines.getJSONObject(i);
-				
-				int lineNum = i;
-				String lineName = jsonLine.getString(TAG_NAME);
+
+                String lineName = jsonLine.getString(TAG_NAME);
 				String status = jsonLine.getString(TAG_STATUS);
 				
 				JSONArray jsonMessages = jsonLine.getJSONArray(TAG_MESSAGES);
@@ -123,14 +117,14 @@ public class TubeService extends ComposableService
 					messages[j] = jsonMessages.getString(j);
 				}
 				
-				Bundle lineBundle = this.makeBundle(lineNum, lineName, status, messages, "");
+				Bundle lineBundle = this.makeBundle(lineName, status, messages, "");
 				
 				if(!status.equals(GOOD_SERVICE))
 					deadLines.add(lineBundle);
 			}
 			
 			if(deadLines.size() == 0)
-				deadLines.add(this.makeBundle(-1, "", "", null, ""));
+				deadLines.add(this.makeBundle("", "", null, ""));
 			
 			isList = true;
 			
@@ -143,7 +137,7 @@ public class TubeService extends ComposableService
 		}
 	}
 	
-	private Bundle makeBundle(int num, String name, String status, String[] messages, String url) 
+	private Bundle makeBundle(String name, String status, String[] messages, String url)
 	{
 		Bundle b = new Bundle();
 		

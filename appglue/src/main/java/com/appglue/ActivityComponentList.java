@@ -166,6 +166,7 @@ public class ActivityComponentList extends ActionBarActivity
 			lastService = registry.getAtomic(lastServiceName);
 		
 		// Setup the search bar
+        // TODO It jumps to the wrong page when you go there from Wiring
         // TODO I think it was this that was throwing all of those log messages about the input connection being dead
 //		search = (EditText) findViewById(R.id.component_search);
 //		search.setOnFocusChangeListener(new View.OnFocusChangeListener() 
