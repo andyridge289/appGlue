@@ -1,6 +1,24 @@
 package com.appglue.description;
 
-import static com.appglue.Constants.*;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.Bundle;
+
+import com.appglue.Constants.ProcessType;
+import com.appglue.Constants.ServiceType;
+import com.appglue.IOValue;
+import com.appglue.Review;
+import com.appglue.ServiceIO;
+import com.appglue.Tag;
+import com.appglue.datatypes.IOType;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
@@ -27,25 +45,6 @@ import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.TAGS;
-
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.util.Log;
-
-import com.appglue.Constants.ProcessType;
-import com.appglue.Constants.ServiceType;
-import com.appglue.IOValue;
-import com.appglue.Review;
-import com.appglue.ServiceIO;
-import com.appglue.Tag;
-import com.appglue.datatypes.IOType;
 
 public class ServiceDescription
 {	
@@ -174,25 +173,15 @@ public class ServiceDescription
 	
 	public boolean hasInputs()
 	{
-		if(this.inputs == null)
-			return false;
-	
-		if(this.inputs.size() == 0)
-			return false;
-		
-		return true;
-	}
+        return this.inputs != null && this.inputs.size() != 0;
+
+    }
 	
 	public boolean hasOutputs()
 	{
-		if(this.outputs == null)
-			return false;
-	
-		if(this.outputs.size() == 0)
-			return false;
-		
-		return true;
-	}
+        return this.outputs != null && this.outputs.size() != 0;
+
+    }
 	
 	public ArrayList<ServiceIO> getInputs()
 	{
@@ -208,8 +197,8 @@ public class ServiceDescription
 	/**
 	 * This is for filters - I don't think we'll ever need to get the inputs
 	 * 
-	 * @param outputId
-	 * @return
+	 * @param outputId The ID of the output to get
+	 * @return The object representing the output
 	 */
 	public ServiceIO getOutput(long outputId)
 	{
@@ -217,14 +206,12 @@ public class ServiceDescription
 		{
 			return null;
 		}
-		
-		for(int i = 0; i < outputs.size(); i++)
-		{
-			if(outputs.get(i).getId() == outputId)
-			{
-				return outputs.get(i);
-			}
-		}
+
+        for (ServiceIO output : outputs) {
+            if (output.getId() == outputId) {
+                return output;
+            }
+        }
 		
 		return null;
 	}
@@ -235,14 +222,12 @@ public class ServiceDescription
 		{
 			return null;
 		}
-		
-		for(int i = 0; i < inputs.size(); i++)
-		{
-			if(inputs.get(i).getId() == inputId)
-			{
-				return inputs.get(i);
-			}
-		}
+
+        for (ServiceIO input : inputs) {
+            if (input.getId() == inputId) {
+                return input;
+            }
+        }
 		
 		return null;
 	}
@@ -251,25 +236,21 @@ public class ServiceDescription
 	{
 		if(inputs == null)
 			inputs = new ArrayList<ServiceIO>();
-		
-		for(int i = 0; i < inputs.size(); i++)
-		{
-			if(inputs.get(i).getId() == id)
-			{
-				return inputs.get(i);
-			}
-		}
+
+        for (ServiceIO input : inputs) {
+            if (input.getId() == id) {
+                return input;
+            }
+        }
 		
 		if(outputs == null)
 			outputs = new ArrayList<ServiceIO>();
-		
-		for(int i = 0; i < outputs.size(); i++)
-		{
-			if(outputs.get(i).getId() == id)
-			{
-				return outputs.get(i);
-			}
-		}
+
+        for (ServiceIO output : outputs) {
+            if (output.getId() == id) {
+                return output;
+            }
+        }
 		
 		return null;
 	}
@@ -286,22 +267,20 @@ public class ServiceDescription
 	
 	public boolean hasIncomingLinks()
 	{
-		for(int i = 0; i < inputs.size(); i++)
-		{
-			if(inputs.get(i).getConnection() != null)
-				return true;
-		}
+        for (ServiceIO input : inputs) {
+            if (input.getConnection() != null)
+                return true;
+        }
 		
 		return false;
 	}
 	
 	public boolean hasOutgoingLinks()
 	{
-		for(int i = 0; i < outputs.size(); i++)
-		{
-			if(outputs.get(i).getConnection() != null)
-				return true;
-		}
+        for (ServiceIO output : outputs) {
+            if (output.getConnection() != null)
+                return true;
+        }
 		
 		return false;
 	}
@@ -314,26 +293,6 @@ public class ServiceDescription
 	public int getNumReviews()
 	{
 		return this.numReviews;
-	}
-	
-	public ArrayList<Review> getReviews()
-	{
-		return this.reviews;
-	}
-	
-	public void setReviews(ArrayList<Review> reviews)
-	{
-		this.reviews = reviews;
-	}
-	
-	public void addReviews(ArrayList<Review> reviews)
-	{
-		this.reviews.addAll(reviews);
-	}
-	
-	public void addReview(Review review)
-	{
-		this.reviews.add(review);
 	}
 	
 	public AppDescription getApp()
@@ -450,7 +409,7 @@ public class ServiceDescription
 		
 		JSONObject json = new JSONObject(jsonString);
 		
-		AppDescription app = null;
+		AppDescription app;
 		
 		if(appDescription == null)
 		{
@@ -499,11 +458,9 @@ public class ServiceDescription
 		
 		int serviceType = c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE));
 		int processType = c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE));
-		
-		ServiceDescription sd = new ServiceDescription(packageName, className, name, description, price, null, null,
-				ServiceDescription.getServiceType(serviceType), ServiceDescription.getProcessType(processType));
-				
-		return sd;
+
+        return new ServiceDescription(packageName, className, name, description, price, null, null,
+                ServiceDescription.getServiceType(serviceType), ServiceDescription.getProcessType(processType));
 	}
 	
 	// New JSON parsings methods
@@ -518,7 +475,7 @@ public class ServiceDescription
 			String ioName = input ? io.getString(INPUT_NAME) : io.getString(OUTPUT_NAME);
 			String friendlyName = io.getString(FRIENDLY_NAME);
 			String className = input ? io.getString(CLASSNAME) : io.getString(CLASSNAME);
-			boolean mandatory = input ? io.getBoolean(MANDATORY) : false;
+			boolean mandatory = input && io.getBoolean(MANDATORY);
 			
 			IOType type = IOType.Factory.getType(className);
 			String ioDescription = input ? io.getString(INPUT_DESCRIPTION) : io.getString(OUTPUT_DESCRIPTION);

@@ -1,18 +1,5 @@
 package com.appglue.layout;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.appglue.ActivityCompositeList;
-import com.appglue.ActivityCompositionCanvas;
-import com.appglue.R;
-import com.appglue.ServiceIO;
-import com.appglue.Constants.ProcessType;
-import com.appglue.description.ServiceDescription;
-import com.appglue.library.LocalStorage;
-import com.appglue.serviceregistry.Registry;
-
-import static com.appglue.Constants.TAG;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
@@ -28,16 +15,22 @@ import android.graphics.Region;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.widget.Toast;
+
+import com.appglue.ActivityCompositionCanvas;
+import com.appglue.R;
+import com.appglue.ServiceIO;
+import com.appglue.description.ServiceDescription;
+import com.appglue.library.LocalStorage;
+import com.appglue.serviceregistry.Registry;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class CompositionView extends View
 {
@@ -48,9 +41,7 @@ public class CompositionView extends View
 	private float posY = 0;
 	private float lastX = 0;
 	private float lastY = 0;
-	private float focusX = 0;
-	private float focusY = 0;
-	
+
 	private int canvasWidth = 2000;
 	private int canvasHeight = 2000;
 	
@@ -167,7 +158,7 @@ public class CompositionView extends View
 				final float x = ev.getX(pointerIndex);
 				final float y = ev.getY(pointerIndex);
 				
-				// Only move if the gesturedetector isn't processing a gesture
+				// Only move if the gesture detector isn't processing a gesture
 				if(!sgd.isInProgress())
 				{
 					final float dx = x - lastX;
@@ -227,7 +218,7 @@ public class CompositionView extends View
 		
 		regions.clear();
 		
-		canvasWidth = (int) ((int) deviceWidth + (components.size() * (COMPONENT_WIDTH + COMPONENT_GAP)));
+		canvasWidth = deviceWidth + (components.size() * (COMPONENT_WIDTH + COMPONENT_GAP));
 		canvasHeight = deviceHeight;
 		
 		canvas.drawBitmap(background, 0, 0, paint);
@@ -480,29 +471,29 @@ public class CompositionView extends View
 		
 		Bitmap.Config conf = Bitmap.Config.ARGB_8888;
 		Bitmap bmp = Bitmap.createBitmap(w, h, conf);
-	    Bitmap sbmp = Bitmap.createScaledBitmap(b, newW, newH, false);
+	    Bitmap scaledBitmap = Bitmap.createScaledBitmap(b, newW, newH, false);
 	    
 	    Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 	    Canvas c = new Canvas(bmp);
 	    
 	    
 	 // Right
-	    Shader rshader = new LinearGradient(newW, 0, w, 0, Color.GRAY, Color.LTGRAY, Shader.TileMode.CLAMP);
-	    paint.setShader(rshader);
+	    Shader rShader = new LinearGradient(newW, 0, w, 0, Color.GRAY, Color.LTGRAY, Shader.TileMode.CLAMP);
+	    paint.setShader(rShader);
 	    c.drawRect(newW, think, w, newH, paint);
 
 	    // Bottom
-	    Shader bshader = new LinearGradient(0, newH, 0, h, Color.GRAY, Color.LTGRAY, Shader.TileMode.CLAMP);
-	    paint.setShader(bshader);
+	    Shader bShader = new LinearGradient(0, newH, 0, h, Color.GRAY, Color.LTGRAY, Shader.TileMode.CLAMP);
+	    paint.setShader(bShader);
 	    c.drawRect(think, newH, newW  , h, paint);
 
 	    //Corner
-	    Shader cchader = new LinearGradient(0, newH, 0, h, Color.LTGRAY, Color.LTGRAY, Shader.TileMode.CLAMP);
-	    paint.setShader(cchader);
+	    Shader cShader = new LinearGradient(0, newH, 0, h, Color.LTGRAY, Color.LTGRAY, Shader.TileMode.CLAMP);
+	    paint.setShader(cShader);
 	    c.drawRect(newW, newH, w  , h, paint);
 
 
-	    c.drawBitmap(sbmp, 0, 0, null);
+	    c.drawBitmap(scaledBitmap, 0, 0, null);
 		
 		return bmp;
 	}
@@ -673,21 +664,19 @@ public class CompositionView extends View
 		{
 			scaleFactor *= detector.getScaleFactor();
 			scaleFactor = Math.max(0.1f, Math.min(scaleFactor, 5.0f));
-			focusX = detector.getFocusX();
-			focusY = detector.getFocusY();
-			
+
 //			if(scaleFactor < 5f)
 //			{
-//				
+//
 //				float focusX = detector.getFocusX();
 //				float focusY = detector.getFocusY();
-//				
+//
 //				float diffX = focusX - posX;
 //				float diffY = focusY - posY;
-//				
+//
 //				diffX = diffX * scaleFactor - diffX;
 //				diffY = diffY * scaleFactor - diffY;
-//				
+//
 //				posX -= diffX;
 //				posY -= diffY;
 //			}

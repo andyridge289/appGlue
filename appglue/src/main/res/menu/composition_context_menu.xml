@@ -6,7 +6,7 @@
         >
 	    <item
 	        android:id="@+id/composition_context_left"
-	        android:title="Move left"
+	        android:title="@string/move_left"
 	        android:icon="@drawable/ab_move_left"
 	        android:showAsAction="ifRoom|withText"
 	        />
@@ -17,7 +17,7 @@
         >
 	     <item
 	        android:id="@+id/composition_context_right"
-	        android:title="Move right"
+	        android:title="@string/move_right"
 	        android:icon="@drawable/ab_move_right"
 	        android:showAsAction="ifRoom|withText"
 	        />
@@ -25,14 +25,14 @@
     <!-- Get info -->
      <item
        android:id="@+id/composition_context_view"
-       android:title="View"
+       android:title="@string/view"
        android:icon="@drawable/ab_about"
        android:showAsAction="ifRoom|withText" 
        />
     <!-- Remove -->
     <item 
         android:id="@+id/composition_context_remove"
-        android:title="Remove"
+        android:title="@string/remove"
         android:icon="@drawable/ab_delete"
         android:showAsAction="ifRoom|withText" 
         />

@@ -17,7 +17,6 @@ import android.util.Log;
 import com.appglue.IOValue;
 import com.appglue.Library;
 import com.appglue.R;
-import com.appglue.Constants.ProcessType;
 import com.appglue.ServiceIO;
 import com.appglue.description.AppDescription;
 import com.appglue.datatypes.IOType;

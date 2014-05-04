@@ -17,13 +17,13 @@ public class Text extends IOType
 	}
 	
 	@Override
-	public Object toStorable(Object value) 
+	public String toStorable(Object value)
 	{
 		return (String) value;
 	}
 
 	@Override
-	public Object fromStorable(Object value) 
+	public String fromStorable(Object value)
 	{
 		// It's just a string so we're good
 		return (String) value;

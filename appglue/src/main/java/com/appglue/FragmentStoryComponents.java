@@ -133,10 +133,10 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			ArrayList<ServiceIO> inputs = component.getInputs();
 			ArrayList<ServiceIO> outputs = component.getOutputs();
 			
-			LinearLayout in = (LinearLayout) v.findViewById(R.id.input_list);
+			LinearLayout in = (LinearLayout) v.findViewById(R.id.storycomponent_input_list);
 			in.removeAllViews();
 			
-			LinearLayout out = (LinearLayout) v.findViewById(R.id.output_list);
+			LinearLayout out = (LinearLayout) v.findViewById(R.id.storycomponent_output_list);
 			out.removeAllViews();
 			
 			// Show placeholders if they aren't set

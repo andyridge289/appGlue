@@ -1,6 +1,9 @@
 package com.appglue.layout.dialog;
 
-import java.util.ArrayList;
+import android.app.AlertDialog;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
 import com.appglue.IOValue;
@@ -12,17 +15,7 @@ import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
 import com.appglue.serviceregistry.Registry;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.Spinner;
-import android.widget.TextView;
+import java.util.ArrayList;
 
 public abstract class DialogCustom extends AlertDialog 
 {
@@ -43,7 +36,7 @@ public abstract class DialogCustom extends AlertDialog
 	protected void setupDialog(Spinner fcs, FilterValue[] conditions, int type,
 			boolean hasSamples, Spinner fvs, ArrayList<IOValue> values,
 			RadioButton rs, RadioButton rt, ServiceIO item,
-			Class<? extends Object> cast, EditText fvt) {
+			Class<?> cast, EditText fvt) {
 
 		if (fcs != null)
 			fcs.setAdapter(new WiringFilterAdapter(activity,

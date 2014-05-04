@@ -4,17 +4,17 @@
         android:id="@+id/comp_context_rungroup">
 	    <item 
 	        android:id="@+id/comp_context_run"
-	        android:title="Run"
+	        android:title="@string/run"
 	        android:icon="@drawable/ab_run"
 	        android:showAsAction="ifRoom|withText" />
 	   <item 
 	        android:id="@+id/comp_context_timer"
-	        android:title="Schedule"
+	        android:title="@string/schedule"
 	        android:icon="@drawable/ab_timer"
 	        android:showAsAction="ifRoom|withText" />
 	   <item 
         	android:id="@+id/comp_context_shortcut"
-        	android:title="Create Shortcut"
+        	android:title="@string/create_shortcut"
         	android:icon="@drawable/ab_shortcut"
         	android:showAsAction="ifRoom|withText" />
    </group>
@@ -22,22 +22,22 @@
        android:id="@+id/comp_context_singlegroup">
 	   <item
 	       android:id="@+id/comp_context_view"
-	       android:title="View"
+	       android:title="@string/view"
 	       android:icon="@drawable/ab_about"
 	       android:showAsAction="ifRoom|withText" />
 	   <item 
 	        android:id="@+id/comp_context_edit"
-	        android:title="Edit"
+	        android:title="@string/edit"
 	        android:icon="@drawable/ab_edit"
 	        android:showAsAction="ifRoom|withText" />
 	   <item 
 	        android:id="@+id/comp_context_editstory"
-	        android:title="Edit (Story)"
+	        android:title="@string/edit_story"
 	        android:showAsAction="ifRoom|withText" />
 	   </group>
    <item 
         android:id="@+id/comp_context_delete"
-        android:title="Delete"
+        android:title="@string/delete"
         android:icon="@drawable/ab_delete"
         android:showAsAction="ifRoom|withText" />
 </menu>

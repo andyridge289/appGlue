@@ -1,11 +1,10 @@
 package com.appglue.library;
 
-import java.util.ArrayList;
-
 import android.os.AsyncTask;
 
 import com.appglue.description.ServiceDescription;
-import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
 
 public class ExternalConnection 
 {
@@ -18,11 +17,11 @@ public class ExternalConnection
 		externalServices = new ArrayList<ServiceDescription>();
 	}
 	
-	public ArrayList<ServiceDescription> getExteralServices()
+	public ArrayList<ServiceDescription> getExternalServices()
 	{
 		return externalServices;
 	}
-	
+
 	public class Async extends AsyncTask<String, Void, ArrayList<ServiceDescription>>
 	{
 		private final int TYPE_SEARCH = 0;
@@ -89,7 +88,7 @@ public class ExternalConnection
 //					int errno = error.getInt(JSON_ERRNO);
 //					
 //					if(errno == ERR_CLASSNAME)
-//						return returnedServices; // The classname wasn't set, this is just a bit of a cock up
+//						return returnedServices; // The class name wasn't set, this is just a bit of a cock up
 //					else if(errno == ERR_NOSERVICE)
 //						addService();
 //						
@@ -211,7 +210,7 @@ public class ExternalConnection
 		@Override
 		protected void onPostExecute(ArrayList<ServiceDescription> services)
 		{	
-			Registry registry = Registry.getInstance(null);
+//			Registry registry = Registry.getInstance(null);
 			
 //			if(this.type == TYPE_SEARCH)
 //			{

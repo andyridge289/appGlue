@@ -26,6 +26,11 @@ public abstract class IOType
 		this.id = id;
 		this.name = name;
 	}
+
+    public String toString()
+    {
+        return this.id + ": " + this.name;
+    }
 	
 	public long getID()
 	{
@@ -59,11 +64,11 @@ public abstract class IOType
 
 	public boolean equals(IOType other)
 	{
-		if(!this.className.equals(other.getClassName()))
-			return false;
-		
-		return true;
-	}
+        return this.className.equals(other.getClassName());
+
+    }
+
+
 	
 	public abstract Object toStorable(Object value);
 	public abstract Object fromStorable(Object value);

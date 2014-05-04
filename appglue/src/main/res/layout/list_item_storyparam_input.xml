@@ -39,6 +39,7 @@
     	    android:layout_alignParentRight="true"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
     	    android:visibility="gone"
     	    >
     	
@@ -46,6 +47,7 @@
 	    	    android:id="@+id/dont_filter_button"
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
 				android:text="Don't filter"
 	    	    />
 	    	
@@ -53,6 +55,7 @@
 	    	    android:id="@+id/done_button"
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
+                style="?android:attr/buttonBarButtonStyle"
 				android:text="Done"
 	    	    />
     	

@@ -1,14 +1,28 @@
 package com.appglue;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+
+import com.appglue.datatypes.IOType;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Set;
+
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
-import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.INPUTS;
 import static com.appglue.Constants.INPUT_DESCRIPTION;
 import static com.appglue.Constants.INPUT_NAME;
 import static com.appglue.Constants.INPUT_TYPE;
+import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.OUTPUTS;
 import static com.appglue.Constants.OUTPUT_DESCRIPTION;
@@ -17,27 +31,10 @@ import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
-import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
-import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TAGS;
-
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Set;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.util.Log;
-
-import com.appglue.datatypes.IOType;
 
 public class Library 
 {
@@ -151,7 +148,7 @@ public class Library
 			if(thing == null)
 				continue;
 				
-			Class<? extends Object> className = thing.getClass();
+			Class<?> className = thing.getClass();
 			
 			if(className.equals(Bundle.class))
 			{
@@ -200,9 +197,9 @@ public class Library
 		for(int i = 0; i < data.length; i++)
 		{
 			if(addQuotes)
-				out.append("\"" + data[i] + "\"" + (i < data.length - 1 ? "," : ""));
+				out.append("\"").append(data[i]).append("\"").append(i < data.length - 1 ? "," : "");
 			else
-				out.append(data[i] + (i < data.length - 1 ? "," : ""));
+				out.append(data[i]).append(i < data.length - 1 ? "," : "");
 		}
 		
 		return out.toString();
@@ -234,9 +231,8 @@ public class Library
 		}
 		
 		Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-		Drawable d = new BitmapDrawable(context.getResources(), b);
-		
-		return d;
+
+        return new BitmapDrawable(context.getResources(), b);
 	}
 	
 	public static Bitmap stringToBitmap(String s)
@@ -248,7 +244,6 @@ public class Library
 			bytes[i] = (byte) chars[i];
 		}
 
-		Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-		return b;
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 	}
 }

@@ -30,7 +30,7 @@ public class FragmentStoryAnnotate extends Fragment implements OnClickListener
         
         // XXX Do a lookup to see if they've already used this name.
         nameText = (EditText) v.findViewById(R.id.name_text);
-        descriptionText = (EditText) v.findViewById(R.id.description_text);
+        descriptionText = (EditText) v.findViewById(R.id.story_description_text);
         
         doneButton = (TextView) v.findViewById(R.id.done_button);
         doneButton.setOnClickListener(this);

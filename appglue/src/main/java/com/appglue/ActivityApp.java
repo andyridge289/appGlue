@@ -31,26 +31,23 @@ import android.widget.TextView;
 
 public class ActivityApp extends Activity
 {
-	private Registry registry;
-	
-	private LocalStorage localStorage;
-	
-	private AppDescription app;
-	
-	public void onCreate(Bundle icicle)
+
+    private LocalStorage localStorage;
+
+    public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		
 		setContentView(R.layout.activity_app);
-		
-		registry = Registry.getInstance(this);
+
+        Registry registry = Registry.getInstance(this);
 		localStorage = LocalStorage.getInstance();
 		
 		Intent intent = this.getIntent();
 		String packageName = intent.getStringExtra(PACKAGENAME);
 		if(LOG) Log.d(TAG, "Got package " + packageName);
-		
-		app = registry.getApp(packageName);
+
+        AppDescription app = registry.getApp(packageName);
 		
 		((TextView) findViewById(R.id.app_name)).setText(app.getName());
 		((TextView) findViewById(R.id.app_dev)).setText(app.getDeveloper());

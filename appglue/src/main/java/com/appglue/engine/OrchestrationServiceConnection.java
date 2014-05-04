@@ -472,7 +472,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         public void handleMessage(Message msg) 
         {   
         	Log.w(TAG, Thread.currentThread().getName() + ": IncomingHandler.handleMessage() " + System.currentTimeMillis());
-        	if(LOG) Log.d(TAG, String.format("Orch received [%d] - %d: %s", osc.index, msg.what, Library.printBundle(msg.getData())));
+        	if(LOG) Log.d(TAG, String.format("Orchestration received [%d] - %d: %s", osc.index, msg.what, Library.printBundle(msg.getData())));
         	
         	ReceiverTask rt = osc.new ReceiverTask(osc);
         	Message m = Message.obtain();

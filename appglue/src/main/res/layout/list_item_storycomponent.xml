@@ -4,10 +4,10 @@
     android:orientation="vertical" >
     
      <LinearLayout
-        android:id="@+id/input_list"
+        android:id="@+id/storycomponent_input_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/input_bar"
+        android:background="@drawable/io_bar"
         android:orientation="horizontal"
         android:padding="0dip"
         />
@@ -20,10 +20,10 @@
     
     
     <LinearLayout
-        android:id="@+id/output_list"
+        android:id="@+id/storycomponent_output_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/output_bar"
+        android:background="@drawable/io_bar"
         android:orientation="horizontal"
         />
 

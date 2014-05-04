@@ -40,9 +40,8 @@ public class LogItem
 		this.className = c.getString(c.getColumnIndex(CLASSNAME));
 		this.time = c.getString(c.getColumnIndex(TIME));
 		this.message = c.getString(c.getColumnIndex(MESSAGE));
-		
-		int success = c.getInt(c.getColumnIndex(LOG_TYPE));
-		this.status = success;
+
+        this.status = c.getInt(c.getColumnIndex(LOG_TYPE));
 	}
 
 	public long getId() 

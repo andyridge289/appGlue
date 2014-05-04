@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.TAG;
 

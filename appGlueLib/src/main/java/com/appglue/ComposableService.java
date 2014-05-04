@@ -206,11 +206,7 @@ public abstract class ComposableService extends Service
 		@Override
 		protected void onPostExecute(Message returnMessage)
 		{
-			if(toastMessage == null)
-			{
-				// Don't really know what to do in this situation
-			}
-			else if(!toastMessage.equals(""))
+			if(!toastMessage.equals(""))
 			{
 				Toast.makeText(ComposableService.this, toastMessage, Toast.LENGTH_SHORT).show();
 			}
@@ -244,7 +240,6 @@ public abstract class ComposableService extends Service
     	
     	private IncomingHandler(ComposableService cs)
     	{
-    		if(LOG) Log.d(TAG, "Incoming handler for " + cs.toString());
     		this.cs = cs;
     	}
     	

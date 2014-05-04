@@ -165,4 +165,28 @@
     <string name="param_cancel">I changed my mind..</string>
 
     <string name="prefs_notifications">prefs_notifications</string>
+    <string name="no_examples">No examples available</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="done">Done</string>
+    <string name="clear_log">Clear log</string>
+    <string name="clear_remote_services">Clear Remote Services</string>
+    <string name="change_view">Change view</string>
+    <string name="run">Run</string>
+    <string name="schedule">Schedule</string>
+    <string name="create_shortcut">Create Shortcut</string>
+    <string name="view">View</string>
+    <string name="delete">Delete</string>
+    <string name="edit_story">Edit (Story)</string>
+    <string name="enter_value">Enter a value</string>
+    <string name="share">Share</string>
+    <string name="move_left">Move left</string>
+    <string name="move_right">Move right</string>
+    <string name="remove">Remove</string>
+    <string name="how_often">How often would you like the service to run?</string>
+    <string name="once_every">Once every..</string>
+    <string name="run_now">Run service now?</string>
+    <string name="composite_name">Composite Name</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
 </resources>

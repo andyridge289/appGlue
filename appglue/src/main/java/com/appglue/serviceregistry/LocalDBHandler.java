@@ -1,46 +1,5 @@
 package com.appglue.serviceregistry;
 
-import static com.appglue.Constants.AVG_RATING;
-import static com.appglue.library.AppGlueConstants.TEMP_ID;
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.DB_NAME;
-import static com.appglue.Constants.DB_VERSION;
-import static com.appglue.Constants.DESCRIPTION;
-import static com.appglue.Constants.FRIENDLY_NAME;
-import static com.appglue.Constants.ICON;
-import static com.appglue.Constants.ID;
-import static com.appglue.Constants.INPUT_CLASSNAME;
-import static com.appglue.Constants.INPUT_IO_ID;
-import static com.appglue.Constants.INPUT_TYPE;
-import static com.appglue.Constants.INSTALLED;
-import static com.appglue.Constants.IO_INDEX;
-import static com.appglue.Constants.IO_TYPE;
-import static com.appglue.Constants.I_OR_O;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.MANDATORY;
-import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.NUM_RATINGS;
-import static com.appglue.Constants.OUTPUT_CLASSNAME;
-import static com.appglue.Constants.OUTPUT_IO_ID;
-import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PARENT_SERVICE;
-import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.PRICE;
-import static com.appglue.Constants.PROCESS_TYPE;
-import static com.appglue.Constants.SAMPLE_VALUE;
-import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.VALUE;
-import static com.appglue.library.AppGlueConstants.*;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Set;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -63,6 +22,82 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Set;
+
+import static com.appglue.Constants.AVG_RATING;
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.DB_NAME;
+import static com.appglue.Constants.DB_VERSION;
+import static com.appglue.Constants.DESCRIPTION;
+import static com.appglue.Constants.FRIENDLY_NAME;
+import static com.appglue.Constants.ICON;
+import static com.appglue.Constants.ID;
+import static com.appglue.Constants.INPUT_CLASSNAME;
+import static com.appglue.Constants.INPUT_IO_ID;
+import static com.appglue.Constants.INSTALLED;
+import static com.appglue.Constants.IO_INDEX;
+import static com.appglue.Constants.IO_TYPE;
+import static com.appglue.Constants.I_OR_O;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.NUM_RATINGS;
+import static com.appglue.Constants.OUTPUT_CLASSNAME;
+import static com.appglue.Constants.OUTPUT_IO_ID;
+import static com.appglue.Constants.PACKAGENAME;
+import static com.appglue.Constants.PARENT_SERVICE;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.PRICE;
+import static com.appglue.Constants.PROCESS_TYPE;
+import static com.appglue.Constants.SAMPLE_VALUE;
+import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.VALUE;
+import static com.appglue.library.AppGlueConstants.ACTIVE_OR_TIMER;
+import static com.appglue.library.AppGlueConstants.COLS_APP;
+import static com.appglue.library.AppGlueConstants.COLS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.COLS_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE;
+import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_HAS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.COLS_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.COLS_FILTER;
+import static com.appglue.library.AppGlueConstants.COLS_IOTYPE;
+import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.COLS_TAG;
+import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
+import static com.appglue.library.AppGlueConstants.FILTER_STATE;
+import static com.appglue.library.AppGlueConstants.INTERVAL;
+import static com.appglue.library.AppGlueConstants.IS_RUNNING;
+import static com.appglue.library.AppGlueConstants.LOG_TYPE;
+import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
+import static com.appglue.library.AppGlueConstants.MESSAGE;
+import static com.appglue.library.AppGlueConstants.NUMERAL;
+import static com.appglue.library.AppGlueConstants.SERVICE_IO;
+import static com.appglue.library.AppGlueConstants.SHOULD_BE_RUNNING;
+import static com.appglue.library.AppGlueConstants.TAG_ID;
+import static com.appglue.library.AppGlueConstants.TBL_APP;
+import static com.appglue.library.AppGlueConstants.TBL_COMPONENT;
+import static com.appglue.library.AppGlueConstants.TBL_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE;
+import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_HAS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.TBL_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.TBL_FILTER;
+import static com.appglue.library.AppGlueConstants.TBL_IOTYPE;
+import static com.appglue.library.AppGlueConstants.TBL_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.TBL_TAG;
+import static com.appglue.library.AppGlueConstants.TEMP_ID;
+import static com.appglue.library.AppGlueConstants.TIME;
 
 public class LocalDBHandler extends SQLiteOpenHelper
 {
@@ -192,7 +227,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
      *
      * 	Also initialise the temporary composite
 	 * 
-	 * @param db
+	 * @param db The Database
 	 */
 	private void postCreateInsert(SQLiteDatabase db)
 	{
@@ -259,20 +294,15 @@ public class LocalDBHandler extends SQLiteOpenHelper
             db.rawQuery(sql, null);
     }
 	
-	public boolean initialiased()
+	public boolean initialised()
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		String sql = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_APP, PACKAGENAME, "com.appglue");
 		Cursor c = db.rawQuery(sql, null);
-		
-		if(c == null)
-			return false;
-		
-		if(c.getCount() > 0)
-			return true;
-		else
-			return false;
-	}
+
+        return c != null && c.getCount() > 0;
+
+    }
 	
 	/***********************************************************************************
 	 * Atomic service stuff
@@ -282,8 +312,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Adds a new atomic service for the given service description
 	 * 
-	 * @param sd
-	 * @return
+	 * @param sd The object representation of the component
+	 * @return The id of the inserted component
 	 */
 	public long addAtomic(ServiceDescription sd)
 	{
@@ -302,7 +332,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		values.put(NUM_RATINGS, sd.getNumReviews());
 		values.put(PRICE, sd.getPrice());
 		
-		long retval = -1;
+		long retval;
 		int inputSuccess = 0;
 		int outputSuccess = 0;
 		
@@ -357,26 +387,25 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
         for (ServiceIO io1 : ios) {
             ContentValues values = new ContentValues();
-            ServiceIO io = io1;
 
-            values.put(NAME, io.getName());
-            values.put(FRIENDLY_NAME, io.getFriendlyName());
-            values.put(IO_INDEX, io.getIndex());
-            values.put(DESCRIPTION, io.getDescription());
+            values.put(NAME, io1.getName());
+            values.put(FRIENDLY_NAME, io1.getFriendlyName());
+            values.put(IO_INDEX, io1.getIndex());
+            values.put(DESCRIPTION, io1.getDescription());
 
             if (!input)
                 values.put(MANDATORY, false);
             else
-                values.put(MANDATORY, io.isMandatory());
+                values.put(MANDATORY, io1.isMandatory());
 
-            IOType type = io.getType();
+            IOType type = io1.getType();
             if (type.getID() == -1) // Then it hasn't been validated, see if it's in the database
             {
                 long inputId = this.getInputOutputIfExists(type.getName(), type.getClass().getCanonicalName()).getID();
 
                 if(inputId == -1)
                 {
-                    Log.e(TAG, "ID is -1 for " + io.getName());
+                    Log.e(TAG, "ID is -1 for " + io1.getName());
                 }
 
                 values.put(IO_TYPE, inputId);
@@ -392,7 +421,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
             if (ioId == -1) {
                 failures = true;
             } else {
-                boolean sampleSuccess = addSampleValues(ioId, io);
+                boolean sampleSuccess = addSampleValues(ioId, io1);
                 if (!sampleSuccess)
                     failures = true;
             }
@@ -407,24 +436,22 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		boolean win = true;
 		
 		ArrayList<IOValue> samples = io.getSampleValues();
-		
-		for(int i = 0; i < samples.size(); i++)
-		{
-			IOValue sample = samples.get(i);
-			ContentValues cv = new ContentValues();
-			cv.put(SERVICE_IO, ioId);
-			cv.put(NAME, sample.name);
-			
-			// The value could be anything really - This might be working but I'm really not sure....
-			IOType type = io.getType();
-			String stringValue = type.toString();
-			
-			cv.put(VALUE, stringValue);
-			
-			long sampleId = db.insertOrThrow(TBL_IO_SAMPLES, null, cv);
-			if(sampleId == -1)
-				win = false;
-		}
+
+        for (IOValue sample : samples) {
+            ContentValues cv = new ContentValues();
+            cv.put(SERVICE_IO, ioId);
+            cv.put(NAME, sample.name);
+
+            // The value could be anything really - This might be working but I'm really not sure....
+            IOType type = io.getType();
+            String stringValue = type.toString();
+
+            cv.put(VALUE, stringValue);
+
+            long sampleId = db.insertOrThrow(TBL_IO_SAMPLES, null, cv);
+            if (sampleId == -1)
+                win = false;
+        }
 		
 		return win;
 	}
@@ -452,7 +479,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		c.moveToFirst();
 		
-		long id = c.getLong(c.getColumnIndex(ID));
 		String name = c.getString(c.getColumnIndex(NAME));
 		String stringValue = c.getString(c.getColumnIndex(VALUE));
 		
@@ -692,7 +718,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			String name = c.getString(c.getColumnIndex(NAME));
 			String friendlyName = c.getString(c.getColumnIndex(FRIENDLY_NAME));
 			int index = c.getInt(c.getColumnIndex(IO_INDEX));
-			boolean mandatory = c.getInt(c.getColumnIndex(MANDATORY)) == 1 ? true: false;
+			boolean mandatory = c.getInt(c.getColumnIndex(MANDATORY)) == 1;
 
             if(c.getLong(c.getColumnIndex(IO_TYPE)) == -1)
             {
@@ -759,8 +785,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * We only need the intermediary table for going the other way I think!!
 	 * 
-	 * @param packageName
-	 * @return
+	 * @param packageName The name of the package to check for apps
+	 * @return An object representing the app description
 	 */
 	private AppDescription getAppForService(String packageName)
 	{
@@ -899,7 +925,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		c.moveToFirst();
 		
 		long id = c.getLong(c.getColumnIndex(ID));
-		String name = c.getString(c.getColumnIndex(NAME));
 		String className = c.getString(c.getColumnIndex(CLASSNAME));
 		
 		IOType type = IOType.Factory.getType(className);
@@ -912,7 +937,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * Adds an IOType with the given class name
 	 * 
 	 * @param name	The name of the IOType to be added
-     * @param className the class name of the IO to be aqdded
+     * @param className the class name of the IO to be added
 	 * @return				The ID of the inserted IOType
 	 */
 	public long addInputOutput(String name, String className)
@@ -1013,7 +1038,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					Log.d(TAG, "Updated " + ret + " rows for " + cs.getId() + "(" + cs.getName() + ")");
 			
 			// Clear the atomic table for that component, then add all the components
-			int num = db.delete(TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID + " = ?", new String[]{ "" + cs.getId() });
 			for(int i = 0; i < components.size(); i++)
 			{
 				long linkId = this.addCompositeHasAtomic(cs.getId(), components.get(i).getClassName(), i);
@@ -1025,7 +1049,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			}
 						
 			// Clear the IO connections then add them all
-			num = db.delete(TBL_COMPOSITE_IOCONNECTION,  COMPOSITE_ID + " = ?", new String[]{ "" + cs.getId() });
+			db.delete(TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID + " = ?", new String[]{"" + cs.getId()});
 			
 			boolean ioSuccess = addIOConnections(cs.getId(), components);
 			boolean filterValueSuccess = updateFiltersAndValues(cs);
@@ -1059,37 +1083,31 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		boolean allSuccess = true;
 		
 		// Loop through the inputs to the second service in each pair, and then add a connection for the relevant output to the relevant input
-		for(int i = 0; i < services.size(); i++)
-		{
-			ServiceDescription current = services.get(i);
-			
-			// Loop through the current inputs
-			ArrayList<ServiceIO> currentInputs = current.getInputs();
-			for(int j = 0; j < currentInputs.size(); j++)
-			{
-				ServiceIO input = currentInputs.get(j);
-				ServiceIO output = input.getConnection();
-				
-				if(output == null) // Currenty nothing is mandatory...
-					continue;
-				
-				ContentValues values = new ContentValues();
-				values.put(COMPOSITE_ID, compositeId);
-				values.put(INPUT_CLASSNAME, current.getClassName());
-				values.put(INPUT_IO_ID, input.getId());
-				values.put(OUTPUT_IO_ID, output.getId());
-				values.put(OUTPUT_CLASSNAME, output.getParent().getClassName());
-				
-				long connectionId = db.insert(TBL_COMPOSITE_IOCONNECTION, null, values);
-				
-				if(connectionId == -1)
-				{
-					Log.e(TAG, compositeId + ": Failed to set link between " + current.getClassName() + 
-							   " and " + output.getParent().getClassName());
-					allSuccess = false;
-				}
-			}
-		}
+        for (ServiceDescription current : services) {
+            // Loop through the current inputs
+            ArrayList<ServiceIO> currentInputs = current.getInputs();
+            for (ServiceIO input : currentInputs) {
+                ServiceIO output = input.getConnection();
+
+                if (output == null) // Currently nothing is mandatory...
+                    continue;
+
+                ContentValues values = new ContentValues();
+                values.put(COMPOSITE_ID, compositeId);
+                values.put(INPUT_CLASSNAME, current.getClassName());
+                values.put(INPUT_IO_ID, input.getId());
+                values.put(OUTPUT_IO_ID, output.getId());
+                values.put(OUTPUT_CLASSNAME, output.getParent().getClassName());
+
+                long connectionId = db.insert(TBL_COMPOSITE_IOCONNECTION, null, values);
+
+                if (connectionId == -1) {
+                    Log.e(TAG, compositeId + ": Failed to set link between " + current.getClassName() +
+                            " and " + output.getParent().getClassName());
+                    allSuccess = false;
+                }
+            }
+        }
 		
 		return allSuccess;
 	}
@@ -1098,7 +1116,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * Get all of the composites!
 	 * 
 	 * @return All of the composites
-     * @param includeTemp
+     * @param includeTemp whether the temp should be included or not
 	 */
 	public ArrayList<CompositeService> getComposites(boolean includeTemp)
 	{
@@ -1175,7 +1193,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Sort out the components of the composite
 	 * 
-	 * @param cs
+	 * @param cs The composite inside which the composites exist
 	 */
 	public void setupComponents(CompositeService cs)
 	{
@@ -1362,14 +1380,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		long id = cs.getId();
 		
 		SQLiteDatabase db = this.getWritableDatabase();
-		int status = db.delete(TBL_COMPOSITE, ID + "=?", new String[] { "" + id });
-		status = db.delete(TBL_COMPOSITE_HAS_COMPONENT, ID +"=?", new String[]{ "" + id });
-		status = db.delete(TBL_COMPOSITE_IOCONNECTION, ID + "=?", new String[] { "" + id });
-		status = db.delete(TBL_FILTER, ID + "=?", new String[] { "" + id });
-		
-		// Not sure what to do with status
+		int cStatus = db.delete(TBL_COMPOSITE, ID + "=?", new String[] { "" + id });
+		int chcStatus = db.delete(TBL_COMPOSITE_HAS_COMPONENT, ID +"=?", new String[]{ "" + id });
+		int cioStatus = db.delete(TBL_COMPOSITE_IOCONNECTION, ID + "=?", new String[] { "" + id });
+		int fStatus = db.delete(TBL_FILTER, ID + "=?", new String[] { "" + id });
 
-		return true;
+        return cStatus == -1 || chcStatus == -1 || cioStatus == -1 || fStatus == -1;
 	}
 	
 	public ArrayList<CompositeService> getIntendedRunningComposites()
@@ -1399,7 +1415,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 				String name = c.getString(c.getColumnIndex(NAME));
 				long numeral = c.getLong(c.getColumnIndex(NUMERAL));
 				int intervalIndex = c.getInt(c.getColumnIndex(INTERVAL));
-				Interval interval = null;
+				Interval interval;
 				
 				if(intervalIndex == Interval.SECONDS.index)
 				{
@@ -1430,8 +1446,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Returns whether it should be running, and then whether it is running
 	 * 
-	 * @param id
-	 * @return
+	 * @param id The id of the composite to find out about the running status
+	 * @return The running status of the composite
 	 */
 	public Pair<Boolean, Boolean> compositeRunning(long id)
 	{
@@ -1459,9 +1475,9 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Set whether a composite service is currently running or not
 	 * 
-	 * @param id
-	 * @param running
-	 * @return
+	 * @param id The id of the composite
+	 * @param running The new running status
+	 * @return The success?
 	 */
 	public boolean setCompositeIsRunning(long id, long running)
 	{
@@ -1472,9 +1488,9 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/**
 	 * Sets whether the composite service should be running or not
 	 * 
-	 * @param id
-	 * @param running
-	 * @return
+	 * @param id The id of the composite
+	 * @param running the new active status
+	 * @return The success of this?
 	 */
 	public boolean setCompositeActive(long id, long running)
 	{		
@@ -1485,10 +1501,10 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * So we don't have such code duplication with two methods doing essentially
 	 * the same thing.
 	 * 
-	 * @param id
-	 * @param running
-	 * @param type
-	 * @return
+	 * @param id The id of the composite
+	 * @param running The running status of the composite
+	 * @param type Custom type
+	 * @return The status
 	 */
 	private boolean setCompositeRunning(long id, long running, String type)
 	{
@@ -1505,10 +1521,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		args.put(type, running);
 		int retval = db.update(TBL_COMPOSITE, args, strFilter, null);
 
-		if(retval == 0)
-			return false;
-		else
-			return true;
+        return retval != 0;
 	}
 	
 	
@@ -1542,14 +1555,10 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			Log.e(TAG, String.format("Cursor dead compositeExistsWithName %s", name));
 			return false;
 		}
-		
-		if(c.getCount() == 0)
-		{
-			return false;
-		}
-		
-		return true;
-	}
+
+        return c.getCount() != 0;
+
+    }
 	
 	public boolean setTimerDuration(long compositeId, long numeral, Interval interval)
 	{
@@ -1562,11 +1571,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		
 		String strFilter = ID + "=" + compositeId;
 		int retval = db.update(TBL_COMPOSITE, values, strFilter, null);
-		
-		if(retval == 1)
-			return true;
-		else
-			return false;
+
+        return retval == 1;
 	}
 	
 	public Pair<Long, Interval> getTimerDuration(long compositeId)
@@ -1594,7 +1600,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		long numeral = c.getLong(c.getColumnIndex(NUMERAL));
 		int intervalValue = c.getInt(c.getColumnIndex(INTERVAL));
 		
-		Interval interval = null;
+		Interval interval;
 		
 		if(intervalValue == Interval.SECONDS.index)
 		{
@@ -1622,76 +1628,65 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		ArrayList<ServiceDescription> components = cs.getComponents();
 		int runningFailures = 0;
 		
-		// Delete all of the filters for that partcular composite 
+		// Delete all of the filters for that particular composite
 		int numRemoved = db.delete(TBL_FILTER, COMPOSITE_ID + " = ?", new String[] { "" + cs.getId() });
 		if(LOG) Log.d(TAG, "Removed " + numRemoved + " from Filter for " + cs.getId() + "("  + cs.getName() + ")");
-		
-		for(int i = 0; i < components.size(); i++)
-		{
-			ServiceDescription c = components.get(i);
-			
-			// Do the filter conditions on the outputs first
-			ArrayList<ServiceIO> inputs = c.getInputs();
-			for(int j = 0; j < inputs.size(); j++)
-			{
-				ServiceIO o = inputs.get(j);
-				if(o.isFiltered() != ServiceIO.UNFILTERED)
-				{
-					ContentValues values = new ContentValues();
-					
-					// Set the filter state
-					values.put(FILTER_STATE, o.isFiltered());
-					values.put(COMPOSITE_ID, cs.getId());
-					values.put(SERVICE_IO, o.getId());
-					values.put(CLASSNAME, c.getClassName());
-					
-					values.put(MANUAL_VALUE, o.getManualValue().toString());
-					
-					values.put(SAMPLE_VALUE, o.getChosenSampleValue().id);
-					
-					values.put(FILTER_CONDITION, o.getCondition());
-					
-					long ret = db.insert(TBL_FILTER, null, values);
-					
-					if(ret == -1)
-					{
-						runningFailures++;
-					}
-				}
-			}
-			
-			
-			// Do the filter conditions on the outputs first
-			ArrayList<ServiceIO> outputs = c.getOutputs();
-			for(int j = 0; j < outputs.size(); j++)
-			{
-				ServiceIO o = outputs.get(j);
-				if(o.isFiltered() != ServiceIO.UNFILTERED)
-				{
-					ContentValues values = new ContentValues();
-					
-					// Set the filter state
-					values.put(FILTER_STATE, o.isFiltered());
-					values.put(COMPOSITE_ID, cs.getId());
-					values.put(SERVICE_IO, o.getId());
-					values.put(CLASSNAME, c.getClassName());
-					
-					values.put(MANUAL_VALUE, o.getManualValue().toString());
-					values.put(SAMPLE_VALUE, o.getChosenSampleValue().id);
-					
-					values.put(FILTER_CONDITION, o.getCondition());
-					
-					long ret = db.insert(TBL_FILTER, null, values);
-					
-					if(ret == -1)
-					{
-						runningFailures++;
-					}
-				}
-			}
-			
-			
-		}
+
+        for (ServiceDescription c : components) {
+            // Do the filter conditions on the outputs first
+            ArrayList<ServiceIO> inputs = c.getInputs();
+            for (ServiceIO o : inputs) {
+                if (o.isFiltered() != ServiceIO.UNFILTERED) {
+                    ContentValues values = new ContentValues();
+
+                    // Set the filter state
+                    values.put(FILTER_STATE, o.isFiltered());
+                    values.put(COMPOSITE_ID, cs.getId());
+                    values.put(SERVICE_IO, o.getId());
+                    values.put(CLASSNAME, c.getClassName());
+
+                    values.put(MANUAL_VALUE, o.getManualValue().toString());
+
+                    values.put(SAMPLE_VALUE, o.getChosenSampleValue().id);
+
+                    values.put(FILTER_CONDITION, o.getCondition());
+
+                    long ret = db.insert(TBL_FILTER, null, values);
+
+                    if (ret == -1) {
+                        runningFailures++;
+                    }
+                }
+            }
+
+
+            // Do the filter conditions on the outputs first
+            ArrayList<ServiceIO> outputs = c.getOutputs();
+            for (ServiceIO o : outputs) {
+                if (o.isFiltered() != ServiceIO.UNFILTERED) {
+                    ContentValues values = new ContentValues();
+
+                    // Set the filter state
+                    values.put(FILTER_STATE, o.isFiltered());
+                    values.put(COMPOSITE_ID, cs.getId());
+                    values.put(SERVICE_IO, o.getId());
+                    values.put(CLASSNAME, c.getClassName());
+
+                    values.put(MANUAL_VALUE, o.getManualValue().toString());
+                    values.put(SAMPLE_VALUE, o.getChosenSampleValue().id);
+
+                    values.put(FILTER_CONDITION, o.getCondition());
+
+                    long ret = db.insert(TBL_FILTER, null, values);
+
+                    if (ret == -1) {
+                        runningFailures++;
+                    }
+                }
+            }
+
+
+        }
 
 		return runningFailures == 0;
 	}
@@ -1700,7 +1695,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * This one needs to set all of the values out of the database for a Composite 
 	 * that's already been got.
 	 * 
-	 * @param cs
+	 * @param cs The composite to get the filter values for
 	 */
 	public void getFiltersAndValues(CompositeService cs)
 	{
@@ -2037,25 +2032,22 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 		
 		boolean allWin = true;
 		ArrayList<Tag> tags = component.getTags();
-		
-		for(int i = 0; i < tags.size(); i++)
-		{
-			Tag t = tags.get(i);
-			if(t.getId() == -1)
-			{
-				// Then we need to get an ID (and maybe insert it)
-				t = getTag(t.getName());
-			}
-			
-			ContentValues cv = new ContentValues();
-			cv.put(TAG_ID, t.getId());
-			cv.put(CLASSNAME, component.getClassName());
-			
-			long id = db.insert(TBL_COMPONENT_HAS_TAG, null, cv);
-			
-			if(id == -1)
-				allWin = false;
-		}
+
+        for (Tag t : tags) {
+            if (t.getId() == -1) {
+                // Then we need to get an ID (and maybe insert it)
+                t = getTag(t.getName());
+            }
+
+            ContentValues cv = new ContentValues();
+            cv.put(TAG_ID, t.getId());
+            cv.put(CLASSNAME, component.getClassName());
+
+            long id = db.insert(TBL_COMPONENT_HAS_TAG, null, cv);
+
+            if (id == -1)
+                allWin = false;
+        }
 		
 		return allWin;
 	}
@@ -2122,12 +2114,11 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 		
 		HashMap<String, ServiceDescription> components =  new HashMap<String, ServiceDescription>();
 		HashMap<String, Long> types = new HashMap<String, Long>();
-		for(int i = 0; i < ios.size(); i++)
-		{
-			IOType type = ios.get(i).getType();
-			if(!types.containsKey(type.getClassName()))
-				types.put(type.getClassName(), type.getID());
-		}
+        for (ServiceIO io : ios) {
+            IOType type = io.getType();
+            if (!types.containsKey(type.getClassName()))
+                types.put(type.getClassName(), type.getID());
+        }
 		
 		Set<String> keys = types.keySet();
 		
@@ -2144,14 +2135,11 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 			// Get all the inputs that use that type - we only want the IDs at this stage
 			// We've got inputs from the component parameter, so we need to get the outputs of the other one. Or vice versa
 			ArrayList<String> componentNames = this.getComponentIdsForType(id, !inputs);
-			for(int i = 0; i < componentNames.size(); i++)
-			{
-				String name = componentNames.get(i);
-				if(!components.containsKey(name))
-				{
-					components.put(name, getAtomic(name));
-				}
-			}
+            for (String name : componentNames) {
+                if (!components.containsKey(name)) {
+                    components.put(name, getAtomic(name));
+                }
+            }
 		}
 		
 		ArrayList<ServiceDescription> c = new ArrayList<ServiceDescription>();
@@ -2163,16 +2151,7 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 		
 		return c;
 	}
-	
-	private ArrayList<ServiceDescription> getComponents(ArrayList<Long> ids)
-	{
-		ArrayList<ServiceDescription> components = new ArrayList<ServiceDescription>();
-		
-		SQLiteDatabase db = this.getReadableDatabase();
-		
-		return components;
-	}
-	
+
 	private ArrayList<String> getComponentIdsForType(long id, boolean inputs)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();

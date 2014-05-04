@@ -1,12 +1,5 @@
 package com.appglue.layout.dialog;
 
-import static com.appglue.library.AppGlueConstants.FILTER_BOOL_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
-
-import java.util.ArrayList;
-
-import android.app.Activity;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +14,12 @@ import com.appglue.R;
 import com.appglue.ServiceIO;
 import com.appglue.datatypes.IOType;
 import com.appglue.layout.WiringMap;
+
+import java.util.ArrayList;
+
+import static com.appglue.library.AppGlueConstants.FILTER_BOOL_VALUES;
+import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
+import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
 
 public class DialogIO extends DialogCustom
 {
@@ -41,7 +40,7 @@ public class DialogIO extends DialogCustom
 		if(values == null)
 			values = new ArrayList<IOValue>();
 		
-		final boolean hasSamples = values.size() == 0 ? false : true;
+		final boolean hasSamples = values.size() != 0;
 		
 		if(!hasSamples)
 		{

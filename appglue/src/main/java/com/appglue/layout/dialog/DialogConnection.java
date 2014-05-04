@@ -1,13 +1,5 @@
 package com.appglue.layout.dialog;
 
-import java.util.ArrayList;
-
-import com.appglue.ActivityWiring;
-import com.appglue.R;
-import com.appglue.ServiceIO;
-import com.appglue.layout.WiringMap;
-
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
 import android.view.LayoutInflater;
@@ -17,6 +9,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.appglue.ActivityWiring;
+import com.appglue.R;
+import com.appglue.ServiceIO;
+import com.appglue.layout.WiringMap;
+
+import java.util.ArrayList;
 
 public class DialogConnection extends DialogCustom
 {	

@@ -1,12 +1,5 @@
 package com.appglue.layout.dialog;
 
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
-
-import java.util.List;
-
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -24,6 +17,11 @@ import com.appglue.ActivityWiring;
 import com.appglue.R;
 import com.appglue.ServiceIO;
 import com.appglue.layout.WiringMap;
+
+import java.util.List;
+
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
 
 public class DialogApp extends DialogCustom
 {
@@ -136,7 +134,7 @@ public class DialogApp extends DialogCustom
 			{	
 				public void onClick(View v) 
 				{
-					// Unselect everything
+					// De-select everything
 					selectedIndex = position;
 					notifyDataSetChanged();
 				}

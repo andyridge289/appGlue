@@ -36,7 +36,7 @@ public class Constants
 			this.index = index;
 			this.name = name;
 		}
-	};
+	}
 	
 	public static enum Requiredness
 	{
@@ -69,7 +69,7 @@ public class Constants
 			this.index = index;
 			this.name = name;
 		}
-	};
+	}
 	
 	public static enum ProcessType
 	{
@@ -87,7 +87,7 @@ public class Constants
 			this.index = index;
 			this.name = name;
 		}
-	};
+	}
 	
 	public static enum Interval
 	{
@@ -132,7 +132,7 @@ public class Constants
 			this.description = description;
 			this.level = level;
 		}
-	};
+	}
 	
 	public static enum Level
 	{

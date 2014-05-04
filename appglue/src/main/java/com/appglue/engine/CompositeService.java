@@ -19,7 +19,7 @@ public class CompositeService
 	
 	private boolean shouldBeRunning;
 	
-	public static final int NEW_COMPOSITE_PLACEHOLER = Integer.MIN_VALUE;
+	public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 	
 	private ArrayList<ServiceDescription> components;
 	
@@ -45,7 +45,7 @@ public class CompositeService
 	
 	public static CompositeService makePlaceholder()
 	{
-		return new CompositeService(NEW_COMPOSITE_PLACEHOLER, "Nothing", "Nothing", null, false);
+		return new CompositeService(NEW_COMPOSITE_PLACEHOLDER, "Nothing", "Nothing", null, false);
 	}
 	
 	public CompositeService(long id, String name, String description, boolean shouldBeRunning)
@@ -95,16 +95,15 @@ public class CompositeService
 	}
 	
 	/**
-	 * @param className
-	 * @return
+	 * @param className The name of the class
+	 * @return The Component
 	 */
 	public ServiceDescription getComponent(String className)
 	{
-		for(int i = 0 ; i < components.size(); i++)
-		{
-			if(components.get(i).getClassName().equals(className))
-				return components.get(i);
-		}
+        for (ServiceDescription component : components) {
+            if (component.getClassName().equals(className))
+                return component;
+        }
 		
 		return null;
 	}
@@ -196,9 +195,6 @@ public class CompositeService
 
 	public boolean containsTrigger()
 	{
-		if(this.components.get(0).getProcessType() == ProcessType.TRIGGER)
-			return true;
-		else
-			return false;
+        return this.components.get(0).getProcessType() == ProcessType.TRIGGER;
 	}
 }

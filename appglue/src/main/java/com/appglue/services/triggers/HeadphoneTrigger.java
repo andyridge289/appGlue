@@ -17,7 +17,7 @@ public class HeadphoneTrigger extends GenericTrigger
 	@Override
 	public void onReceive(Context context, Intent intent) 
 	{	
-		if(LOG) Log.d(TAG, "Haedphones plugged/unplugged");
+		if(LOG) Log.d(TAG, "Headphones plugged/unplugged");
 		
 		String action = intent.getAction();
 		

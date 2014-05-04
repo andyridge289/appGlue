@@ -17,19 +17,19 @@ public class NumberInt extends IOType
 	}
 
 	@Override
-	public Object toStorable(Object value) 
+	public Integer toStorable(Object value)
 	{
 		return (Integer) value;
 	}
 	
-	public Object fromStorable(Object value)
+	public Integer fromStorable(Object value)
 	{
 		return (Integer) value;
 	}
 	
 	public String toString(Object value)
 	{
-		return "" + (Integer) value;
+		return "" + value;
 	}
 	
 	public Object fromString(String value)

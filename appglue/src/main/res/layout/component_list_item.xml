@@ -73,6 +73,7 @@
 	                    android:id="@+id/comp_item_trigger"
 	                    android:layout_width="16dip"
 	                    android:layout_height="16dip"
+                        android:contentDescription="Trigger icon"
 	                    android:layout_alignParentLeft="true"
 	                    android:src="@drawable/ic_trigger"
 	                    android:visibility="gone"
@@ -92,6 +93,7 @@
 	                <ImageView
 	                    android:id="@+id/comp_item_filter"
 	                    android:layout_width="16dip"
+                        android:contentDescription="Fitler icon"
 	                    android:layout_height="14dip"
 	                    android:layout_below="@id/comp_item_trigger"
 	                    android:src="@drawable/ic_filter"

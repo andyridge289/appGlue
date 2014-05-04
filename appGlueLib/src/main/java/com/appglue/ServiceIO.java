@@ -167,11 +167,9 @@ public class ServiceIO
 	
 	public boolean equals(ServiceIO io)
 	{
-		if(!this.description.equals(io.getDescription()))
-			return false;
-		
-		return true;
-	}
+        return this.description.equals(io.getDescription());
+
+    }
 	
 	public int isFiltered()
 	{
@@ -233,10 +231,7 @@ public class ServiceIO
 	
 	public boolean hasValue()
 	{
-		if(this.manualValue != null || this.chosenSampleValue != null)
-			return true;
-		else
-			return false;
+        return this.manualValue != null || this.chosenSampleValue != null;
 	}
 	
 	public boolean isMandatory()

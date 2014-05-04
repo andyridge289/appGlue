@@ -6,7 +6,7 @@
     
     <TextView
         style="@style/FillWrap"
-        android:text="Enter a value"
+        android:text="@string/enter_value"
         />
 
  	<LinearLayout 

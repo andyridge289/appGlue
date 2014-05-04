@@ -41,17 +41,18 @@ public class Test
 		
 		Object obj = bundle.get(ComposableService.INPUT);
 		
-		Class<? extends Object> className = obj.getClass();
+		Class<?> className = obj.getClass();
 		
 		if(index == 0)
 		{
+            if(LOG) Log.d(TAG, "The index is zero");
 			// Do nothing?
 		}
 		if(className.equals(Bundle.class))
 		{
 			// If input is a bundle, then it should have a TEXT
 			
-			Bundle input = (Bundle) obj;
+//			Bundle input = (Bundle) obj;
 			
 //			if(!input.containsKey(ComposableService.TEXT))
 //			{
@@ -63,8 +64,7 @@ public class Test
 		{
 			// If input is an ArrayList, each element should have a TEXT
 			
-			@SuppressWarnings("unchecked")
-			ArrayList<Bundle> inputs = (ArrayList<Bundle>) obj;
+//			ArrayList<Bundle> inputs = (ArrayList<Bundle>) obj;
 			 
 //			for(int i = 0; i < inputs.size(); i++)
 //			{

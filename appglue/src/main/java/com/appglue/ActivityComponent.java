@@ -180,7 +180,7 @@ public class ActivityComponent extends Activity
                     else
                     {
                         // Do something?
-                        Log.e(TAG, "Couldn't launch app because the packagemanager is null: " + service.getApp().getPackageName());
+                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + service.getApp().getPackageName());
                     }
 				}
 				catch (Exception e) 

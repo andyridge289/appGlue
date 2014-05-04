@@ -21,14 +21,11 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 
 import com.appglue.Constants.ServiceType;
-import com.appglue.description.ServiceDescription;
-import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.LAST_CLASSNAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.RESULT;
 import static com.appglue.Constants.SERVICE_TYPE;
@@ -84,8 +81,6 @@ public class ActivityComponentList extends ActionBarActivity
 		
 		setContentView(R.layout.activity_component_list);
 
-        Registry registry = Registry.getInstance(this);
-		
 		Intent intent = this.getIntent();
 		
 		// This is the stuff for story mode
@@ -159,11 +154,11 @@ public class ActivityComponentList extends ActionBarActivity
 			}
 		}
 		
-		String lastServiceName = intent.getStringExtra(LAST_CLASSNAME);
+//		String lastServiceName = intent.getStringExtra(LAST_CLASSNAME);
 
-        ServiceDescription lastService;
-        if(lastServiceName != null)
-			lastService = registry.getAtomic(lastServiceName);
+//        ServiceDescription lastService;
+//        if(lastServiceName != null)
+//			lastService = registry.getAtomic(lastServiceName);
 		
 		// Setup the search bar
         // TODO It jumps to the wrong page when you go there from Wiring
@@ -279,6 +274,7 @@ public class ActivityComponentList extends ActionBarActivity
 				adapter.notifyDataSetChanged();
 			}
 		});
+
 
 
 		

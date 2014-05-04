@@ -68,7 +68,7 @@ public class LocationService extends ComposableService //implements GooglePlaySe
 
 		if (mWifi.isConnected()) 
 		{
-		    Toast.makeText(this, "Wifi is connected, this sometimes doens't work for looking up Lat long. You can ask google why", Toast.LENGTH_LONG).show();
+		    Toast.makeText(this, "Wifi is connected, this sometimes doesn't work for looking up Lat long. You can ask google why", Toast.LENGTH_LONG).show();
 		}
 		
 		Geocoder g = new Geocoder(this, Locale.getDefault());

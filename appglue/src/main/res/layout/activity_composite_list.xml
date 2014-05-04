@@ -20,6 +20,7 @@
 	
 	<ImageView
         android:id="@+id/loading_spinner"
+        android:contentDescription="Loading spinner"
         android:layout_width="16px"
         android:layout_height="16px"
         android:background="@drawable/loader"

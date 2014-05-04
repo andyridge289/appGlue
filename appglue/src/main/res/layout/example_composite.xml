@@ -9,7 +9,7 @@
 	    android:id="@+id/example_name"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:text="Composite Name"
+	    android:text="@string/composite_name"
 	    android:gravity="center_horizontal"
 	    android:duplicateParentState="true"
 	    />
@@ -23,6 +23,7 @@
 	    <ImageView
 	        android:id="@+id/example_icon_0"
 	        android:layout_width="32dip"
+            android:contentDescription=""
 	        android:layout_height="32dip"
 	        android:layout_margin="4dip"
 	        android:layout_marginLeft="10dip"
@@ -32,6 +33,7 @@
 	    
 	    <ImageView
 	        android:layout_width="24dip"
+            android:contentDescription=""
 	        android:layout_height="24dip"
 	        android:layout_margin="8dip"
 	        android:src="@drawable/right" 
@@ -40,6 +42,7 @@
 	    
 	    <ImageView
 	        android:id="@+id/example_icon_1"
+            android:contentDescription=""
 	        android:layout_width="32dip"
 	        android:layout_height="32dip"
 	        android:layout_margin="4dip"

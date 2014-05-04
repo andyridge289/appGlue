@@ -1,14 +1,15 @@
 package com.appglue.services;
 
-import java.util.ArrayList;
-
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
+
+import java.util.ArrayList;
 
 public class NotificationService extends ComposableService {
 	
@@ -23,15 +24,19 @@ public class NotificationService extends ComposableService {
 		String title = input.getString(NOTIFICATION_TITLE, "");
 		String text = input.getString(NOTIFICATION_TEXT, "");
 
-		NotificationManager n = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Context context = getApplicationContext();
+        NotificationManager n = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // TODO Find the "new" way of doing this
-		Notification notification = new Notification.Builder(context)
-				.setContentTitle(title).setContentText(text)
-				.setSmallIcon(R.drawable.ic_launcher).getNotification();
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+                this)
+                .setContentText(text)
+                .setContentTitle(title)
+                .setSmallIcon(R.drawable.icon) // TODO Include an image for the icon, maybe large icon too
+                .setPriority(NotificationCompat.PRIORITY_MIN) // TODO Priority needs to be added to the notification service
+                .setVibrate(null)
+                .setTicker(title + ": " + text);
 
-		n.notify(this.hashCode(), notification);
+        Notification notification = notificationBuilder.build();
+        n.notify(this.hashCode(), notification);
 		
 		return null;
 	}
@@ -47,10 +52,17 @@ public class NotificationService extends ComposableService {
 			String title = b.getString(NOTIFICATION_TITLE);
 			String text = b.getString(NOTIFICATION_TEXT);
 
-			Notification notification = new Notification.Builder(context)
-					.setContentTitle(title)
-					.setContentText(text)
-					.setSmallIcon(R.drawable.ic_launcher).getNotification();
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(
+                    this)
+                    .setContentText(text)
+                    .setContentTitle(title)
+                    .setSmallIcon(R.drawable.icon) // TODO Include an image for the icon, maybe large icon too
+                    .setPriority(NotificationCompat.PRIORITY_MIN) // TODO Priority needs to be added to the notification service
+                    .setVibrate(null)
+                    .setTicker(title + ": " + text);
+
+            Notification notification = notificationBuilder.build();
+            n.notify(this.hashCode(), notification);
 
 			n.notify(this.hashCode() + i, notification);
 		}

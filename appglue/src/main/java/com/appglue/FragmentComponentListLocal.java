@@ -19,7 +19,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
 
-import com.appglue.Constants.ServiceType;
 import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.serviceregistry.Registry;
@@ -119,7 +118,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 						
 						if(prior == null && next == null)
 						{
-							// Both null, get everthing
+							// Both null, get everything
 							services = registry.getAllDeviceServices();
 						}
 						else if(prior != null && next == null)
@@ -134,7 +133,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 						}
 						else {
                             if (prior == null && next != null) {
-                                // Prior is dead, next is alive, just use nexts inputs
+                                // Prior is dead, next is alive, just use next's inputs
 
                                 // IF there's nothing to match, just get everything
                                 if (next.hasInputs())

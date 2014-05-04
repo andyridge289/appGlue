@@ -48,7 +48,7 @@ public class ActivityCompositionCanvas extends Activity
 	// Wiring also needs a test button
 		// Put it in the actionbar menu
 	// Wiring also needs the done button to work
-		// If they came compositioncanvas is needs to go back there
+		// If they came composition canvas is needs to go back there
 		// Otherwise it needs to go back to the composite list
 	// Remove the name from the wiring page
 		// If they haven't entered a name when they click done, they should be prompted to do so
@@ -289,7 +289,7 @@ public class ActivityCompositionCanvas extends Activity
 		}
 		else
 		{
-			// We're coming back from somewhere that isn't wiring or adding, so we dooo... nothing?
+			// We're coming back from somewhere that isn't wiring or adding, so we do... nothing?
 			// Fuck it. Just refresh. What's the worst that can happen....
 			refresh();
 		}

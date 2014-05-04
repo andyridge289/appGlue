@@ -1,64 +1,26 @@
 package com.appglue.layout;
 
-import static com.appglue.Constants.FULL_ALPHA;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.FILTER_BOOL_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_SET_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.database.DataSetObserver;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IOValue;
 import com.appglue.R;
 import com.appglue.ServiceIO;
 import com.appglue.datatypes.IOType;
@@ -71,6 +33,15 @@ import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
 import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+
+import static com.appglue.Constants.FULL_ALPHA;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
 
 public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 {
@@ -324,16 +295,15 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		
 		// Sort by IOType then add the different ones
 		String previous = "";
-		for(int i = 0; i < ios.size(); i++)
-		{
-			IOType type = ios.get(i).getType();
+        for (ServiceIO io : ios) {
+            IOType type = io.getType();
 
-			if(type.getClass().getCanonicalName().equals(previous) && !type.getClass().getCanonicalName().equals(Set.class.getCanonicalName()))
-				continue;
-			
-			previous = type.getClass().getCanonicalName();
-			distinctTypes.add(type);
-		}
+            if (type.getClass().getCanonicalName().equals(previous) && !type.getClass().getCanonicalName().equals(Set.class.getCanonicalName()))
+                continue;
+
+            previous = type.getClass().getCanonicalName();
+            distinctTypes.add(type);
+        }
 
 		if(distinctTypes.size() == 0)
 			return;
@@ -396,12 +366,10 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
             Path path = new Path();
             // Need to get the class of one of the items
 
+            View selectedOutput = outputList.getChildAt(connection.x);
+            View selectedInput = inputList.getChildAt(connection.y);
 
-            Point p = connection;
-            View selectedOutput = outputList.getChildAt(p.x);
-            View selectedInput = inputList.getChildAt(p.y);
-
-            String className = first.getOutputs().get(p.x).getType().getClassName();
+            String className = first.getOutputs().get(connection.x).getType().getClassName();
             int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
 
             // This should be half the width of the ``tab'' you click on
@@ -623,7 +591,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 				{
 					if(inputConnection(position) || first == null || !first.hasOutputs())
 					{
-
+                        if(LOG) Log.d(TAG, "No highlights");
 					}
 					else if(iSelected == null && oSelected == null)
 					{						

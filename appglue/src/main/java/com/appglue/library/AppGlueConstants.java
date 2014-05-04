@@ -200,7 +200,7 @@ public class AppGlueConstants
 		{ COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID }, // Need to keep track of which composite has these values
 		{ FILTER_STATE, "INTEGER" },
 		{ MANUAL_VALUE, "TEXT" }, // The value could be anything, better just set it as text so we can do some clever stuff at some point
-		{ SAMPLE_VALUE, "INTEGER DEFAULT '-1'" }, // This needs to be a reference to the iovalue table
+		{ SAMPLE_VALUE, "INTEGER DEFAULT '-1'" }, // This needs to be a reference to the io value table
 		{ FILTER_CONDITION, "INTEGER" }
 	};
 	

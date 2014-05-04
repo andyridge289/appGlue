@@ -8,7 +8,7 @@
 	<TextView 
     	android:layout_width="wrap_content"
        	android:layout_height="wrap_content"
-       	android:text="How often would you like the service to run?"
+       	android:text="@string/how_often"
    		android:textColor="@color/dim_on_dark"
    		android:layout_margin="5dip"
    		android:textSize="16sp"
@@ -17,7 +17,7 @@
    <TextView
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:text="Once every.."
+       android:text="@string/once_every"
        android:textColor="@color/white"
        android:layout_margin="5dip"
        android:textSize="16sp"
@@ -50,7 +50,7 @@
 	   <CheckBox
 	       style="@style/FillWrap"
 	       android:id="@+id/timer_run_now"
-	       android:text="Run service now?"
+	       android:text="@string/run_now"
 	       android:textColor="@color/white"
 	       />
 

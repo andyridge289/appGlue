@@ -17,19 +17,19 @@ public class Bool extends IOType
 	}
 
 	@Override
-	public Object toStorable(Object value) 
+	public Boolean toStorable(Object value)
 	{
 		return (Boolean) value;
 	}
 	
-	public Object fromStorable(Object value)
+	public Boolean fromStorable(Object value)
 	{
 		return (Boolean) value;
 	}
 	
 	public String toString(Object value)
 	{
-		return "" + (Boolean) value;
+		return "" + value;
 	}
 	
 	public Object fromString(String value)

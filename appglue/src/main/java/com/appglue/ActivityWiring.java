@@ -273,7 +273,7 @@ public class ActivityWiring extends FragmentActivity
 		}
 		else
 		{
-			getActionBar().setSubtitle("Manualy set data");
+			getActionBar().setSubtitle("Manually set data");
 		}
 		
 		// Tell all the fragments to redraw...

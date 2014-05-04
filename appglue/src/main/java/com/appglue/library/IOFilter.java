@@ -32,12 +32,12 @@ public class IOFilter
 	
 	public static boolean numEquals(Integer first, Integer second)
 	{
-		return first == second;
+		return first.equals(second);
 	}
 	
 	public static boolean numNotEquals(Integer first, Integer second)
 	{
-		return first != second;
+		return !first.equals(second);
 	}
 	
 	public static boolean numLequals(Integer first, Integer second)
@@ -160,5 +160,5 @@ public class IOFilter
 		{
 			return this.text;
 		}
-	};
+	}
 }

@@ -51,7 +51,7 @@
 	        android:background="?android:selectableItemBackground"
 			android:visibility="gone"
 			android:src="@drawable/filter_small"
-			android:contentDescription="TODO"
+			android:contentDescription="Filter button"
 			/>
     
     </LinearLayout>

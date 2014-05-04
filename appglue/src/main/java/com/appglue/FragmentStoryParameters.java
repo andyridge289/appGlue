@@ -1,9 +1,23 @@
 package com.appglue;
 
-import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.*;
-
-import java.util.ArrayList;
+import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TabHost;
+import android.widget.TabWidget;
+import android.widget.TextView;
 
 import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
@@ -14,24 +28,13 @@ import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
 import com.appglue.serviceregistry.Registry;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.Context;
-import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TabHost;
-import android.widget.TabWidget;
-import android.widget.TextView;
+import java.util.ArrayList;
+
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.FILTER_BOOL_VALUES;
+import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
+import static com.appglue.library.AppGlueConstants.FILTER_SET_VALUES;
+import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
 
 public class FragmentStoryParameters extends Fragment
 {
@@ -240,7 +243,7 @@ public class FragmentStoryParameters extends Fragment
 				// 2 See which tab is selected - hopefully this is the same as the last one they selected?
 				TabHost tabs = (TabHost) container.findViewById(R.id.param_tabhost);
 				
-				// 3 See what the value of the corresponding textbox/spinner is
+				// 3 See what the value of the corresponding text box/spinner is
 				if(tabs.getCurrentTab() == 0)
 				{
 					// It's the sample one
