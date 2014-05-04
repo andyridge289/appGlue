@@ -1869,7 +1869,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 *  Log Stuff
 	 */
 	
-	public boolean addToLog(long compositeId, String className, String message, boolean success)
+	public boolean addToLog(long compositeId, String className, String message, int status)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		
@@ -1881,7 +1881,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		values.put(CLASSNAME, className);
 		values.put(MESSAGE, message);
 		values.put(TIME, sdf.format(date));
-		values.put(LOG_TYPE, success);
+		values.put(LOG_TYPE, status);
 		
 		long id = db.insert(TBL_EXECUTION_LOG, null, values);
 		

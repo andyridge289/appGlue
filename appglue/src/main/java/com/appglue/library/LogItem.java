@@ -14,12 +14,17 @@ import android.database.Cursor;
 
 public class LogItem 
 {
+    public static final int LOG_SUCCESS = 0x1;
+    public static final int LOG_FAIL = 0x2;
+    public static final int LOG_STOP = 0x3;
+    public static final int LOG_FILTER = 0x4;
+
 	private long id;
 	private CompositeService cs;
 	private String className;
 	private String time;
 	private String message;
-	private boolean success;
+	private int status;
 	
 	public LogItem(Cursor c)
 	{
@@ -36,8 +41,8 @@ public class LogItem
 		this.time = c.getString(c.getColumnIndex(TIME));
 		this.message = c.getString(c.getColumnIndex(MESSAGE));
 		
-		int iSuccess = c.getInt(c.getColumnIndex(LOG_TYPE));
-		this.success = iSuccess == 1;
+		int success = c.getInt(c.getColumnIndex(LOG_TYPE));
+		this.status = success;
 	}
 
 	public long getId() 
@@ -75,14 +80,14 @@ public class LogItem
 		this.message = message;
 	}
 
-	public boolean isSuccess() 
+	public int getStatus()
 	{
-		return success;
+		return status;
 	}
 
-	public void setSuccess(boolean success) 
+	public void setStatus(int success)
 	{
-		this.success = success;
+		this.status = success;
 	}
 
 	public CompositeService getComposite() 

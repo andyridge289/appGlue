@@ -293,19 +293,27 @@ public class Registry
 	public boolean success(long compositeId)
 	{
 		this.setIsntRunning(compositeId);
-		return dbHandler.addToLog(compositeId, "", "", true);
+		return dbHandler.addToLog(compositeId, "", "", LogItem.LOG_SUCCESS);
 	}
 	
 	public boolean fail(long compositeId, String className, String message)
 	{
 		this.setIsntRunning(compositeId);
-		return dbHandler.addToLog(compositeId, className, message, false);
+		return dbHandler.addToLog(compositeId, className, message, LogItem.LOG_FAIL);
 	}
+
+    public boolean stopped(long compositeId, String message)
+    {
+        this.setIsntRunning(compositeId);
+        boolean ret = dbHandler.addToLog(compositeId, "", message, LogItem.LOG_STOP);
+        this.finishComposite(compositeId);
+        return ret;
+    }
 	
 	public boolean filter(CompositeService cs, ServiceDescription sd, ServiceIO io, String condition, Object value)
 	{
 		this.setIsntRunning(cs.getId());
-		return dbHandler.addToLog(cs.getId(), sd.getClassName(), "Stopped execution: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"", false);
+		return dbHandler.addToLog(cs.getId(), sd.getClassName(), "Stopped execution: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"", LogItem.LOG_FILTER);
 	}
 
 	public ArrayList<LogItem> getLog() 

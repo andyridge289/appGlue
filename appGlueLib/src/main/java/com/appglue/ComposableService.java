@@ -29,12 +29,7 @@ public abstract class ComposableService extends Service
 	public static final int MSG_LIST = 4;
 	public static final int MSG_WAIT = 5;
 	public static final int MSG_FAIL = 6;
-	
-	public static final String PARAM_NAME = "param_name";
-	public static final String PARAM_TYPE = "param_type";
-	public static final String PARAM_VALUE = "param_value";
-	
-	public static final String PARAMS = "params";
+
 	public static final String INPUT = "input";
 	public static final String TEXT = "text";
 	public static final String WAIT = "wait";
