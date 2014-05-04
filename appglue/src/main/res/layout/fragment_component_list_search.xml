@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+ 	android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/component_adv_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/advanced_filter"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            />
+
+        <HorizontalScrollView
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:scrollbars="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/component_adv_trigger"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="@string/triggers"
+                    />
+                <CheckBox
+                    android:id="@+id/component_adv_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="@string/filters"
+                    />
+                <CheckBox
+                    android:id="@+id/component_adv_inputs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="@string/has_inputs"
+                    />
+                <CheckBox
+                    android:id="@+id/component_adv_outputs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:text="@string/has_outputs"
+                    />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/component_search"
+            />
+
+    </LinearLayout>
+    
+    <TextView
+        style="@style/FillWrap"
+        android:gravity="center_horizontal"
+        android:id="@+id/simple_list_none"
+        android:visibility="gone"
+        />
+    
+    <ImageView
+        android:id="@+id/loading_spinner"
+        android:contentDescription="Loading spinner"
+        android:layout_width="16px"
+        android:layout_height="16px"
+        android:background="@drawable/loader"
+        />
+
+    <ListView
+		style="@style/Fill"
+	    android:id="@+id/simple_list" 
+	    android:visibility="gone"
+	    />
+
+</LinearLayout>

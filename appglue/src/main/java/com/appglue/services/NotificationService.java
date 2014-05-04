@@ -30,8 +30,8 @@ public class NotificationService extends ComposableService {
                 this)
                 .setContentText(text)
                 .setContentTitle(title)
-                .setSmallIcon(R.drawable.icon) // TODO Include an image for the icon, maybe large icon too
-                .setPriority(NotificationCompat.PRIORITY_MIN) // TODO Priority needs to be added to the notification service
+                .setSmallIcon(R.drawable.icon) // XXX Include an image for the icon, maybe large icon too
+                .setPriority(NotificationCompat.PRIORITY_MIN) // XXX Priority needs to be added to the notification service
                 .setVibrate(null)
                 .setTicker(title + ": " + text);
 

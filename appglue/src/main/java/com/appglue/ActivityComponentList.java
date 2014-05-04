@@ -50,28 +50,17 @@ public class ActivityComponentList extends ActionBarActivity
     private int position;
 	private boolean isFirst;
 	
-	private ArrayList<FragmentComponentListLocal> fragments;
-	
-	private EditText search;
+	private ArrayList<FragmentComponentList> fragments;
 	
 	private final String SHOW_ADV = "Show advanced filter";
 	private final String HIDE_ADV = "Hide advanced filter";
-	
-	public static final int FLAG_TRIGGER = 0;
-	public static final int FLAG_NOINPUT = 1;
-	public static final int FLAG_NOOUTPUT = 2;
-	public static final int FLAG_MATCHING = 3;
-	public static final int FLAG_ALL = 4;
 
-    // Flags for filtering
-	private boolean fTRIGGER = false;
-	private boolean fFILTER = false;
-	private boolean fHAS_INPUT = false;
-	private boolean fMATCHING = false;
-	private boolean fHAS_OUTPUT = false;
-    private boolean fSHOW = true;
-	
-	private boolean fDEFAULT_SEARCH = true;
+    public static final int FLAG_SEARCH = 0x0;
+	public static final int FLAG_TRIGGER = 0x1;
+	public static final int FLAG_NOINPUT = 0x2;
+	public static final int FLAG_NOOUTPUT = 0x3;
+	public static final int FLAG_MATCHING = 0x4;
+	public static final int FLAG_ALL = 0x5;
 
     public void onCreate(Bundle icicle)
 	{
@@ -90,7 +79,7 @@ public class ActivityComponentList extends ActionBarActivity
 		position = intent.getIntExtra(POSITION, -1);
 		isFirst = intent.getBooleanExtra(FIRST, false);
 		
-		fragments = new ArrayList<FragmentComponentListLocal>();
+		fragments = new ArrayList<FragmentComponentList>();
 		
 		if(triggersOnly)
 		{
@@ -103,6 +92,10 @@ public class ActivityComponentList extends ActionBarActivity
 		}
 		else
 		{
+            FragmentComponentListSearch searchFragment = new FragmentComponentListSearch();
+            searchFragment.setName("SEARCH");
+            fragments.add(searchFragment);
+
 			Bundle noInputArgs = new Bundle();
 			noInputArgs.putBoolean(HAS_INPUTS, false);
 			noInputArgs.putBoolean(HAS_OUTPUTS, true);			
@@ -118,7 +111,8 @@ public class ActivityComponentList extends ActionBarActivity
 			noOutput.setArguments(noOutputArgs);
 			noOutput.setName("INPUT ONLY");
 			fragments.add(noOutput);
-			
+
+            // FIXME Only show this if there are components to be matched against.
 			Bundle matchingArgs = new Bundle();
 			matchingArgs.putBoolean(MATCHING, true);
 			matchingArgs.putInt(POSITION, position);
@@ -153,143 +147,14 @@ public class ActivityComponentList extends ActionBarActivity
 				viewPager.setCurrentItem(FLAG_ALL);
 			}
 		}
+
+        // TODO It jumps to the wrong page when you go there from Wiring
 		
 //		String lastServiceName = intent.getStringExtra(LAST_CLASSNAME);
 
 //        ServiceDescription lastService;
 //        if(lastServiceName != null)
 //			lastService = registry.getAtomic(lastServiceName);
-		
-		// Setup the search bar
-        // TODO It jumps to the wrong page when you go there from Wiring
-        // TODO I think it was this that was throwing all of those log messages about the input connection being dead
-//		search = (EditText) findViewById(R.id.component_search);
-//		search.setOnFocusChangeListener(new View.OnFocusChangeListener() 
-//		{
-//			@Override
-//			public void onFocusChange(View v, boolean hasFocus) 
-//			{
-//				EditText et = (EditText) v;
-//				if(hasFocus)
-//				{
-//					if(et.getText().toString().equals("Search"))
-//					{
-//						fDEFAULT_SEARCH = false;
-//						et.setText("");
-//					}
-//				}
-//				else
-//				{
-//					if(et.getText().toString().equals(""))
-//					{
-//						et.setText("Search");
-//						fDEFAULT_SEARCH = true;
-//					}
-//				}
-//			}
-//		});
-		
-//		search.addTextChangedListener(new TextWatcher() 
-//		{	
-//			@Override
-//			public void onTextChanged(CharSequence s, int start, int before, int count) {}
-//			
-//			@Override
-//			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-//			
-//			@Override
-//			public void afterTextChanged(Editable s) 
-//			{
-//				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-//				if(currentFragment == null)
-//					return;
-//				
-//				AdapterComponentList localAdapter = currentFragment.getAdapter();
-//				if(localAdapter != null)
-//				{
-//					localAdapter.getFilter().filter(s);
-//					localAdapter.notifyDataSetChanged();
-//				}
-//			}
-//		});
-		
-		// Setup the checkbox filters
-		((CheckBox) findViewById(R.id.component_adv_trigger)).setOnCheckedChangeListener(new OnCheckedChangeListener() 
-		{
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-			{
-				fTRIGGER = isChecked;
-				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-				if(currentFragment == null)
-					return;
-				
-				AdapterComponentList adapter = currentFragment.getAdapter();
-				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-				adapter.notifyDataSetChanged();
-			}
-		});
-		((CheckBox) findViewById(R.id.component_adv_filter)).setOnCheckedChangeListener(new OnCheckedChangeListener() 
-		{
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-			{
-				fFILTER = isChecked;
-				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-				if(currentFragment == null)
-					return;
-				
-				AdapterComponentList adapter = currentFragment.getAdapter();
-				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-				adapter.notifyDataSetChanged();
-			}
-		});
-		((CheckBox) findViewById(R.id.component_adv_inputs)).setOnCheckedChangeListener(new OnCheckedChangeListener() 
-		{
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-			{
-				fHAS_INPUT = isChecked;
-				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-				if(currentFragment == null)
-					return;
-				
-				AdapterComponentList adapter = currentFragment.getAdapter();
-				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-				adapter.notifyDataSetChanged();
-			}
-		});
-		((CheckBox) findViewById(R.id.component_adv_outputs)).setOnCheckedChangeListener(new OnCheckedChangeListener() 
-		{
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
-			{
-				fHAS_OUTPUT = isChecked;
-				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-				if(currentFragment == null)
-					return;
-				
-				AdapterComponentList adapter = currentFragment.getAdapter();
-				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-				adapter.notifyDataSetChanged();
-			}
-		});
-
-
-
-		
-		findViewById(R.id.component_adv_hide).setOnClickListener(new OnClickListener() 
-		{
-			@Override
-			public void onClick(View v) 
-			{
-				// then we need to hide the advanced filter
-				findViewById(R.id.component_adv_container).setVisibility(View.GONE);
-				
-				// And change the title of the menu item to show
-				ActivityComponentList.this.invalidateOptionsMenu();
-			}
-		});
 		
 		ActionBar actionBar = getSupportActionBar();
 		boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
@@ -308,12 +173,6 @@ public class ActivityComponentList extends ActionBarActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-
-        if(fSHOW)
-			menu.add(SHOW_ADV).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-		else
-			menu.add(HIDE_ADV).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-		
 		return true;
 	}
 	
@@ -325,27 +184,10 @@ public class ActivityComponentList extends ActionBarActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		if(item.getItemId() == android.R.id.home)
-		{
-			finish();
-			return true;
-		}
-		else if(item.getTitle().toString().equals(SHOW_ADV))
-		{
-			// Then we need to show the advanced filter
-			findViewById(R.id.component_adv_container).setVisibility(View.VISIBLE);
-			
-			// And change the title of this one to hide
-			item.setTitle(HIDE_ADV);
-		}
-		else if(item.getTitle().toString().equals(HIDE_ADV))
-		{
-			// then we need to hide the advanced filter
-			findViewById(R.id.component_adv_container).setVisibility(View.GONE);
-			
-			// And change the title of this one to show
-			item.setTitle(SHOW_ADV);
-		}
+		if(item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
 		
 		return super.onOptionsItemSelected(item);
 	}
@@ -355,31 +197,6 @@ public class ActivityComponentList extends ActionBarActivity
 		return justAList;
 	}
 
-	public boolean isTriggerSet()
-	{
-		return fTRIGGER;
-	}
-
-	public boolean isFilterSet()
-	{
-		return fFILTER;
-	}
-	
-	public boolean hasInputSet()
-	{
-		return fHAS_INPUT;
-	}
-	
-	public boolean hasOutputSet()
-	{
-		return fHAS_OUTPUT;
-	}
-	
-	public boolean areAnySet()
-	{
-		return fTRIGGER || fFILTER || fHAS_INPUT || fHAS_OUTPUT;
-	}
-	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{

@@ -375,8 +375,6 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
             // This should be half the width of the ``tab'' you click on
             int px = 0;//(int) ((24 + 5) * scale + 0.5); // Half the square plus the border
 
-            // XXX Colour of connections?
-
             int[] layout = new int[2];
             this.getLocationOnScreen(layout);
 

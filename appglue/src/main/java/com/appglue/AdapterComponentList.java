@@ -191,38 +191,38 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 					final ArrayList<ServiceDescription> localItems = new ArrayList<ServiceDescription>();
 					localItems.addAll(originalItems);
 					
-					if(!parent.areAnySet())
-					{
-						// None of the flags are set, just add them all!
-						filteredItems.addAll(localItems);
-						
-					}
-					else
-					{
-                        for (ServiceDescription sd : localItems) {
-                            // Work out whether we should add it or not
-                            if (parent.isTriggerSet() && sd.getProcessType() == ProcessType.TRIGGER) {
-                                // It doesn't matter what the other ones are set, it needs to be in there anyway
-                                filteredItems.add(sd);
-                                continue;
-                            }
-
-                            if (parent.isFilterSet() && sd.getProcessType() == ProcessType.FILTER) {
-                                filteredItems.add(sd);
-                                continue;
-                            }
-
-                            if (parent.hasInputSet() && sd.hasInputs()) {
-                                filteredItems.add(sd);
-                                continue;
-                            }
-
-                            if (parent.hasOutputSet() && sd.hasOutputs()) {
-                                filteredItems.add(sd);
-                            }
-                        }
-
-					}
+//					if(!parent.areAnySet())
+//					{
+//						// None of the flags are set, just add them all!
+//						filteredItems.addAll(localItems);
+//
+//					}
+//					else
+//					{
+//                        for (ServiceDescription sd : localItems) {
+//                            // Work out whether we should add it or not
+//                            if (parent.isTriggerSet() && sd.getProcessType() == ProcessType.TRIGGER) {
+//                                // It doesn't matter what the other ones are set, it needs to be in there anyway
+//                                filteredItems.add(sd);
+//                                continue;
+//                            }
+//
+//                            if (parent.isFilterSet() && sd.getProcessType() == ProcessType.FILTER) {
+//                                filteredItems.add(sd);
+//                                continue;
+//                            }
+//
+//                            if (parent.hasInputSet() && sd.hasInputs()) {
+//                                filteredItems.add(sd);
+//                                continue;
+//                            }
+//
+//                            if (parent.hasOutputSet() && sd.hasOutputs()) {
+//                                filteredItems.add(sd);
+//                            }
+//                        }
+//
+//					}
 					
 					results.values = filteredItems;
 					results.count = filteredItems.size();

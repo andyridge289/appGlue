@@ -553,7 +553,7 @@ public class ActivityCompositeList extends Activity
 			View v = convertView;
 			final CompositeService cs = composites.get(position);
 			
-			if(cs.getId() == CompositeService.NEW_COMPOSITE_PLACEHOLER)
+			if(cs.getId() == CompositeService.NEW_COMPOSITE_PLACEHOLDER)
 			{
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				v = vi.inflate(R.layout.composite_list_item_new, null);

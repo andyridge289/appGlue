@@ -291,10 +291,6 @@ public class ActivityComponent extends Activity
 	public void onStart()
 	{
 		super.onStart();
-//		if(this.service == null)
-//		{
-//			// TODO Work out what I was going to do here
-//		}
 	}
 	
 	@Override

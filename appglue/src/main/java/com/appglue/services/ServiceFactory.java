@@ -95,8 +95,8 @@ public class ServiceFactory
         for (ServiceDescription sd : serviceList) {
             long atomicId = registry.addService(sd);
 
-            if (atomicId == -1) {
-                // TODO Then something has gone wrong
+            if (atomicId == -1)
+            {
                 Log.d(TAG, "The atomic ID is -1, apparently this is bad");
             }
         }
