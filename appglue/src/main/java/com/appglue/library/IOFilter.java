@@ -95,10 +95,10 @@ public class IOFilter
 			INT_NOTEQUALS = new FilterValue(Character.toString((char) 0x2260), 0x11, IOFilter.class.getMethod("numNotEquals", Integer.class, Integer.class)); // !=
 			filters.put(INT_NOTEQUALS.index, INT_NOTEQUALS);
 			
-			INT_LEQUALS = new FilterValue(Character.toString((char) 0x2264), 0x12, IOFilter.class.getMethod("numLequals", Integer.class, Integer.class)); // <=
+			INT_LEQUALS = new FilterValue(Character.toString((char) 0x2264), 0x12, IOFilter.class.getMethod("numLEquals", Integer.class, Integer.class)); // <=
 			filters.put(INT_LEQUALS.index, INT_LEQUALS);
 			
-			INT_GEQUALS = new FilterValue(Character.toString((char) 0x2265), 0x13, IOFilter.class.getMethod("numGequals", Integer.class, Integer.class)); // >=
+			INT_GEQUALS = new FilterValue(Character.toString((char) 0x2265), 0x13, IOFilter.class.getMethod("numGEquals", Integer.class, Integer.class)); // >=
 			filters.put(INT_GEQUALS.index, INT_GEQUALS);
 			
 			INT_LT = new FilterValue(Character.toString((char) 0x003E), 0x14, IOFilter.class.getMethod("numLT", Integer.class, Integer.class)); // <

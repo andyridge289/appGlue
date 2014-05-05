@@ -1,5 +1,6 @@
 package com.appglue;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -70,16 +71,15 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
         return gi;
     }
 
-	@Override
+    @Override
+	@SuppressLint("InflateParams")
 	public View getView(int position, View convertView, ViewGroup viewGroup)
 	{
 		View v = convertView;
 		LayoutInflater vi = (LayoutInflater) parent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
 		if(v == null)
-		{
-			v = vi.inflate(R.layout.component_list_item, viewGroup);
-		}
+            v = vi.inflate(R.layout.component_list_item, null);
 		
 		ServiceDescription sd;
 		synchronized(lock)

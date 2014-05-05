@@ -1,5 +1,6 @@
 package com.appglue;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -61,9 +62,6 @@ import static com.appglue.library.AppGlueConstants.PRE_EXEC_PARAMS;
 
 public class ActivityCompositeList extends Activity
 {
-	// TODO Make some sort of loading page
-    // FIXME Don't show the temporary one on the composite list
-	
 	private GridView loadGrid;
 	private ImageView loader;
 	
@@ -113,8 +111,6 @@ public class ActivityCompositeList extends Activity
 			return true;
 		}
 
-        // FIXME If delete 2 or 3 and then click on the first one we get a null pointer...
-		
 		@Override
 		public boolean onPrepareActionMode(ActionMode mode, Menu menu) 
 		{
@@ -156,9 +152,9 @@ public class ActivityCompositeList extends Activity
 					edit(composites.get((selected.get(0))));
 					break;
 					
-				case R.id.comp_context_editstory:
-					editStory(composites.get((selected.get(0))));
-					break;
+//				case R.id.comp_context_editstory:
+//					editStory(composites.get((selected.get(0))));
+//					break;
 				
 				case R.id.comp_context_shortcut:
 					createShortcut(composites.get((selected.get(0))));
@@ -253,10 +249,10 @@ public class ActivityCompositeList extends Activity
 		{
 			intent = new Intent(ActivityCompositeList.this, ActivityRunning.class);
 		}
-		else if(item.getItemId() == R.id.comp_list_story)
-		{
-			intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
-		}
+//		else if(item.getItemId() == R.id.comp_list_story)
+//		{
+//			intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
+//		}
         else if(item.getItemId() == R.id.comp_list_settings)
         {
             intent = new Intent(ActivityCompositeList.this, ActivitySettings.class);
@@ -548,7 +544,8 @@ public class ActivityCompositeList extends Activity
 			super(context, textViewResourceId, items);
 		}
 		
-		public View getView(final int position, View convertView, final ViewGroup parent)
+		@SuppressLint("InflateParams")
+        public View getView(final int position, View convertView, final ViewGroup parent)
 		{
 			View v = convertView;
 			final CompositeService cs = composites.get(position);
@@ -556,7 +553,7 @@ public class ActivityCompositeList extends Activity
 			if(cs.getId() == CompositeService.NEW_COMPOSITE_PLACEHOLDER)
 			{
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.composite_list_item_new, parent);
+				v = vi.inflate(R.layout.composite_list_item_new, null);
 
                 if(v != null)
                 {

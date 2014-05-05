@@ -1,15 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.*;
-import static com.appglue.Constants.LOG;
-
-import com.appglue.engine.CompositeService;
-import com.appglue.serviceregistry.Registry;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -20,6 +10,18 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.appglue.engine.CompositeService;
+import com.appglue.serviceregistry.Registry;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.NO_TRIGGERS;
+import static com.appglue.library.AppGlueConstants.STORY_MODE;
+import static com.appglue.library.AppGlueConstants.TRIGGERS_ONLY;
 
 public class FragmentStory extends Fragment implements OnClickListener
 {
@@ -85,7 +87,6 @@ public class FragmentStory extends Fragment implements OnClickListener
 		}
 		else if(requestCode == STORY_MODE && resultCode == Activity.RESULT_CANCELED)
 		{
-			// TODO Is this okay? I don't know
             if(LOG) Log.d(TAG, "Story mode cancelled.");
 		}
 	}

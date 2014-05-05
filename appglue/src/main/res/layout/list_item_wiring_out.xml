@@ -45,7 +45,7 @@
 	        />
     
 	    <ImageView
-	        android:id="@+id/storyparam_filter_button"
+	        android:id="@+id/filter_button"
 	        android:layout_width="48dip"
 	        android:layout_height="48dip"
 	        android:background="?android:selectableItemBackground"

@@ -22,9 +22,6 @@ public class FragmentComponentList extends Fragment
 	protected ImageView loader;
 	
 	protected ActivityComponentList parent;
-
-    // TODO Apparently adapter is never assigned, this is a problem
-	private AdapterComponentList adapter;
 	
 	protected Registry registry;
 	
@@ -69,10 +66,5 @@ public class FragmentComponentList extends Fragment
 	public String getName()
 	{
 		return name;
-	}
-	
-	public AdapterComponentList getAdapter()
-	{
-		return adapter;
 	}
 }

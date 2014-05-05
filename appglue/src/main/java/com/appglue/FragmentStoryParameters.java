@@ -204,7 +204,7 @@ public class FragmentStoryParameters extends Fragment
 		final View container = v.findViewById(R.id.filter_container);
 		final Button doneButton = (Button) v.findViewById(R.id.storyparam_done_button);
 		final LinearLayout doneContainer = (LinearLayout) v.findViewById(R.id.button_container);
-		final Button filterButton = (Button) v.findViewById(R.id.storyparam_filter_button);
+		final Button filterButton = (Button) v.findViewById(R.id.filter_button_story);
 		final Button dontFilterButton = (Button) v.findViewById(R.id.dont_filter_button);
 
 		filterButton.setOnClickListener(new OnClickListener()
@@ -494,7 +494,7 @@ public class FragmentStoryParameters extends Fragment
 		final View container = v.findViewById(R.id.filter_container);
 		final Button doneButton = (Button) v.findViewById(R.id.done_button);
 		final LinearLayout doneContainer = (LinearLayout) v.findViewById(R.id.button_container);
-		final Button filterButton = (Button) v.findViewById(R.id.filter_button);
+		final Button filterButton = (Button) v.findViewById(R.id.filter_button_story);
 		final Button dontFilterButton = (Button) v.findViewById(R.id.dont_filter_button);
 		
 		
@@ -732,9 +732,7 @@ public class FragmentStoryParameters extends Fragment
 			LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			
 			if(v == null)
-			{
-				v = vi.inflate(android.R.layout.simple_dropdown_item_1line, null);
-			}
+                v = vi.inflate(android.R.layout.simple_dropdown_item_1line, null);
 			
 			ServiceIO other = getItem(position);
 			

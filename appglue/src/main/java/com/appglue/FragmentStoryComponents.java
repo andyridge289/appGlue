@@ -142,16 +142,16 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			// Show placeholders if they aren't set
 			if(inputs == null || inputs.size() == 0)
 			{
-//				// TODO Just add a placeholder with no name and make the value disappear
+				// Just add a placeholder with no name and make the value disappear
                 Log.d(TAG, "Should apparently be adding a placeholder");
-//				View vv = vi.inflate(R.layout.list_item_storycomponent_io, null);
-//				TextView ioName = (TextView) vv.findViewById(R.id.story_io_name);
-//				ioName.setText("None");
-//				
-//				TextView ioValue = (TextView) vv.findViewById(R.id.story_io_value);
-//				ioValue.setVisibility(View.GONE);
-//				
-//				in.addView(vv);
+				View vv = vi.inflate(R.layout.list_item_storycomponent_io, null);
+				TextView ioName = (TextView) vv.findViewById(R.id.story_io_name);
+				ioName.setText("Placeholder");
+
+				TextView ioValue = (TextView) vv.findViewById(R.id.story_io_value);
+				ioValue.setVisibility(View.GONE);
+
+				in.addView(vv);
 			}
 			else
 			{
@@ -175,14 +175,14 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			// Show placeholders if they aren't set
 			if(outputs == null || outputs.size() == 0)
 			{ 
-//				// TODO Just add a placeholder
+//				// Just add a placeholder
                 Log.d(TAG, "Should apparently be adding a placeholder?");
-//				View vv = vi.inflate(R.layout.list_item_storycomponent_io, null);
-//				TextView ioName = (TextView) vv.findViewById(R.id.story_io_name);
-//				TextView ioValue = (TextView) vv.findViewById(R.id.story_io_value);
-//				ioName.setText("None");
-//				ioValue.setVisibility(View.GONE);   
-//				out.addView(vv);
+				View vv = vi.inflate(R.layout.list_item_storycomponent_io, null);
+				TextView ioName = (TextView) vv.findViewById(R.id.story_io_name);
+				TextView ioValue = (TextView) vv.findViewById(R.id.story_io_value);
+				ioName.setText("Placeholder");
+				ioValue.setVisibility(View.GONE);
+				out.addView(vv);
 			}
 			else
 			{   
@@ -205,37 +205,4 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 		}
 		
 	}
-	
-//	private class IOAdapter extends ArrayAdapter<ServiceIO>
-//	{
-//		private boolean isInput;
-//		
-//		public IOAdapter(Context context, int textViewResourceId, ArrayList<ServiceIO> objects, boolean isInput) {
-//			super(context, textViewResourceId, objects);
-//			this.isInput = isInput;
-//		}
-//		
-//		@Override
-//		public View getView(int position, View convertView, ViewGroup viewGroup)
-//		{
-//			View v = convertView;
-//			LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//			
-//			if(v == null)
-//			{
-//				v = vi.inflate(R.layout.list_item_storycomponent_io, null);
-//			}
-//			
-//			ServiceIO component = getItem(position);
-//			
-//			TextView nameText = (TextView) v.findViewById(R.id.story_io_name);
-//			nameText.setText(component.getFriendlyName());
-//			
-//			
-//			
-//			// FIXME Put what the value is
-//			
-//			return v;
-//		}
-//	}
 }

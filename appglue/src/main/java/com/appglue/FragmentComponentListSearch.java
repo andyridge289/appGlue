@@ -35,13 +35,6 @@ public class FragmentComponentListSearch extends FragmentComponentList
 {
     private EditText searchEdit;
 
-    // Flags for filtering
-	public static final int fTRIGGER = 0x1;     // 00001
-	public static final int fFILTER = 0x2;      // 00010
-	public static final int fHAS_INPUT = 0x4;   // 00100
-	public static final int fHAS_OUTPUT = 0x8; // 10000
-    private int flags;
-
 	public FragmentComponentListSearch()
 	{
 		super();
@@ -92,7 +85,6 @@ public class FragmentComponentListSearch extends FragmentComponentList
 		});
 
         // Setup the search bar
-        // TODO I think it was this that was throwing all of those log messages about the input connection being dead
 		searchEdit = (EditText) v.findViewById(R.id.component_search);
 		searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener()
 		{

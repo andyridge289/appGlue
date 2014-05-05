@@ -35,7 +35,6 @@ public class AdapterComponentListSearch extends AdapterComponentList
 		return filter;
 	}
 
-    // FIXME Enable the dedicated search fragment -- search bar
 	private class ComponentFilter extends Filter
 	{
 		@Override

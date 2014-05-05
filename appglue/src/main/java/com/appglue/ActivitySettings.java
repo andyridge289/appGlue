@@ -20,7 +20,6 @@ public class ActivitySettings extends PreferenceActivity
     protected boolean isValidFragment(String fragmentName)
     {
         return true;
-        // TODO Might need to do something smarter here?
     }
 
 

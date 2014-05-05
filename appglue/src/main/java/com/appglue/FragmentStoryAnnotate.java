@@ -27,8 +27,7 @@ public class FragmentStoryAnnotate extends Fragment implements OnClickListener
         View v =  inflater.inflate(R.layout.fragment_story_annotate, container, false);
         
         registry = Registry.getInstance(getActivity());
-        
-        // XXX Do a lookup to see if they've already used this name.
+
         nameText = (EditText) v.findViewById(R.id.name_text);
         descriptionText = (EditText) v.findViewById(R.id.story_description_text);
         
