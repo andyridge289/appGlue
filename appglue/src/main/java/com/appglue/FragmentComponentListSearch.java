@@ -7,10 +7,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -19,10 +22,15 @@ import android.widget.TextView;
 import com.appglue.description.ServiceDescription;
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.Constants.*;
-import static com.appglue.library.AppGlueConstants.*;
-
 import java.util.ArrayList;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.ServiceType;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
+import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
 
 public class FragmentComponentListSearch extends FragmentComponentList
@@ -30,12 +38,11 @@ public class FragmentComponentListSearch extends FragmentComponentList
     private EditText searchEdit;
 
     // Flags for filtering
-	private boolean fTRIGGER = false;
-	private boolean fFILTER = false;
-	private boolean fHAS_INPUT = false;
-	private boolean fMATCHING = false;
-	private boolean fHAS_OUTPUT = false;
-    private boolean fDEFAULT_SEARCH = true;
+	public static final int fTRIGGER = 0x1;     // 00001
+	public static final int fFILTER = 0x2;      // 00010
+	public static final int fHAS_INPUT = 0x4;   // 00100
+	public static final int fHAS_OUTPUT = 0x8; // 10000
+    private int flags;
 
 	public FragmentComponentListSearch()
 	{
@@ -76,7 +83,7 @@ public class FragmentComponentListSearch extends FragmentComponentList
 				return true;
 			}
 		});
-//
+
 		serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
 		{
 			@Override
@@ -87,8 +94,6 @@ public class FragmentComponentListSearch extends FragmentComponentList
 		});
 
         // Setup the search bar
-
-        // FIXME Enable the dedicated search fragment -- search bar
         // FIXME Enable the decicated search fragment -- filter checkboxes
         // TODO I think it was this that was throwing all of those log messages about the input connection being dead
 		searchEdit = (EditText) v.findViewById(R.id.component_search);
@@ -101,8 +106,7 @@ public class FragmentComponentListSearch extends FragmentComponentList
 				if(hasFocus)
 				{
 					if(et.getText().toString().equals("Search"))
-					{
-						fDEFAULT_SEARCH = false;
+                    {
 						et.setText("");
 					}
 				}
@@ -111,98 +115,36 @@ public class FragmentComponentListSearch extends FragmentComponentList
 					if(et.getText().toString().equals(""))
 					{
 						et.setText("Search");
-						fDEFAULT_SEARCH = true;
 					}
 				}
 			}
 		});
 
-//		searchEdit.addTextChangedListener(new TextWatcher()
-//		{
-//			@Override
-//			public void onTextChanged(CharSequence s, int start, int before, int count) {}
-//
-//			@Override
-//			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-//
-//			@Override
-//			public void afterTextChanged(Editable s)
-//			{
-//				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-//				if(currentFragment == null)
-//					return;
-//
-//				AdapterComponentList localAdapter = currentFragment.getAdapter();
-//				if(localAdapter != null)
-//				{
-//					localAdapter.getFilter().filter(s);
-//					localAdapter.notifyDataSetChanged();
-//				}
-//			}
-//		});
+		searchEdit.addTextChangedListener(new TextWatcher()
+		{
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}
 
-        // Setup the checkbox filters
-//		((CheckBox) findViewById(R.id.component_adv_trigger)).setOnCheckedChangeListener(new OnCheckedChangeListener()
-//		{
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-//			{
-//				fTRIGGER = isChecked;
-//				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-//				if(currentFragment == null)
-//					return;
-//
-//				AdapterComponentList adapter = currentFragment.getAdapter();
-//				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-//				adapter.notifyDataSetChanged();
-//			}
-//		});
-//		((CheckBox) findViewById(R.id.component_adv_filter)).setOnCheckedChangeListener(new OnCheckedChangeListener()
-//		{
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-//			{
-//				fFILTER = isChecked;
-//				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-//				if(currentFragment == null)
-//					return;
-//
-//				AdapterComponentList adapter = currentFragment.getAdapter();
-//				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-//				adapter.notifyDataSetChanged();
-//			}
-//		});
-//		((CheckBox) findViewById(R.id.component_adv_inputs)).setOnCheckedChangeListener(new OnCheckedChangeListener()
-//		{
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-//			{
-//				fHAS_INPUT = isChecked;
-//				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-//				if(currentFragment == null)
-//					return;
-//
-//				AdapterComponentList adapter = currentFragment.getAdapter();
-//				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-//				adapter.notifyDataSetChanged();
-//			}
-//		});
-//		((CheckBox) findViewById(R.id.component_adv_outputs)).setOnCheckedChangeListener(new OnCheckedChangeListener()
-//		{
-//			@Override
-//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-//			{
-//				fHAS_OUTPUT = isChecked;
-//				FragmentComponentList currentFragment = ((FragmentComponentList) getCurrentFragment());
-//				if(currentFragment == null)
-//					return;
-//
-//				AdapterComponentList adapter = currentFragment.getAdapter();
-//				adapter.getFilter().filter(fDEFAULT_SEARCH ? "" : search.getText());
-//				adapter.notifyDataSetChanged();
-//			}
-//		});
-//
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+			@Override
+			public void afterTextChanged(Editable s)
+			{
+				AdapterComponentList localAdapter = (AdapterComponentList) serviceListView.getAdapter();
+				if(localAdapter != null)
+				{
+					localAdapter.getFilter().filter(s);
+					localAdapter.notifyDataSetChanged();
+				}
+                else
+                {
+                    if(LOG) Log.d(TAG, "The local adapter is null.");
+                    // Do we just need to create a new one?
+                }
+			}
+		});
+
 		return v;
 	}
 	
@@ -233,7 +175,8 @@ public class FragmentComponentListSearch extends FragmentComponentList
 			if(services.size() > 0)
 			{
 				serviceListView.setVisibility(View.VISIBLE);
-				AdapterComponentList adapter = new AdapterComponentList(parent, R.layout.component_list_item, services);
+				AdapterComponentList adapter = new AdapterComponentListSearch(parent, R.layout.component_list_item, services,
+                                                                        FragmentComponentListSearch.this);
 				serviceListView.setAdapter(adapter);
 			}
 			else

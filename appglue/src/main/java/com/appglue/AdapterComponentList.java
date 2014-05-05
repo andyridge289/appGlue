@@ -25,15 +25,15 @@ import com.appglue.library.LocalStorage;
 
 public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 {
-	private ArrayList<ServiceDescription> originalItems;
-	private ArrayList<ServiceDescription> items;
+	protected ArrayList<ServiceDescription> originalItems;
+	protected ArrayList<ServiceDescription> items;
+
 	private ActivityComponentList parent;
-	
+
 	private LocalStorage localStorage;
 	
-	private ComponentFilter filter;
-	private final Object lock = new Object();
-	
+	protected final Object lock = new Object();
+
 	public AdapterComponentList(Context context, int textViewResourceId, ArrayList<ServiceDescription> items)
 	{
 		super(context, textViewResourceId, items);
@@ -41,6 +41,7 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 		localStorage = LocalStorage.getInstance();
 		
 		this.parent = (ActivityComponentList) context;
+
 		this.items = items;
 		cloneItems();
 	}
@@ -162,138 +163,5 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 		}
 		
 		return v;
-	}
-	
-	public Filter getFilter()
-	{
-		if(filter == null)
-		{
-			filter = new ComponentFilter();
-		}
-		
-		return filter;
-	}
-	
-	private class ComponentFilter extends Filter
-	{
-		@Override
-		protected FilterResults performFiltering(CharSequence constraint) 
-		{
-			final FilterResults results = new FilterResults();
-			
-			if(constraint == null || constraint.length() == 0)
-			{
-//				Log.e(TAG, "Constraint dead/empty!");
-				synchronized(lock)
-				{
-					// This might be a bit redundant...?
-					final ArrayList<ServiceDescription> filteredItems = new ArrayList<ServiceDescription>();
-					final ArrayList<ServiceDescription> localItems = new ArrayList<ServiceDescription>();
-					localItems.addAll(originalItems);
-					
-//					if(!parent.areAnySet())
-//					{
-//						// None of the flags are set, just add them all!
-//						filteredItems.addAll(localItems);
-//
-//					}
-//					else
-//					{
-//                        for (ServiceDescription sd : localItems) {
-//                            // Work out whether we should add it or not
-//                            if (parent.isTriggerSet() && sd.getProcessType() == ProcessType.TRIGGER) {
-//                                // It doesn't matter what the other ones are set, it needs to be in there anyway
-//                                filteredItems.add(sd);
-//                                continue;
-//                            }
-//
-//                            if (parent.isFilterSet() && sd.getProcessType() == ProcessType.FILTER) {
-//                                filteredItems.add(sd);
-//                                continue;
-//                            }
-//
-//                            if (parent.hasInputSet() && sd.hasInputs()) {
-//                                filteredItems.add(sd);
-//                                continue;
-//                            }
-//
-//                            if (parent.hasOutputSet() && sd.hasOutputs()) {
-//                                filteredItems.add(sd);
-//                            }
-//                        }
-//
-//					}
-					
-					results.values = filteredItems;
-					results.count = filteredItems.size();
-				}
-			}
-			else
-			{
-				synchronized(lock)
-				{
-					final String data = constraint.toString().toLowerCase(Locale.getDefault());
-					
-					// Set up the ArrayLists we need to do the filtering
-					final ArrayList<ServiceDescription> filteredItems = new ArrayList<ServiceDescription>();
-					final ArrayList<ServiceDescription> localItems = new ArrayList<ServiceDescription>();
-					localItems.addAll(originalItems);
-
-                    for (ServiceDescription item : localItems) {
-                        if (matches(item, data)) {
-                            filteredItems.add(item);
-                        }
-                    }
-				
-					results.values = filteredItems;
-					results.count = filteredItems.size();
-				}
-			}
-			
-			return results;
-		}
-		
-		private boolean matches(ServiceDescription item, String term)
-		{
-			String name = item.getName().toLowerCase(Locale.getDefault());
-			String description = item.getDescription().toLowerCase(Locale.getDefault());
-			
-			if(name.contains(term))
-				return true;
-				
-			if(description.contains(term))
-				return true;	
-			
-			ArrayList<Tag> tags = item.getTags();
-			Log.w(TAG, item.getName() + " has " + tags.size() + " tags");
-            for (Tag tag : tags) {
-                String tagName = tag.getName().toLowerCase(Locale.US);
-                Log.d(TAG, "Comparing " + tagName + " to " + term);
-                if (tagName.contains(term)) {
-                    return true;
-                }
-            }
-			
-			
-			return false;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		protected void publishResults(CharSequence constraint, FilterResults results) 
-		{
-			synchronized(lock)
-			{
-				final ArrayList<ServiceDescription> localItems = (ArrayList<ServiceDescription>) results.values;
-				clear();
-
-                for (ServiceDescription localItem : localItems) {
-                    AdapterComponentList.this.add(localItem);
-                }
-			}
-			
-			notifyDataSetChanged();
-		}
-		
 	}
 }

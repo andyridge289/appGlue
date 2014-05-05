@@ -6,73 +6,13 @@
     android:layout_gravity="center"
     android:gravity="center" >
 
-    <LinearLayout
-        android:id="@+id/component_adv_container"
+
+    <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:id="@+id/component_search"
+        />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/advanced_filter"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            />
-
-        <HorizontalScrollView
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:scrollbars="horizontal">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/component_adv_trigger"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="@string/triggers"
-                    />
-                <CheckBox
-                    android:id="@+id/component_adv_filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="@string/filters"
-                    />
-                <CheckBox
-                    android:id="@+id/component_adv_inputs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="@string/has_inputs"
-                    />
-                <CheckBox
-                    android:id="@+id/component_adv_outputs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="@string/has_outputs"
-                    />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/component_search"
-            />
-
-    </LinearLayout>
-    
     <TextView
         style="@style/FillWrap"
         android:gravity="center_horizontal"

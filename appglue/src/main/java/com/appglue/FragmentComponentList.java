@@ -59,32 +59,6 @@ public class FragmentComponentList extends Fragment
 		this.parent = (ActivityComponentList) getActivity();
 		
 		renderServices = new ArrayList<ServiceDescription>();
-		
-//		// Remove triggers if it's not position 0
-//		if(parent.getLastService() != null && services != null)
-//		{
-//			for(int i = 0; i < services.size(); i++)
-//			{
-//				if(services.get(i).getProcessType() != ProcessType.TRIGGER)
-//				{
-//					renderServices.add(services.get(i));
-//				}
-//			}
-//		}
-//		else
-//		{
-//			renderServices = services == null ? new ArrayList<ServiceDescription>() : services;
-//		}
-//			
-//		if(renderServices.size() > 0)
-//		{
-//			
-//		}
-//		else
-//		{
-//			// Then we need to hide the list and show a text view to say there's nothing there
-////			this.getView().findViewById(R.id.simple_list_none).setVisibility(View.VISIBLE);
-//		}
 	}
 	
 	public void setName(String name)
@@ -96,15 +70,6 @@ public class FragmentComponentList extends Fragment
 	{
 		return name;
 	}
-	
-//	public void update(ArrayList<ServiceDescription> components)
-//	{
-//		this.services = components;
-//		adapter.clear();
-//
-//		adapter = new AdapterComponentList(parent, R.layout.component_list_item, services);
-//		serviceListView.setAdapter(adapter);
-//	}
 	
 	public AdapterComponentList getAdapter()
 	{

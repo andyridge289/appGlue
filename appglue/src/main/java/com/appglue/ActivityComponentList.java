@@ -149,13 +149,7 @@ public class ActivityComponentList extends ActionBarActivity
 		}
 
         // TODO It jumps to the wrong page when you go there from Wiring
-		
-//		String lastServiceName = intent.getStringExtra(LAST_CLASSNAME);
 
-//        ServiceDescription lastService;
-//        if(lastServiceName != null)
-//			lastService = registry.getAtomic(lastServiceName);
-		
 		ActionBar actionBar = getSupportActionBar();
 		boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
 		
