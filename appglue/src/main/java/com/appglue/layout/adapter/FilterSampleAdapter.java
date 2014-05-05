@@ -1,7 +1,5 @@
 package com.appglue.layout.adapter;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,14 +10,16 @@ import android.widget.TextView;
 
 import com.appglue.IOValue;
 
+import java.util.ArrayList;
+
 public class FilterSampleAdapter extends ArrayAdapter<IOValue>
 {
 	private ArrayList<IOValue> values;
 	private Activity activity;
 	
-	public FilterSampleAdapter(Activity context, int resource, ArrayList<IOValue> values) 
+	public FilterSampleAdapter(Activity context, ArrayList<IOValue> values)
 	{
-		super(context, resource, values);
+		super(context, android.R.layout.simple_dropdown_item_1line, values);
 
 		this.activity = context;
 		this.values = values;

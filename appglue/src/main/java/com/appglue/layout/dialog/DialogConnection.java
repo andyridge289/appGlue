@@ -35,7 +35,7 @@ public class DialogConnection extends DialogCustom
 				if(convertView == null)
 				{
 					LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					convertView = vi.inflate(R.layout.list_item_connection, null);
+					convertView = vi.inflate(R.layout.list_item_connection, vg);
 				}
 				
 				final View v = convertView;

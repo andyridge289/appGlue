@@ -11,7 +11,7 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:textSize="18sp"
-		android:text="When do you want your gluedApp to run?"
+		android:text="@string/when_run"
 		/>
     
     <LinearLayout
@@ -30,7 +30,7 @@
 			android:textSize="24sp"
 			android:textColor="@color/dim_on_dark"
 			android:layout_height="wrap_content"
-			android:text="When something happens"
+			android:text="@string/story_trigger"
 			/>
         
         <TextView
@@ -41,7 +41,7 @@
 			android:textColor="@color/dim_on_dark"
 			android:textSize="16sp"
 			android:textStyle="italic"
-            android:text="When an event happens - you get a SMS, you plug the power in, etc."
+            android:text="@string/story_trigger_description"
             />
         
     </LinearLayout>
@@ -70,7 +70,7 @@
 			android:layout_height="wrap_content"
 			android:textSize="24sp"
 			android:textColor="@color/dim_on_dark"
-			android:text="When you say so"
+			android:text="@string/story_normal"
 			/>
         
         <TextView
@@ -80,7 +80,7 @@
 			android:textStyle="italic"
 			android:textSize="16sp"
 			android:textColor="@color/dim_on_dark"
-            android:text="When you press go, or you tell it to go at a particular time."
+            android:text="@string/story_normal_description"
             />
         
     </LinearLayout>

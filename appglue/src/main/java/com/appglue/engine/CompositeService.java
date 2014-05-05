@@ -1,11 +1,11 @@
 package com.appglue.engine;
 
-import static com.appglue.Constants.*;
+import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
 
-import com.appglue.description.ServiceDescription;
-
+import static com.appglue.Constants.Interval;
+import static com.appglue.Constants.ProcessType;
 import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService 
@@ -45,7 +45,7 @@ public class CompositeService
 	
 	public static CompositeService makePlaceholder()
 	{
-		return new CompositeService(NEW_COMPOSITE_PLACEHOLDER, "Nothing", "Nothing", null, false);
+		return new CompositeService("Nothing", "Nothing", null, false);
 	}
 	
 	public CompositeService(long id, String name, String description, boolean shouldBeRunning)
@@ -57,10 +57,10 @@ public class CompositeService
 		this.shouldBeRunning = shouldBeRunning;
 	}
 	
-	public CompositeService(long id, String name, String description, ArrayList<ServiceDescription> services, boolean shouldBeRunning)
+	public CompositeService(String name, String description, ArrayList<ServiceDescription> services, boolean shouldBeRunning)
 	{
         this(false);
-		this.id = id;
+		this.id = (long) CompositeService.NEW_COMPOSITE_PLACEHOLDER;
 		this.name = name;
 		this.components = services;
 		this.description = description;

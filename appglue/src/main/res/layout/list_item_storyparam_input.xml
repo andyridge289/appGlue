@@ -13,7 +13,7 @@
 	        android:id="@+id/param_input_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="IO Name"
+	        android:text="@string/io_name"
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentTop="true"
 	        android:textSize="20sp" />
@@ -24,13 +24,13 @@
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@id/param_input_name"
-	        android:text="IO Type" />
+	        android:text="@string/io_type" />
     
     	<Button
     	    android:id="@+id/filter_button_story"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
-			android:text="Filter"
+			android:text="@string/filter"
 			android:layout_alignParentRight="true"
     	    />
     	
@@ -48,15 +48,15 @@
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
                 style="?android:attr/buttonBarButtonStyle"
-				android:text="Don't filter"
+				android:text="@string/dont_filter"
 	    	    />
 	    	
 	    	<Button
-	    	    android:id="@+id/done_button"
+	    	    android:id="@+id/storyparam_done_button"
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
                 style="?android:attr/buttonBarButtonStyle"
-				android:text="Done"
+				android:text="@string/done"
 	    	    />
     	
     	</LinearLayout>
@@ -83,15 +83,6 @@
             android:background="#EEE"
             
             >
-            
-    
-	   		<!-- <Spinner
-	         	android:id="@+id/param_condition_spinner"
-	            android:layout_width="wrap_content"
-	            android:layout_height="40dip"
-	            android:layout_marginLeft="5dip"
-	            android:layout_marginRight="5dip"
-				/> -->
 	   		
 	   		<TabHost 
        		    android:id="@+id/param_tabhost" 

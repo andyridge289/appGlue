@@ -17,7 +17,7 @@
 
             <ImageView
                 android:id="@+id/first_icon"
-                android:contentDescription="first component icon"
+                android:contentDescription="@string/first_component_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/icon" 
@@ -54,7 +54,7 @@
                 android:id="@+id/second_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="Second component icon"
+                android:contentDescription="@string/second_component_icon"
                 android:layout_centerInParent="true"
                 android:src="@drawable/icon" />
 

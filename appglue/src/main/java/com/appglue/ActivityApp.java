@@ -1,19 +1,5 @@
 package com.appglue;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.appglue.Constants.ProcessType;
-import com.appglue.Constants.ServiceType;
-import com.appglue.description.AppDescription;
-import com.appglue.description.ServiceDescription;
-import com.appglue.library.LocalStorage;
-import com.appglue.serviceregistry.Registry;
-
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.PACKAGENAME;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +14,20 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.appglue.Constants.ProcessType;
+import com.appglue.Constants.ServiceType;
+import com.appglue.description.AppDescription;
+import com.appglue.description.ServiceDescription;
+import com.appglue.library.LocalStorage;
+import com.appglue.serviceregistry.Registry;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.PACKAGENAME;
+import static com.appglue.Constants.TAG;
 
 public class ActivityApp extends Activity
 {
@@ -56,17 +56,17 @@ public class ActivityApp extends Activity
 		ListView componentList = (ListView) findViewById(R.id.app_component_list);
 		ArrayList<ServiceDescription> components = registry.getComponentsForApp(app.getPackageName());
 		
-		componentList.setAdapter(new AppComponentAdapter(this, R.layout.component_list_item, components));
+		componentList.setAdapter(new AppComponentAdapter(this, components));
 	}
 	
 	private class AppComponentAdapter extends ArrayAdapter<ServiceDescription>
 	{
 		private ArrayList<ServiceDescription> items;
 
-		public AppComponentAdapter(Context context, int textViewResourceId, ArrayList<ServiceDescription> items)
+		public AppComponentAdapter(Context context, ArrayList<ServiceDescription> items)
 		{
-			super(context, textViewResourceId, items);
-			
+			super(context, R.layout.component_list_item, items);
+
 			this.items = items;
 		}
 		
@@ -77,7 +77,7 @@ public class ActivityApp extends Activity
 			
 			if(v == null)
 			{
-				v = vi.inflate(R.layout.component_list_item, null);
+				v = vi.inflate(R.layout.component_list_item, viewGroup);
 			}
 			
 			ServiceDescription sd = items.get(position);

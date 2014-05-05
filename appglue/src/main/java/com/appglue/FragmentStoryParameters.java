@@ -202,11 +202,11 @@ public class FragmentStoryParameters extends Fragment
 		typeText.setText(type.getName());
 		
 		final View container = v.findViewById(R.id.filter_container);
-		final Button doneButton = (Button) v.findViewById(R.id.done_button);
+		final Button doneButton = (Button) v.findViewById(R.id.storyparam_done_button);
 		final LinearLayout doneContainer = (LinearLayout) v.findViewById(R.id.button_container);
-		final Button filterButton = (Button) v.findViewById(R.id.filter_button);
+		final Button filterButton = (Button) v.findViewById(R.id.storyparam_filter_button);
 		final Button dontFilterButton = (Button) v.findViewById(R.id.dont_filter_button);
-		
+
 		filterButton.setOnClickListener(new OnClickListener()
 		{
 			public void onClick(View vv)
@@ -393,14 +393,14 @@ public class FragmentStoryParameters extends Fragment
         
 		if(matching.size() > 0)
 		{
-			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, matching));
+			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), matching));
 			tabs.setCurrentTab(2);
 		}
 		else
 		{
 			matching.add(new ServiceIO("No matching", "", null, null, false, null));
 			// It shouldn't be a sample value, because it ain't a sample. It's a ServiceIO. You tit.
-			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, matching));
+			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), matching));
 			previousSpinner.setEnabled(false);
 			
 			previousTab.setEnabled(false);
@@ -421,13 +421,13 @@ public class FragmentStoryParameters extends Fragment
 
 		if (hasSamples) 
 		{
-			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, values));
+			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(), values));
 			tabs.setCurrentTab(0);
 		}
 		else 
 		{
 			// In this case we might have already added the no samples one...?
-			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, values));
+			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(), values));
 			valueSpinner.setEnabled(false);
 			sampleTab.setEnabled(false);
 			sampleTab.setAlpha(0.2f);
@@ -534,7 +534,7 @@ public class FragmentStoryParameters extends Fragment
 				// 2 See which tab is selected - hopefully this is the same as the last one they selected?
 				TabHost tabs = (TabHost) container.findViewById(R.id.param_tabhost);
 				
-				// 3 See what the value of the corresponding textbox/spinner is
+				// 3 See what the value of the corresponding text box/spinner is
 				if(tabs.getCurrentTab() == 0)
 				{
 					// It's the sample one
@@ -654,7 +654,7 @@ public class FragmentStoryParameters extends Fragment
 
 		if (conditionSpinner != null)
 			conditionSpinner.setAdapter(new WiringFilterAdapter(getActivity(),
-					android.R.layout.simple_dropdown_item_1line, conditions));
+                    conditions));
 
 		// FIXME This also needs to take into account what type the thing is
 		
@@ -674,14 +674,14 @@ public class FragmentStoryParameters extends Fragment
 		{
 			Log.e(TAG, "Pre-setting value with prior samples 1");
 			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(),
-					android.R.layout.simple_dropdown_item_1line, values));
+                    values));
 			tabs.setCurrentTab(0);
 		}
 		else 
 		{
 			Log.e(TAG, "Pre-setting value with prior samples 2");
 			valueSpinner.setAdapter(new FilterSampleAdapter(getActivity(),
-					android.R.layout.simple_dropdown_item_1line, values));
+                    values));
 			valueSpinner.setEnabled(false);
 			sampleTab.setEnabled(false);
 			sampleTab.setAlpha(0.2f);
@@ -720,9 +720,9 @@ public class FragmentStoryParameters extends Fragment
 	
 	private class MatchingAdapter extends ArrayAdapter<ServiceIO>
 	{	
-		public MatchingAdapter(Context context, int textViewResourceId, ArrayList<ServiceIO> objects) 
+		public MatchingAdapter(Context context, ArrayList<ServiceIO> objects)
 		{
-			super(context, textViewResourceId, objects);
+			super(context, android.R.layout.simple_dropdown_item_1line, objects);
 		}
 		
 		@Override

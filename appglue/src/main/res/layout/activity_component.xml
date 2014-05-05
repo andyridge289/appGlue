@@ -9,7 +9,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
         
         <ImageView
             android:id="@+id/component_icon"
@@ -151,7 +152,7 @@
 	<TextView
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:text="No examples available"
+	    android:text="@string/no_examples"
 	    android:id="@+id/eg_none"
 	    android:textColor="@color/dimmer_text"
 	    android:layout_margin="5dip"
@@ -199,7 +200,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Inputs"
+                    android:text="@string/inputs"
                     />
                 
                 <ListView 
@@ -213,7 +214,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:id="@+id/no_inputs"
-                    android:text="No inputs"
+                    android:text="@string/no_inputs"
                     android:textAllCaps="true"
                     android:visibility="gone"
                     android:textColor="@color/dimmer_text" />
@@ -229,7 +230,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Outputs"
+                    android:text="@string/outputs"
                     />
                 
                 <ListView
@@ -242,7 +243,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="No outputs"
+                    android:text="@string/no_outputs"
                     android:id="@+id/no_outputs"
                     android:textAllCaps="true"
                     android:textColor="@color/dimmer_text" 

@@ -15,9 +15,9 @@ public class WiringFilterAdapter extends ArrayAdapter<FilterValue>
 	private FilterValue[] values;
 	private Activity activity;
 	
-	public WiringFilterAdapter(Activity context, int resource, FilterValue[] values) 
+	public WiringFilterAdapter(Activity context, FilterValue[] values)
 	{
-		super(context, resource, values);
+		super(context, android.R.layout.simple_dropdown_item_1line, values);
 		
 		this.activity = context;
 		this.values = values;

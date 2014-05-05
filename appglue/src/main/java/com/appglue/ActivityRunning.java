@@ -42,7 +42,7 @@ public class ActivityRunning extends Activity
         ArrayList<CompositeService> runningServices = registry.getIntendedRunningServices();
 		
 		ListView runningList = (ListView) findViewById(R.id.running_list);
-		adapter = new RunningAdapter(this, R.layout.running_list_item, runningServices);
+		adapter = new RunningAdapter(this, runningServices);
 		runningList.setAdapter(adapter);
 		
 		ActionBar actionBar = getActionBar();
@@ -55,9 +55,9 @@ public class ActivityRunning extends Activity
 	{
 		private ArrayList<CompositeService> items;
 		
-		public RunningAdapter(Context context, int textViewResourceId, ArrayList<CompositeService> items)
+		public RunningAdapter(Context context, ArrayList<CompositeService> items)
 		{
-			super(context, textViewResourceId, items);
+			super(context, R.layout.running_list_item, items);
 			
 			this.items = items;
 		}

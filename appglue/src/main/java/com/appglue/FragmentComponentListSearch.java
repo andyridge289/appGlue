@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -89,12 +87,11 @@ public class FragmentComponentListSearch extends FragmentComponentList
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View v, int position, long id)
 			{
-				parent.chosenItem(services.get(position).getClassName(), ServiceType.DEVICE);
+				parent.chosenItem(services.get(position).getClassName());
 			}
 		});
 
         // Setup the search bar
-        // FIXME Enable the decicated search fragment -- filter checkboxes
         // TODO I think it was this that was throwing all of those log messages about the input connection being dead
 		searchEdit = (EditText) v.findViewById(R.id.component_search);
 		searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener()
@@ -159,9 +156,7 @@ public class FragmentComponentListSearch extends FragmentComponentList
 		@Override
 		protected ArrayList<ServiceDescription> doInBackground(Void... params)
 		{
-			ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
-            services = registry.getAllDeviceServices();
-			return services;
+			return registry.getAllDeviceServices();
 		}
 
 		@Override
@@ -175,7 +170,7 @@ public class FragmentComponentListSearch extends FragmentComponentList
 			if(services.size() > 0)
 			{
 				serviceListView.setVisibility(View.VISIBLE);
-				AdapterComponentList adapter = new AdapterComponentListSearch(parent, R.layout.component_list_item, services,
+				AdapterComponentList adapter = new AdapterComponentListSearch(parent, services,
                                                                         FragmentComponentListSearch.this);
 				serviceListView.setAdapter(adapter);
 			}

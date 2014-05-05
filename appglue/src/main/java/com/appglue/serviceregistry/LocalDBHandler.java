@@ -629,7 +629,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * 
 	 * @return All of the atomic services
 	 */
-	public ArrayList<ServiceDescription> getAtomics(ServiceType type, boolean includeConverters)
+	public ArrayList<ServiceDescription> getAtomics(ServiceType type)
 	{
 		ArrayList<ServiceDescription> serviceList = new ArrayList<ServiceDescription>();
 		
@@ -2078,8 +2078,7 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 		{
 			
 			long tagId = c.getLong(c.getColumnIndex(TAG_ID));
-//			Tag t = getTag(tagId);
-            Tag t = new Tag();
+			Tag t = getTag(tagId);
 			tags.add(t);
 		}
 		while(c.moveToNext());

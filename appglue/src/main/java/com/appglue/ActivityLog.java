@@ -41,7 +41,7 @@ public class ActivityLog extends Activity
 		}
 		else
 		{
-			logList.setAdapter(new LogAdapter(this, R.layout.list_item_log, log));
+			logList.setAdapter(new LogAdapter(this, log));
 			noLog.setVisibility(View.GONE);
 		}
 	}
@@ -59,9 +59,9 @@ public class ActivityLog extends Activity
 	{
 		private ArrayList<LogItem> items;
 		
-		public LogAdapter(Context context, int textViewResourceId, ArrayList<LogItem> items) 
+		public LogAdapter(Context context, ArrayList<LogItem> items)
 		{
-			super(context, textViewResourceId, items);
+			super(context, R.layout.list_item_log, items);
 			
 			this.items = items;
 		}
@@ -79,7 +79,7 @@ public class ActivityLog extends Activity
 			
 			if(v == null)
 			{
-				v = vi.inflate(R.layout.list_item_log, null);
+				v = vi.inflate(R.layout.list_item_log, viewGroup);
 			}
 			
 			LogItem log = items.get(position);

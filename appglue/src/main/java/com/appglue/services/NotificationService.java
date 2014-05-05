@@ -44,7 +44,6 @@ public class NotificationService extends ComposableService {
 	@Override
 	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) {
 		NotificationManager n = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Context context = getApplicationContext();
 
 		for (int i = 0; i < os.size(); i++) {
 			Bundle b = os.get(i);

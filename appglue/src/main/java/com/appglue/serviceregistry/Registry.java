@@ -10,7 +10,6 @@ import com.appglue.ServiceIO;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
-import com.appglue.serviceregistry.LocalDBHandler;
 import com.appglue.library.LogItem;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import java.util.HashMap;
 
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
-
 import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class Registry
@@ -164,7 +162,7 @@ public class Registry
 	
 	public ArrayList<ServiceDescription> getAllDeviceServices()
 	{
-		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.DEVICE, false);
+		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.DEVICE);
 		
 		if(services.size() == 0)
 		{

@@ -44,7 +44,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
         registry = Registry.getInstance(getActivity());
         
         ListView componentList = (ListView) v.findViewById(R.id.story_composite_components);
-        componentList.setAdapter(new ComponentAdapter(getActivity(), R.layout.list_item_storycomponent, registry.getService().getComponents()));
+        componentList.setAdapter(new ComponentAdapter(getActivity(), registry.getService().getComponents()));
         
         addLayout = (LinearLayout) v.findViewById(R.id.choice_carry_on);
         addLayout.setOnClickListener(this);
@@ -109,8 +109,8 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 	private class ComponentAdapter extends ArrayAdapter<ServiceDescription>
 	{
 
-		public ComponentAdapter(Context context, int textViewResourceId, ArrayList<ServiceDescription> objects) {
-			super(context, textViewResourceId, objects);
+		public ComponentAdapter(Context context, ArrayList<ServiceDescription> objects) {
+			super(context, R.layout.list_item_storycomponent, objects);
 			
 		}
 		

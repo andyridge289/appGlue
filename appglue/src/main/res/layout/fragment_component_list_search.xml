@@ -9,6 +9,7 @@
 
     <EditText
         android:layout_width="fill_parent"
+        android:inputType="text"
         android:layout_height="wrap_content"
         android:id="@+id/component_search"
         />
@@ -22,7 +23,7 @@
     
     <ImageView
         android:id="@+id/loading_spinner"
-        android:contentDescription="Loading spinner"
+        android:contentDescription="@string/loading_spinner"
         android:layout_width="16px"
         android:layout_height="16px"
         android:background="@drawable/loader"

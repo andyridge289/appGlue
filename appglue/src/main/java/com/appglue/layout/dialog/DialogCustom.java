@@ -40,7 +40,7 @@ public abstract class DialogCustom extends AlertDialog
 
 		if (fcs != null)
 			fcs.setAdapter(new WiringFilterAdapter(activity,
-					android.R.layout.simple_dropdown_item_1line, conditions));
+                    conditions));
 
 		if (type != -1)
 			fvt.setInputType(type);
@@ -54,11 +54,11 @@ public abstract class DialogCustom extends AlertDialog
 
 		if (hasSamples) {
 			fvs.setAdapter(new FilterSampleAdapter(activity,
-					android.R.layout.simple_dropdown_item_1line, values));
+                    values));
 			rs.setChecked(true);
 		} else {
 			fvs.setAdapter(new FilterSampleAdapter(activity,
-					android.R.layout.simple_dropdown_item_1line, values));
+                    values));
 			fvs.setEnabled(false);
 			rt.setChecked(true);
 			rs.setEnabled(false);

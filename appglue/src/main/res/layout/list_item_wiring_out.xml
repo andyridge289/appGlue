@@ -45,13 +45,13 @@
 	        />
     
 	    <ImageView
-	        android:id="@+id/filter_button"
+	        android:id="@+id/storyparam_filter_button"
 	        android:layout_width="48dip"
 	        android:layout_height="48dip"
 	        android:background="?android:selectableItemBackground"
 			android:visibility="gone"
 			android:src="@drawable/filter_small"
-			android:contentDescription="Filter button"
+			android:contentDescription="@string/filter_button"
 			/>
     
     </LinearLayout>

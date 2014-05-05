@@ -51,7 +51,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	private ListView outputList;
 	private ListView inputList;
 	
-	// I don'think we actually care what these are
+	// I don't think we actually care what these are
 	private View outputContainer;
 	private View inputContainer;
 	private View noOutputs;
@@ -215,7 +215,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			if(outputs.size() > 0)
 			{
 				// There are outputs, show the list, hide the none and the add
-				outputList.setAdapter(new OutputAdapter(activity, R.layout.list_item_wiring_out, outputs));
+				outputList.setAdapter(new OutputAdapter(activity, outputs));
 				outputContainer.setVisibility(View.VISIBLE);
 				noOutputs.setVisibility(View.INVISIBLE);
 				addOutput.setVisibility(View.INVISIBLE);
@@ -242,7 +242,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			ArrayList<ServiceIO> inputs = second.getInputs();
 			if(inputs.size() > 0)
 			{
-				inputList.setAdapter(new InputAdapter(activity, R.layout.list_item_wiring_in, inputs));
+				inputList.setAdapter(new InputAdapter(activity, inputs));
 				inputContainer.setVisibility(View.VISIBLE);
 				noInputs.setVisibility(View.INVISIBLE);
 				addInput.setVisibility(View.INVISIBLE);
@@ -271,7 +271,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 				ServiceIO connection = in.get(i).getConnection();
 				if(connection != null)
 				{
-					// It's connected to something so work out what position the other thing is in the ouputs
+					// It's connected to something so work out what position the other thing is in the outputs
 					connections.add(new Point(connection.getIndex(), i));
 				}
 			}
@@ -347,7 +347,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		// Don't know if this actually does anything?
 		super.onDraw(canvas);
 		
-		// Reset the paint incase something else has changed it
+		// Reset the paint in case something else has changed it
 		
 	}
 	
@@ -481,9 +481,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	{
 		public ArrayList<ServiceIO> items;
 		
-		public InputAdapter(Context parent, int textViewResourceId, ArrayList<ServiceIO> items)
+		public InputAdapter(Context parent, ArrayList<ServiceIO> items)
 		{
-			super(parent, textViewResourceId, items);
+			super(parent, R.layout.list_item_wiring_in, items);
 			this.items = items;
 		}
 		
@@ -492,7 +492,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			if(convertView == null)
 			{
 				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);				
-				convertView = vi.inflate(R.layout.list_item_wiring_in, null);
+				convertView = vi.inflate(R.layout.list_item_wiring_in, parent);
 			}
 			
 			final View v = convertView;
@@ -654,7 +654,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 					else if(iSelected != null && oSelected == null)
 					{
 						if(LOG) Log.d(TAG, "Output " + position + " (output is null, input is not)");
-						// This means that we need to unselect the current one?
+						// This means that we need to deselect the current one?
 						setHighlight(null, parent);
 						
 						if(iIndex == position)
@@ -771,9 +771,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	{
 		public ArrayList<ServiceIO> items;
 		
-		public OutputAdapter(Context parent, int textViewResourceId, ArrayList<ServiceIO> items)
+		public OutputAdapter(Context parent, ArrayList<ServiceIO> items)
 		{
-			super(parent, textViewResourceId, items);
+			super(parent, R.layout.list_item_wiring_out, items);
 			this.items = items;
 		}
 		
@@ -782,7 +782,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			if(convertView == null)
 			{
 				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				convertView = vi.inflate(R.layout.list_item_wiring_out, null);
+				convertView = vi.inflate(R.layout.list_item_wiring_out, parent);
 			}
 			
 			final View v = convertView;
@@ -943,7 +943,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 					else if(oSelected != null && iSelected == null)
 					{
 						if(LOG) Log.d(TAG, "Output " + position + " (input is null, output is not)");
-						// This means that we need to unselect the current one?
+						// This means that we need to deselect the current one?
 						setHighlight(null, parent);
 						
 						if(oIndex == position)

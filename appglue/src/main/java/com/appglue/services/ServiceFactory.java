@@ -197,7 +197,7 @@ public class ServiceFactory
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, btJSON);
 	}
 	
-	// TODO Need to make sure allll the text is escaped
+	// TODO Need to make sure all the text is escaped
 	
 	private String setupWifiService()
 	{
@@ -244,15 +244,15 @@ public class ServiceFactory
 		sampleLines.add(new IOValue("Victoria", "Victoria"));
 		sampleLines.add(new IOValue("Waterloo & City", "Waterloo & City"));
 		
-		ArrayList<IOValue> sampleStatuss = new ArrayList<IOValue>();
-		sampleStatuss.add(new IOValue("Minor delays", "minor delays"));
-		sampleStatuss.add(new IOValue("Major delays", "major delays"));
-		sampleStatuss.add(new IOValue("Good Service", "good service"));
-		sampleStatuss.add(new IOValue("Severe delays", "severe delays"));
-		sampleStatuss.add(new IOValue("Part Closure", "part closure"));
+		ArrayList<IOValue> sampleStatuses = new ArrayList<IOValue>();
+		sampleStatuses.add(new IOValue("Minor delays", "minor delays"));
+		sampleStatuses.add(new IOValue("Major delays", "major delays"));
+		sampleStatuses.add(new IOValue("Good Service", "good service"));
+		sampleStatuses.add(new IOValue("Severe delays", "severe delays"));
+		sampleStatuses.add(new IOValue("Part Closure", "part closure"));
 		
 		outputs.add(new ServiceIO(TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
-		outputs.add(new ServiceIO(TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuss));
+		outputs.add(new ServiceIO(TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
 		outputs.add(new ServiceIO(TubeService.LINE_MESSAGE, "Message", text, "The message associated with the line.", false, null));
 		outputs.add(new ServiceIO(TubeService.LINE_URL, "Support website", url, "The URL that links to the page with the problem", false, null));
 		
@@ -578,7 +578,7 @@ public class ServiceFactory
 			//	android.media.RINGER_MODE_CHANGED
 			//	android.media.VIBRATE_SETTING_CHANGED
 	
-		// Backround data/network/whatever
+		// Background data/network/whatever
 			//	android.net.conn.BACKGROUND_DATA_SETTING_CHANGED
 			//	android.net.conn.CONNECTIVITY_CHANGE
 			//	android.net.nsd.STATE_CHANGED
@@ -666,11 +666,11 @@ public class ServiceFactory
 			// Status update
 		// Twitter
 			// Favourited
-			// MEssage received
+			// Message received
 			// New tweet
 			// Reply received
-		// Dropbox
-			// Directoy added/removed
+		// DropBox
+			// Directory added/removed
 			// File added/removed
 			// 	Space used
 			// Media uploaded

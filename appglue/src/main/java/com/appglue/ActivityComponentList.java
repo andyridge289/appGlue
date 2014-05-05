@@ -12,15 +12,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
 
 import com.appglue.Constants.ServiceType;
+import com.appglue.description.ServiceDescription;
+import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
@@ -31,7 +27,6 @@ import static com.appglue.Constants.RESULT;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
-import static com.appglue.library.AppGlueConstants.FIRST;
 import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
 import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
@@ -48,19 +43,8 @@ public class ActivityComponentList extends ActionBarActivity
 
     private boolean justAList;
     private int position;
-	private boolean isFirst;
-	
-	private ArrayList<FragmentComponentList> fragments;
-	
-	private final String SHOW_ADV = "Show advanced filter";
-	private final String HIDE_ADV = "Hide advanced filter";
 
-    public static final int FLAG_SEARCH = 0x0;
-	public static final int FLAG_TRIGGER = 0x1;
-	public static final int FLAG_NOINPUT = 0x2;
-	public static final int FLAG_NOOUTPUT = 0x3;
-	public static final int FLAG_MATCHING = 0x4;
-	public static final int FLAG_ALL = 0x5;
+	private ArrayList<FragmentComponentList> fragments;
 
     public void onCreate(Bundle icicle)
 	{
@@ -76,10 +60,14 @@ public class ActivityComponentList extends ActionBarActivity
         boolean triggersOnly = intent.getBooleanExtra(TRIGGERS_ONLY, false);
 
 		justAList = intent.getBooleanExtra(JUST_A_LIST, false);
+
 		position = intent.getIntExtra(POSITION, -1);
-		isFirst = intent.getBooleanExtra(FIRST, false);
-		
-		fragments = new ArrayList<FragmentComponentList>();
+        Registry registry = Registry.getInstance(this);
+        ArrayList<ServiceDescription> components = registry.getService().getComponents();
+
+        boolean showMatching = components.size() != 0;
+
+        fragments = new ArrayList<FragmentComponentList>();
 		
 		if(triggersOnly)
 		{
@@ -112,14 +100,15 @@ public class ActivityComponentList extends ActionBarActivity
 			noOutput.setName("INPUT ONLY");
 			fragments.add(noOutput);
 
-            // FIXME Only show this if there are components to be matched against.
-			Bundle matchingArgs = new Bundle();
-			matchingArgs.putBoolean(MATCHING, true);
-			matchingArgs.putInt(POSITION, position);
-			FragmentComponentListLocal matching = new FragmentComponentListLocal();
-			matching.setArguments(matchingArgs);
-			matching.setName("MATCHING COMPONENTS");
-			fragments.add(matching);
+            if(showMatching) {
+                Bundle matchingArgs = new Bundle();
+                matchingArgs.putBoolean(MATCHING, true);
+                matchingArgs.putInt(POSITION, position);
+                FragmentComponentListLocal matching = new FragmentComponentListLocal();
+                matching.setArguments(matchingArgs);
+                matching.setName("MATCHING COMPONENTS");
+                fragments.add(matching);
+            }
 			
 			Bundle args = new Bundle();
 			args.putBoolean(HAS_INPUTS, true);
@@ -133,22 +122,8 @@ public class ActivityComponentList extends ActionBarActivity
 		adapter = new PagerAdapter(getSupportFragmentManager());
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(adapter);
-		
-		if(!triggersOnly)
-		{
-			// need to move to one that they might actually want
-			if(isFirst)
-			{
-				// Then we want to be on the trigger page
-				viewPager.setCurrentItem(FLAG_NOINPUT);
-			}
-			else if(position > 0)
-			{
-				viewPager.setCurrentItem(FLAG_ALL);
-			}
-		}
 
-        // TODO It jumps to the wrong page when you go there from Wiring
+        viewPager.setCurrentItem(1);
 
 		ActionBar actionBar = getSupportActionBar();
 		boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
@@ -233,7 +208,6 @@ public class ActivityComponentList extends ActionBarActivity
 		Intent i = new Intent();
 		i.putExtra(CLASSNAME, className);
 		i.putExtra(SERVICE_TYPE, serviceType);
-		i.putExtra(FIRST, isFirst);
 		i.putExtra(POSITION, position);
 		
 		if (getParent() == null) 
@@ -248,12 +222,11 @@ public class ActivityComponentList extends ActionBarActivity
 		finish();
 	}
 	
-	public void chosenItem(String className, ServiceType type)
+	public void chosenItem(String className)
 	{
 		Intent i = new Intent();
 		i.putExtra(CLASSNAME, className);
-		i.putExtra(SERVICE_TYPE, type.index);
-		i.putExtra(FIRST, isFirst);
+		i.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
 		i.putExtra(INDEX, position);
 		
 		Log.w(TAG, "Putting before I finish: " +  className + " " + position);
@@ -282,7 +255,6 @@ public class ActivityComponentList extends ActionBarActivity
 		{
             if(fragments.get(i) == null)
             {
-                // TODO Do something
                 return fragments.get(0);
             }
             else return fragments.get(i);

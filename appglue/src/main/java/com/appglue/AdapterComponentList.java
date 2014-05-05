@@ -1,20 +1,12 @@
 package com.appglue;
 
-import static com.appglue.Constants.TAG;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,16 +15,19 @@ import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 {
 	protected ArrayList<ServiceDescription> originalItems;
-	protected ArrayList<ServiceDescription> items;
+	private ArrayList<ServiceDescription> items;
 
 	private ActivityComponentList parent;
 
 	private LocalStorage localStorage;
 	
-	protected final Object lock = new Object();
+	private final Object lock = new Object();
 
 	public AdapterComponentList(Context context, int textViewResourceId, ArrayList<ServiceDescription> items)
 	{
@@ -83,7 +78,7 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription>
 		
 		if(v == null)
 		{
-			v = vi.inflate(R.layout.component_list_item, null);
+			v = vi.inflate(R.layout.component_list_item, viewGroup);
 		}
 		
 		ServiceDescription sd;

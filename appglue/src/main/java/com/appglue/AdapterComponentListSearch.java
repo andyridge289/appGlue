@@ -1,23 +1,11 @@
 package com.appglue;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Filter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.appglue.Constants.ProcessType;
-import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
-import com.appglue.library.LocalStorage;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -30,10 +18,10 @@ public class AdapterComponentListSearch extends AdapterComponentList
 	private ComponentFilter filter;
 	private final Object lock = new Object();
 
-	public AdapterComponentListSearch(Context context, int textViewResourceId, ArrayList<ServiceDescription> items,
+	public AdapterComponentListSearch(Context context, ArrayList<ServiceDescription> items,
                                       FragmentComponentListSearch searchFragment)
 	{
-		super(context, textViewResourceId, items);
+		super(context, R.layout.component_list_item, items);
         this.searchFragment = searchFragment;
 	}
 

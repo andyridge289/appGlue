@@ -10,7 +10,7 @@
         android:showAsAction="always|withText" />
     <item
         android:id="@+id/composite_list_gplus_login"
-        android:title="Log in with g+"
+        android:title="@string/google_plus_login"
         android:showAsAction="never" 
         />
     <item
@@ -19,17 +19,17 @@
         android:showAsAction="never" />
     <item 
         android:id="@+id/comp_list_log"
-        android:title="View log"
+        android:title="@string/view_log"
         android:showAsAction="never"
         />
     <item
         android:id="@+id/comp_list_story"
-        android:title="Add new Story"
+        android:title="@string/new_story"
         android:showAsAction="never"
         />
     <item
         android:id="@+id/comp_list_settings"
-        android:title="Settings"
+        android:title="@string/settings"
         android:showAsAction="never"
         />
     

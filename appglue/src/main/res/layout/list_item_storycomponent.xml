@@ -15,7 +15,7 @@
     <TextView
         android:id="@+id/story_component_name"
         style="@style/FillWrap"
-        android:text="Component Name"
+        android:text="@string/component_name"
         android:textSize="18sp" />
     
     

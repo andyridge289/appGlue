@@ -18,7 +18,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dip"
-            android:text="I&apos;m done."
+            android:text="@string/finished_story"
             android:textColor="@color/dim_on_dark"
             android:textSize="24sp" />
 
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dip"
             android:layout_marginTop="5dip"
-            android:text="Let&apos;s save it and decide what to do next."
+            android:text="@string/not_finished_story"
             android:textColor="@color/dim_on_dark"
             android:textSize="16sp"
             android:textStyle="italic" />
@@ -56,7 +56,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dip"
-            android:text="Add more things!"
+            android:text="@string/story_add"
             android:textColor="@color/dim_on_dark"
             android:textSize="24sp" />
 
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dip"
             android:layout_marginTop="5dip"
-            android:text="I want to do more stuff"
+            android:text="@string/story_add_description"
             android:textColor="@color/dim_on_dark"
             android:textSize="16sp"
             android:textStyle="italic" />

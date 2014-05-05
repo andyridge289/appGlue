@@ -17,13 +17,13 @@
 		    />
 		
 		<TextView
-		    android:text="Inputs"
+		    android:text="@string/inputs"
 		    style="@style/Simple.Title"
 		    android:layout_marginTop="5dip"
 		    />
 		
 		<TextView
-		    android:text="No inputs for this component"
+		    android:text="@string/inputs_none"
 		    android:id="@+id/story_param_no_inputs"
 		    style="@style/FillWrap"
 		    android:visibility="gone"
@@ -38,12 +38,12 @@
 		    />
 		
 		<TextView
-		    android:text="Outputs"
+		    android:text="@string/outputs"
 		    style="@style/Simple.Title"
 		    />
 		
 		<TextView
-		    android:text="No outputs for this component"
+		    android:text="@string/outputs_none"
 		    android:id="@+id/story_param_no_outputs"
 		    style="@style/FillWrap"
 		    android:visibility="gone"

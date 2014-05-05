@@ -86,7 +86,7 @@ public class OrchestrationService extends Service
                 final CompositeService cs = test ? registry.getService() : registry.getComposite(compositeId);
 
                 if (cs == null) {
-                    Log.e(TAG, "The composite is null. WHAT THE UFCK HAVE YOU DONE");
+                    Log.e(TAG, "The composite is null. WHAT THE FUCK HAVE YOU DONE");
                     return false;
                 }
 

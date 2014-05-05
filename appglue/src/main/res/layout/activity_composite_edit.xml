@@ -24,6 +24,7 @@
             android:id="@+id/composite_name_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="text"
             android:text="@string/service_name"
             android:paddingTop="10dip"
             android:textSize="20sp"
@@ -41,6 +42,7 @@
     <EditText
         android:id="@+id/composite_description_edit"
         android:layout_width="fill_parent"
+        android:inputType="text"
         android:layout_height="wrap_content"
         android:padding="5dip"
         android:text="@string/simple_service_description_text"
@@ -48,7 +50,7 @@
     
     <TextView
         style="@style/Simple.Title"
-        android:text="Status" 
+        android:text="@string/status"
         />
     
     <LinearLayout 
@@ -59,7 +61,7 @@
         
         <CheckBox 
 	        android:id="@+id/composite_active"
-	        android:text="Active"
+	        android:text="@string/active"
 	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
@@ -67,7 +69,7 @@
 	    
 	    <CheckBox
 	        android:id="@+id/composite_running"
-	        android:text="Running"
+	        android:text="@string/running"
 	        android:layout_width="0dip"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1"
@@ -85,14 +87,14 @@
 	        android:layout_height="wrap_content"
 	        android:layout_width="0dip"
 	        android:layout_weight="4"
-	        android:text="Components"
+	        android:text="@string/components"
 	        android:gravity="center"
 	        />
 		
 		<ImageButton
 		    android:id="@+id/composite_edit_composition"
 		    android:layout_width="0dip"
-            android:contentDescription="Edit composition"
+            android:contentDescription="@string/edit_composition"
 		    android:layout_weight="1"
 		    android:layout_height="wrap_content"
 		    android:src="@drawable/ab_edit"

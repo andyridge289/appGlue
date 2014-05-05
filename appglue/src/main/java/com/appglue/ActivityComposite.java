@@ -64,13 +64,13 @@ public class ActivityComposite extends Activity
 		
 		ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            actionBar.setTitle("View Composite"); // XXX Extract this as a string
+            actionBar.setTitle(getString(R.string.view_composite));
             actionBar.setSubtitle(cs.getName());
         }
 
 	}
 	
-	public void setup()
+	private void setup()
 	{
 		if(edit)
 		{
@@ -141,7 +141,7 @@ public class ActivityComposite extends Activity
 		activeCheck.setChecked(registry.isCompositeActive(cs.getId()));
 		
 		ListView componentList = (ListView) findViewById(R.id.composite_component_list);
-		componentList.setAdapter(new CompositeComponentAdapter(this, R.layout.li_component_in_composite, cs.getComponents()));
+		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponents()));
 			
 		if(edit)
 		{
@@ -194,9 +194,9 @@ public class ActivityComposite extends Activity
 	{
 		private ArrayList<ServiceDescription> items;
 		
-		public CompositeComponentAdapter(Context context, int textViewResourceId, ArrayList<ServiceDescription> items) 
+		public CompositeComponentAdapter(Context context, ArrayList<ServiceDescription> items)
 		{
-			super(context, textViewResourceId, items);
+			super(context, R.layout.li_component_in_composite, items);
 			
 			this.items = items;
 		}
@@ -208,7 +208,7 @@ public class ActivityComposite extends Activity
 			
 			if(v == null)
 			{
-				v = vi.inflate(R.layout.li_component_in_composite, null);
+				v = vi.inflate(R.layout.li_component_in_composite, parent);
 			}
 
             if(v == null)

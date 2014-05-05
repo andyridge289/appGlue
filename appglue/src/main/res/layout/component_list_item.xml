@@ -73,7 +73,7 @@
 	                    android:id="@+id/comp_item_trigger"
 	                    android:layout_width="16dip"
 	                    android:layout_height="16dip"
-                        android:contentDescription="Trigger icon"
+                        android:contentDescription="@string/trigger_icon"
 	                    android:layout_alignParentLeft="true"
 	                    android:src="@drawable/ic_trigger"
 	                    android:visibility="gone"
@@ -85,7 +85,7 @@
 	                    android:textSize="12sp"
 	                    android:layout_width="wrap_content"
 	                    android:layout_toRightOf="@id/comp_item_trigger"
-	                    android:text="Trigger"
+	                    android:text="@string/trigger"
 	                    android:textColor="@color/dim_text"
 	                    android:visibility="gone"
 	                    />
@@ -93,7 +93,7 @@
 	                <ImageView
 	                    android:id="@+id/comp_item_filter"
 	                    android:layout_width="16dip"
-                        android:contentDescription="Fitler icon"
+                        android:contentDescription="@string/filter_icon"
 	                    android:layout_height="14dip"
 	                    android:layout_below="@id/comp_item_trigger"
 	                    android:src="@drawable/ic_filter"
@@ -107,7 +107,7 @@
 	                    android:layout_width="wrap_content"
 	                    android:layout_toRightOf="@id/comp_item_filter"
 	                    android:layout_below="@id/comp_item_trigger_text"
-	                    android:text="Filter"
+	                    android:text="@string/filter"
 	                    android:textColor="@color/dim_text"
 	                    android:visibility="gone"
 	                    />

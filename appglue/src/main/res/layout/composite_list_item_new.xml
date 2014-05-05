@@ -15,7 +15,7 @@
    	    
    	     <ImageView
    	     	android:layout_alignParentTop="true"
-   	        android:contentDescription="Create new composite"
+   	        android:contentDescription="@string/create_composite"
    	        android:id="@+id/service_icon"
 			android:layout_width="64dip"
 	    	android:layout_height="64dip"

@@ -14,7 +14,7 @@
         android:id="@+id/no_log"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No log messages yet"
+        android:text="@string/empty_log"
         android:gravity="center"
         android:textColor="@color/dim_text"
         android:visibility="gone"

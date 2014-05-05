@@ -556,7 +556,7 @@ public class ActivityCompositeList extends Activity
 			if(cs.getId() == CompositeService.NEW_COMPOSITE_PLACEHOLDER)
 			{
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.composite_list_item_new, null);
+				v = vi.inflate(R.layout.composite_list_item_new, parent);
 
                 if(v != null)
                 {
@@ -578,7 +578,7 @@ public class ActivityCompositeList extends Activity
 			if(v == null)
 			{
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.list_item_app_selector, null);
+				v = vi.inflate(R.layout.list_item_app_selector, parent);
 			}
 			
 			if(v == null)

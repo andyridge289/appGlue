@@ -40,12 +40,12 @@ public class IOFilter
 		return !first.equals(second);
 	}
 	
-	public static boolean numLequals(Integer first, Integer second)
+	public static boolean numLEquals(Integer first, Integer second)
 	{
 		return first <= second;
 	}
 	
-	public static boolean numGequals(Integer first, Integer second)
+	public static boolean numGEquals(Integer first, Integer second)
 	{
 		return first >= second;
 	}

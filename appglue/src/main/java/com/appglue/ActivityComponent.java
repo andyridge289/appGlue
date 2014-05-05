@@ -208,7 +208,7 @@ public class ActivityComponent extends Activity
 		LinearLayout exampleContainer = (LinearLayout) findViewById(R.id.component_eg_container);
 		for(int i = 0; i < examples.size(); i++)
 		{
-			View v = inflater.inflate(R.layout.example_composite, null);
+			View v = inflater.inflate(R.layout.example_composite, exampleContainer);
 			final int index = i;
 
             if(v != null)
@@ -421,9 +421,9 @@ public class ActivityComponent extends Activity
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				
 				if(inputs)
-					v = vi.inflate(R.layout.list_item_wiring_in, null);
+					v = vi.inflate(R.layout.list_item_wiring_in, parent);
 				else
-					v = vi.inflate(R.layout.list_item_wiring_out, null);
+					v = vi.inflate(R.layout.list_item_wiring_out, parent);
 			}
 
             if(v == null)

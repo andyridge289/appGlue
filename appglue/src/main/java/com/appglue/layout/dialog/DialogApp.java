@@ -35,7 +35,7 @@ public class DialogApp extends DialogCustom
 		// Get a list of the installed apps and then show them on something
 		final PackageManager pm = activity.getPackageManager();
 		final List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-		final AppChooserAdapter adapter = new AppChooserAdapter(activity, R.layout.list_item_app_selector, packages, pm);
+		final AppChooserAdapter adapter = new AppChooserAdapter(activity, packages, pm);
 		
 		GridView g = (GridView) v.findViewById(R.id.app_grid);
 		g.setAdapter(adapter);
@@ -95,9 +95,9 @@ public class DialogApp extends DialogCustom
 		private PackageManager pm;
 		private int selectedIndex;
 		
-		public AppChooserAdapter(Context context, int resource, List<ApplicationInfo> values, PackageManager pm)
+		public AppChooserAdapter(Context context, List<ApplicationInfo> values, PackageManager pm)
 		{
-			super(context, resource, values);
+			super(context, R.layout.list_item_app_selector, values);
 			
 			this.pm = pm;
 			this.values = values;
@@ -109,7 +109,7 @@ public class DialogApp extends DialogCustom
 			if(v == null)
 			{
 				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.list_item_app_selector, null);
+				v = vi.inflate(R.layout.list_item_app_selector, parent);
 			}
 			
 			if(position != selectedIndex)
