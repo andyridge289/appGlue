@@ -575,7 +575,7 @@ public class ActivityCompositeList extends Activity
 			if(v == null)
 			{
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				v = vi.inflate(R.layout.list_item_app_selector, parent);
+				v = vi.inflate(R.layout.list_item_app_selector, null);
 			}
 			
 			if(v == null)
