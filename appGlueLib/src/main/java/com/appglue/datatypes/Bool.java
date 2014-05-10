@@ -1,5 +1,7 @@
 package com.appglue.datatypes;
 
+import android.os.Bundle;
+
 public class Bool extends IOType
 {
 	public Bool()
@@ -9,25 +11,19 @@ public class Bool extends IOType
 		this.className = Bool.class.getCanonicalName();
 		this.value = false;
 	}
-	
-	public Bool(boolean value)
-	{
-		this();
-		this.value = value;
-	}
 
-	@Override
-	public Boolean toStorable(Object value)
-	{
-		return (Boolean) value;
-	}
-	
-	public Boolean fromStorable(Object value)
-	{
-		return (Boolean) value;
-	}
-	
-	public String toString(Object value)
+    @Override
+    public Object getFromBundle(Bundle bundle, String key, Object defautValue) {
+        return bundle.getBoolean(key, false);
+    }
+
+    @Override
+    public void addToBundle(Bundle b, Object o, String key) {
+        b.putBoolean(key, (Boolean) o);
+    }
+
+
+    public String toString(Object value)
 	{
 		return "" + value;
 	}

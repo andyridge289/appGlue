@@ -115,7 +115,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		appMap = new HashMap<String, AppDescription>();
 		
 		// Recreate the database every time for now while we are testing
-		recreate();
+//		recreate();
 	}
 	
 

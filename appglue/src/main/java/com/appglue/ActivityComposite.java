@@ -208,7 +208,7 @@ public class ActivityComposite extends Activity
 			
 			if(v == null)
 			{
-				v = vi.inflate(R.layout.li_component_in_composite, parent);
+				v = vi.inflate(R.layout.li_component_in_composite, null);
 			}
 
             if(v == null)

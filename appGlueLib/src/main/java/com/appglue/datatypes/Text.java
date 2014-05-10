@@ -1,5 +1,7 @@
 package com.appglue.datatypes;
 
+import android.os.Bundle;
+
 public class Text extends IOType
 {
 	public Text()
@@ -9,27 +11,19 @@ public class Text extends IOType
 		this.className = Text.class.getCanonicalName();
 		this.value = "";
 	}
-	
-	public Text(String value)
-	{
-		this();
-		this.value = value;
-	}
-	
-	@Override
-	public String toStorable(Object value)
-	{
-		return (String) value;
-	}
 
-	@Override
-	public String fromStorable(Object value)
-	{
-		// It's just a string so we're good
-		return (String) value;
-	}
-	
-	@Override
+    @Override
+	public Object getFromBundle(Bundle bundle, String key, Object defaultValue)
+    {
+        return bundle.getString(key, (String) defaultValue);
+    }
+
+    @Override
+    public void addToBundle(Bundle b, Object object, String key) {
+        b.putString(key, (String) object);
+    }
+
+    @Override
 	public String toString(Object value)
 	{
 		return (String) value;

@@ -492,7 +492,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			if(convertView == null)
 			{
 				LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);				
-				convertView = vi.inflate(R.layout.list_item_wiring_in, parent);
+				convertView = vi.inflate(R.layout.list_item_wiring_in, null);
 			}
 			
 			final View v = convertView;

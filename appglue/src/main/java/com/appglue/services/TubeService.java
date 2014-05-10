@@ -1,7 +1,11 @@
 package com.appglue.services;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import android.os.Bundle;
+
+import com.appglue.ComposableService;
+import com.appglue.R;
+import com.appglue.datatypes.IOType;
+import com.appglue.library.Network;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -10,15 +14,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Bundle;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import com.appglue.ComposableService;
-import com.appglue.library.Network;
-
-import static com.appglue.Constants.*;
+import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.VALUE;
 
 public class TubeService extends ComposableService
-{	
+{
+    public static final IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
+    public static final IOType urlType = IOType.Factory.getType(IOType.Factory.URL);
+    public static final IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
+
 	public static final String TAG_LINES = "lines";
 	public static final String TAG_UPDATE = "update";
 	public static final String TAG_NAME = "name";
@@ -34,8 +41,9 @@ public class TubeService extends ComposableService
 	public static final String LINE_STATUS = "line_status";
 	public static final String LINE_MESSAGE = "line_message";
 	public static final String LINE_URL = "line_url";
+    public static final String LINE_ICON = "line_icon";
 
-    private String getFromURL(String url, ArrayList<Bundle> parameters) throws ClientProtocolException, IOException
+    private String getFromURL(String url, ArrayList<Bundle> parameters) throws IOException
 	{		
 		if(parameters == null)
 		{
@@ -84,7 +92,8 @@ public class TubeService extends ComposableService
 		if(fail)
 		{
 			ArrayList<Bundle> deadLines = new ArrayList<Bundle>();
-			deadLines.add(this.makeBundle("No network!", "failure", null, ""));
+//			deadLines.add(this.makeBundle("No network!", "failure", null, ""));
+            // FIXME This needs to use the failure mechanism rather than doing it this way
 			
 			isList = true;
 			
@@ -117,14 +126,27 @@ public class TubeService extends ComposableService
 					messages[j] = jsonMessages.getString(j);
 				}
 				
-				Bundle lineBundle = this.makeBundle(lineName, status, messages, "");
+				Bundle lineBundle = new Bundle();
+                text.addToBundle(lineBundle, lineName, LINE_NAME);
+                text.addToBundle(lineBundle, status, LINE_STATUS);
+                urlType.addToBundle(lineBundle, "http://www.google.co.uk", LINE_URL);
+                imageDrawable.addToBundle(lineBundle, R.drawable.circle, LINE_ICON);
 				
 				if(!status.equals(GOOD_SERVICE))
 					deadLines.add(lineBundle);
 			}
-			
+
 			if(deadLines.size() == 0)
-				deadLines.add(this.makeBundle("", "", null, ""));
+            {
+                Bundle lineBundle = new Bundle();
+                text.addToBundle(lineBundle, "Bakerloo", LINE_NAME);
+                text.addToBundle(lineBundle, "Minor delays", LINE_STATUS);
+                urlType.addToBundle(lineBundle, "http://www.google.co.uk", LINE_URL);
+                imageDrawable.addToBundle(lineBundle, R.drawable.circle, LINE_ICON);
+                deadLines.add(lineBundle);
+            }
+
+            // FIXME What happens when the result is empty?
 			
 			isList = true;
 			
@@ -135,18 +157,6 @@ public class TubeService extends ComposableService
 			e.printStackTrace();
 			return null;
 		}
-	}
-	
-	private Bundle makeBundle(String name, String status, String[] messages, String url)
-	{
-		Bundle b = new Bundle();
-		
-		b.putString(LINE_NAME, name);
-		b.putString(LINE_STATUS, status);
-		b.putStringArray(LINE_MESSAGE, messages);
-		b.putString(LINE_URL, url);
-		
-		return b;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.appglue.datatypes;
 
+import android.os.Bundle;
+
 public abstract class IOType
 {
 	protected long id;
@@ -65,13 +67,10 @@ public abstract class IOType
 	public boolean equals(IOType other)
 	{
         return this.className.equals(other.getClassName());
-
     }
 
-
-	
-	public abstract Object toStorable(Object value);
-	public abstract Object fromStorable(Object value);
+    public abstract Object getFromBundle(Bundle b, String key, Object defautValue);
+    public abstract void addToBundle(Bundle b, Object o, String key);
 	
 	public abstract String toString(Object value); // One for any OTHER iotype
 	public abstract Object fromString(String value);
@@ -85,40 +84,31 @@ public abstract class IOType
 		public static final String BOOLEAN = Bool.class.getCanonicalName();
 		public static final String SET = Set.class.getCanonicalName();
 		public static final String APP = App.class.getCanonicalName();
+        public static final String IMAGE = Image.class.getCanonicalName();
+        public static final String IMAGE_DRAWABLE = ImageDrawable.class.getCanonicalName();
 		
 		public static IOType getType(String name)
 		{
-//			try
-			{		
-				// The first 3 are string types so it's pretty easy
-				if(name.equals(TEXT))
-					return new Text();
-				else if(name.equals(URL))
-					return new URLObject();
-				else if(name.equals(PHONE_NUMBER))
-					return new PhoneNumber();
-				else if(name.equals(NUMBER))
-					return new NumberInt();
-				else if(name.equals(BOOLEAN))
-					return new Bool();
-				else if(name.equals(SET))
-					return new Set();
-				else if(name.equals(APP))
-					return new App();
-//				{
-//					return new IOType("App", App.class.getCanonicalName(), IOType.class.getDeclaredMethod("toStorable", String.class));
-//				}
-//				else
-//				{
-//					Log.e(TAG, "Class name isn't supported by the factory yet " + name);
-//				}
-			}
-//			catch(NoSuchMethodException e)
-//			{
-//				Log.e(TAG, "Error: Method not found!");
-//			}
-			
-//			return new IOType();
+
+            if(name.equals(TEXT))
+                return new Text();
+            else if(name.equals(URL))
+                return new URLObject();
+            else if(name.equals(PHONE_NUMBER))
+                return new PhoneNumber();
+            else if(name.equals(NUMBER))
+                return new NumberInt();
+            else if(name.equals(BOOLEAN))
+                return new Bool();
+            else if(name.equals(SET))
+                return new Set();
+            else if(name.equals(APP))
+                return new App();
+            else if(name.equals(IMAGE))
+                return new Image();
+            else if(name.equals(IMAGE_DRAWABLE))
+                return new ImageDrawable();
+
 			return null;
 		}
 		

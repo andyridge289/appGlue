@@ -1,15 +1,5 @@
 package com.appglue.services;
 
-import static com.appglue.Constants.*;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.util.Log;
@@ -18,8 +8,8 @@ import com.appglue.IOValue;
 import com.appglue.Library;
 import com.appglue.R;
 import com.appglue.ServiceIO;
-import com.appglue.description.AppDescription;
 import com.appglue.datatypes.IOType;
+import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
@@ -29,6 +19,25 @@ import com.appglue.services.triggers.PowerTrigger;
 import com.appglue.services.triggers.ReceiveSMSTrigger;
 import com.appglue.services.util.BluetoothService;
 import com.appglue.services.util.WifiService;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+
+import static com.appglue.Constants.DESCRIPTION;
+import static com.appglue.Constants.DEVELOPER;
+import static com.appglue.Constants.JSON_APP;
+import static com.appglue.Constants.JSON_SERVICE;
+import static com.appglue.Constants.JSON_SERVICE_DATA;
+import static com.appglue.Constants.JSON_SERVICE_LIST;
+import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.PACKAGENAME;
+import static com.appglue.Constants.ProcessType;
+import static com.appglue.Constants.TAG;
 
 public class ServiceFactory 
 {
@@ -228,6 +237,7 @@ public class ServiceFactory
 		ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
 		IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 		IOType url = IOType.Factory.getType(IOType.Factory.URL);
+        IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
 		
 		ArrayList<IOValue> sampleLines = new ArrayList<IOValue>();
 		sampleLines.add(new IOValue("Bakerloo", "Bakerloo"));
@@ -255,6 +265,7 @@ public class ServiceFactory
 		outputs.add(new ServiceIO(TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
 		outputs.add(new ServiceIO(TubeService.LINE_MESSAGE, "Message", text, "The message associated with the line.", false, null));
 		outputs.add(new ServiceIO(TubeService.LINE_URL, "Support website", url, "The URL that links to the page with the problem", false, null));
+        outputs.add(new ServiceIO(TubeService.LINE_ICON, "Line icon", imageDrawable, "An icon representing the line", false, null));
 		
 		String[] tags = { "Tube", "London", "Underground", "Travel", "tfl" };
 		
@@ -292,10 +303,12 @@ public class ServiceFactory
 		ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
 		IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 		IOType url = IOType.Factory.getType(IOType.Factory.URL);
+        IOType imageD = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
 		
 		inputs.add(new ServiceIO(NotificationService.NOTIFICATION_TITLE, "Notification title", text, "The title of the notification.", true, null));
 		inputs.add(new ServiceIO(NotificationService.NOTIFICATION_TEXT, "Notification message", text, "The message in the notification.", false, null));
 		inputs.add(new ServiceIO(NotificationService.NOTIFICATION_URL, "Notification URL", url, "The URL that the notification points to.", false, null));
+        inputs.add(new ServiceIO(NotificationService.NOTIFICATION_IMAGE, "Notification Image", imageD, "The image to use for the notification", false, null));
 		
 		String[] tags = { "Android", "Notification", "Notify" };
 		

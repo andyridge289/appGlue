@@ -1,11 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.TAG;
-
-import java.util.ArrayList;
-
-import com.appglue.Constants.ProcessType;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -17,6 +11,12 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.appglue.Constants.ProcessType;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.TAG;
 
 public abstract class ComposableService extends Service 
 {		
@@ -131,7 +131,7 @@ public abstract class ComposableService extends Service
                 	
                 	// Get the inputs
                 	ArrayList<Bundle> inputs = messageData.getParcelableArrayList(INPUT);
-                	Bundle input = inputs.size() == 0 ? new Bundle() : inputs.get(0); // Either get the first thing, or if there aren't any things, just make a new thing so that shit doesn't go down
+                	Bundle input = inputs == null || inputs.size() == 0 ? new Bundle() : inputs.get(0); // Either get the first thing, or if there aren't any things, just make a new thing so that shit doesn't go down
                 	
                 	// It should only be the first one that is set if only one thing has been sent
                 	// Get the parameters

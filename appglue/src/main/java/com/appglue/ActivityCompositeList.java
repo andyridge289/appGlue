@@ -364,7 +364,7 @@ public class ActivityCompositeList extends Activity
 		b.putInt(DURATION, 0);
 		b.putBoolean(TEST, false);
 		
-		if(LOG) Log.w(TAG, "Trying to run " + cs.getId());
+		if(LOG) Log.w(TAG, "Trying to run " + cs.getId() + " : " + cs.getName());
 		
 		intentData.add(b);
 		serviceIntent.putParcelableArrayListExtra(DATA, intentData);

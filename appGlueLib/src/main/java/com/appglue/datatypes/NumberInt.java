@@ -1,5 +1,7 @@
 package com.appglue.datatypes;
 
+import android.os.Bundle;
+
 public class NumberInt extends IOType
 {
 	public NumberInt()
@@ -9,25 +11,19 @@ public class NumberInt extends IOType
 		this.className = NumberInt.class.getCanonicalName();
 		this.value = 0;
 	}
-	
-	public NumberInt(int value)
-	{
-		this();
-		this.value = value;
-	}
 
-	@Override
-	public Integer toStorable(Object value)
-	{
-		return (Integer) value;
-	}
-	
-	public Integer fromStorable(Object value)
-	{
-		return (Integer) value;
-	}
-	
-	public String toString(Object value)
+    @Override
+    public Object getFromBundle(Bundle bundle, String key, Object defautValue) {
+        return null;
+    }
+
+    @Override
+    public void addToBundle(Bundle b, Object o, String key) {
+        b.putInt(key, (Integer) o);
+    }
+
+
+    public String toString(Object value)
 	{
 		return "" + value;
 	}
