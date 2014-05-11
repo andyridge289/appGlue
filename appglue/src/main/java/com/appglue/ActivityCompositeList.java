@@ -707,6 +707,7 @@ public class ActivityCompositeList extends Activity
             }
 
 	        ArrayList<CompositeService> composites = registry.getComposites(false);
+            registry.getComponentsJoin();
 			composites.add(CompositeService.makePlaceholder());
 			
 			return composites;

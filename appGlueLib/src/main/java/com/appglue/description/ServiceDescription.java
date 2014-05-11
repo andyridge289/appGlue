@@ -86,11 +86,6 @@ public class ServiceDescription
 	// Representations of the icon of the service
 	private AppDescription app = null;
 	
-	protected ServiceDescription()
-	{
-		this.className = null;
-	}
-	
 	private ServiceDescription(
 			String packageName, String className, String name, 
 			String description, double price,
@@ -112,7 +107,25 @@ public class ServiceDescription
 		this.serviceType = serviceType;
 		this.processType = processType;
 	}
-	
+
+	public ServiceDescription()
+    {
+        this.name = "";
+        this.className = "";
+        this.packageName = "";
+        this.description = "";
+        this.price = 0.0f;
+        this.averageReviewRating = 0;
+        this.numReviews = 0;
+        this.reviews = new ArrayList<Review>();
+
+        this.inputs = inputs == null ? new ArrayList<ServiceIO>() : inputs;
+        this.outputs = outputs == null ? new ArrayList<ServiceIO>() : outputs;
+
+        this.serviceType = ServiceType.ANY;
+        this.processType = ProcessType.NORMAL;
+    }
+
 	public String getClassName()
 	{
 		return this.className;
@@ -445,6 +458,27 @@ public class ServiceDescription
 		
 		return services;
 	}
+
+    public void setInfo(Cursor c)
+    {
+        this.packageName = c.getString(c.getColumnIndex(PACKAGENAME));
+        this.className = c.getString(c.getColumnIndex(CLASSNAME));
+        this.name = c.getString(c.getColumnIndex(NAME));
+        this.description = c.getString(c.getColumnIndex(DESCRIPTION));
+
+        this.price = c.getFloat(c.getColumnIndex(PRICE));
+
+        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(SERVICE_TYPE)));
+        this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(PROCESS_TYPE)));
+    }
+
+    public void addIO(ServiceIO io, boolean input, int position)
+    {
+        if(input)
+            this.inputs.add(position, io);
+        else
+            this.outputs.add(position, io);
+    }
 	
 	public static ServiceDescription createFromCursor(Cursor c, String prefix)
 	{

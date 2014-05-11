@@ -386,5 +386,9 @@ public class Registry
 		return dbHandler.getMatchingForIOs(next, true);
 	}
 
-	
+	// Temporary functions to expose the joins
+    public void getComponentsJoin()
+    {
+        dbHandler.getComponentsJoin();
+    }
 }

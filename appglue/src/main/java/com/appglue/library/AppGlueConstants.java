@@ -22,7 +22,6 @@ import static com.appglue.Constants.NUM_RATINGS;
 import static com.appglue.Constants.OUTPUT_CLASSNAME;
 import static com.appglue.Constants.OUTPUT_IO_ID;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PARENT_SERVICE;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
@@ -152,9 +151,9 @@ public class AppGlueConstants
 		{ IO_INDEX, "INTEGER" },
 		{ IO_TYPE, "INTEGER" },
 		{ DESCRIPTION, "TEXT" },
-		{ PARENT_SERVICE, "TEXT", TBL_COMPONENT, CLASSNAME },
+		{ CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
 		{ MANDATORY, "TINYINT" },
-		{ I_OR_O, "INTEGER" }
+		{ I_OR_O, "TINYINT" }
 	};
 
     // Links between the output of one component in a composite and the input to another
@@ -231,8 +230,6 @@ public class AppGlueConstants
 	
 	public static final String HAS_INPUTS = "has_inputs";
 	public static final String HAS_OUTPUTS = "has_outputs";
-	
-
 	
 	public static final String TAG_ID = "tag_id";
 	

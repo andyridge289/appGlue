@@ -215,7 +215,6 @@ public class Constants
 	public static final String PROCESS_TYPE = "process_type";
 	
 	public static final String IO_TYPE = "io_type";
-	public static final String PARENT_SERVICE = "parent_service";
 	public static final String FRIENDLY_NAME = "friendly_name";
 	public static final String IO_INDEX = "io_index";
 	public static final String I_OR_O = "i_or_o";

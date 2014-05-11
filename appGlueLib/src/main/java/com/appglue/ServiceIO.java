@@ -1,10 +1,19 @@
 package com.appglue;
 
-import java.util.ArrayList;
+import android.database.Cursor;
 
 import com.appglue.datatypes.IOType;
 import com.appglue.datatypes.Text;
 import com.appglue.description.ServiceDescription;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.FRIENDLY_NAME;
+import static com.appglue.Constants.IO_INDEX;
+import static com.appglue.Constants.I_OR_O;
+import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.DESCRIPTION;
 
 public class ServiceIO 
 {
@@ -12,6 +21,7 @@ public class ServiceIO
 	
 	// The index of the IO in the list of IOs for the SD
 	private int index;
+    private boolean isInput;
 	
 	// User friendly name of the type
 	private String name;
@@ -57,6 +67,12 @@ public class ServiceIO
 		this.mandatory = false;
 		this.sampleValues = new ArrayList<IOValue>();
 	}
+
+    public ServiceIO(long id)
+    {
+        this();
+        this.id = id;
+    }
 	
 	public ServiceIO(String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> sampleValues)
 	{
@@ -89,6 +105,12 @@ public class ServiceIO
 		this(name, friendlyName, index, type, description, parent, mandatory, sampleValues);
 		this.id = id;
 	}
+
+    public void setInput(boolean isInput) {
+        this.isInput = isInput;
+    }
+
+    public boolean isInput() { return this.isInput; }
 	
 	public long getId()
 	{
@@ -261,14 +283,16 @@ public class ServiceIO
 		
 		sampleValues.add(value);
 	}
-	
-	public String toString()
-	{
-//		return "<serviceio name='" + name + "' description='" + 
-//					 StringEscapeUtils.escapeXml(description) + "'>" + 
-//					 type.toString() + "</serviceio>";
-		return "";
-	}
+
+    public void setInfo(String tableAlias, Cursor c)
+    {
+        this.setName(c.getString(c.getColumnIndex(tableAlias + "." + NAME)));
+        this.setFriendlyName(c.getString(c.getColumnIndex(tableAlias + "." + FRIENDLY_NAME)));
+        this.setIndex(c.getInt(c.getColumnIndex(tableAlias + "." + IO_INDEX)));
+        this.setDescription(c.getString(c.getColumnIndex(tableAlias + "." + DESCRIPTION)));
+        this.setMandatory(c.getInt(c.getColumnIndex(tableAlias + "." + MANDATORY)) == 1);
+        this.setInput(c.getInt(c.getColumnIndex(tableAlias + "." + I_OR_O)) == 1);
+    }
 	
 	
 }
