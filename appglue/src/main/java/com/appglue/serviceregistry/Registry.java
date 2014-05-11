@@ -120,14 +120,14 @@ public class Registry
 	{
 		// Don't care what it says it is, it's lying.
 		sd.setServiceType(ServiceType.LOCAL);
-		return dbHandler.addAtomic(sd);
+		return dbHandler.addComponent(sd);
 	}
 	
 	public long addService(ServiceDescription sd)
 	{
 		// Don't care what it says it is, it's lying.
 		sd.setServiceType(ServiceType.IN_APP);
-		return dbHandler.addAtomic(sd);
+		return dbHandler.addComponent(sd);
 	}
 	
 	public ArrayList<ServiceDescription> getInputOnlyComponents()

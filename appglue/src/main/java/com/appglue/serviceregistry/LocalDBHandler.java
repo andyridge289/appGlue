@@ -315,7 +315,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 * @param sd The object representation of the component
 	 * @return The id of the inserted component
 	 */
-	public long addAtomic(ServiceDescription sd)
+	public long addComponent(ServiceDescription sd)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		
@@ -981,7 +981,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			
 			long compositeId = db.insert(TBL_COMPOSITE, null, values);
 			cs.setId(compositeId);
-			
+
+            deleteAllComponents(cs.getId());
 			for(int i = 0; i < components.size(); i++)
 			{
 				long linkId = this.addCompositeHasAtomic(compositeId, components.get(i).getClassName(), i);
@@ -1038,6 +1039,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					Log.d(TAG, "Updated " + ret + " rows for " + cs.getId() + "(" + cs.getName() + ")");
 			
 			// Clear the atomic table for that component, then add all the components
+            deleteAllComponents(cs.getId());
 			for(int i = 0; i < components.size(); i++)
 			{
 				long linkId = this.addCompositeHasAtomic(cs.getId(), components.get(i).getClassName(), i);
@@ -1528,7 +1530,13 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	/***********************************************************************************
 	 * Link from composite service to atomic service stuff
 	 **********************************************************************************/
-	
+
+    private int deleteAllComponents(long compositeId)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID + " = ? ", new String[]{ "" + compositeId });
+    }
+
 	public long addCompositeHasAtomic(long compositeId, String className, int position)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
