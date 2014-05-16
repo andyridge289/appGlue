@@ -105,6 +105,9 @@ public class LocalDBHandler extends SQLiteOpenHelper
     private HashMap<Long, CompositeService> compositeMap;
 	private HashMap<String, ServiceDescription> componentMap;
     private HashMap<Long, ServiceIO> ioMap;
+
+    // These are the ones that get cached immediately for speed-ness.
+    private HashMap<Long, IOType> typeMap;
     private HashMap<Long, Tag> tagMap;
 
 	/**
@@ -119,6 +122,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		appMap = new HashMap<String, AppDescription>();
         componentMap = new HashMap<String, ServiceDescription>();
         ioMap = new HashMap<Long, ServiceIO>();
+
+        typeMap = new HashMap<Long, IOType>();
+        tagMap = new HashMap<Long, Tag>();
+
+        cacheIOTypes();
+        cacheTags();
 		
 		// Recreate the database every time for now while we are testing
 		recreate();
@@ -545,30 +554,31 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			components.add(sd);
 		}
 		while(c.moveToNext());
-		
+        c.close();
+
 		return components;
 	}
-	
+
 	/**
 	 * Updates the service. It's been added after a broadcast, and is now being updated
 	 * after more information about it has been looked up.
-	 * 
+	 *
 	 * @param service 	The description of the service containing the new information
 	 * @return			An indication as to whether it has been successful or not
 	 */
 	public boolean updateServiceFromLookup(ServiceDescription service)
-	{		
+	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		String strFilter = CLASSNAME + "='" + service.getClassName() + "'";
 		ContentValues args = new ContentValues();
-		
+
 		args.put(AVG_RATING, service.getAverageRating());
 		args.put(NUM_RATINGS, service.getNumReviews());
 		args.put(PRICE, service.getPrice());
-		
+
 		int retval = db.update(TBL_COMPONENT, args, strFilter, null);
-		
+
 		if(retval == 0)
 		{
 			Log.e(TAG, "Failed to update service " + service.getClassName());
@@ -580,140 +590,142 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			return true;
 		}
 	}
-	
+
 	public ArrayList<ServiceDescription> getComponents(ProcessType type)
 	{
 		ArrayList<ServiceDescription> serviceList = new ArrayList<ServiceDescription>();
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		Cursor c = db.query(TBL_COMPONENT, null,
 				PROCESS_TYPE + " = ?", new String[] { "" + ProcessType.TRIGGER.index },
 				null, null, null, null);
-		
-		
-		
+
+
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("Component cursor null: %s", "getAtomics(Process)"));
 			return serviceList;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			Log.e(TAG, String.format("Component cursor empty: %s", "getAtomics(Process)"));
 			return serviceList;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-			
+
 			ArrayList<ServiceIO> inputs = getServiceIOs(sd, true);
 			sd.setInputs(inputs);
-			
+
 			ArrayList<ServiceIO> outputs = getServiceIOs(sd, false);
 			sd.setOutputs(outputs);
-			
+
 			ArrayList<Tag> tags = getTagsForComponent(sd.getClassName());
 			sd.addTags(tags);
-			
+
 			serviceList.add(sd);
 		}
 		while(c.moveToNext());
-		
+        c.close();
+
 		return serviceList;
 	}
-	
+
 	/**
-	 * Gets all of the atomic services we know about with the given ServiceType 
-	 * 
+	 * Gets all of the atomic services we know about with the given ServiceType
+	 *
 	 * @return All of the atomic services
 	 */
 	public ArrayList<ServiceDescription> getAtomics(ServiceType type)
 	{
 		ArrayList<ServiceDescription> serviceList = new ArrayList<ServiceDescription>();
-		
+
 		String typeString = "";
-		
+
 		if(type == ServiceType.LOCAL)
 			typeString = String.format(" WHERE %s.%s = %s", TBL_COMPONENT, SERVICE_TYPE, ServiceType.LOCAL.index);
 		else if(type == ServiceType.IN_APP)
 			typeString = String.format(" WHERE %s.%s = %s", TBL_COMPONENT, SERVICE_TYPE, ServiceType.IN_APP.index);
 		else if(type == ServiceType.DEVICE)
 			typeString = String.format(" WHERE %s.%s = %s OR %s.%s = %s", TBL_COMPONENT, SERVICE_TYPE, ServiceType.LOCAL.index, TBL_COMPONENT, SERVICE_TYPE, ServiceType.IN_APP.index);
-		
+
 		String query = String.format("SELECT * FROM %s %s", TBL_COMPONENT, typeString);
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("Atomic cursor null: %s", "getAtomics(Service)"));
 			return serviceList;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			Log.e(TAG, String.format("Atomic cursor empty: %s", "getAtomics(Service)"));
 			return serviceList;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
-			
+
 			ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-			
+
 			ArrayList<ServiceIO> inputs = getServiceIOs(sd, true);
 			if(inputs == null) inputs = new ArrayList<ServiceIO>();
 			sd.setInputs(inputs);
-			
+
 			ArrayList<ServiceIO> outputs = getServiceIOs(sd, false);
 			if(outputs == null) outputs = new ArrayList<ServiceIO>();
 			sd.setOutputs(outputs);
-			
+
 			ArrayList<Tag> tags = getTagsForComponent(sd.getClassName());
 			sd.addTags(tags);
-			
+
 			AppDescription app = getAppForService(sd.getPackageName());
 			if(app != null)
 				sd.setApp(app);
-			
+
 //			if(!sd.isConverter() || includeConverters)
 				serviceList.add(sd);
 		}
 		while(c.moveToNext());
-		
+        c.close();
+
 		return serviceList;
 	}
-	
+
 	private ArrayList<ServiceIO> getServiceIOs(ServiceDescription sd, boolean input)
 	{
 		ArrayList<ServiceIO> ios = new ArrayList<ServiceIO>();
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		String textInput = input ? "1" : "0";
 		Cursor c = db.query(TBL_SERVICEIO, null,
 	 			CLASSNAME + " = ? AND " + I_OR_O + " = ?", new String[] { sd.getClassName(),  textInput},
 				null, null, null, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("getServiceIO() %s %s: Cursor dead", sd.getClassName(), "" + input));
 			return null;
 		}
-			
+
 		if(c.getCount() == 0)
 		{
 			return ios;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			long id = c.getLong(c.getColumnIndex(ID));
@@ -730,47 +742,48 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 			IOType type = getIOType(c.getLong(c.getColumnIndex(IO_TYPE)));
 			String description = c.getString(c.getColumnIndex(DESCRIPTION));
-			
+
 			ServiceIO io = new ServiceIO(id, name, friendlyName, index, type, description, sd, mandatory, new ArrayList<IOValue>());
 			getSampleValues(io);
-			
+
 			ios.add(io);
 		}
 		while(c.moveToNext());
-		
+		c.close();
+
 		return ios;
 	}
-	
+
 	private void getSampleValues(ServiceIO io)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		String q = String.format(Locale.ENGLISH, "SELECT * FROM %s WHERE %s = %d", TBL_IO_SAMPLES, SERVICE_IO, io.getId());
-		
+
 		Cursor c = db.rawQuery(q, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, "Getting sample values fail, or there aren't any...");
 			return;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			// This should just mean that there aren't any
 			return;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			// Build and set up the IO values
 			long id = c.getLong(c.getColumnIndex(ID));
 			String name = c.getString(c.getColumnIndex(NAME));
 			String stringValue = c.getString(c.getColumnIndex(VALUE));
-			
+
 			IOType type = io.getType();
-			
+
 			IOValue value = new IOValue(id, name);
 			if(type.equals(IOType.Factory.getType(IOType.Factory.NUMBER)))
 				value.setValue(Integer.parseInt(stringValue));
@@ -778,15 +791,16 @@ public class LocalDBHandler extends SQLiteOpenHelper
 				value.setValue(Boolean.parseBoolean(stringValue));
 			else // It's probably just a string, so a string representation will do...
 				value.setValue(stringValue);
-			
+
 			io.addSampleValue(value);
 		}
 		while(c.moveToNext());
+        c.close();
 	}
-	
+
 	/**
 	 * We only need the intermediary table for going the other way I think!!
-	 * 
+	 *
 	 * @param packageName The name of the package to check for apps
 	 * @return An object representing the app description
 	 */
@@ -794,30 +808,30 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	{
 		if(appMap.containsKey(packageName))
 			return appMap.get(packageName);
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_APP, PACKAGENAME, packageName);
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 			return null;
-			
+
 		if(c.getCount() == 0)
 			return null;
-		
+
 		c.moveToFirst();
-		
+
 		AppDescription app = AppDescription.parseFromCursor(c);
 		appMap.put(packageName, app);
 		return app;
 	}
-	
 
-	
-	
+
+
+
 	/**
 	 * Returns an IO if it exists, adds it if it doesn't
-	 * 
+	 *
 	 * @param name	The name of the IOType to be searched for/added
      * @param className The name of the class
 	 * @return				the IO Type
@@ -828,9 +842,9 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		{
 			return null;
 		}
-		
+
 		IOType type = getIOType(className);
-		
+
 		if(type == null)
 		{
 			long id = addInputOutput(name, className);
@@ -842,53 +856,58 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 			type = getIOType(id);
 		}
-		
-		
+
+
 		return type;
 	}
-	
-	
+
+
 	/**
 	 * Returns an IOType
-	 * 
+	 *
 	 * @param ioId	The ID of the IOType to be got
 	 * @return		The IOType
 	 */
 	public IOType getIOType(long ioId)
 	{
+        // Get it from the cache if it's in there
+        if(typeMap.containsKey(ioId))
+            return typeMap.get(ioId);
+
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		String sql = String.format("SELECT * FROM %s WHERE %s = %s", TBL_IOTYPE, ID, "" + ioId);
 		Cursor c = db.rawQuery(sql, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("getIOType() %d: Cursor dead", ioId));
 			return null;
 		}
-			
+
 		if(c.getCount() == 0)
 		{
 			Log.e(TAG, String.format("getIOType() %d: Cursor empty", ioId));
 			return null;
 		}
-			
+
 		c.moveToFirst();
-		
+
 		long id = c.getLong(c.getColumnIndex(ID));
 		String className = c.getString(c.getColumnIndex(CLASSNAME));
-		
+        c.close();
+
 		IOType type = IOType.Factory.getType(className);
 		type.setID(id);
-		
+
 		return type;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Gets an IOType, given its classname
-	 * 
+	 *
 	 * @param inputClassName	The name of the class of the IOType
 	 * @return				The IOType
 	 */
@@ -901,26 +920,26 @@ public class LocalDBHandler extends SQLiteOpenHelper
             Log.e(TAG, String.format("getIOType() %s: Cursor dead", inputClassName));
             return null;
         }
-		
+
 		if(c.getCount() == 0) {
             if(LOG) Log.w(TAG, String.format("getIOType() %s: Cursor empty", inputClassName));
             return null;
         }
-		
+
 		c.moveToFirst();
-		
+
 		long id = c.getLong(c.getColumnIndex(ID));
 		String className = c.getString(c.getColumnIndex(CLASSNAME));
-		
+
 		IOType type = IOType.Factory.getType(className);
 		type.setID(id);
 		return type; //new IOType(id, name, className);
 	}
-	
-	
+
+
 	/**
 	 * Adds an IOType with the given class name
-	 * 
+	 *
 	 * @param name	The name of the IOType to be added
      * @param className the class name of the IO to be added
 	 * @return				The ID of the inserted IOType
@@ -928,18 +947,18 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	public long addInputOutput(String name, String className)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		ContentValues values = new ContentValues();
 		values.put(NAME, name);
 		values.put(CLASSNAME, className);
-		
+
 		return db.insert(TBL_IOTYPE, null, values);
 	}
-	
-	public long updateComposite(CompositeService cs) 
+
+	public long updateComposite(CompositeService cs)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		if(cs.getId() == -1)
 		{
 			// This is a new one and it needs to be added from scratch
@@ -949,16 +968,16 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			values.put(IS_RUNNING, 0);
             values.put(SHOULD_BE_RUNNING, 1);
 			values.put(ACTIVE_OR_TIMER, 0);
-			
+
 			ArrayList<ServiceDescription> components = cs.getComponents();
 			if(components.size() == 0)
 				return -1;
-			
+
 			if(components.get(0).getProcessType() == ProcessType.TRIGGER)
 				values.put(ACTIVE_OR_TIMER, 1);
 			else
 				values.put(ACTIVE_OR_TIMER, 0);
-			
+
 			long compositeId = db.insert(TBL_COMPOSITE, null, values);
 			cs.setId(compositeId);
 
@@ -966,17 +985,17 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			for(int i = 0; i < components.size(); i++)
 			{
 				long linkId = this.addCompositeHasAtomic(compositeId, components.get(i).getClassName(), i);
-				
+
 				if(linkId == -1)
 					Log.e(TAG, "Failed to add " + components.get(i).getClassName() + " to " + cs.getId());
 				else if(LOG)
 					Log.d(TAG, "Added component: " + components.get(i).getClassName() + " to " + cs.getId());
 			}
-			
+
 			// Now we need to connect the ServiceIOs
 			boolean ioSuccess = addIOConnections(compositeId, components);
 			boolean filterValueSuccess = updateFiltersAndValues(cs);
-			
+
 			if(!ioSuccess)
 			{
 				Log.e(TAG, "Composite save LOSE -- IO");
@@ -997,7 +1016,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		{
 			// We've already saved it once, so we just need to add everything else
 			ContentValues values = new ContentValues();
-			
+
 			Log.e(TAG, "Setting name to" + cs.getName());
 			values.put(NAME, cs.getName());
 			values.put(DESCRIPTION, cs.getDescription());
@@ -1005,37 +1024,37 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			ArrayList<ServiceDescription> components = cs.getComponents();
 			if(components.size() == 0)
 				return -1;
-			
+
 			if(components.get(0).getProcessType() == ProcessType.TRIGGER)
 				values.put(ACTIVE_OR_TIMER, 1);
 			else
 				values.put(ACTIVE_OR_TIMER, 0);
-			
+
 			int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{ "" + cs.getId() });
 			if(LOG)
 				if(ret == 0)
 					Log.d(TAG, "Nothing to update for " + cs.getId() + "(" + cs.getName() + ")");
 				else
 					Log.d(TAG, "Updated " + ret + " rows for " + cs.getId() + "(" + cs.getName() + ")");
-			
+
 			// Clear the atomic table for that component, then add all the components
             deleteAllComponents(cs.getId());
 			for(int i = 0; i < components.size(); i++)
 			{
 				long linkId = this.addCompositeHasAtomic(cs.getId(), components.get(i).getClassName(), i);
-				
+
 				if(linkId == -1)
 					Log.e(TAG, "Failed to add " + components.get(i).getClassName() + " to " + cs.getId());
 				else if(LOG)
 					Log.d(TAG, "Added component: " + components.get(i).getClassName() + " to " + cs.getId());
 			}
-						
+
 			// Clear the IO connections then add them all
 			db.delete(TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID + " = ?", new String[]{"" + cs.getId()});
-			
+
 			boolean ioSuccess = addIOConnections(cs.getId(), components);
 			boolean filterValueSuccess = updateFiltersAndValues(cs);
-			
+
 			if(!ioSuccess)
 			{
 				Log.e(TAG, "Composite save LOSE -- IO");
@@ -1051,19 +1070,19 @@ public class LocalDBHandler extends SQLiteOpenHelper
 				if(LOG) Log.d(TAG, "Successfully updated " + cs.getId() + "("  + cs.getName() + ")");
 				return cs.getId();
 			}
-		}		
+		}
 	}
-	
+
 	private boolean addIOConnections(long compositeId, ArrayList<ServiceDescription> services)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		// If there's only one service we don't need to do anything
 		if(services.size() <= 1)
 			return true;
-		
+
 		boolean allSuccess = true;
-		
+
 		// Loop through the inputs to the second service in each pair, and then add a connection for the relevant output to the relevant input
         for (ServiceDescription current : services) {
             // Loop through the current inputs
@@ -1090,13 +1109,13 @@ public class LocalDBHandler extends SQLiteOpenHelper
                 }
             }
         }
-		
+
 		return allSuccess;
 	}
 
 	/***
 	 * Get all of the composites!
-	 * 
+	 *
 	 * @return All of the composites
      * @param includeTemp whether the temp should be included or not
 	 */
@@ -1111,13 +1130,13 @@ public class LocalDBHandler extends SQLiteOpenHelper
             c = db.query(TBL_COMPOSITE, new String[] { ID }, null, null, null, null, null);
         else
             c = db.query(TBL_COMPOSITE, new String[] { ID }, ID + " <> ?", new String[] { "" + TEMP_ID }, null, null, null);
-		
+
 		if(c == null)
 			return composites;
-		
+
 		if(c.getCount() == 0)
 			return composites;
-		
+
 		if(c.moveToFirst())
 		{
 			do
@@ -1128,99 +1147,101 @@ public class LocalDBHandler extends SQLiteOpenHelper
 				composites.add(getComposite(id));
 			}
 			while(c.moveToNext());
+            c.close();
 		}
-		
+
 		return composites;
 	}
-	
-	
+
+
 	/**
 	 * Get one of the composites
-	 * 
+	 *
 	 * @param id The id of the composite
 	 * @return The composite
 	 */
 	public CompositeService getComposite(long id)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor c = db.query(TBL_COMPOSITE, 
+		Cursor c = db.query(TBL_COMPOSITE,
 							new String[]{ ID, NAME, DESCRIPTION, ACTIVE_OR_TIMER },
 							ID + " = ?", new String[]{ "" + id },
 							null, null, null, null);
-		
+
 		if(c == null)
 		{
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return null;
 		}
-		
+
 		if(!c.moveToFirst())
 			return null;
-		
+
 		String name = c.getString(c.getColumnIndex(NAME));
 		String description = c.getString(c.getColumnIndex(DESCRIPTION));
 		int active = c.getInt(c.getColumnIndex(ACTIVE_OR_TIMER));
-				
+
 		CompositeService cs = new CompositeService(id, name, description, active == 1);
-				
+
 		setupComponents(cs);
-		
+
 		return cs;
 	}
-	
+
 	/**
 	 * Sort out the components of the composite
-	 * 
+	 *
 	 * @param cs The composite inside which the composites exist
 	 */
 	public void setupComponents(CompositeService cs)
 	{
 		ArrayList<ServiceDescription> components = new ArrayList<ServiceDescription>();
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		Cursor c = db.query(TBL_COMPOSITE_HAS_COMPONENT, null,
 				 			COMPOSITE_ID + " = ?", new String[] { "" + cs.getId() },
 							null, null, POSITION, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, "Error, trying to get components but didn't really manage it");
 			return;
 		}
-		
+
 		if(c.getCount() == 0) // This is fine, there just aren't any
 		{
 			if(LOG) Log.d(TAG, "No components... " + cs.getId());
 			return;
 		}
-		
+
 		c.moveToFirst();
-			
+
 		do
 		{
 			// Make a component from the stuff we get back and then add it at the right position
 			int position = c.getInt(c.getColumnIndex(POSITION));
-			 
+
 			components.add(position, getComponentForComposite(c.getString(c.getColumnIndex(CLASSNAME))));
 		}
 		while(c.moveToNext());
-		
+        c.close();
+
 		cs.setComponents(components);
-		
+
 		// We should have all of the components set by this point, now do the connections
 		setupConnections(cs);
-		
+
 		// Then get all the filter information for those components
 		getFiltersAndValues(cs);
 	}
-	
+
 	/**
 	 * Gets the atomic service with the given ID
-	 * 	
+	 *
 	 * @param className	The name of the class of the service to get
 	 * @return 		The service with the given ID
 	 */
@@ -1230,51 +1251,51 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		Cursor c = db.query(TBL_COMPONENT, null,
 	 			CLASSNAME + " = ?", new String[] { className },
 				null, null, null, null);
-		
-		
+
+
 		if(c == null)
 		{
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return null;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-		
+
 		ArrayList<ServiceIO> inputs = getServiceIOs(sd, true);
 		sd.setInputs(inputs);
-		
+
 		ArrayList<ServiceIO> outputs = getServiceIOs(sd, false);
 		sd.setOutputs(outputs);
-		
+
 		AppDescription app = getAppForService(sd.getPackageName());
 		if(app != null)
 			sd.setApp(app);
-		
+
 		return sd;
 	}
-	
+
 	public void setupConnections(CompositeService cs)
 	{
 		String query = String.format("SELECT * FROM %s WHERE %s = %s",
 				TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID, "" + cs.getId());
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 			return;
-		
+
 		if(c.getCount() == 0)
 			return;
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			// Get the output atomic
@@ -1287,10 +1308,10 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					first = service;
 				}
 			}
-			
+
 			if(first == null)
 				continue;
-			
+
 			// Get the ID of the input atomic
 			ServiceDescription second = null;
 			String secondClassName = c.getString(c.getColumnIndex(INPUT_CLASSNAME));
@@ -1301,10 +1322,10 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					second = service;
 				}
 			}
-			
+
 			if(second == null)
-				continue;  
-			
+				continue;
+
 			// Get the ID of the serviceIO output
 			ArrayList<ServiceIO> outputs = first.getOutputs();
 			ServiceIO output = null;
@@ -1316,10 +1337,10 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					output = io;
 				}
 			}
-			
+
 			if(output == null)
 				continue;
-			
+
 			// Get the ID of the serviceIO input
 			ArrayList<ServiceIO> inputs = second.getInputs();
 			ServiceIO input = null;
@@ -1331,36 +1352,37 @@ public class LocalDBHandler extends SQLiteOpenHelper
 					input = io;
 				}
 			}
-			
+
 			if(input == null)
 				continue;
-			
+
 			// Connect the input to the output and vice versa
 			input.setConnection(output);
 			output.setConnection(input);
-			
+
 		}
 		while(c.moveToNext());
+        c.close();
 	}
-	
-	public boolean updateWiring(CompositeService cs) 
+
+	public boolean updateWiring(CompositeService cs)
 	{
 		// Just delete them all and then re-add them all again - this seems easiest?
 		SQLiteDatabase db = this.getWritableDatabase();
 		int delCount = db.delete(TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID + "=" + cs.getId(), null);
-		
+
 		if(LOG) Log.d(TAG, "DBUPDATE: Deleted " + delCount + " rows for " + cs.getName());
-		
+
 		// This could be zero to be fair
-		addIOConnections(cs.getId(), cs.getComponents()); 
-		
+		addIOConnections(cs.getId(), cs.getComponents());
+
 		return true;
 	}
-	
+
 	public boolean deleteComposite(CompositeService cs)
 	{
 		long id = cs.getId();
-		
+
 		SQLiteDatabase db = this.getWritableDatabase();
 		int cStatus = db.delete(TBL_COMPOSITE, ID + "=?", new String[] { "" + id });
 		int chcStatus = db.delete(TBL_COMPOSITE_HAS_COMPONENT, ID +"=?", new String[]{ "" + id });
@@ -1369,26 +1391,26 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
         return cStatus == -1 || chcStatus == -1 || cioStatus == -1 || fStatus == -1;
 	}
-	
+
 	public ArrayList<CompositeService> getIntendedRunningComposites()
 	{
 		ArrayList<CompositeService> serviceList = new ArrayList<CompositeService>();
 		String query = String.format(Locale.getDefault(), "SELECT * FROM %s WHERE %s = %d", TBL_COMPOSITE, ACTIVE_OR_TIMER, 1);
-		
+
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, "Running cursor dead - getIntendedRunningComposites");
 			return serviceList;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return serviceList;
 		}
-		
+
 		if(c.moveToFirst())
 		{
 			do
@@ -1398,7 +1420,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 				long numeral = c.getLong(c.getColumnIndex(NUMERAL));
 				int intervalIndex = c.getInt(c.getColumnIndex(INTERVAL));
 				Interval interval;
-				
+
 				if(intervalIndex == Interval.SECONDS.index)
 				{
 					interval = Interval.SECONDS;
@@ -1411,52 +1433,53 @@ public class LocalDBHandler extends SQLiteOpenHelper
 				{
 					interval = Interval.HOURS;
 				}
-				else 
+				else
 				{
 					interval = Interval.DAYS;
 				}
-				
-				CompositeService cs = getComposite(id);				
+
+				CompositeService cs = getComposite(id);
 				serviceList.add(new CompositeService(id, name, cs.getComponents(), numeral, interval));
 			}
 			while(c.moveToNext());
+            c.close();
 		}
-		
+
 		return serviceList;
 	}
-	
+
 	/**
 	 * Returns whether it should be running, and then whether it is running
-	 * 
+	 *
 	 * @param id The id of the composite to find out about the running status
 	 * @return The running status of the composite
 	 */
 	public Pair<Boolean, Boolean> compositeRunning(long id)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		if(id == -1)
 		{
 			// ID not set, don't really know what to do here
 			return null;
 		}
-		
+
 		Cursor c = db.query(TBL_COMPOSITE, new String[]{ ACTIVE_OR_TIMER, IS_RUNNING }, ID + "=?", new String[] { "" + id }, null, null, null);
-		
+
 		if(c == null)
 			return new Pair<Boolean, Boolean>(false, false);
-		
+
 		c.moveToFirst();
 
-		long is = c.getLong(c.getColumnIndex(IS_RUNNING)); 
+		long is = c.getLong(c.getColumnIndex(IS_RUNNING));
 		long should = c.getLong(c.getColumnIndex(ACTIVE_OR_TIMER));
-		
+
 		return new Pair<Boolean, Boolean>((should == 1), (is == 1));
 	}
-	
+
 	/**
 	 * Set whether a composite service is currently running or not
-	 * 
+	 *
 	 * @param id The id of the composite
 	 * @param running The new running status
 	 * @return The success?
@@ -1465,24 +1488,24 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	{
 		return setCompositeRunning(id, running, IS_RUNNING);
 	}
-	
-	
+
+
 	/**
 	 * Sets whether the composite service should be running or not
-	 * 
+	 *
 	 * @param id The id of the composite
 	 * @param running the new active status
 	 * @return The success of this?
 	 */
 	public boolean setCompositeActive(long id, long running)
-	{		
+	{
 		return setCompositeRunning(id, running, ACTIVE_OR_TIMER);
 	}
-	
+
 	/**
 	 * So we don't have such code duplication with two methods doing essentially
 	 * the same thing.
-	 * 
+	 *
 	 * @param id The id of the composite
 	 * @param running The running status of the composite
 	 * @param type Custom type
@@ -1491,13 +1514,13 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	private boolean setCompositeRunning(long id, long running, String type)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		if(id == -1)
 		{
 			// Id not set, don't really know what to do here
 			return false;
 		}
-		
+
 		String strFilter = ID + "=" + id;
 		ContentValues args = new ContentValues();
 		args.put(type, running);
@@ -1505,8 +1528,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
         return retval != 0;
 	}
-	
-	
+
+
 	/***********************************************************************************
 	 * Link from composite service to atomic service stuff
 	 **********************************************************************************/
@@ -1520,24 +1543,24 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	public long addCompositeHasAtomic(long compositeId, String className, int position)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		ContentValues values = new ContentValues();
 		values.put(COMPOSITE_ID, compositeId);
 		values.put(CLASSNAME, className);
 		values.put(POSITION, position);
-		
+
 		return db.insert(TBL_COMPOSITE_HAS_COMPONENT, null, values);
 	}
 
-	public boolean compositeExistsWithName(String name) 
+	public boolean compositeExistsWithName(String name)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPOSITE,
 				NAME, name);
-		
+
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("Cursor dead compositeExistsWithName %s", name));
@@ -1547,49 +1570,49 @@ public class LocalDBHandler extends SQLiteOpenHelper
         return c.getCount() != 0;
 
     }
-	
+
 	public boolean setTimerDuration(long compositeId, long numeral, Interval interval)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		ContentValues values = new ContentValues();
-		
+
 		values.put(NUMERAL, numeral);
 		values.put(INTERVAL, interval.index);
-		
+
 		String strFilter = ID + "=" + compositeId;
 		int retval = db.update(TBL_COMPOSITE, values, strFilter, null);
 
         return retval == 1;
 	}
-	
+
 	public Pair<Long, Interval> getTimerDuration(long compositeId)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		String query = String.format("SELECT * FROM %s WHERE %s = %s", TBL_COMPOSITE, ID, compositeId);
-		
+
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, "Cursor null getTimerDuration " + compositeId);
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			Log.e(TAG, "No rows getTimerDuration " + compositeId);
 			return null;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		long numeral = c.getLong(c.getColumnIndex(NUMERAL));
 		int intervalValue = c.getInt(c.getColumnIndex(INTERVAL));
-		
+
 		Interval interval;
-		
+
 		if(intervalValue == Interval.SECONDS.index)
 		{
 			interval = Interval.SECONDS;
@@ -1606,16 +1629,16 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		{
 			interval = Interval.DAYS;
 		}
-		
+
 		return new Pair<Long, Interval>(numeral, interval);
 	}
-	
-	public boolean updateFiltersAndValues(CompositeService cs) 
-	{		
+
+	public boolean updateFiltersAndValues(CompositeService cs)
+	{
 		SQLiteDatabase db = this.getWritableDatabase();
 		ArrayList<ServiceDescription> components = cs.getComponents();
 		int runningFailures = 0;
-		
+
 		// Delete all of the filters for that particular composite
 		int numRemoved = db.delete(TBL_FILTER, COMPOSITE_ID + " = ?", new String[] { "" + cs.getId() });
 		if(LOG) Log.d(TAG, "Removed " + numRemoved + " from Filter for " + cs.getId() + "("  + cs.getName() + ")");
@@ -1676,35 +1699,35 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 		return runningFailures == 0;
 	}
-	
+
 	/**
-	 * This one needs to set all of the values out of the database for a Composite 
+	 * This one needs to set all of the values out of the database for a Composite
 	 * that's already been got.
-	 * 
+	 *
 	 * @param cs The composite to get the filter values for
 	 */
 	public void getFiltersAndValues(CompositeService cs)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		Cursor c = db.query(TBL_FILTER, null,
 	 			COMPOSITE_ID + " = ?", new String[] { ""+  cs.getId() },
 				null, null, null, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("Cursor dead for getFilterValues: %s", cs.getName()));
 			return ;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			// This shouldn't be a problem, it probably just means that there are no filters for that composite
 			return;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			// Need to know which atomic in the composite we're operating on
@@ -1712,71 +1735,73 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 			if(component == null)
 				continue; // I don't feel like this should happen but you never know...
-			
+
 			ServiceIO io = component.getIO(c.getLong(c.getColumnIndex(SERVICE_IO)));
-			
+
 			if(io == null)
 				continue; // Ditto
-			
+
 			// Try to set both of the values in case they've saved an old one
-			
+
 			long sampleValue = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
 			if(sampleValue != -1)
 			{
 				IOValue ioValue = getIOValue(sampleValue, io);
 				io.setChosenSampleValue(ioValue);
 			}
-			
+
 			String manualValue = c.getString(c.getColumnIndex(MANUAL_VALUE));
-			
+
 			// A the re-loading of values needs to use the new method
 			io.setManualValue(io.getType().fromString(manualValue));
-			
+
 			// Set the filter state afterwards to override it to whatever they wanted
 			int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
 			io.setFilterState(filterState);
-			
+
 			io.setCondition(c.getInt(c.getColumnIndex(FILTER_CONDITION)));
 		}
 		while(c.moveToNext());
+        c.close();
 	}
 
 
-	public ArrayList<CompositeService> atomicAtPosition(String className, int position) 
+	public ArrayList<CompositeService> atomicAtPosition(String className, int position)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
-		
+
 		String sql = String.format("SELECT DISTINCT %s FROM %s WHERE %s = '%s' AND %s = %s", COMPOSITE_ID, TBL_COMPOSITE_HAS_COMPONENT, CLASSNAME, className, POSITION, position);
 
 		Cursor c = db.rawQuery(sql, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, String.format("Cursor dead for atomicAtPosition: %s %d", className, position));
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return null;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			long id = c.getLong(c.getColumnIndex(COMPOSITE_ID));
 			composites.add(this.getComposite(id));
 		}
 		while(c.moveToNext());
-		
+        c.close();
+
 		return composites;
 	}
 
 
-	public ArrayList<CompositeService> getExamples(String componentName) 
+	public ArrayList<CompositeService> getExamples(String componentName)
 	{
 		// Implement some examples of composites that can be used
 		// Implement this?
@@ -1784,10 +1809,10 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	}
 
 
-	public AppDescription getApp(String packageName) 
+	public AppDescription getApp(String packageName)
 	{
 		String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_APP, PACKAGENAME, packageName);
-	
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);
 
@@ -1802,21 +1827,21 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		}
 
 		c.moveToFirst();
-		
+
 		return AppDescription.parseFromCursor(c);
 	}
 
-	public boolean setAppInstalled(String packageName, boolean b) 
+	public boolean setAppInstalled(String packageName, boolean b)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		String strFilter = PACKAGENAME + "='" + packageName + "'";
 		ContentValues args = new ContentValues();
-		
+
 		args.put(INSTALLED, b ? 1 : 0);
-		
+
 		int retval = db.update(TBL_APP, args, strFilter, null);
-		
+
 		if(retval == 0)
 		{
 			Log.e(TAG, "Failed to update service " + packageName);
@@ -1829,32 +1854,32 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		}
 	}
 
-	
+
 	public boolean addToLog(long compositeId, String className, String message, int status)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
 		Date date = new Date();
-		
+
 		ContentValues values = new ContentValues();
 		values.put(COMPOSITE_ID, compositeId);
 		values.put(CLASSNAME, className);
 		values.put(MESSAGE, message);
 		values.put(TIME, sdf.format(date));
 		values.put(LOG_TYPE, status);
-		
+
 		long id = db.insert(TBL_EXECUTION_LOG, null, values);
-		
+
 		return id != -1;
 	}
 
 	public ArrayList<LogItem> getLog()
 	{
 		ArrayList<LogItem> items = new ArrayList<LogItem>();
-		
+
 		String query = String.format("SELECT * FROM %s", TBL_EXECUTION_LOG);
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);
 
@@ -1875,127 +1900,131 @@ public class LocalDBHandler extends SQLiteOpenHelper
 			items.add(new LogItem(c));
 		}
 		while(c.moveToNext());
-				
+        c.close();
+
 		return items;
 	}
 
 
-	public ServiceDescription getAtomic(String className) 
+	public ServiceDescription getAtomic(String className)
 	{
 String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT, CLASSNAME, className);
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor c = db.rawQuery(query, null);
-		
+
 		if(c == null)
 		{
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return null;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-		
+
 		ArrayList<ServiceIO> inputs = getServiceIOs(sd, true);
 		sd.setInputs(inputs);
-		
+
 		ArrayList<ServiceIO> outputs = getServiceIOs(sd, false);
 		sd.setOutputs(outputs);
-		
+
 //		if((sd.getAverageRating() == -1f || sd.getNumReviews() == -1 || sd.getPrice() == -1f) && sd.getProcessType() != ProcessType.CONVERTER)
 //		{
 //			ExternalConnection conn = ExternalConnection.getInstance();
 //			conn.getExternalService(sd);
 //		}
-		
+
 		ArrayList<Tag> tags = getTagsForComponent(className);
 		if(LOG) Log.d(TAG, "Adding " + tags.size() + " tags to " + sd.getClassName());
 		sd.addTags(tags);
-		
+
 		AppDescription app = getAppForService(sd.getPackageName());
 		if(app != null)
 			sd.setApp(app);
-		
+
 //		ArrayList<ServiceParameter> params = getParametersForAtomic(sd.getClassName());
 //		sd.addParameters(params);
-		
+
 		return sd;
 	}
 
-	
+
 	public Tag addTag(String name)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		ContentValues cv = new ContentValues();
 		cv.put(NAME, name);
-		
+
 		long id = db.insert(TBL_TAG, null, cv);
-		
+
 		return new Tag(id, name);
 	}
-	
+
 	public Tag getTag(long id)
 	{
+        if(tagMap.containsKey(id))
+            return tagMap.get(id);
+
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		// Should probably do something clever than just equals - consider lower case too
 		Cursor c = db.query(TBL_TAG, null,
 	 			ID + " = ?", new String[] { "" + id },
 				null, null, null, null);
-		
+
 		if(c == null)
-		{	
+		{
 			Log.e(TAG, "Dead cursor: tag exists " + id);
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			// Insert it?
 			return new Tag();
 		}
-		
+
 		c.moveToFirst(); // There better not be more than one...
-		
+
 		return Tag.createOneFromCursor(c);
 	}
-	
+
 	public Tag getTag(String name)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		// Should probably do something clever than just equals - consider lower case too
 		Cursor c = db.query(TBL_TAG, null,
 	 			NAME + " = ?", new String[] { name },
 				null, null, null, null);
-		
+
 		if(c == null)
-		{	
+		{
 			Log.e(TAG, "Dead cursor: get tag " + name);
 			return null;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			// Insert it?
 			return addTag(name);
 		}
-		
+
 		c.moveToFirst(); // There better not be more than one...
-		
+
 		return Tag.createOneFromCursor(c);
 	}
-	
+
 	public boolean addTagsForComponent(ServiceDescription component)
 	{
 		SQLiteDatabase db = this.getWritableDatabase();
-		
+
 		boolean allWin = true;
 		ArrayList<Tag> tags = component.getTags();
 
@@ -2014,70 +2043,71 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
             if (id == -1)
                 allWin = false;
         }
-		
+
 		return allWin;
 	}
-	
+
 	public ArrayList<Tag> getTagsForComponent(String className)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		ArrayList<Tag> tags = new ArrayList<Tag>();
-		
+
 		Cursor c = db.query(TBL_COMPONENT_HAS_TAG, null,
 	 			CLASSNAME + " = ?", new String[] { className },
 				null, null, null, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, "Cursor dead for getTagsForComponent: " + className);
 			return tags;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return tags;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
-			
+
 			long tagId = c.getLong(c.getColumnIndex(TAG_ID));
 			Tag t = getTag(tagId);
 			tags.add(t);
 		}
 		while(c.moveToNext());
-		
+		c.close();
+
 		return tags;
 	}
 
-	public boolean shouldBeRunning(long id) 
+	public boolean shouldBeRunning(long id)
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
-		
+
 		Cursor c = db.query(TBL_COMPOSITE, new String[]{ SHOULD_BE_RUNNING },
 	 			ID + " = ?", new String[] { "" + id },
 				null, null, null, null);
-		
+
 		if(c == null)
 			return false;
-		
+
 		if(c.getCount() != 1)
 			return false;
-		
+
 		c.moveToFirst();
-		
+
 		int ret = c.getInt((c.getColumnIndex(SHOULD_BE_RUNNING)));
-		
+
 		return ret == 1;
 	}
 
 
-	public ArrayList<ServiceDescription> getMatchingForIOs(ServiceDescription component, boolean inputs) 
+	public ArrayList<ServiceDescription> getMatchingForIOs(ServiceDescription component, boolean inputs)
 	{
 		ArrayList<ServiceIO> ios = inputs ? component.getInputs() : component.getOutputs();
-		
+
 		HashMap<String, ServiceDescription> components =  new HashMap<String, ServiceDescription>();
 		HashMap<String, Long> types = new HashMap<String, Long>();
         for (ServiceIO io : ios) {
@@ -2085,19 +2115,19 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
             if (!types.containsKey(type.getClassName()))
                 types.put(type.getClassName(), type.getID());
         }
-		
+
 		Set<String> keys = types.keySet();
-		
+
 		for(String s : keys)
 		{
 			Long id = types.get(s);
-			
+
 			if(id == -1)
 			{
 				// A Need to get the ID of the type
 				id = this.getIOType(s).getID();
 			}
-			
+
 			// Get all the inputs that use that type - we only want the IDs at this stage
 			// We've got inputs from the component parameter, so we need to get the outputs of the other one. Or vice versa
 			ArrayList<String> componentNames = this.getComponentIdsForType(id, !inputs);
@@ -2107,14 +2137,14 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
                 }
             }
 		}
-		
+
 		ArrayList<ServiceDescription> c = new ArrayList<ServiceDescription>();
 		keys = components.keySet();
 		for(String s : keys)
 		{
 			c.add(components.get(s));
 		}
-		
+
 		return c;
 	}
 
@@ -2122,32 +2152,33 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 	{
 		SQLiteDatabase db = this.getReadableDatabase();
 		ArrayList<String> ioIds = new ArrayList<String>();
-		
+
 		int ioNum = inputs ? 1 : 0;
-		
+
 		Cursor c = db.query(TBL_SERVICEIO, new String[] { CLASSNAME },
 	 			IO_TYPE + " = ? AND " + I_OR_O + " = ?", new String[] { "" + id, "" + ioNum },
 				null, null, null, null);
-		
+
 		if(c == null)
 		{
 			Log.e(TAG, "Cursor dead for getIOsForType(" + id + "," + inputs + ")");
 			return ioIds;
 		}
-		
+
 		if(c.getCount() == 0)
 		{
 			return ioIds;
 		}
-		
+
 		c.moveToFirst();
-		
+
 		do
 		{
 			ioIds.add(c.getString(c.getColumnIndex(CLASSNAME)));
 		}
 		while(c.moveToNext());
-		
+        c.close();
+
 		return ioIds;
 	}
 
@@ -2170,10 +2201,8 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
         String query = String.format("SELECT * FROM %s a " +
             "LEFT JOIN %s b ON a.%s = b.%s " +
             "LEFT JOIN %s c ON b.%s = c.%s " +
-            "LEFT JOIN %s d ON b.%s = d.%s",
                 TBL_COMPONENT,
                 TBL_SERVICEIO, CLASSNAME, CLASSNAME,
-                TBL_IOTYPE, IO_TYPE, ID,
                 TBL_IO_SAMPLES, ID, SERVICE_IO);
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -2212,33 +2241,127 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
                 componentMap.put(className, currentComponent);
             }
 
-            String tablePrefix = "b";
-            long ioId = c.getLong(c.getColumnIndex("." + ID));
+            String ioTablePrefix = "b";
+            long ioId = c.getLong(c.getColumnIndex(ioTablePrefix + "." + ID));
+            long ioTypeId = c.getLong(c.getColumnIndex(ioTablePrefix + "." + IO_TYPE));
 
             if(ioMap.containsKey(ioId)) {
                 currentIO = ioMap.get(ioId);
                 currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
-            } else {
+            } else if(currentIO == null || currentIO.getId() != ioId) {
+
+                // If it doesn't exist, then use the old one
                 currentIO = new ServiceIO(ioId);
-                currentIO.setInfo(tablePrefix, c);
+                currentIO.setInfo(ioTablePrefix, c);
+                currentIO.setType(getIOType(ioTypeId));
                 currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
                 ioMap.put(ioId, currentIO);
             }
 
-            // Look up the serviceIO
-                // Look up the sample values for the ServiceIO
-                // Look up the type for the ServiceIO
+            String sampleTablePrefix = "c";
+            long sampleId = c.getLong(c.getColumnIndex(sampleTablePrefix + "." + ID));
+            String sampleName = c.getString(c.getColumnIndex(sampleTablePrefix + "." + NAME));
+            String strValue = c.getString(c.getColumnIndex(sampleTablePrefix + "." + VALUE));
 
-            // Look up the tag
+            // When we make the sample it might need to be converted to be the right type of object?
+            Object value = currentIO.getType().fromString(strValue);
+            currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+
+            if(!currentComponent.hasTags())
+            {
+                Cursor c2 = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = %d",
+                                        TBL_COMPONENT_HAS_TAG, CLASSNAME,
+                                        currentComponent.getClassName()), null);
+
+                if(c2 == null)
+                {
+                    Log.e(TAG, "Tag cursor dead for getting components w/ join");
+                    continue;
+                }
+
+                if(c2.getCount() == 0) // This is fine
+                    continue;
+
+                c2.moveToFirst();
+
+                do {
+                    currentComponent.addTag(getTag(c2.getLong(c2.getColumnIndex(TAG_ID))));
+                } while(c2.moveToNext());
+                c2.close();
+            }
 
             Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
 
 
         }
         while(c.moveToNext());
-
+        c.close();
 
 
         return components;
+    }
+
+
+    /*********************************
+     * Below here is the auto-caching stuff
+     */
+
+    private void cacheIOTypes()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_IOTYPE), null);
+
+        if(c == null)
+        {
+            Log.e(TAG, "Dead cursor: Caching all the types");
+            return;
+        }
+
+        if(c.getCount() == 0)
+        {
+            Log.w(TAG, "Empty cursor: Caching all the tags");
+            return;
+        }
+
+        c.moveToFirst();
+
+        do {
+
+            String className = c.getString(c.getColumnIndex(CLASSNAME));
+            IOType type = IOType.Factory.getType(className);
+            typeMap.put(type.getID(), type);
+
+        } while(c.moveToNext());
+
+        c.close();
+    }
+
+    private void cacheTags()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_TAG), null);
+
+        if(c == null)
+        {
+            Log.e(TAG, "Dead cursor: Caching all the tags");
+            return;
+        }
+
+        if(c.getCount() == 0)
+        {
+            // Insert it?
+            Log.w(TAG, "Empty cursor: Caching all the tags");
+            return;
+        }
+
+        c.moveToFirst();
+
+        do
+        {
+            Tag tag = Tag.createOneFromCursor(c);
+            tagMap.put(tag.getId(), tag);
+        }
+        while(c.moveToNext());
+        c.close();
     }
 }

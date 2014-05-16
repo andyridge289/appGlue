@@ -25,6 +25,13 @@ public class IOValue
         this.id = id;
         this.name = name;
     }
+
+    public IOValue(long id, String name, Object value)
+    {
+        this.id = id;
+        this.name = name;
+        this.value = value;
+    }
 	
 	public String toString()
 	{
