@@ -37,23 +37,23 @@ public class AppGlueLibrary
 //		return out.toString();
 //	}
 	
-//	/**
-//	 * Builds a string to get all of the given columns in the given table.
-//	 *
-//	 * @param table The table to get everything out of
-//	 * @param columns The columns of said table
-//	 * @return A string of SQL
-//	 */
-//	public static String buildGetAllString(String table, String[][] columns)
-//	{
-//		StringBuilder out = new StringBuilder();
-//		for(int i = 0; i < columns.length; i++)
-//		{
-//			out.append(String.format("%s.%s AS %s_%s", table, columns[i][0], table, columns[i][0])).append(i < columns.length - 1 ? ", " : " ");
-//		}
-//
-//		return out.toString();
-//	}
+	/**
+	 * Builds a string to get all of the given columns in the given table.
+	 *
+	 * @param table The table to get everything out of
+	 * @param columns The columns of said table
+	 * @return A string of SQL
+	 */
+	public static String buildGetAllString(String table, String[][] columns)
+	{
+		StringBuilder out = new StringBuilder();
+		for(int i = 0; i < columns.length; i++)
+		{
+			out.append(String.format("%s.%s AS %s_%s", table, columns[i][0], table, columns[i][0])).append(i < columns.length - 1 ? ", " : " ");
+		}
+
+		return out.toString();
+	}
 	
 //	public static void dumpTable(String tableName, SQLiteOpenHelper dbHelper)
 //	{

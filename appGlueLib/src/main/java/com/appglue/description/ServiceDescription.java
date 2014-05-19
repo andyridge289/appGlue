@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
@@ -70,8 +71,8 @@ public class ServiceDescription
 	private double price = 0;
 	
 	// Inputs and outputs to/from the service
-	private ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
-	private ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+	private TreeMap<Integer, ServiceIO> inputs = new TreeMap<Integer, ServiceIO>();
+	private TreeMap<Integer, ServiceIO> outputs = new TreeMap<Integer, ServiceIO>();
 	
 	// The average rating of the service
 	private double averageReviewRating = 0;
@@ -100,9 +101,19 @@ public class ServiceDescription
 		this.averageReviewRating = 0;
 		this.numReviews = 0;
 		this.reviews = new ArrayList<Review>();
-		
-		this.inputs = inputs == null ? new ArrayList<ServiceIO>() : inputs;
-		this.outputs = outputs == null ? new ArrayList<ServiceIO>() : outputs;
+
+        if(inputs == null)
+        {
+            this.inputs = new TreeMap<Integer, ServiceIO>();
+        }
+        else
+        {
+            this.inputs = new TreeMap<Integer, ServiceIO>();
+            for(int i = 0 ; i < inputs.size(); i++)
+                this.inputs.put(i, inputs.get(i));
+        }
+
+		this.outputs = outputs == null ? new TreeMap<ServiceIO>() : outputs;
 		
 		this.serviceType = serviceType;
 		this.processType = processType;
@@ -459,17 +470,17 @@ public class ServiceDescription
 		return services;
 	}
 
-    public void setInfo(Cursor c)
+    public void setInfo(String prefix, Cursor c)
     {
-        this.packageName = c.getString(c.getColumnIndex(PACKAGENAME));
-        this.className = c.getString(c.getColumnIndex(CLASSNAME));
-        this.name = c.getString(c.getColumnIndex(NAME));
-        this.description = c.getString(c.getColumnIndex(DESCRIPTION));
+        this.packageName = c.getString(c.getColumnIndex(prefix + PACKAGENAME));
+        this.className = c.getString(c.getColumnIndex(prefix + CLASSNAME));
+        this.name = c.getString(c.getColumnIndex(prefix + NAME));
+        this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
-        this.price = c.getFloat(c.getColumnIndex(PRICE));
+        this.price = c.getFloat(c.getColumnIndex(prefix + PRICE));
 
-        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(SERVICE_TYPE)));
-        this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(PROCESS_TYPE)));
+        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
+        this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE)));
     }
 
     public void addIO(ServiceIO io, boolean input, int position)

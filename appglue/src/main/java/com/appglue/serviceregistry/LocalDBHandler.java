@@ -2198,12 +2198,17 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 
     public ArrayList<ServiceDescription> getComponentsJoin()
     {
-        String query = String.format("SELECT * FROM %s a " +
-            "LEFT JOIN %s b ON a.%s = b.%s " +
-            "LEFT JOIN %s c ON b.%s = c.%s " +
+        String componentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
+        String ioCols = AppGlueLibrary.buildGetAllString(TBL_SERVICEIO, COLS_SERVICEIO);
+        String ioSamples = AppGlueLibrary.buildGetAllString(TBL_IO_SAMPLES, COLS_IO_SAMPLES);
+
+        String query = String.format("SELECT %s FROM %s " +
+            "LEFT JOIN %s ON %s.%s = %s.%s " +
+            "LEFT JOIN %s ON %s.%s = %s.%s ",
+                componentCols + "," + ioCols + "," + ioSamples,
                 TBL_COMPONENT,
-                TBL_SERVICEIO, CLASSNAME, CLASSNAME,
-                TBL_IO_SAMPLES, ID, SERVICE_IO);
+                TBL_SERVICEIO, TBL_COMPONENT, CLASSNAME, TBL_SERVICEIO, CLASSNAME,
+                TBL_IO_SAMPLES, TBL_SERVICEIO, ID, TBL_IO_SAMPLES, SERVICE_IO);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
@@ -2225,7 +2230,7 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 
         do
         {
-            String className = c.getString(c.getColumnIndex(CLASSNAME));
+            String className = c.getString(c.getColumnIndex(TBL_COMPONENT + "_" + CLASSNAME));
 
             if(componentMap.containsKey(className))  {
                 currentComponent = componentMap.get(className);
@@ -2234,16 +2239,15 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 
                 // Create a new component based on this info
                 currentComponent = new ServiceDescription();
-                currentComponent.setInfo(c);
+                currentComponent.setInfo(TBL_COMPONENT + "_", c);
                 components.add(currentComponent);
 
                 // It shouldn't already be in there
                 componentMap.put(className, currentComponent);
             }
 
-            String ioTablePrefix = "b";
-            long ioId = c.getLong(c.getColumnIndex(ioTablePrefix + "." + ID));
-            long ioTypeId = c.getLong(c.getColumnIndex(ioTablePrefix + "." + IO_TYPE));
+            long ioId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + ID));
+            long ioTypeId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + IO_TYPE));
 
             if(ioMap.containsKey(ioId)) {
                 currentIO = ioMap.get(ioId);
@@ -2252,16 +2256,15 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 
                 // If it doesn't exist, then use the old one
                 currentIO = new ServiceIO(ioId);
-                currentIO.setInfo(ioTablePrefix, c);
+                currentIO.setInfo(TBL_SERVICEIO + "_", c);
                 currentIO.setType(getIOType(ioTypeId));
                 currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
                 ioMap.put(ioId, currentIO);
             }
 
-            String sampleTablePrefix = "c";
-            long sampleId = c.getLong(c.getColumnIndex(sampleTablePrefix + "." + ID));
-            String sampleName = c.getString(c.getColumnIndex(sampleTablePrefix + "." + NAME));
-            String strValue = c.getString(c.getColumnIndex(sampleTablePrefix + "." + VALUE));
+            long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
+            String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
+            String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
 
             // When we make the sample it might need to be converted to be the right type of object?
             Object value = currentIO.getType().fromString(strValue);
@@ -2269,7 +2272,7 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 
             if(!currentComponent.hasTags())
             {
-                Cursor c2 = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = %d",
+                Cursor c2 = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = '%s'",
                                         TBL_COMPONENT_HAS_TAG, CLASSNAME,
                                         currentComponent.getClassName()), null);
 
@@ -2290,7 +2293,7 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
                 c2.close();
             }
 
-            Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
+
 
 
         }

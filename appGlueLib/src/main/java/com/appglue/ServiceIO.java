@@ -284,14 +284,14 @@ public class ServiceIO
 		sampleValues.add(value);
 	}
 
-    public void setInfo(String tableAlias, Cursor c)
+    public void setInfo(String prefix, Cursor c)
     {
-        this.setName(c.getString(c.getColumnIndex(tableAlias + "." + NAME)));
-        this.setFriendlyName(c.getString(c.getColumnIndex(tableAlias + "." + FRIENDLY_NAME)));
-        this.setIndex(c.getInt(c.getColumnIndex(tableAlias + "." + IO_INDEX)));
-        this.setDescription(c.getString(c.getColumnIndex(tableAlias + "." + DESCRIPTION)));
-        this.setMandatory(c.getInt(c.getColumnIndex(tableAlias + "." + MANDATORY)) == 1);
-        this.setInput(c.getInt(c.getColumnIndex(tableAlias + "." + I_OR_O)) == 1);
+        this.setName(c.getString(c.getColumnIndex(prefix + NAME)));
+        this.setFriendlyName(c.getString(c.getColumnIndex(prefix + FRIENDLY_NAME)));
+        this.setIndex(c.getInt(c.getColumnIndex(prefix + IO_INDEX)));
+        this.setDescription(c.getString(c.getColumnIndex(prefix + DESCRIPTION)));
+        this.setMandatory(c.getInt(c.getColumnIndex(prefix + MANDATORY)) == 1);
+        this.setInput(c.getInt(c.getColumnIndex(prefix + I_OR_O)) == 1);
     }
 	
 	
