@@ -71,8 +71,8 @@ public class ServiceDescription
 	private double price = 0;
 	
 	// Inputs and outputs to/from the service
-	private TreeMap<Integer, ServiceIO> inputs = new TreeMap<Integer, ServiceIO>();
-	private TreeMap<Integer, ServiceIO> outputs = new TreeMap<Integer, ServiceIO>();
+	private ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+	private ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
 	
 	// The average rating of the service
 	private double averageReviewRating = 0;
@@ -102,19 +102,9 @@ public class ServiceDescription
 		this.numReviews = 0;
 		this.reviews = new ArrayList<Review>();
 
-        if(inputs == null)
-        {
-            this.inputs = new TreeMap<Integer, ServiceIO>();
-        }
-        else
-        {
-            this.inputs = new TreeMap<Integer, ServiceIO>();
-            for(int i = 0 ; i < inputs.size(); i++)
-                this.inputs.put(i, inputs.get(i));
-        }
+        this.inputs = inputs == null ? new ArrayList<ServiceIO>() : inputs;
+		this.outputs = outputs == null ? new ArrayList<ServiceIO>() : outputs;
 
-		this.outputs = outputs == null ? new TreeMap<ServiceIO>() : outputs;
-		
 		this.serviceType = serviceType;
 		this.processType = processType;
 	}

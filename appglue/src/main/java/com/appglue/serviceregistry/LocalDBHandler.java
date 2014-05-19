@@ -454,9 +454,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
             cv.put(NAME, sample.name);
 
             // The value could be anything really - This might be working but I'm really not sure....
-            IOType type = io.getType();
-            String stringValue = type.toString();
-
+            String stringValue = io.getType().toString(io.getValue());
             cv.put(VALUE, stringValue);
 
             long sampleId = db.insertOrThrow(TBL_IO_SAMPLES, null, cv);
@@ -1683,7 +1681,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
                     values.put(SERVICE_IO, o.getId());
                     values.put(CLASSNAME, c.getClassName());
 
-                    values.put(MANUAL_VALUE, o.getManualValue().toString());
+                    values.put(MANUAL_VALUE, o.getType().toString(o.getManualValue()));
                     values.put(SAMPLE_VALUE, o.getChosenSampleValue().id);
 
                     values.put(FILTER_CONDITION, o.getCondition());
@@ -2204,11 +2202,13 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
 
         String query = String.format("SELECT %s FROM %s " +
             "LEFT JOIN %s ON %s.%s = %s.%s " +
-            "LEFT JOIN %s ON %s.%s = %s.%s ",
+            "LEFT JOIN %s ON %s.%s = %s.%s " +
+                "ORDER BY %s",
                 componentCols + "," + ioCols + "," + ioSamples,
                 TBL_COMPONENT,
                 TBL_SERVICEIO, TBL_COMPONENT, CLASSNAME, TBL_SERVICEIO, CLASSNAME,
-                TBL_IO_SAMPLES, TBL_SERVICEIO, ID, TBL_IO_SAMPLES, SERVICE_IO);
+                TBL_IO_SAMPLES, TBL_SERVICEIO, ID, TBL_IO_SAMPLES, SERVICE_IO,
+                TBL_SERVICEIO + "_" + IO_INDEX);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
@@ -2263,12 +2263,16 @@ String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPONENT
             }
 
             long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
-            String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
-            String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
 
-            // When we make the sample it might need to be converted to be the right type of object?
-            Object value = currentIO.getType().fromString(strValue);
-            currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+            if(sampleId != -1)
+            {
+                String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
+                String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
+
+                // When we make the sample it might need to be converted to be the right type of object?
+                Object value = currentIO.getType().fromString(strValue);
+                currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+            }
 
             if(!currentComponent.hasTags())
             {
