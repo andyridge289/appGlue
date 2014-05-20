@@ -10,7 +10,7 @@ import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService 
 {
-	private long id;
+	private int id;
 	private String name;
 	private String description;
 	
@@ -48,7 +48,7 @@ public class CompositeService
 		return new CompositeService("Nothing", "Nothing", null, false);
 	}
 	
-	public CompositeService(long id, String name, String description, boolean shouldBeRunning)
+	public CompositeService(int id, String name, String description, boolean shouldBeRunning)
 	{
         this(false);
 		this.id = id;
@@ -60,7 +60,7 @@ public class CompositeService
 	public CompositeService(String name, String description, ArrayList<ServiceDescription> services, boolean shouldBeRunning)
 	{
         this(false);
-		this.id = (long) CompositeService.NEW_COMPOSITE_PLACEHOLDER;
+		this.id = CompositeService.NEW_COMPOSITE_PLACEHOLDER;
 		this.name = name;
 		this.components = services;
 		this.description = description;
@@ -68,7 +68,7 @@ public class CompositeService
 		this.shouldBeRunning = shouldBeRunning;
 	}
 	
-	public CompositeService(long id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval)
+	public CompositeService(int id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval)
 	{
         this(false);
 		this.id = id;
@@ -143,12 +143,12 @@ public class CompositeService
 		this.description = description;
 	}
 
-	public long getId() 
+	public int getId()
 	{
 		return id;
 	}
 
-	public void setId(long id) 
+	public void setId(int id)
 	{
 		this.id = id;
 	}

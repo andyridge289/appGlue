@@ -49,6 +49,8 @@ public class ActivityComponentList extends ActionBarActivity
     public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
+
+        // This is closign the app?
 		
 		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 		
@@ -63,9 +65,12 @@ public class ActivityComponentList extends ActionBarActivity
 
 		position = intent.getIntExtra(POSITION, -1);
         Registry registry = Registry.getInstance(this);
-        ArrayList<ServiceDescription> components = registry.getService().getComponents();
+        boolean showMatching = false;
 
-        boolean showMatching = components.size() != 0;
+        if(registry.getService() != null) {
+            ArrayList<ServiceDescription> components = registry.getService().getComponents();
+            showMatching = components.size() != 0;
+        }
 
         fragments = new ArrayList<FragmentComponentList>();
 		
@@ -218,7 +223,8 @@ public class ActivityComponentList extends ActionBarActivity
 		{
 		    getParent().setResult(Activity.RESULT_OK, i);
 		}
-		
+
+        Log.e(TAG, "Finishing component list");
 		finish();
 	}
 	

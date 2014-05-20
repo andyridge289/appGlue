@@ -1,14 +1,15 @@
 package com.appglue;
 
+import android.database.Cursor;
+
 import java.util.ArrayList;
 
-import android.database.Cursor;
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.NAME;
 
 public class Tag 
 {
-	private long id;
+	private int id;
 	private String name;
 	
 	public Tag()
@@ -23,7 +24,7 @@ public class Tag
 		this.name = name;
 	}
 	
-	public Tag(long id, String name)
+	public Tag(int id, String name)
 	{
 		this.id = id;
 		this.name = name;
@@ -34,14 +35,14 @@ public class Tag
 		return name;
 	}
 	
-	public long getId()
+	public int getId()
 	{
 		return id;
 	}
 	
 	public static Tag createOneFromCursor(Cursor c)
 	{
-		long id = c.getLong(c.getColumnIndex(ID));
+		int id = c.getInt(c.getColumnIndex(ID));
 		String name = c.getString(c.getColumnIndex(NAME));
 		
 		return new Tag(id, name);

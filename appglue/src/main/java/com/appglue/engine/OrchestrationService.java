@@ -76,7 +76,7 @@ public class OrchestrationService extends Service
 			Log.w(TAG, Thread.currentThread().getName() + ": Runner.run() " + System.currentTimeMillis());
 
             for (Bundle thing : params) {
-                final long compositeId = thing.getLong(COMPOSITE_ID, -1);
+                final int compositeId = thing.getInt(COMPOSITE_ID, -1);
                 final int duration = thing.getInt(DURATION, 0);
                 final int startIndex = thing.getInt(INDEX, -1);
                 final boolean isList = thing.getBoolean(IS_LIST, false);

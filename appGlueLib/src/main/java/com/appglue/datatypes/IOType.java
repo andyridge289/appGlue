@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 public abstract class IOType
 {
-	protected long id;
+	protected int id;
 
 	protected String name;
 	protected String className;
@@ -23,7 +23,7 @@ public abstract class IOType
 		this.name = name;
 	}
 	
-	public IOType(long id, String name, String className)
+	public IOType(int id, String name, String className)
 	{
 		this.id = id;
 		this.name = name;
@@ -34,12 +34,12 @@ public abstract class IOType
         return this.id + ": " + this.name;
     }
 	
-	public long getID()
+	public int getID()
 	{
 		return this.id;
 	}
 
-	public void setID(long id)
+	public void setID(int id)
 	{
 		this.id = id;
 	}

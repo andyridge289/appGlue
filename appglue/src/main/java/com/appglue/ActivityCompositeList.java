@@ -358,7 +358,7 @@ public class ActivityCompositeList extends Activity
 		ArrayList<Bundle> intentData = new ArrayList<Bundle>();
 		Bundle b = new Bundle();
 	
-		b.putLong(COMPOSITE_ID, cs.getId());
+		b.putInt(COMPOSITE_ID, cs.getId());
 		b.putInt(INDEX, 0);
 		b.putBoolean(IS_LIST, false);
 		b.putInt(DURATION, 0);
@@ -520,7 +520,7 @@ public class ActivityCompositeList extends Activity
         shortcutIntent.setComponent(new ComponentName(ActivityCompositeList.this.getPackageName(), ShortcutActivity.class.getName()));
         
         Bundle b = new Bundle();
-        b.putLong(COMPOSITE_ID, cs.getId());
+        b.putInt(COMPOSITE_ID, cs.getId());
         shortcutIntent.putExtras(b);
 
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

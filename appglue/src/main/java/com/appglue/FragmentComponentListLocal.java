@@ -1,12 +1,6 @@
 package com.appglue;
 
 
-import static com.appglue.library.AppGlueConstants.*;
-import static com.appglue.Constants.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +16,21 @@ import android.widget.TextView;
 import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.ServiceType;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
+import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
+import static com.appglue.library.AppGlueConstants.MATCHING;
+import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
+import static com.appglue.library.AppGlueConstants.TRIGGERS_ONLY;
 
 
 public class FragmentComponentListLocal extends FragmentComponentList
@@ -119,7 +128,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 						if(prior == null && next == null)
 						{
 							// Both null, get everything
-							services = registry.getAllDeviceServices();
+							services = registry.getComponents();
 						}
 						else if(prior != null && next == null)
 						{
@@ -129,7 +138,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 							if(prior.hasOutputs())
 								services = registry.getMatchingForOutputs(prior);
 							else
-								services = registry.getAllDeviceServices();
+								services = registry.getComponents();
 						}
 						else {
                             if (prior == null && next != null) {
@@ -139,7 +148,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
                                 if (next.hasInputs())
                                     services = registry.getMatchingForInputs(next);
                                 else
-                                    services = registry.getAllDeviceServices();
+                                    services = registry.getComponents();
                             } else {
                                 // Both are alive, so get them based on the outputs and then filter on the inputs
                                 if (prior.hasOutputs()) {
@@ -152,7 +161,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 
                                         // Then filter it based on the inputs of the other one
                                         ArrayList<ServiceIO> nextInputs = next.getInputs();
-                                        HashMap<String, Long> types = new HashMap<String, Long>();
+                                        HashMap<String, Integer> types = new HashMap<String, Integer>();
                                         for (ServiceIO nextInput : nextInputs) {
                                             IOType type = nextInput.getType();
                                             if (!types.containsKey(type.getClassName()))
@@ -177,7 +186,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
                                 } else if (next.hasInputs()) {
                                     services = registry.getMatchingForInputs(next);
                                 } else
-                                    services = registry.getAllDeviceServices();
+                                    services = registry.getComponents();
 
 
                             }
@@ -198,7 +207,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 			else
 			{
 				// Everything
-				services = registry.getAllDeviceServices();
+				services = registry.getComponents();
 			}
 			
 			return services;

@@ -54,7 +54,7 @@ public class Registry
 		this.service = service;
 	}
 	
-	public void setService(long id)
+	public void setService(int id)
 	{
 		this.service = this.getComposite(id);
 	}
@@ -132,9 +132,9 @@ public class Registry
 	
 	public ArrayList<ServiceDescription> getInputOnlyComponents()
 	{	
-		ArrayList<ServiceDescription> components = getAllDeviceServices();
-		
-		for(int i = 0; i < components.size(); )
+		ArrayList<ServiceDescription> components = dbHandler.getComponents(null);
+
+        for(int i = 0; i < components.size(); )
 		{
 			if(components.get(i).getOutputs().size() > 0)
 				components.remove(i);
@@ -147,7 +147,7 @@ public class Registry
 	
 	public ArrayList<ServiceDescription> getOutputOnlyComponents()
 	{
-		ArrayList<ServiceDescription> components = getAllDeviceServices();
+		ArrayList<ServiceDescription> components = dbHandler.getComponents(null);
 		
 		for(int i = 0; i < components.size(); )
 		{
@@ -160,37 +160,25 @@ public class Registry
 		return components;
 	}
 	
-	public ArrayList<ServiceDescription> getAllDeviceServices()
-	{
-		ArrayList<ServiceDescription> services = dbHandler.getAtomics(ServiceType.DEVICE);
-		
-		if(services.size() == 0)
-		{
-			Log.e(TAG, "No local services!");
-		}
-		
-		return services;
-	}
-	
-	public ArrayList<ServiceDescription> getComponents(String classString)
-	{
-		String[] classes = classString.split(",");
-		
-		ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
-		for(String s : classes)
-		{
-			services.add(this.getAtomic(s));
-		}
-		
-		return services;
-	}
+//	public ArrayList<ServiceDescription> getComponents(String classString)
+//	{
+//		String[] classes = classString.split(",");
+//
+//		ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
+//		for(String s : classes)
+//		{
+//			services.add(this.getAtomic(s));
+//		}
+//
+//		return services;
+//	}
 	
 	public ServiceDescription getAtomic(String className)
 	{
-		return dbHandler.getAtomic(className);
+		return dbHandler.getComponent(className);
 	}
 	
-	public CompositeService getComposite(long compositeId)
+	public CompositeService getComposite(int compositeId)
 	{
 		if(compositeId == -1)
 			return null;
@@ -238,17 +226,17 @@ public class Registry
 	 * @param id The id of the service to check
 	 * @return And indication of whether the thing is running or not
 	 */
-	public Pair<Boolean, Boolean> running(long id)
+	public Pair<Boolean, Boolean> running(int id)
 	{
 		return dbHandler.compositeRunning(id);
 	}
 	
-	public boolean isCompositeActive(long id)
+	public boolean isCompositeActive(int id)
 	{
 		return dbHandler.compositeRunning(id).first;
 	}
 	
-	public boolean isCompositeRunning(long id)
+	public boolean isCompositeRunning(int id)
 	{
 		return dbHandler.compositeRunning(id).second;
 	}
@@ -258,7 +246,7 @@ public class Registry
 		return dbHandler.getIntendedRunningComposites();
 	}
 	
-	public Pair<Long, Interval> getTimerDuration(long compositeId)
+	public Pair<Integer, Interval> getTimerDuration(int compositeId)
 	{
 		return dbHandler.getTimerDuration(compositeId);
 	}
@@ -277,7 +265,12 @@ public class Registry
 	{
 		return dbHandler.getComponentsForApp(packageName);
 	}
-	
+
+    public ArrayList<ServiceDescription> getComponents()
+    {
+        return dbHandler.getComponents(null);
+    }
+
 	public ArrayList<ServiceDescription> getTriggers()
 	{
 		return dbHandler.getComponents(ProcessType.TRIGGER);
@@ -288,19 +281,19 @@ public class Registry
 //		return dbHandler.setAppInstalled(packageName, false);
 //	}
 	
-	public boolean success(long compositeId)
+	public boolean success(int compositeId)
 	{
 		this.setIsntRunning(compositeId);
 		return dbHandler.addToLog(compositeId, "", "", LogItem.LOG_SUCCESS);
 	}
 	
-	public boolean fail(long compositeId, String className, String message)
+	public boolean fail(int compositeId, String className, String message)
 	{
 		this.setIsntRunning(compositeId);
 		return dbHandler.addToLog(compositeId, className, message, LogItem.LOG_FAIL);
 	}
 
-    public boolean stopped(long compositeId, String message)
+    public boolean stopped(int compositeId, String message)
     {
         this.setIsntRunning(compositeId);
         boolean ret = dbHandler.addToLog(compositeId, "", message, LogItem.LOG_STOP);
@@ -328,39 +321,39 @@ public class Registry
 		
 	}
 	
-	public boolean setIsRunning(long id)
+	public boolean setIsRunning(int id)
 	{
 		return dbHandler.setCompositeIsRunning(id, 1);
 	}
 	
-	public boolean setIsntRunning(long id)
+	public boolean setIsntRunning(int id)
 	{
 		return dbHandler.setCompositeIsRunning(id, 0);
 	}
 	
-	public boolean setShouldBeRunning(long id)
+	public boolean setShouldBeRunning(int id)
 	{
 		return dbHandler.setCompositeActive(id, 1);
 	}
 	
-	public boolean setShouldntBeRunning(long id)
+	public boolean setShouldntBeRunning(int id)
 	{
 		return dbHandler.setCompositeActive(id, 0);
 	}
 	
 
-	public boolean shouldBeRunning(long id) 
+	public boolean shouldBeRunning(int id)
 	{
 		return dbHandler.shouldBeRunning(id);
 	}
 	
-	public void startComposite(long id)
+	public void startComposite(int id)
 	{
 		setIsRunning(id);
 		setShouldBeRunning(id);
 	}
 	
-	public void stopComposite(long id)
+	public void stopComposite(int id)
 	{
 		setShouldntBeRunning(id);
 	}
@@ -370,7 +363,7 @@ public class Registry
 		stopComposite(this.service.getId());
 	}
 	
-	public void finishComposite(long id)
+	public void finishComposite(int id)
 	{
 		setIsntRunning(id);
 		setShouldntBeRunning(id);
@@ -385,10 +378,4 @@ public class Registry
 	{
 		return dbHandler.getMatchingForIOs(next, true);
 	}
-
-	// Temporary functions to expose the joins
-    public void getComponentsJoin()
-    {
-        dbHandler.getComponentsJoin();
-    }
 }

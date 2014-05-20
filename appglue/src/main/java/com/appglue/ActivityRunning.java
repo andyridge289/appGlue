@@ -86,7 +86,7 @@ public class ActivityRunning extends Activity
 			final Button pauseButton = (Button) v.findViewById(R.id.running_pause_button);
 			final Button stopButton = (Button) v.findViewById(R.id.running_stop_button);
 			
-			Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
+			Pair<Integer, Interval> timings = registry.getTimerDuration(service.getId());
 			
 			TextView numeralText = (TextView) v.findViewById(R.id.numeral_interval);
 			numeralText.setText(String.format("Runs once every %d %s%s", timings.first, timings.second.name, (timings.first > 1) ? "s" : ""));
@@ -140,7 +140,7 @@ public class ActivityRunning extends Activity
 					@Override	
 					public void onClick(View v)
 					{
-						Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
+						Pair<Integer, Interval> timings = registry.getTimerDuration(service.getId());
 						registry.setIsRunning(service.getId());
 						
 						Intent intent = new Intent(ActivityRunning.this, OrchestrationService.class);

@@ -148,7 +148,7 @@ public class FragmentComponentListSearch extends FragmentComponentList
 		@Override
 		protected ArrayList<ServiceDescription> doInBackground(Void... params)
 		{
-			return registry.getAllDeviceServices();
+			return registry.getComponents();
 		}
 
 		@Override

@@ -1,16 +1,16 @@
 package com.appglue.library;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.ID;
-import static com.appglue.library.AppGlueConstants.TIME;
-import static com.appglue.library.AppGlueConstants.MESSAGE;
-import static com.appglue.library.AppGlueConstants.LOG_TYPE;
+import android.database.Cursor;
 
 import com.appglue.engine.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
-import android.database.Cursor;
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.ID;
+import static com.appglue.library.AppGlueConstants.LOG_TYPE;
+import static com.appglue.library.AppGlueConstants.MESSAGE;
+import static com.appglue.library.AppGlueConstants.TIME;
 
 public class LogItem 
 {
@@ -30,7 +30,7 @@ public class LogItem
 	{
 		this.id = c.getLong(c.getColumnIndex(ID));
 		
-		long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID)); 
+		int compositeId = c.getInt(c.getColumnIndex(COMPOSITE_ID));
 		
 		if(compositeId != -1)
 			this.cs = Registry.getInstance(null).getComposite(compositeId);

@@ -53,7 +53,7 @@ public class ActivityComposite extends Activity
 		localStorage = LocalStorage.getInstance();
 		registry = Registry.getInstance(this);
 		
-		long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
+		int compositeId = intent.getIntExtra(COMPOSITE_ID, -1);
 		if(compositeId == -1){ finish(); return; }
 		
 		cs = registry.getComposite(compositeId);
