@@ -223,7 +223,7 @@ public class ActivityCompositionCanvas extends Activity
 		// This means we're editing a composite rather than creating a new one
 		if(extras != null && extras.containsKey(COMPOSITE_ID))
 		{
-			int compositeId = extras.getInt(COMPOSITE_ID);
+			long compositeId = extras.getLong(COMPOSITE_ID);
 			registry.setService(compositeId);
 			
 			if(LOG) Log.d(TAG, "Registry service set to " + registry.getService().getName());
@@ -339,7 +339,7 @@ public class ActivityCompositionCanvas extends Activity
 		if(service.getId() != -1)
 		{
 			// If it's a composite service then save the id of the composite service and just pull it back out again
-			icicle.putInt(COMPOSITE_ID, service.getId());
+			icicle.putLong(COMPOSITE_ID, service.getId());
 		}
 		else
 		{
@@ -419,7 +419,7 @@ public class ActivityCompositionCanvas extends Activity
 				ArrayList<Bundle> intentData = new ArrayList<Bundle>();
 				Bundle b = new Bundle();
 			
-				b.putInt(COMPOSITE_ID, -1);
+				b.putLong(COMPOSITE_ID, -1);
 				b.putInt(INDEX, 0);
 				b.putBoolean(IS_LIST, false);
 				b.putInt(DURATION, 0);

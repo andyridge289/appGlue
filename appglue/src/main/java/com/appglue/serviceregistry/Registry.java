@@ -54,7 +54,7 @@ public class Registry
 		this.service = service;
 	}
 	
-	public void setService(int id)
+	public void setService(long id)
 	{
 		this.service = this.getComposite(id);
 	}
@@ -178,7 +178,7 @@ public class Registry
 		return dbHandler.getComponent(className);
 	}
 	
-	public CompositeService getComposite(int compositeId)
+	public CompositeService getComposite(long compositeId)
 	{
 		if(compositeId == -1)
 			return null;
@@ -226,17 +226,17 @@ public class Registry
 	 * @param id The id of the service to check
 	 * @return And indication of whether the thing is running or not
 	 */
-	public Pair<Boolean, Boolean> running(int id)
+	public Pair<Boolean, Boolean> running(long id)
 	{
 		return dbHandler.compositeRunning(id);
 	}
 	
-	public boolean isCompositeActive(int id)
+	public boolean isCompositeActive(long id)
 	{
 		return dbHandler.compositeRunning(id).first;
 	}
 	
-	public boolean isCompositeRunning(int id)
+	public boolean isCompositeRunning(long id)
 	{
 		return dbHandler.compositeRunning(id).second;
 	}
@@ -246,7 +246,7 @@ public class Registry
 		return dbHandler.getIntendedRunningComposites();
 	}
 	
-	public Pair<Integer, Interval> getTimerDuration(int compositeId)
+	public Pair<Long, Interval> getTimerDuration(long compositeId)
 	{
 		return dbHandler.getTimerDuration(compositeId);
 	}
@@ -281,19 +281,19 @@ public class Registry
 //		return dbHandler.setAppInstalled(packageName, false);
 //	}
 	
-	public boolean success(int compositeId)
+	public boolean success(long compositeId)
 	{
 		this.setIsntRunning(compositeId);
 		return dbHandler.addToLog(compositeId, "", "", LogItem.LOG_SUCCESS);
 	}
 	
-	public boolean fail(int compositeId, String className, String message)
+	public boolean fail(long compositeId, String className, String message)
 	{
 		this.setIsntRunning(compositeId);
 		return dbHandler.addToLog(compositeId, className, message, LogItem.LOG_FAIL);
 	}
 
-    public boolean stopped(int compositeId, String message)
+    public boolean stopped(long compositeId, String message)
     {
         this.setIsntRunning(compositeId);
         boolean ret = dbHandler.addToLog(compositeId, "", message, LogItem.LOG_STOP);
@@ -321,39 +321,39 @@ public class Registry
 		
 	}
 	
-	public boolean setIsRunning(int id)
+	public boolean setIsRunning(long id)
 	{
 		return dbHandler.setCompositeIsRunning(id, 1);
 	}
 	
-	public boolean setIsntRunning(int id)
+	public boolean setIsntRunning(long id)
 	{
 		return dbHandler.setCompositeIsRunning(id, 0);
 	}
 	
-	public boolean setShouldBeRunning(int id)
+	public boolean setShouldBeRunning(long id)
 	{
 		return dbHandler.setCompositeActive(id, 1);
 	}
 	
-	public boolean setShouldntBeRunning(int id)
+	public boolean setShouldntBeRunning(long id)
 	{
 		return dbHandler.setCompositeActive(id, 0);
 	}
 	
 
-	public boolean shouldBeRunning(int id)
+	public boolean shouldBeRunning(long id)
 	{
 		return dbHandler.shouldBeRunning(id);
 	}
 	
-	public void startComposite(int id)
+	public void startComposite(long id)
 	{
 		setIsRunning(id);
 		setShouldBeRunning(id);
 	}
 	
-	public void stopComposite(int id)
+	public void stopComposite(long id)
 	{
 		setShouldntBeRunning(id);
 	}
@@ -363,7 +363,7 @@ public class Registry
 		stopComposite(this.service.getId());
 	}
 	
-	public void finishComposite(int id)
+	public void finishComposite(long id)
 	{
 		setIsntRunning(id);
 		setShouldntBeRunning(id);

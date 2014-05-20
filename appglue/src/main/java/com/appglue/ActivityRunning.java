@@ -1,16 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.RUN_NOW;
-
-import java.util.ArrayList;
-
-import com.appglue.Constants.Interval;
-import com.appglue.engine.CompositeService;
-import com.appglue.engine.OrchestrationService;
-import com.appglue.serviceregistry.Registry;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +14,17 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.appglue.Constants.Interval;
+import com.appglue.engine.CompositeService;
+import com.appglue.engine.OrchestrationService;
+import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.Constants.DURATION;
+import static com.appglue.Constants.RUN_NOW;
 
 public class ActivityRunning extends Activity
 {
@@ -86,7 +86,7 @@ public class ActivityRunning extends Activity
 			final Button pauseButton = (Button) v.findViewById(R.id.running_pause_button);
 			final Button stopButton = (Button) v.findViewById(R.id.running_stop_button);
 			
-			Pair<Integer, Interval> timings = registry.getTimerDuration(service.getId());
+			Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
 			
 			TextView numeralText = (TextView) v.findViewById(R.id.numeral_interval);
 			numeralText.setText(String.format("Runs once every %d %s%s", timings.first, timings.second.name, (timings.first > 1) ? "s" : ""));
@@ -140,7 +140,7 @@ public class ActivityRunning extends Activity
 					@Override	
 					public void onClick(View v)
 					{
-						Pair<Integer, Interval> timings = registry.getTimerDuration(service.getId());
+						Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
 						registry.setIsRunning(service.getId());
 						
 						Intent intent = new Intent(ActivityRunning.this, OrchestrationService.class);

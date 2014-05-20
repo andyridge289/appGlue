@@ -46,7 +46,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
         {
             // There has been a failure in executing the trigger, so don't start. Just record it to the log
             // The compositeId is -1 because nothing actually started.
-            registry.fail(-1, this.getClass().getCanonicalName(), error);
+            registry.fail(-1L, this.getClass().getCanonicalName(), error);
             return;
         }
 
@@ -70,7 +70,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
 
             Bundle b = new Bundle();
 
-            b.putInt(COMPOSITE_ID, service.getId());
+            b.putLong(COMPOSITE_ID, service.getId());
             b.putInt(INDEX, 1);
 
             b.putBoolean(IS_LIST, isList);

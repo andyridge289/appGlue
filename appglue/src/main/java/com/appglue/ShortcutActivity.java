@@ -22,7 +22,7 @@ public class ShortcutActivity extends Activity
 	        Bundle b = stuff.getExtras();
 	        
 	        // Maybe if it isn't set we could ask them which one they want to execute?
-	        int id = b.getInt(COMPOSITE_ID);
+	        long id = b.getLong(COMPOSITE_ID);
 	        
 	        Registry registry = Registry.getInstance(this);
 			CompositeService cs = registry.getComposite(id);

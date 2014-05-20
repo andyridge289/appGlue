@@ -30,7 +30,7 @@ public class LogItem
 	{
 		this.id = c.getLong(c.getColumnIndex(ID));
 		
-		int compositeId = c.getInt(c.getColumnIndex(COMPOSITE_ID));
+		long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
 		
 		if(compositeId != -1)
 			this.cs = Registry.getInstance(null).getComposite(compositeId);

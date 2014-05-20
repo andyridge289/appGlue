@@ -9,7 +9,7 @@ import static com.appglue.Constants.NAME;
 
 public class Tag 
 {
-	private int id;
+	private long id;
 	private String name;
 	
 	public Tag()
@@ -24,7 +24,7 @@ public class Tag
 		this.name = name;
 	}
 	
-	public Tag(int id, String name)
+	public Tag(long id, String name)
 	{
 		this.id = id;
 		this.name = name;
@@ -35,14 +35,14 @@ public class Tag
 		return name;
 	}
 	
-	public int getId()
+	public long getId()
 	{
 		return id;
 	}
 	
 	public static Tag createOneFromCursor(Cursor c)
 	{
-		int id = c.getInt(c.getColumnIndex(ID));
+		long id = c.getLong(c.getColumnIndex(ID));
 		String name = c.getString(c.getColumnIndex(NAME));
 		
 		return new Tag(id, name);

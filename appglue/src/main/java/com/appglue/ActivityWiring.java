@@ -179,7 +179,7 @@ public class ActivityWiring extends FragmentActivity
 		super.onResume();
 
         Intent intent = this.getIntent();
-        int compositeId = intent.getIntExtra(COMPOSITE_ID, -1);
+        long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
 
         if(source == this.COMPONENT_LIST)
         {

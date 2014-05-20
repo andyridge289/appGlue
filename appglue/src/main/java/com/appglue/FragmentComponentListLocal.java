@@ -161,7 +161,7 @@ public class FragmentComponentListLocal extends FragmentComponentList
 
                                         // Then filter it based on the inputs of the other one
                                         ArrayList<ServiceIO> nextInputs = next.getInputs();
-                                        HashMap<String, Integer> types = new HashMap<String, Integer>();
+                                        HashMap<String, Long> types = new HashMap<String, Long>();
                                         for (ServiceIO nextInput : nextInputs) {
                                             IOType type = nextInput.getType();
                                             if (!types.containsKey(type.getClassName()))
