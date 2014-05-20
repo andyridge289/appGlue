@@ -308,7 +308,17 @@ public class LocalDBHandler extends SQLiteOpenHelper
         for(String sql : sqls)
             db.rawQuery(sql, null);
     }
-	
+
+    public boolean initialised() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_APP, PACKAGENAME, "com.appglue");
+        Cursor c = db.rawQuery(sql, null);
+
+        return c != null && c.getCount() > 0;
+
+    }
+
+
 	/**
 	 * Adds a new atomic service for the given service description
 	 * 
@@ -443,7 +453,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
             cv.put(NAME, sample.name);
 
             // The value could be anything really - This might be working but I'm really not sure....
-            String stringValue = io.getType().toString(io.getValue());
+            String stringValue = io.getType().toString(sample.value);
             cv.put(VALUE, stringValue);
 
             long sampleId = db.insertOrThrow(TBL_IO_SAMPLES, null, cv);
@@ -1895,7 +1905,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 		do
 		{
-
 			long tagId = c.getLong(c.getColumnIndex(TAG_ID));
 			Tag t = getTag(tagId);
 			tags.add(t);
@@ -2178,18 +2187,20 @@ public class LocalDBHandler extends SQLiteOpenHelper
         {
             String className = c.getString(c.getColumnIndex(TBL_COMPONENT + "_" + CLASSNAME));
 
-            if(componentMap.containsKey(className))  {
-                currentComponent = componentMap.get(className);
-                components.add(currentComponent);
-            } else if(currentComponent == null || !currentComponent.getClassName().equals(className)) {
+            if (currentComponent == null || !currentComponent.getClassName().equals(className)) {
 
-                // Create a new component based on this info
-                currentComponent = new ServiceDescription();
-                currentComponent.setInfo(TBL_COMPONENT + "_", c);
-                components.add(currentComponent);
+                if (componentMap.containsKey(className))
+                    currentComponent = componentMap.get(className);
+                else {
+                    // Create a new component based on this info
+                    currentComponent = new ServiceDescription();
+                    currentComponent.setInfo(TBL_COMPONENT + "_", c);
+                    // It shouldn't already be in there
+                    componentMap.put(className, currentComponent);
+                }
 
-                // It shouldn't already be in there
-                componentMap.put(className, currentComponent);
+                if (!components.contains(currentComponent))
+                    components.add(currentComponent);
             }
 
             long ioId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + ID));
@@ -2209,13 +2220,11 @@ public class LocalDBHandler extends SQLiteOpenHelper
             }
 
             long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
+            String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
+            String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
 
-            if(sampleId != -1)
+            if (sampleName != null && strValue != null)
             {
-                String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
-                String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
-
-                // When we make the sample it might need to be converted to be the right type of object?
                 Object value = currentIO.getType().fromString(strValue);
                 currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
             }
@@ -2242,11 +2251,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
                 } while(c2.moveToNext());
                 c2.close();
             }
+
+
         }
         while(c.moveToNext());
         c.close();
 
-        Log.e(TAG, "Got all components");
         return components;
     }
 
