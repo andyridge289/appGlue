@@ -102,8 +102,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 {
 	private HashMap<String, AppDescription> appMap;
 
-    private HashMap<Long, CompositeService> compositeMap;
-	private HashMap<String, ServiceDescription> componentMap;
+    private LongSparseArray<CompositeService> compositeMap;
+    private HashMap<String, ServiceDescription> componentMap;
     private LongSparseArray<ServiceIO> ioMap;
 
     // These are the ones that get cached immediately for speed-ness.
@@ -121,8 +121,9 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
 		appMap = new HashMap<String, AppDescription>();
         componentMap = new HashMap<String, ServiceDescription>();
-        ioMap = new LongSparseArray<ServiceIO>();
 
+        compositeMap = new LongSparseArray<CompositeService>();
+        ioMap = new LongSparseArray<ServiceIO>();
         typeMap = new LongSparseArray<IOType>();
         tagMap = new LongSparseArray<Tag>();
 
@@ -2026,6 +2027,9 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
     public CompositeService getCompositeJoin(long compositeId)
     {
+        if (compositeMap.get(compositeId) != null)
+            return compositeMap.get(compositeId);
+
         return new CompositeService(false);
     }
 
