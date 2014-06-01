@@ -22,6 +22,7 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
+import com.appglue.library.TST;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,8 +34,6 @@ import java.util.Set;
 import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.DB_NAME;
-import static com.appglue.Constants.DB_VERSION;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ICON;
@@ -72,10 +71,26 @@ import static com.appglue.library.AppGlueConstants.COLS_IOTYPE;
 import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.COLS_TAG;
+import static com.appglue.library.AppGlueConstants.DB_NAME;
+import static com.appglue.library.AppGlueConstants.DB_VERSION;
 import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
 import static com.appglue.library.AppGlueConstants.FILTER_STATE;
+import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_HAS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.INDEX_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.INDEX_FILTER;
+import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.INDEX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.IS_RUNNING;
+import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_HAS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.IX_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.IX_FILTER;
+import static com.appglue.library.AppGlueConstants.IX_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.LOG_TYPE;
 import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
@@ -100,10 +115,10 @@ import static com.appglue.library.AppGlueConstants.TIME;
 
 public class LocalDBHandler extends SQLiteOpenHelper
 {
-	private HashMap<String, AppDescription> appMap;
+    private TST<AppDescription> appMap;
 
     private LongSparseArray<CompositeService> compositeMap;
-    private HashMap<String, ServiceDescription> componentMap;
+    private TST<ServiceDescription> componentMap;
     private LongSparseArray<ServiceIO> ioMap;
 
     // These are the ones that get cached immediately for speed-ness.
@@ -119,8 +134,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	{
 		super(context, DB_NAME, null, DB_VERSION);
 
-		appMap = new HashMap<String, AppDescription>();
-        componentMap = new HashMap<String, ServiceDescription>();
+        appMap = new TST<AppDescription>();
+        componentMap = new TST<ServiceDescription>();
 
         compositeMap = new LongSparseArray<CompositeService>();
         ioMap = new LongSparseArray<ServiceIO>();
@@ -210,31 +225,38 @@ public class LocalDBHandler extends SQLiteOpenHelper
         // references Component
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SERVICEIO));
         db.execSQL(AppGlueLibrary.createTableString(TBL_SERVICEIO, COLS_SERVICEIO));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_SERVICEIO, IX_SERVICEIO, INDEX_SERVICEIO));
 
         // references ServiceIO
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IO_SAMPLES));
         db.execSQL(AppGlueLibrary.createTableString(TBL_IO_SAMPLES, COLS_IO_SAMPLES));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_IO_SAMPLES, IX_IO_SAMPLES, INDEX_IO_SAMPLES));
 
         // references Composite and component
 		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_HAS_COMPONENT));
 		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE_HAS_COMPONENT, COLS_COMPOSITE_HAS_COMPONENT));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_COMPOSITE_HAS_COMPONENT, IX_COMPOSITE_HAS_COMPONENT, INDEX_COMPOSITE_HAS_COMPONENT));
 
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_EXECUTION_LOG));
         db.execSQL(AppGlueLibrary.createTableString(TBL_EXECUTION_LOG, COLS_EXECUTION_LOG));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_EXECUTION_LOG, IX_EXECUTION_LOG, INDEX_EXECUTION_LOG));
 
         // references Component and Tag
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPONENT_HAS_TAG));
         db.execSQL(AppGlueLibrary.createTableString(TBL_COMPONENT_HAS_TAG, COLS_COMPONENT_HAS_TAG));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_COMPONENT_HAS_TAG, IX_COMPONENT_HAS_TAG, INDEX_COMPONENT_HAS_TAG));
 
         // references Component, composite and ServiceIO
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_IOCONNECTION));
         db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE_IOCONNECTION, COLS_COMPOSITE_IOCONNECTION));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_COMPOSITE_IOCONNECTION, IX_COMPOSITE_IOCONNECTION, INDEX_COMPOSITE_IOCONNECTION));
 
      	db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_FILTER));
 		db.execSQL(AppGlueLibrary.createTableString(TBL_FILTER, COLS_FILTER));
-		
-		postCreateInsert(db);
-	}	
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_FILTER, IX_FILTER, INDEX_FILTER));
+
+        postCreateInsert(db);
+    }
 	
 	/**
 	 * Anything that needs to be put in the database without making a component do it.
@@ -692,8 +714,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 */
 	private AppDescription getAppForService(String packageName)
 	{
-		if(appMap.containsKey(packageName))
-			return appMap.get(packageName);
+        if (appMap.contains(packageName))
+            return appMap.get(packageName);
 
 		SQLiteDatabase db = this.getReadableDatabase();
 		String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_APP, PACKAGENAME, packageName);
@@ -2030,12 +2052,107 @@ public class LocalDBHandler extends SQLiteOpenHelper
         if (compositeMap.get(compositeId) != null)
             return compositeMap.get(compositeId);
 
+        String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
+        String compositeComponentCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_HAS_COMPONENT, COLS_COMPOSITE_HAS_COMPONENT);
+
+        String query = String.format("SELECT %s FROM %s" +
+                        " LEFT JOIN %s ON %s.%s = %s.%s" +
+                        " %s",
+                new StringBuilder(compositeCols).append(",").append(compositeComponentCols).append(","),
+                TBL_COMPOSITE,
+                TBL_COMPOSITE_HAS_COMPONENT, TBL_COMPOSITE, COMPOSITE_ID, TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID,
+                new StringBuilder("WHERE ").append(TBL_COMPOSITE).append("_").append(COMPOSITE_ID).append(" = ").append(compositeId)
+        );
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Cursor is null for getting composite: " + query);
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            Log.e(TAG, "Cursor is empty for getting composite: " + query);
+            return null;
+        }
+
+        c.moveToFirst();
+
+        CompositeService currentComposite = null;
+        ServiceDescription currentComponent = null;
+
+        do {
+
+            if (currentComposite == null) {
+
+                // Create a new component based on this info
+                currentComposite = new CompositeService(false);
+                currentComposite.setInfo(TBL_COMPOSITE + "_", c);
+
+                // It shouldn't already be in there
+                compositeMap.put(currentComposite.getId(), currentComposite);
+            }
+
+            String className = c.getString(c.getColumnIndex(new StringBuilder(TBL_COMPOSITE_HAS_COMPONENT).append("_").append(CLASSNAME).toString()));
+
+            if (componentMap.contains(className)) {
+                // Get the component out if it's already in there
+                currentComponent = ServiceDescription.clone(componentMap.get(className));
+            } else {
+                currentComponent = getComponent(className);
+                // This is added to the component map implicitly
+            }
+        }
+        while (c.moveToNext());
+        c.close();
+
+        compositeCols = String.format("%s.%s AS %s_%s", TBL_COMPOSITE, ID, TBL_COMPOSITE, ID);
+        String filterCols = AppGlueLibrary.buildGetAllString(TBL_FILTER, COLS_FILTER);
+        String ioConnectionCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_IOCONNECTION, COLS_COMPOSITE_IOCONNECTION);
+
+        // The IOs should be in there now, already, so we can just look up the other crap
+        String q2 = String.format("SELECT %s FROM %s" +
+                        " LEFT JOIN %s ON %s.%s = %s.%s" +
+                        " LEFT JOIN %s ON %s.%s = %s.%s" +
+                        " %s",
+                new StringBuilder(compositeCols).append(filterCols),
+                TBL_COMPOSITE,
+                TBL_FILTER, TBL_COMPOSITE, ID, TBL_FILTER, COMPOSITE_ID,
+                TBL_COMPOSITE_IOCONNECTION, TBL_COMPOSITE, ID, TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID,
+                new StringBuilder("WHERE ").append(TBL_COMPOSITE).append("_").append(COMPOSITE_ID).append(" = ").append(compositeId)
+        );
+        Cursor c2 = db.rawQuery(q2, null);
+
+        if (c2 == null) {
+            Log.e(TAG, "Cursor is null for getting composite: " + q2);
+            return null;
+        }
+
+        if (c2.getCount() == 0) {
+            Log.e(TAG, "Cursor is empty for getting composite: " + q2);
+            return null;
+        }
+
+        c2.moveToFirst();
+
+        do {
+
+            long filterId = c.getLong(c.getColumnIndex(TBL_FILTER + "_" + ID));
+            // Get the actual values?
+            // Get the connections
+            // Get the filters
+
+        } while (c2.moveToNext());
+
+
+
         return new CompositeService(false);
     }
 
     public ServiceDescription getComponent(String className)
     {
-        if(componentMap.containsKey(className)) {
+        if (componentMap.contains(className)) {
             return componentMap.get(className);
         }
 
@@ -2048,7 +2165,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
                         "LEFT JOIN %s ON %s.%s = %s.%s " +
                         "ORDER BY %s" +
                         " %s",
-                componentCols + "," + ioCols + "," + ioSamples,
+                new StringBuilder(componentCols).append(",").append(ioCols).append(",").append(ioSamples),
                 TBL_COMPONENT,
                 TBL_SERVICEIO, TBL_COMPONENT, CLASSNAME, TBL_SERVICEIO, CLASSNAME,
                 TBL_IO_SAMPLES, TBL_SERVICEIO, ID, TBL_IO_SAMPLES, SERVICE_IO,
@@ -2193,7 +2310,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
             if (currentComponent == null || !currentComponent.getClassName().equals(className)) {
 
-                if (componentMap.containsKey(className))
+                if (componentMap.contains(className))
                     currentComponent = componentMap.get(className);
                 else {
                     // Create a new component based on this info

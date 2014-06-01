@@ -17,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
@@ -471,6 +470,33 @@ public class ServiceDescription
 
         this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
         this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE)));
+    }
+
+    public static ServiceDescription clone(ServiceDescription sd) {
+
+        // Do the basics
+        ServiceDescription component = new ServiceDescription(sd.getPackageName(), sd.getClassName(), sd.getName(),
+                sd.getDescription(), sd.getPrice(), null, null, sd.getServiceType(), sd.getProcessType());
+
+        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+
+        cloneIOs(sd.getInputs(), inputs);
+        cloneIOs(sd.getOutputs(), outputs);
+        component.setInputs(inputs);
+        component.setOutputs(outputs);
+
+        return component;
+    }
+
+    private static void cloneIOs(ArrayList<ServiceIO> oldList, ArrayList<ServiceIO> newList) {
+        for (int i = 0; i < oldList.size(); i++) {
+            ServiceIO old = oldList.get(i);
+
+            ServiceIO io = new ServiceIO(old.getName(), old.getFriendlyName(), old.getType(),
+                    old.getDescription(), old.isMandatory(), old.getSampleValues());
+            newList.add(io);
+        }
     }
 
     public void addIO(ServiceIO io, boolean input, int position)

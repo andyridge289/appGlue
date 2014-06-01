@@ -193,17 +193,13 @@ public class Constants
 	
 	// The escape sequence
 	public static final String DELIMITER = "!!@!!@!!@!!@";
-	
-	// Database information
-	public static final int DB_VERSION = 6;
-	public static final String DB_NAME = "ServiceRegistry";
-	
-	// Database - Composite
-	public static final String ID = "id";
-	public static final String NAME = "name";
-	public static final String DESCRIPTION = "description";
-	
-	// Database - Atomic
+
+    // These sort out the service descriptions too
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "description";
+
+    // Database - Atomic
 	public static final String CLASSNAME = "classname";
 	public static final String PACKAGENAME = "packagename";
 	public static final String DEVELOPER = "developer";

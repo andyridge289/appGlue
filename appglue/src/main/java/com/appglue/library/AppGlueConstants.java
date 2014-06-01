@@ -35,7 +35,11 @@ public class AppGlueConstants
 	public static final String SECOND_WIRING = "second_wiring";
 	public static final String CREATE_NEW = "create_new";
 	public static final String MATCHING = "matching";
-	
+
+    // Database information
+    public static final int DB_VERSION = 6;
+    public static final String DB_NAME = "ServiceRegistry";
+
 	// Database tables
 	public static final String TBL_COMPONENT = "atomic";
 	public static final String TBL_COMPOSITE = "composite";
@@ -95,13 +99,13 @@ public class AppGlueConstants
 	};
 	
 	public static String[] FILTER_BOOL = new String[] { "true", "false" };
-	
-	public static final String SHOULD_BE_RUNNING = "should_be_running";
+
+    // Database - Composite
+    public static final String SHOULD_BE_RUNNING = "should_be_running";
 	public static final String IS_RUNNING = "running";
 	public static final String ACTIVE_OR_TIMER = "should";
 	public static final String NUMERAL = "numeral";
 	public static final String INTERVAL = "interval";
-
 
 	public static final String[][] COLS_COMPOSITE = new String[][]
 	{
@@ -142,8 +146,13 @@ public class AppGlueConstants
         { CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
         { POSITION, "INT" }
     };
-	
-	public static final String[][] COLS_SERVICEIO = new String[][]
+
+    public static final String IX_COMPOSITE_HAS_COMPONENT = "index_composite_component";
+    public static final String[] INDEX_COMPOSITE_HAS_COMPONENT = new String[]{
+            COMPOSITE_ID, CLASSNAME
+    };
+
+    public static final String[][] COLS_SERVICEIO = new String[][]
 	{
 		{ ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
 		{ NAME, "TEXT" },
@@ -156,6 +165,11 @@ public class AppGlueConstants
 		{ I_OR_O, "TINYINT" }
 	};
 
+    public static final String IX_SERVICEIO = "index_service_io";
+    public static final String[] INDEX_SERVICEIO = new String[]{
+            IO_TYPE
+    };
+
     // Links between the output of one component in a composite and the input to another
     public static final String[][] COLS_COMPOSITE_IOCONNECTION = new String[][]
     {
@@ -165,6 +179,11 @@ public class AppGlueConstants
         { OUTPUT_IO_ID, "INTEGER", TBL_SERVICEIO, ID },
         { INPUT_CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME },
         { INPUT_IO_ID, "INTEGER", TBL_SERVICEIO, ID }
+    };
+
+    public static final String IX_COMPOSITE_IOCONNECTION = "index_composite_ioconnection";
+    public static final String[] INDEX_COMPOSITE_IOCONNECTION = new String[]{
+            COMPOSITE_ID, OUTPUT_CLASSNAME, INPUT_CLASSNAME, OUTPUT_IO_ID, INPUT_IO_ID
     };
 
 	public static final String[][] COLS_IOTYPE = new String[][]
@@ -185,8 +204,13 @@ public class AppGlueConstants
 		{ NAME, "TEXT" },
 		{ VALUE, "TEXT" }
 	};
-	
-	// Constants for the filter table
+
+    public static final String IX_IO_SAMPLES = "index_io_samples";
+    public static final String[] INDEX_IO_SAMPLES = new String[]{
+            SERVICE_IO
+    };
+
+    // Constants for the filter table
 	public static final String FILTER_CONDITION = "filter_condition";
 	public static final String MANUAL_VALUE = "manual_value";	
 	public static final String FILTER_STATE = "filter_state";
@@ -202,8 +226,13 @@ public class AppGlueConstants
 		{ SAMPLE_VALUE, "INTEGER DEFAULT '-1'" }, // This needs to be a reference to the io value table
 		{ FILTER_CONDITION, "INTEGER" }
 	};
-	
-	public static final String[][] COLS_APP = new String[][]
+
+    public static final String IX_FILTER = "index_filter";
+    public static final String[] INDEX_FILTER = new String[]{
+            SERVICE_IO, CLASSNAME, COMPOSITE_ID
+    };
+
+    public static final String[][] COLS_APP = new String[][]
 	{
 		{ PACKAGENAME, "TEXT" },
 		{ NAME, "TEXT" }, 
@@ -227,8 +256,13 @@ public class AppGlueConstants
 		{ MESSAGE, "TEXT" },
 		{ LOG_TYPE, "INTEGER" }
 	};
-	
-	public static final String HAS_INPUTS = "has_inputs";
+
+    public static final String IX_EXECUTION_LOG = "index_execution_log";
+    public static final String[] INDEX_EXECUTION_LOG = new String[]{
+            COMPOSITE_ID, CLASSNAME
+    };
+
+    public static final String HAS_INPUTS = "has_inputs";
 	public static final String HAS_OUTPUTS = "has_outputs";
 	
 	public static final String TAG_ID = "tag_id";
@@ -239,8 +273,13 @@ public class AppGlueConstants
 		{ CLASSNAME, "TEXT" },
 		{ TAG_ID, "INTEGER" }
 	};
-	
-	public static final String FIRST = "first";
+
+    public static final String IX_COMPONENT_HAS_TAG = "index_component_has_tag";
+    public static final String[] INDEX_COMPONENT_HAS_TAG = new String[]{
+            CLASSNAME, TAG_ID
+    };
+
+    public static final String FIRST = "first";
 
     public static final String PREFS = "appGlue_prefs";
 }
