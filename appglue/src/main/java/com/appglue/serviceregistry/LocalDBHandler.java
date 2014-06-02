@@ -2139,15 +2139,92 @@ public class LocalDBHandler extends SQLiteOpenHelper
         do {
 
             long filterId = c.getLong(c.getColumnIndex(TBL_FILTER + "_" + ID));
-            // Get the actual values?
-            // Get the connections
-            // Get the filters
+
+            if (filterId != -1) {
+                filterComponents(c, currentComposite, TBL_FILTER + "_");
+            }
+
+            long ioConnectionId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_IOCONNECTION + "_" + ID));
+
+            if (ioConnectionId != -1) {
+                connectComponents(c, currentComposite, TBL_COMPOSITE_IOCONNECTION + "_");
+            }
 
         } while (c2.moveToNext());
 
 
 
         return new CompositeService(false);
+    }
+
+    private void connectComponents(Cursor c, CompositeService cs, String prefix) {
+
+        long csId = c.getLong(c.getColumnIndex(prefix + COMPOSITE_ID));
+        if (csId != cs.getId())
+            return;
+
+        String outputClassName = c.getString(c.getColumnIndex(prefix + OUTPUT_CLASSNAME));
+        ServiceDescription out = cs.getComponent(outputClassName);
+        if (out == null)
+            return;
+
+        String inputClassName = c.getString(c.getColumnIndex(prefix + INPUT_CLASSNAME));
+        ServiceDescription in = cs.getComponent(inputClassName);
+        if (in == null)
+            return;
+
+        long outputId = c.getLong(c.getColumnIndex(prefix + OUTPUT_IO_ID));
+        ServiceIO output = out.getOutput(outputId);
+        if (output == null)
+            return;
+
+        long inputId = c.getLong(c.getColumnIndex(prefix + INPUT_IO_ID));
+        ServiceIO input = in.getInput(inputId);
+        if (input == null)
+            return;
+
+        // If we've got to here then everything should have worked. Make a two-way link
+        output.setConnection(input);
+        input.setConnection(output);
+    }
+
+    private void filterComponents(Cursor c, CompositeService cs, String prefix) {
+
+        long csId = c.getLong(c.getColumnIndex(prefix + COMPOSITE_ID));
+        if (csId != cs.getId())
+            return;
+
+        String className = c.getString(c.getColumnIndex(prefix + CLASSNAME));
+        ServiceDescription component = cs.getComponent(className);
+        if (component == null)
+            return;
+
+        long ioId = c.getLong(c.getColumnIndex(prefix + SERVICE_IO));
+        ServiceIO io = component.getIO(ioId);
+        if (io == null)
+            return;
+
+        int filterState = c.getInt(c.getColumnIndex(prefix + FILTER_STATE));
+        int filterCondition = c.getInt(c.getColumnIndex(prefix + FILTER_CONDITION));
+
+        switch (filterState) {
+
+            case ServiceIO.SAMPLE_FILTER: // Then we need to look up a sample value
+                long sampleId = c.getLong(c.getColumnIndex(prefix + SAMPLE_VALUE));
+                IOValue sample = io.getSampleValue(sampleId);
+                io.setChosenSampleValue(sample);
+                io.setCondition(filterCondition);
+                break;
+
+            case ServiceIO.MANUAL_FILTER: // Then we need to look up the manual value
+                String textValue = c.getString(c.getColumnIndex(prefix + MANUAL_VALUE));
+                io.setManualValue(io.getType().fromString(textValue));
+                io.setCondition(filterCondition);
+                break;
+
+            default:
+                // Do nothing, I think, either it's none of our values, or it's unfiltered.
+        }
     }
 
     public ServiceDescription getComponent(String className)

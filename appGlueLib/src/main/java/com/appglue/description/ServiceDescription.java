@@ -3,6 +3,7 @@ package com.appglue.description;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.LongSparseArray;
 
 import com.appglue.Constants.ProcessType;
 import com.appglue.Constants.ServiceType;
@@ -72,8 +73,10 @@ public class ServiceDescription
 	// Inputs and outputs to/from the service
 	private ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
 	private ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
-	
-	// The average rating of the service
+    private LongSparseArray<ServiceIO> searchInputs = new LongSparseArray<ServiceIO>();
+    private LongSparseArray<ServiceIO> searchOutputs = new LongSparseArray<ServiceIO>();
+
+    // The average rating of the service
 	private double averageReviewRating = 0;
 	
 	// The number of ratings/reviews the service has received
@@ -215,68 +218,41 @@ public class ServiceDescription
 	 */
 	public ServiceIO getOutput(long outputId)
 	{
-		if(outputs == null)
-		{
-			return null;
-		}
-
-        for (ServiceIO output : outputs) {
-            if (output.getId() == outputId) {
-                return output;
-            }
-        }
-		
-		return null;
-	}
+        return searchOutputs.get(outputId);
+    }
 	
 	public ServiceIO getInput(long inputId)
 	{
-		if(inputs == null)
-		{
-			return null;
-		}
+        return searchInputs.get(inputId);
+    }
 
-        for (ServiceIO input : inputs) {
-            if (input.getId() == inputId) {
-                return input;
-            }
-        }
-		
-		return null;
-	}
-	
-	public ServiceIO getIO(long id)
-	{
-		if(inputs == null)
-			inputs = new ArrayList<ServiceIO>();
+    public ServiceIO getIO(long ioId) {
 
-        for (ServiceIO input : inputs) {
-            if (input.getId() == id) {
-                return input;
-            }
-        }
-		
-		if(outputs == null)
-			outputs = new ArrayList<ServiceIO>();
+        // First check if it's an input
+        ServiceIO io = getInput(ioId);
+        if (io != null)
+            return io;
 
-        for (ServiceIO output : outputs) {
-            if (output.getId() == id) {
-                return output;
-            }
-        }
-		
-		return null;
-	}
-	
+        return getOutput(ioId);
+    }
+
 	public void setInputs(ArrayList<ServiceIO> inputs)
 	{
-		this.inputs = inputs;
-	}
+        this.inputs = inputs;
+
+        for (ServiceIO in : inputs) {
+            searchInputs.put(in.getId(), in);
+        }
+    }
 	
 	public void setOutputs(ArrayList<ServiceIO> outputs)
 	{
 		this.outputs = outputs;
-	}
+
+        for (ServiceIO out : outputs) {
+            searchOutputs.put(out.getId(), out);
+        }
+    }
 	
 	public boolean hasIncomingLinks()
 	{
@@ -501,10 +477,13 @@ public class ServiceDescription
 
     public void addIO(ServiceIO io, boolean input, int position)
     {
-        if(input)
+        if (input) {
             this.inputs.add(position, io);
-        else
+            this.searchInputs.put(io.getId(), io);
+        } else {
             this.outputs.add(position, io);
+            this.searchOutputs.put(io.getId(), io);
+        }
     }
 	
 	public static ServiceDescription createFromCursor(Cursor c, String prefix)

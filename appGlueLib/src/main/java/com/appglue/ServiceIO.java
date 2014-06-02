@@ -1,6 +1,7 @@
 package com.appglue;
 
 import android.database.Cursor;
+import android.util.LongSparseArray;
 
 import com.appglue.datatypes.IOType;
 import com.appglue.datatypes.Text;
@@ -8,12 +9,12 @@ import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
 
+import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.IO_INDEX;
 import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.DESCRIPTION;
 
 public class ServiceIO 
 {
@@ -40,10 +41,11 @@ public class ServiceIO
 	private int filterState = UNFILTERED;
 	private Object manualValue; // This is used for outputs on filtering, or its hardcoded value if its an input
 	private IOValue chosenSampleValue;
-	
-	private ArrayList<IOValue> sampleValues;
-	
-	private int condition;
+
+    private LongSparseArray<IOValue> sampleSearch;
+    private ArrayList<IOValue> sampleValues;
+
+    private int condition;
 	
 	private boolean mandatory;
 	
@@ -65,17 +67,18 @@ public class ServiceIO
 		this.chosenSampleValue = null;
 		this.condition = -1;
 		this.mandatory = false;
-		this.sampleValues = new ArrayList<IOValue>();
-	}
+
+        this.sampleValues = new ArrayList<IOValue>();
+        this.sampleSearch = new LongSparseArray<IOValue>();
+    }
 
     public ServiceIO(long id)
     {
         this();
         this.id = id;
     }
-	
-	public ServiceIO(String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> sampleValues)
-	{
+
+    public ServiceIO(String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> samples) {
 		this();
 		
 		this.name = name;
@@ -85,8 +88,12 @@ public class ServiceIO
 		this.id = -1;
 		this.index = -1;
 		this.mandatory = mandatory;
-		this.sampleValues = sampleValues;
-	}
+
+        this.sampleValues = samples;
+        for (IOValue v : samples) {
+            sampleSearch.put(v.id, v);
+        }
+    }
 	
 	public ServiceIO(String name, String friendlyName, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
 	{
@@ -268,21 +275,35 @@ public class ServiceIO
 	
 	public ArrayList<IOValue> getSampleValues()
 	{
-		return this.sampleValues;
-	}
-	
-	public void setSampleValues(ArrayList<IOValue> values)
+        return sampleValues;
+    }
+
+    public IOValue getSampleValue(long id) {
+        return this.sampleSearch.get(id);
+    }
+
+    public void setSampleValues(ArrayList<IOValue> values)
 	{
-		this.sampleValues = values;
-	}
+        this.sampleSearch = new LongSparseArray<IOValue>();
+
+        for (IOValue v : values) {
+            this.sampleSearch.put(v.id, v);
+        }
+        sampleValues = values;
+    }
 	
 	public void addSampleValue(IOValue value)
 	{
-		if(sampleValues == null)
-			sampleValues = new ArrayList<IOValue>();
-		
-		sampleValues.add(value);
-	}
+        if (sampleSearch == null)
+            sampleSearch = new LongSparseArray<IOValue>();
+
+        sampleSearch.put(value.id, value);
+
+        if (sampleValues == null)
+            sampleValues = new ArrayList<IOValue>();
+
+        sampleValues.add(value);
+    }
 
     public void setInfo(String prefix, Cursor c)
     {

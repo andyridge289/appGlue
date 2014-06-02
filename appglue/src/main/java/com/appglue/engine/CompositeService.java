@@ -3,6 +3,7 @@ package com.appglue.engine;
 import android.database.Cursor;
 
 import com.appglue.description.ServiceDescription;
+import com.appglue.library.TST;
 
 import java.util.ArrayList;
 
@@ -29,6 +30,7 @@ public class CompositeService {
     public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 
     private ArrayList<ServiceDescription> components;
+    private TST<ServiceDescription> componentSearch;
 
     public CompositeService(boolean temp) {
         if (temp)
@@ -39,6 +41,7 @@ public class CompositeService {
         this.description = "";
         this.components = new ArrayList<ServiceDescription>();
         this.shouldBeRunning = false;
+        this.componentSearch = new TST<ServiceDescription>();
     }
 
     public CompositeService(String name, String description, ArrayList<ServiceDescription> components) {
@@ -46,6 +49,10 @@ public class CompositeService {
         this.name = name;
         this.description = description;
         this.components = components;
+
+        for (ServiceDescription s : components) {
+            this.componentSearch.put(s.getClassName(), s);
+        }
     }
 
     public static CompositeService makePlaceholder() {
@@ -67,6 +74,10 @@ public class CompositeService {
         this.components = services;
         this.description = description;
 
+        for (ServiceDescription s : services) {
+            this.componentSearch.put(s.getClassName(), s);
+        }
+
         this.shouldBeRunning = shouldBeRunning;
     }
 
@@ -75,6 +86,10 @@ public class CompositeService {
         this.id = id;
         this.name = name;
         this.components = services;
+
+        for (ServiceDescription s : services) {
+            this.componentSearch.put(s.getClassName(), s);
+        }
 
         this.numeral = numeral;
         this.interval = interval;
@@ -91,6 +106,10 @@ public class CompositeService {
 
         this.components = orchestration;
 
+        for (ServiceDescription s : orchestration) {
+            this.componentSearch.put(s.getClassName(), s);
+        }
+
         this.shouldBeRunning = false;
     }
 
@@ -99,12 +118,7 @@ public class CompositeService {
      * @return The Component
      */
     public ServiceDescription getComponent(String className) {
-        for (ServiceDescription component : components) {
-            if (component.getClassName().equals(className))
-                return component;
-        }
-
-        return null;
+        return this.componentSearch.get(className);
     }
 
     public String getName() {
