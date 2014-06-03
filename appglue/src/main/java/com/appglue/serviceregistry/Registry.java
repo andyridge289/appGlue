@@ -188,8 +188,9 @@ public class Registry
 	
 	public ArrayList<CompositeService> getComposites(boolean includeTemp)
 	{
-        return dbHandler.getComposites(includeTemp);
-	}
+//        return dbHandler.getComposites(includeTemp);
+        return dbHandler.getCompositesJoin(includeTemp);
+    }
 	
 	public boolean deleteComposite(CompositeService cs)
 	{

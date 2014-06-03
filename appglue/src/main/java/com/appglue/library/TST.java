@@ -1,13 +1,18 @@
 package com.appglue.library;
 
+import java.util.ArrayList;
+
 /**
  * Created by andyridge on 30/05/2014.
  */
 public class TST<E> {
+
     private int N;
     private Node root;
+    private ArrayList<String> keys;
 
     public TST() {
+        keys = new ArrayList<String>();
     }
 
     public boolean contains(String key) {
@@ -53,6 +58,7 @@ public class TST<E> {
     public void put(String s, E val) {
         if (!contains(s)) N++;
         root = put(root, s, val, 0);
+        keys.add(s);
     }
 
     private Node put(Node n, String k, E v, int ix) {
@@ -98,6 +104,10 @@ public class TST<E> {
         }
 
         return s.substring(0, length);
+    }
+
+    public ArrayList<String> getKeys() {
+        return keys;
     }
 
     private class Node {

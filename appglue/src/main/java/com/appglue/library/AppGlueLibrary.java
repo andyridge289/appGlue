@@ -1,7 +1,5 @@
 package com.appglue.library;
 
-import static com.appglue.library.AppGlueConstants.DB_NAME;
-
 public class AppGlueLibrary {
     public static String createTableString(String tableName, String[][] cols) {
         StringBuilder createTable = new StringBuilder(String.format("CREATE TABLE %s (", tableName));
@@ -18,14 +16,14 @@ public class AppGlueLibrary {
         return createTable.toString();
     }
 
-    public static String createIndexString(String indexName, String tableName, String[] cols) {
-        StringBuilder createIndex = new StringBuilder(String.format("CREATE UNIQUE INDEX IF NOT EXISTS %s.%s ON %s (",
-                DB_NAME,
+    public static String createIndexString(String tableName, String indexName, String[] cols) {
+        StringBuilder createIndex = new StringBuilder(String.format("CREATE UNIQUE INDEX IF NOT EXISTS %s ON %s (",
+//                DB_NAME,
                 indexName,
                 tableName));
 
         for (int i = 0; i < cols.length; i++) {
-            if (i > 1)
+            if (i > 0)
                 createIndex.append(",");
             createIndex.append(cols[i]);
         }

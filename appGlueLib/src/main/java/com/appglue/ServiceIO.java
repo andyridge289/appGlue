@@ -90,6 +90,10 @@ public class ServiceIO
 		this.mandatory = mandatory;
 
         this.sampleValues = samples;
+
+        if (samples == null)
+            return;
+
         for (IOValue v : samples) {
             sampleSearch.put(v.id, v);
         }

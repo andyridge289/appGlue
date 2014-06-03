@@ -354,6 +354,12 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	@Override
 	public int compare(ServiceIO a, ServiceIO b) 
 	{
+        if (a.getType() == null)
+            Log.e(TAG, "a Type null");
+
+        if (b.getType() == null)
+            Log.e(TAG, "b type null");
+
 		return a.getType().getClass().getCanonicalName().compareTo(b.getType().getClass().getCanonicalName());
 	}
 	

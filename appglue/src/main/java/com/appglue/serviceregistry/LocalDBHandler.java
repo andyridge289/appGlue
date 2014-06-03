@@ -161,13 +161,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
 		create(db);
 	}
 
-    @Override
-    public void onConfigure(SQLiteDatabase db)
-    {
-        db.setForeignKeyConstraintsEnabled(true);
-    }
-	
-	
 	/**
 	 * Indicate the database should be created again
 	 */
@@ -206,7 +199,8 @@ public class LocalDBHandler extends SQLiteOpenHelper
 	 */
 	private void create(SQLiteDatabase db)
 	{
-        // None of these should have foreign keys
+        Log.d(TAG, "Path: " + db.getPath());
+
 		db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE));
 		db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE, COLS_COMPOSITE));
 
@@ -2044,7 +2038,122 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
     public ArrayList<CompositeService> getCompositesJoin(boolean includeTemp)
     {
-        return new ArrayList<CompositeService>();
+        ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
+
+        String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
+        String compositeComponentCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_HAS_COMPONENT, COLS_COMPOSITE_HAS_COMPONENT);
+        String whereClause = includeTemp ? "" : new StringBuilder(" where ").append(TBL_COMPOSITE).append(".").append(ID).append(" <> ").append(TEMP_ID).toString();
+
+        String query = String.format("SELECT %s FROM %s" +
+                        " LEFT JOIN %s ON %s.%s = %s.%s" +
+                        " %s",
+                new StringBuilder(compositeCols).append(",").append(compositeComponentCols),
+                TBL_COMPOSITE,
+                TBL_COMPOSITE_HAS_COMPONENT, TBL_COMPOSITE, ID, TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID,
+                whereClause
+        );
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Cursor is null for getting composite: " + query);
+            return composites;
+        }
+
+        if (c.getCount() == 0) {
+            Log.e(TAG, "Cursor is empty for getting composite: " + query);
+            return composites;
+        }
+
+        c.moveToFirst();
+
+        CompositeService currentComposite = null;
+
+        do {
+
+            long compositeId = c.getLong(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE, ID)));
+
+            if (currentComposite == null || compositeId != currentComposite.getId()) {
+
+                if (compositeMap.get(compositeId) == null) {
+                    currentComposite = new CompositeService(false);
+                    currentComposite.setInfo(TBL_COMPOSITE + "_", c);
+                } else {
+                    currentComposite = compositeMap.get(compositeId);
+                    composites.add(currentComposite);
+                }
+            }
+
+            String className = c.getString(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE_HAS_COMPONENT, CLASSNAME)));
+            ServiceDescription currentComponent = null;
+
+            if (componentMap.contains(className)) {
+                // Get the component out if it's already in there
+                currentComponent = ServiceDescription.clone(componentMap.get(className));
+            } else {
+                currentComponent = getComponent(className);
+                // This is added to the component map implicitly
+            }
+
+            // Find out if the composite has the component in it already
+            if (!currentComposite.containsComponent(className)) {
+                int position = c.getInt(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE_HAS_COMPONENT, POSITION)));
+                currentComposite.addComponent(position, currentComponent);
+            }
+        }
+        while (c.moveToNext());
+        c.close();
+
+        // At this stage we have all of the components, so link everything up
+        compositeCols = String.format("%s.%s AS %s_%s", TBL_COMPOSITE, ID, TBL_COMPOSITE, ID);
+        String filterCols = AppGlueLibrary.buildGetAllString(TBL_FILTER, COLS_FILTER);
+        String ioConnectionCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_IOCONNECTION, COLS_COMPOSITE_IOCONNECTION);
+
+        // The IOs should be in there now, already, so we can just look up the other crap
+        String q2 = String.format("SELECT %s FROM %s" +
+                        " LEFT JOIN %s ON %s.%s = %s.%s" +
+                        " LEFT JOIN %s ON %s.%s = %s.%s",
+                new StringBuilder(compositeCols).append(",").append(filterCols).append(",").append(ioConnectionCols),
+                TBL_COMPOSITE,
+                TBL_FILTER, TBL_COMPOSITE, ID, TBL_FILTER, COMPOSITE_ID,
+                TBL_COMPOSITE_IOCONNECTION, TBL_COMPOSITE, ID, TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID
+        );
+        Cursor c2 = db.rawQuery(q2, null);
+
+        if (c2 == null) {
+            Log.e(TAG, "Cursor is null for getting composite: " + q2);
+            return composites;
+        }
+
+        if (c2.getCount() == 0) {
+            Log.e(TAG, "Cursor is empty for getting composite: " + q2);
+            return composites;
+        }
+
+        c2.moveToFirst();
+
+        do {
+
+            long compositeId = c.getLong(c.getColumnIndex(new StringBuilder(TBL_COMPOSITE).append("_").append(ID).toString()));
+            long filterId = c.getLong(c.getColumnIndex(new StringBuilder(TBL_FILTER).append("_").append(ID).toString()));
+            CompositeService cs = compositeMap.get(compositeId); // It must be in the thing
+
+            // Just blindly overwrite this stuff, it must be newer in the database than it is in the cache
+            if (filterId != -1) {
+                filterComponents(c, cs, new StringBuilder(TBL_FILTER).append("_").toString());
+            }
+
+            long ioConnectionId = c.getLong(c.getColumnIndex(new StringBuilder(TBL_COMPOSITE_IOCONNECTION).append("_").append(ID).toString()));
+
+            if (ioConnectionId != -1) {
+                connectComponents(c, cs, new StringBuilder(TBL_COMPOSITE_IOCONNECTION).append("_").toString());
+            }
+
+        } while (c2.moveToNext());
+
+
+        return composites;
     }
 
     public CompositeService getCompositeJoin(long compositeId)
@@ -2094,7 +2203,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
                 compositeMap.put(currentComposite.getId(), currentComposite);
             }
 
-            String className = c.getString(c.getColumnIndex(new StringBuilder(TBL_COMPOSITE_HAS_COMPONENT).append("_").append(CLASSNAME).toString()));
+            String className = c.getString(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE_HAS_COMPONENT, CLASSNAME)));
 
             if (componentMap.contains(className)) {
                 // Get the component out if it's already in there
@@ -2102,6 +2211,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
             } else {
                 currentComponent = getComponent(className);
                 // This is added to the component map implicitly
+            }
+
+            // Find out if the composite has the component in it already
+            if (!currentComposite.containsComponent(className)) {
+                int position = c.getInt(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE_HAS_COMPONENT, POSITION)));
+                currentComposite.addComponent(position, currentComponent);
             }
         }
         while (c.moveToNext());
@@ -2116,7 +2231,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
                         " LEFT JOIN %s ON %s.%s = %s.%s" +
                         " LEFT JOIN %s ON %s.%s = %s.%s" +
                         " %s",
-                new StringBuilder(compositeCols).append(filterCols),
+                new StringBuilder(compositeCols).append(",").append(filterCols).append(",").append(ioConnectionCols),
                 TBL_COMPOSITE,
                 TBL_FILTER, TBL_COMPOSITE, ID, TBL_FILTER, COMPOSITE_ID,
                 TBL_COMPOSITE_IOCONNECTION, TBL_COMPOSITE, ID, TBL_COMPOSITE_IOCONNECTION, COMPOSITE_ID,
@@ -2151,8 +2266,6 @@ public class LocalDBHandler extends SQLiteOpenHelper
             }
 
         } while (c2.moveToNext());
-
-
 
         return new CompositeService(false);
     }
@@ -2227,6 +2340,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
         }
     }
 
+    // FIXME Need to left join on to the app as well
     public ServiceDescription getComponent(String className)
     {
         if (componentMap.contains(className)) {
@@ -2270,7 +2384,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
         do
         {
-           if(currentComponent == null) {
+            if (currentComponent == null) {
 
                 // Create a new component based on this info
                 currentComponent = new ServiceDescription();
@@ -2283,29 +2397,31 @@ public class LocalDBHandler extends SQLiteOpenHelper
             long ioId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + ID));
             long ioTypeId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + IO_TYPE));
 
-            if(ioMap.get(ioId) != null) {
-                currentIO = ioMap.get(ioId);
-                currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
-            } else if(currentIO == null || currentIO.getId() != ioId) {
+            if (ioTypeId != 0) {
 
-                // If it doesn't exist, then use the old one
-                currentIO = new ServiceIO(ioId);
-                currentIO.setInfo(TBL_SERVICEIO + "_", c);
-                currentIO.setType(getIOType(ioTypeId));
-                currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
-                ioMap.put(ioId, currentIO);
-            }
+                if (ioMap.get(ioId) != null) {
+                    currentIO = ioMap.get(ioId);
+                    currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
+                } else if (currentIO == null || currentIO.getId() != ioId) {
 
-            long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
+                    // If it doesn't exist, then use the old one
+                    currentIO = new ServiceIO(ioId);
+                    currentIO.setInfo(TBL_SERVICEIO + "_", c);
+                    currentIO.setType(getIOType(ioTypeId));
+                    currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
+                    ioMap.put(ioId, currentIO);
+                }
 
-            if(sampleId != -1)
-            {
-                String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
-                String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
+                long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
 
-                // When we make the sample it might need to be converted to be the right type of object?
-                Object value = currentIO.getType().fromString(strValue);
-                currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+                if (sampleId != -1) {
+                    String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
+                    String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
+
+                    // When we make the sample it might need to be converted to be the right type of object?
+                    Object value = currentIO.getType().fromString(strValue);
+                    currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+                }
             }
 
             if(!currentComponent.hasTags())
@@ -2339,6 +2455,7 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
     public ArrayList<ServiceDescription> getComponents(ProcessType processType)
     {
+        TST<Integer> componentCount = new TST<Integer>();
         String componentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
         String ioCols = AppGlueLibrary.buildGetAllString(TBL_SERVICEIO, COLS_SERVICEIO);
         String ioSamples = AppGlueLibrary.buildGetAllString(TBL_IO_SAMPLES, COLS_IO_SAMPLES);
@@ -2352,13 +2469,11 @@ public class LocalDBHandler extends SQLiteOpenHelper
         String query = String.format("SELECT %s FROM %s " +
             "LEFT JOIN %s ON %s.%s = %s.%s " +
             "LEFT JOIN %s ON %s.%s = %s.%s " +
-                "ORDER BY %s" +
                 " %s",
                 componentCols + "," + ioCols + "," + ioSamples,
                 TBL_COMPONENT,
                 TBL_SERVICEIO, TBL_COMPONENT, CLASSNAME, TBL_SERVICEIO, CLASSNAME,
                 TBL_IO_SAMPLES, TBL_SERVICEIO, ID, TBL_IO_SAMPLES, SERVICE_IO,
-                TBL_SERVICEIO + "_" + IO_INDEX,
                 args);
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -2383,7 +2498,15 @@ public class LocalDBHandler extends SQLiteOpenHelper
 
         do
         {
+            Log.d(TAG, DatabaseUtils.dumpCursorToString(c));
+
             String className = c.getString(c.getColumnIndex(TBL_COMPONENT + "_" + CLASSNAME));
+
+            if (componentCount.get(className) == null) {
+                componentCount.put(className, 1);
+            } else {
+                componentCount.put(className, componentCount.get(className) + 1);
+            }
 
             if (currentComponent == null || !currentComponent.getClassName().equals(className)) {
 
@@ -2404,27 +2527,31 @@ public class LocalDBHandler extends SQLiteOpenHelper
             long ioId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + ID));
             long ioTypeId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + IO_TYPE));
 
-            if(ioMap.get(ioId) != null) {
-                currentIO = ioMap.get(ioId);
-                currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
-            } else if(currentIO == null || currentIO.getId() != ioId) {
+            if (ioTypeId != 0) {
 
-                // If it doesn't exist, then use the old one
-                currentIO = new ServiceIO(ioId);
-                currentIO.setInfo(TBL_SERVICEIO + "_", c);
-                currentIO.setType(getIOType(ioTypeId));
-                currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
-                ioMap.put(ioId, currentIO);
-            }
+                if (ioMap.get(ioId) != null) {
+                    currentIO = ioMap.get(ioId);
+                    currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
+                } else if (currentIO == null || currentIO.getId() != ioId) {
 
-            long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
-            String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
-            String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
+                    // If it doesn't exist, then use the old one
+                    currentIO = new ServiceIO(ioId);
+                    currentIO.setInfo(TBL_SERVICEIO + "_", c);
+                    currentIO.setType(getIOType(ioTypeId));
+                    currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
+                    ioMap.put(ioId, currentIO);
+                }
 
-            if (sampleName != null && strValue != null)
-            {
-                Object value = currentIO.getType().fromString(strValue);
-                currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+                long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
+                String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
+                String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
+
+                if (sampleName != null && strValue != null) {
+                    Object value = currentIO.getType().fromString(strValue);
+                    currentIO.addSampleValue(new IOValue(sampleId, sampleName, value));
+                }
+            } else {
+                Log.d(TAG, "Skipping for " + className);
             }
 
             if(!currentComponent.hasTags())
@@ -2454,6 +2581,12 @@ public class LocalDBHandler extends SQLiteOpenHelper
         }
         while(c.moveToNext());
         c.close();
+
+        // FIXME This is testing the keys and shit
+        ArrayList<String> keys = componentCount.getKeys();
+        for (String k : keys) {
+            Log.d(TAG, k + ": " + componentCount.get(k));
+        }
 
         return components;
     }

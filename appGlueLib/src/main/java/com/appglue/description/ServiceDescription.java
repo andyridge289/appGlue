@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.LongSparseArray;
+import android.util.SparseArray;
 
 import com.appglue.Constants.ProcessType;
 import com.appglue.Constants.ServiceType;
@@ -71,8 +72,8 @@ public class ServiceDescription
 	private double price = 0;
 	
 	// Inputs and outputs to/from the service
-	private ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
-	private ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+    private SparseArray<ServiceIO> inputs = new SparseArray<ServiceIO>();
+    private SparseArray<ServiceIO> outputs = new SparseArray<ServiceIO>();
     private LongSparseArray<ServiceIO> searchInputs = new LongSparseArray<ServiceIO>();
     private LongSparseArray<ServiceIO> searchOutputs = new LongSparseArray<ServiceIO>();
 
@@ -104,10 +105,11 @@ public class ServiceDescription
 		this.numReviews = 0;
 		this.reviews = new ArrayList<Review>();
 
-        this.inputs = inputs == null ? new ArrayList<ServiceIO>() : inputs;
-		this.outputs = outputs == null ? new ArrayList<ServiceIO>() : outputs;
+        this.setInputs(inputs);
+        this.setOutputs(outputs);
 
-		this.serviceType = serviceType;
+
+        this.serviceType = serviceType;
 		this.processType = processType;
 	}
 
@@ -122,8 +124,8 @@ public class ServiceDescription
         this.numReviews = 0;
         this.reviews = new ArrayList<Review>();
 
-        this.inputs = inputs == null ? new ArrayList<ServiceIO>() : inputs;
-        this.outputs = outputs == null ? new ArrayList<ServiceIO>() : outputs;
+        this.inputs = new SparseArray<ServiceIO>();
+        this.outputs = new SparseArray<ServiceIO>();
 
         this.serviceType = ServiceType.ANY;
         this.processType = ProcessType.NORMAL;
@@ -201,14 +203,26 @@ public class ServiceDescription
 	
 	public ArrayList<ServiceIO> getInputs()
 	{
-		return this.inputs;
-	}
+        ArrayList<ServiceIO> in = new ArrayList<ServiceIO>();
+
+        for (int i = 0; i < inputs.size(); i++) {
+            in.add(inputs.get(i));
+        }
+
+        return in;
+    }
 	
 	
 	public ArrayList<ServiceIO> getOutputs()
 	{
-		return this.outputs;
-	}
+        ArrayList<ServiceIO> out = new ArrayList<ServiceIO>();
+
+        for (int i = 0; i < outputs.size(); i++) {
+            out.add(outputs.get(i));
+        }
+
+        return out;
+    }
 	
 	/**
 	 * This is for filters - I don't think we'll ever need to get the inputs
@@ -238,7 +252,17 @@ public class ServiceDescription
 
 	public void setInputs(ArrayList<ServiceIO> inputs)
 	{
-        this.inputs = inputs;
+        this.inputs = new SparseArray<ServiceIO>();
+        this.searchInputs = new LongSparseArray<ServiceIO>();
+
+        if (inputs == null)
+            return;
+
+        if (inputs != null) {
+            for (int i = 0; i < inputs.size(); i++) {
+                this.inputs.put(i, inputs.get(i));
+            }
+        }
 
         for (ServiceIO in : inputs) {
             searchInputs.put(in.getId(), in);
@@ -247,7 +271,17 @@ public class ServiceDescription
 	
 	public void setOutputs(ArrayList<ServiceIO> outputs)
 	{
-		this.outputs = outputs;
+        this.outputs = new SparseArray<ServiceIO>();
+        this.searchOutputs = new LongSparseArray<ServiceIO>();
+
+        if (outputs == null)
+            return;
+
+        if (outputs != null) {
+            for (int i = 0; i < outputs.size(); i++) {
+                this.outputs.put(i, outputs.get(i));
+            }
+        }
 
         for (ServiceIO out : outputs) {
             searchOutputs.put(out.getId(), out);
@@ -256,8 +290,8 @@ public class ServiceDescription
 	
 	public boolean hasIncomingLinks()
 	{
-        for (ServiceIO input : inputs) {
-            if (input.getConnection() != null)
+        for (int i = 0; i < inputs.size(); i++) {
+            if (inputs.get(i).getConnection() != null)
                 return true;
         }
 		
@@ -266,8 +300,8 @@ public class ServiceDescription
 	
 	public boolean hasOutgoingLinks()
 	{
-        for (ServiceIO output : outputs) {
-            if (output.getConnection() != null)
+        for (int i = 0; i < outputs.size(); i++) {
+            if (outputs.get(i).getConnection() != null)
                 return true;
         }
 		
@@ -478,10 +512,10 @@ public class ServiceDescription
     public void addIO(ServiceIO io, boolean input, int position)
     {
         if (input) {
-            this.inputs.add(position, io);
+            this.inputs.put(position, io);
             this.searchInputs.put(io.getId(), io);
         } else {
-            this.outputs.add(position, io);
+            this.outputs.put(position, io);
             this.searchOutputs.put(io.getId(), io);
         }
     }

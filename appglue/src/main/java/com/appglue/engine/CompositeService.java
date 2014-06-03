@@ -73,12 +73,16 @@ public class CompositeService {
         this.name = name;
         this.components = services;
         this.description = description;
+        this.shouldBeRunning = shouldBeRunning;
+
+        if (services == null)
+            return;
 
         for (ServiceDescription s : services) {
             this.componentSearch.put(s.getClassName(), s);
         }
 
-        this.shouldBeRunning = shouldBeRunning;
+
     }
 
     public CompositeService(long id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval) {
@@ -130,11 +134,17 @@ public class CompositeService {
     }
 
     public void addComponent(ServiceDescription service) {
+        this.componentSearch.put(service.getClassName(), service);
         this.components.add(service);
     }
 
     public void addComponent(int position, ServiceDescription component) {
+        this.componentSearch.put(component.getClassName(), component);
         this.components.add(position, component);
+    }
+
+    public boolean containsComponent(String className) {
+        return this.getComponent(className) != null;
     }
 
     public void resetOrchestration() {
