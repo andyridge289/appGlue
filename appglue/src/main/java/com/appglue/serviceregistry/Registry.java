@@ -12,6 +12,7 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LogItem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -109,14 +110,13 @@ public class Registry
 	{
 		dbHandler.updateComposite(cs);
 	}
-	
-	
-	public ArrayList<CompositeService> atomicAtPosition(String className, int position)
-	{
-		return dbHandler.atomicAtPosition(className, position);
-	}
-	
-	public long addServiceFromBroadcast(ServiceDescription sd)
+
+
+    public ArrayList<CompositeService> atomicAtPosition(String className, int position) {
+        return dbHandler.atomicAtPosition(className, position);
+    }
+
+    public long addServiceFromBroadcast(ServiceDescription sd)
 	{
 		// Don't care what it says it is, it's lying.
 		sd.setServiceType(ServiceType.LOCAL);
@@ -189,7 +189,7 @@ public class Registry
 	public ArrayList<CompositeService> getComposites(boolean includeTemp)
 	{
 //        return dbHandler.getComposites(includeTemp);
-        return dbHandler.getCompositesJoin(includeTemp);
+        return dbHandler.getComposites(includeTemp);
     }
 	
 	public boolean deleteComposite(CompositeService cs)
@@ -379,4 +379,12 @@ public class Registry
 	{
 		return dbHandler.getMatchingForIOs(next, true);
 	}
+
+    public void dumpSQLLog() {
+        try {
+            dbHandler.dumpSQLLog();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

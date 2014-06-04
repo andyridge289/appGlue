@@ -199,7 +199,7 @@ public class AppGlueConstants {
     public static final String[][] COLS_IO_SAMPLES = new String[][]
             {
                     {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {SERVICE_IO, "INTEGER", TBL_SERVICEIO, ID},
+                    {SERVICE_IO, "INTEGER"},
                     {NAME, "TEXT"},
                     {VALUE, "TEXT"}
             };

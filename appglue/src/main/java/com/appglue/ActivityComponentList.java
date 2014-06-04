@@ -65,6 +65,7 @@ public class ActivityComponentList extends ActionBarActivity
 
 		position = intent.getIntExtra(POSITION, -1);
         Registry registry = Registry.getInstance(this);
+
         boolean showMatching = false;
 
         if(registry.getService() != null) {

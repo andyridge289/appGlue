@@ -1,20 +1,5 @@
 package com.appglue;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.ID;
-import static com.appglue.library.AppGlueConstants.MARKET_LOOKUP;
-import static com.appglue.library.AppGlueConstants.NOT_SET;
-import static com.appglue.library.AppGlueConstants.SUCCESS;
-import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.RESULT;
-import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
-import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
@@ -42,6 +27,21 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+
+import java.io.IOException;
+import java.util.ArrayList;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.ID;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.PACKAGENAME;
+import static com.appglue.Constants.RESULT;
+import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
+import static com.appglue.library.AppGlueConstants.MARKET_LOOKUP;
+import static com.appglue.library.AppGlueConstants.NOT_SET;
+import static com.appglue.library.AppGlueConstants.SUCCESS;
 
 public class ActivityComponent extends Activity
 {
@@ -82,7 +82,9 @@ public class ActivityComponent extends Activity
 			service = registry.getRemote(className);
 		else
 			service = null;
-		
+
+        registry.dumpSQLLog();
+
 		if(service == null)
 			finish();
 		
@@ -421,10 +423,10 @@ public class ActivityComponent extends Activity
 				LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 				
 				if(inputs)
-					v = vi.inflate(R.layout.list_item_wiring_in, parent);
-				else
-					v = vi.inflate(R.layout.list_item_wiring_out, parent);
-			}
+                    v = vi.inflate(R.layout.list_item_wiring_in, null);
+                else
+                    v = vi.inflate(R.layout.list_item_wiring_out, null);
+            }
 
             if(v == null)
                 return null;

@@ -212,7 +212,21 @@ public class CompositeService {
         // FIXME WHAT ABOUT ACTIVE_OR_TIMER and IS_RUNNING?
 
         this.shouldBeRunning = c.getInt(c.getColumnIndex(prefix + SHOULD_BE_RUNNING)) == 1;
-        this.numeral = c.getInt(c.getColumnIndex(NUMERAL));
-        this.interval = Interval.valueOf(c.getString(c.getColumnIndex(INTERVAL)));
+        this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
+
+        int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));
+        Interval interval;
+
+        if (intervalValue == Interval.SECONDS.index) {
+            interval = Interval.SECONDS;
+        } else if (intervalValue == Interval.MINUTES.index) {
+            interval = Interval.MINUTES;
+        } else if (intervalValue == Interval.HOURS.index) {
+            interval = Interval.HOURS;
+        } else {
+            interval = Interval.DAYS;
+        }
+
+        this.interval = interval;
     }
 }
