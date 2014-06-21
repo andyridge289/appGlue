@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
+import com.appglue.description.AppDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.library.LocalStorage;
@@ -56,7 +57,6 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TEST;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_PARAMS;
-import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
 import static com.appglue.library.AppGlueConstants.PRE_EXEC_PARAMS;
 
@@ -75,8 +75,10 @@ public class ActivityCompositeList extends Activity
 	private int tempCount = 0;
 	
 	private ArrayList<Integer> selected = new ArrayList<Integer>();
-	
-	private ActionMode actionMode;
+
+    // TODO Let them choose custom icons
+
+    private ActionMode actionMode;
 	private ActionMode.Callback actionCallback = new ActionMode.Callback() 
 	{		
 		@Override
@@ -143,12 +145,12 @@ public class ActivityCompositeList extends Activity
 				case R.id.comp_context_timer:
 					createTimerDialog(composites.get((selected.get(0))));
 					break;
-					
-				case R.id.comp_context_view:
-					view(composites.get((selected.get(0))));
-					break;
-					
-				case R.id.comp_context_edit:
+
+//				case R.id.comp_context_view:
+//					view(composites.get((selected.get(0))));
+//					break;
+
+                case R.id.comp_context_edit:
 					edit(composites.get((selected.get(0))));
 					break;
 					
@@ -215,22 +217,22 @@ public class ActivityCompositeList extends Activity
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		Intent intent = null;
-		
-		if(item.getItemId() == R.id.comp_list_simple)
-		{
-			intent = new Intent(ActivityCompositeList.this, ActivityComponentList.class);
-			intent.putExtra(JUST_A_LIST, true);
-		}
-		else if(item.getItemId() == R.id.comp_list_new)
-		{
+
+//		if(item.getItemId() == R.id.comp_list_simple)
+//		{
+//			intent = new Intent(ActivityCompositeList.this, ActivityComponentList.class);
+//			intent.putExtra(JUST_A_LIST, true);
+//		}
+//		else
+        if (item.getItemId() == R.id.comp_list_new) {
 			intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
 		}
 		else if(item.getItemId() == R.id.comp_list_log)
 		{
 			intent = new Intent(ActivityCompositeList.this, ActivityLog.class);
 		}
-		else if(item.getItemId() == R.id.composite_list_gplus_login)
-		{
+//		else if(item.getItemId() == R.id.composite_list_gplus_login)
+//		{
 //			GooglePlus gPlus = GooglePlus.getInstance(this);
 //			String[] accounts = gPlus.getAccountNames(this);
 //			
@@ -242,13 +244,13 @@ public class ActivityCompositeList extends Activity
 //			{
 //				// Make them choose which account if there is more than one account 
 //			}
-			
-			return true;
-		}
-		else if(item.getItemId() == R.id.comp_list_running)
-		{
-			intent = new Intent(ActivityCompositeList.this, ActivityRunning.class);
-		}
+//
+//			return true;
+//		}
+//		else if(item.getItemId() == R.id.comp_list_running)
+//		{
+//			intent = new Intent(ActivityCompositeList.this, ActivityRunning.class);
+//		}
 //		else if(item.getItemId() == R.id.comp_list_story)
 //		{
 //			intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
@@ -271,7 +273,7 @@ public class ActivityCompositeList extends Activity
 	{
 		if(actionMode != null)
 		{
-		    // TODO NEed to address this somehow - probably by removing the action mode
+            actionMode.finish();
             Log.d(TAG, "Back pressed during action mode");
 		}
 		
@@ -459,9 +461,8 @@ public class ActivityCompositeList extends Activity
 	
 	private void editStory(CompositeService cs)
 	{
-		// TODO NEed to make this edit from the story rather than the Wiring
-		Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
-		if(LOG) Log.d(TAG, "Putting id for edit " + cs.getId());
+        Intent intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
+        if(LOG) Log.d(TAG, "Putting id for edit " + cs.getId());
 		intent.putExtra(COMPOSITE_ID, cs.getId());
 		startActivity(intent);
 	}
@@ -591,21 +592,23 @@ public class ActivityCompositeList extends Activity
 				nameText.setText(cs.getName());
 			
 			ImageView icon = (ImageView) v.findViewById(R.id.service_icon);
-			
-			try 
-			{
+            AppDescription app = cs.getComponents().get(0).getApp();
 
-				String iconLocation = cs.getComponents().get(0).getApp().getIconLocation();
-				Bitmap b = localStorage.readIcon(iconLocation);
-				icon.setImageBitmap(b);
-			}
-			catch (Exception e) 
-			{
-				icon.setBackground(getResources().getDrawable(R.drawable.icon));
-			}
-			
-			
-			v.setOnClickListener(new OnClickListener()
+
+            if (app == null) {
+                icon.setBackground(getResources().getDrawable(R.drawable.icon));
+            } else {
+                String iconLocation = app.getIconLocation();
+                try {
+                    Bitmap b = localStorage.readIcon(iconLocation);
+                    icon.setImageBitmap(b);
+                } catch (Exception e) {
+                    icon.setBackground(getResources().getDrawable(R.drawable.icon));
+                }
+            }
+
+
+            v.setOnClickListener(new OnClickListener()
 			{
 				@Override
 				public void onClick(View v)

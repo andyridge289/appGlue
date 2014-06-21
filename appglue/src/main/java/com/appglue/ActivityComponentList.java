@@ -36,77 +36,70 @@ import static com.appglue.library.AppGlueConstants.NOT_SET;
 import static com.appglue.library.AppGlueConstants.SUCCESS;
 import static com.appglue.library.AppGlueConstants.TRIGGERS_ONLY;
 
-public class ActivityComponentList extends ActionBarActivity
-{
-	private PagerAdapter adapter;
-	private ViewPager viewPager;
+public class ActivityComponentList extends ActionBarActivity {
+    private PagerAdapter adapter;
+    private ViewPager viewPager;
 
     private boolean justAList;
     private int position;
 
-	private ArrayList<FragmentComponentList> fragments;
+    private ArrayList<FragmentComponentList> fragments;
 
-    public void onCreate(Bundle icicle)
-	{
-		super.onCreate(icicle);
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
 
-        // This is closign the app?
-		
-		getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
-		
-		setContentView(R.layout.activity_component_list);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
 
-		Intent intent = this.getIntent();
-		
-		// This is the stuff for story mode
+        setContentView(R.layout.activity_component_list);
+
+        Intent intent = this.getIntent();
+
+        // This is the stuff for story mode
         boolean triggersOnly = intent.getBooleanExtra(TRIGGERS_ONLY, false);
 
-		justAList = intent.getBooleanExtra(JUST_A_LIST, false);
+        justAList = intent.getBooleanExtra(JUST_A_LIST, false);
 
-		position = intent.getIntExtra(POSITION, -1);
+        position = intent.getIntExtra(POSITION, -1);
         Registry registry = Registry.getInstance(this);
 
         boolean showMatching = false;
 
-        if(registry.getService() != null) {
+        if (registry.getService() != null) {
             ArrayList<ServiceDescription> components = registry.getService().getComponents();
             showMatching = components.size() != 0;
         }
 
         fragments = new ArrayList<FragmentComponentList>();
-		
-		if(triggersOnly)
-		{
-			Bundle args = new Bundle();
-			args.putBoolean(TRIGGERS_ONLY, true);
-			FragmentComponentListLocal triggers = new FragmentComponentListLocal();
-			triggers.setArguments(args);
-			triggers.setName("TRIGGERS");
-			fragments.add(triggers);
-		}
-		else
-		{
+
+        if (triggersOnly) {
+            Bundle args = new Bundle();
+            args.putBoolean(TRIGGERS_ONLY, true);
+            FragmentComponentListLocal triggers = new FragmentComponentListLocal();
+            triggers.setArguments(args);
+            triggers.setName("TRIGGERS");
+            fragments.add(triggers);
+        } else {
             FragmentComponentListSearch searchFragment = new FragmentComponentListSearch();
             searchFragment.setName("SEARCH");
             fragments.add(searchFragment);
 
-			Bundle noInputArgs = new Bundle();
-			noInputArgs.putBoolean(HAS_INPUTS, false);
-			noInputArgs.putBoolean(HAS_OUTPUTS, true);			
-			FragmentComponentListLocal noInput = new FragmentComponentListLocal();
-			noInput.setArguments(noInputArgs);
-			noInput.setName("OUTPUT ONLY");
-			fragments.add(noInput);
-			
-			Bundle noOutputArgs = new Bundle();
-			noOutputArgs.putBoolean(HAS_INPUTS, true);
-			noOutputArgs.putBoolean(HAS_OUTPUTS, false);			
-			FragmentComponentListLocal noOutput = new FragmentComponentListLocal();
-			noOutput.setArguments(noOutputArgs);
-			noOutput.setName("INPUT ONLY");
-			fragments.add(noOutput);
+            Bundle noInputArgs = new Bundle();
+            noInputArgs.putBoolean(HAS_INPUTS, false);
+            noInputArgs.putBoolean(HAS_OUTPUTS, true);
+            FragmentComponentListLocal noInput = new FragmentComponentListLocal();
+            noInput.setArguments(noInputArgs);
+            noInput.setName("OUTPUT ONLY");
+            fragments.add(noInput);
 
-            if(showMatching) {
+            Bundle noOutputArgs = new Bundle();
+            noOutputArgs.putBoolean(HAS_INPUTS, true);
+            noOutputArgs.putBoolean(HAS_OUTPUTS, false);
+            FragmentComponentListLocal noOutput = new FragmentComponentListLocal();
+            noOutput.setArguments(noOutputArgs);
+            noOutput.setName("INPUT ONLY");
+            fragments.add(noOutput);
+
+            if (showMatching) {
                 Bundle matchingArgs = new Bundle();
                 matchingArgs.putBoolean(MATCHING, true);
                 matchingArgs.putInt(POSITION, position);
@@ -115,169 +108,146 @@ public class ActivityComponentList extends ActionBarActivity
                 matching.setName("MATCHING COMPONENTS");
                 fragments.add(matching);
             }
-			
-			Bundle args = new Bundle();
-			args.putBoolean(HAS_INPUTS, true);
-			args.putBoolean(HAS_OUTPUTS, true);
-			FragmentComponentListLocal all = new FragmentComponentListLocal();
-			all.setArguments(args);
-			all.setName("ALL COMPONENTS");
-			fragments.add(all);
-		}
-		
-		adapter = new PagerAdapter(getSupportFragmentManager());
-		viewPager = (ViewPager) findViewById(R.id.pager);
-		viewPager.setAdapter(adapter);
+
+            Bundle args = new Bundle();
+            args.putBoolean(HAS_INPUTS, true);
+            args.putBoolean(HAS_OUTPUTS, true);
+            FragmentComponentListLocal all = new FragmentComponentListLocal();
+            all.setArguments(args);
+            all.setName("ALL COMPONENTS");
+            fragments.add(all);
+        }
+
+        adapter = new PagerAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setAdapter(adapter);
 
         viewPager.setCurrentItem(1);
 
-		ActionBar actionBar = getSupportActionBar();
-		boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
-		
-		if(actionBar != null)
-		{
-			if(!createNew)
-				actionBar.setTitle("Available components");
-			else
-				actionBar.setTitle("Choose first component");
-				
-			actionBar.setHomeButtonEnabled(true);
-		}
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		return true;
-	}
-	
-	public Fragment getCurrentFragment()
-	{
-		return adapter.getItem(viewPager.getCurrentItem());
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-		if(item.getItemId() == android.R.id.home) {
+        ActionBar actionBar = getSupportActionBar();
+        boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
+
+        if (actionBar != null) {
+            if (!createNew)
+                actionBar.setTitle("Available components");
+            else
+                actionBar.setTitle("Choose first component");
+
+            actionBar.setHomeButtonEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    public Fragment getCurrentFragment() {
+        return adapter.getItem(viewPager.getCurrentItem());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
-		
-		return super.onOptionsItemSelected(item);
-	}
-	
-	public boolean justAList()
-	{
-		return justAList;
-	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent)
-	{
-		if(intent == null)
-			return;
-		
-		int result = intent.getIntExtra(RESULT, NOT_SET);
-		
-		if(justAList)
-		{
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean justAList() {
+        return justAList;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (intent == null)
+            return;
+
+        int result = intent.getIntExtra(RESULT, NOT_SET);
+
+        if (justAList) {
 //			localFragment.update(registry.getAllDeviceServices());
 //			remoteFragment.update(new ArrayList<ServiceDescription>());
-			
-			return;
-		}
-		
-				
-		switch(result)
-		{
-			case MARKET_LOOKUP:
-			{
-				// Make the lists do a refresh
+
+            return;
+        }
+
+
+        switch (result) {
+            case MARKET_LOOKUP: {
+                // Make the lists do a refresh
 //				localFragment.update(registry.getAllDeviceServices());
 //				remoteFragment.update(new ArrayList<ServiceDescription>());
-				break;
-			}
-				
-			case SUCCESS:
-				// Don't think we need to do anything here
-				break;
-		
-			case NOT_SET:
-				// They haven't selected anything, so don't do anything
-				return;
-		}
-		
-		String className = intent.getStringExtra(CLASSNAME);
-		int serviceType = intent.getIntExtra(SERVICE_TYPE, -1);
-		
-		Intent i = new Intent();
-		i.putExtra(CLASSNAME, className);
-		i.putExtra(SERVICE_TYPE, serviceType);
-		i.putExtra(POSITION, position);
-		
-		if (getParent() == null) 
-		{
-		    setResult(Activity.RESULT_OK, i);
-		}
-		else 
-		{
-		    getParent().setResult(Activity.RESULT_OK, i);
-		}
+                break;
+            }
+
+            case SUCCESS:
+                // Don't think we need to do anything here
+                break;
+
+            case NOT_SET:
+                // They haven't selected anything, so don't do anything
+                return;
+        }
+
+        String className = intent.getStringExtra(CLASSNAME);
+        int serviceType = intent.getIntExtra(SERVICE_TYPE, -1);
+
+        Intent i = new Intent();
+        i.putExtra(CLASSNAME, className);
+        i.putExtra(SERVICE_TYPE, serviceType);
+        i.putExtra(POSITION, position);
+
+        if (getParent() == null) {
+            setResult(Activity.RESULT_OK, i);
+        } else {
+            getParent().setResult(Activity.RESULT_OK, i);
+        }
 
         Log.e(TAG, "Finishing component list");
-		finish();
-	}
-	
-	public void chosenItem(String className)
-	{
-		Intent i = new Intent();
-		i.putExtra(CLASSNAME, className);
-		i.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-		i.putExtra(INDEX, position);
-		
-		Log.w(TAG, "Putting before I finish: " +  className + " " + position);
-		
-		if (getParent() == null) 
-		{
-		    setResult(Activity.RESULT_OK, i);
-		}
-		else 
-		{
-		    getParent().setResult(Activity.RESULT_OK, i);
-		}
-		
-		finish();
-	}
-	
-	private class PagerAdapter extends FragmentStatePagerAdapter
-	{
-		public PagerAdapter(FragmentManager fm)
-		{
-			super(fm);
-		}
+        finish();
+    }
 
-		@Override
-		public Fragment getItem(int i) 
-		{
-            if(fragments.get(i) == null)
-            {
+    public void chosenItem(String className) {
+        Intent i = new Intent();
+        i.putExtra(CLASSNAME, className);
+        i.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
+        i.putExtra(INDEX, position);
+
+        Log.w(TAG, "Putting before I finish: " + className + " " + position);
+
+        if (getParent() == null) {
+            setResult(Activity.RESULT_OK, i);
+        } else {
+            getParent().setResult(Activity.RESULT_OK, i);
+        }
+
+        finish();
+    }
+
+    private class PagerAdapter extends FragmentStatePagerAdapter {
+        public PagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            if (fragments.get(i) == null) {
                 return fragments.get(0);
-            }
-            else return fragments.get(i);
+            } else return fragments.get(i);
 
-		}
+        }
 
-		@Override
-		public int getCount() 
-		{
-			return fragments.size();
-		}
-		
-		public CharSequence getPageTitle(int position)
-		{
-			return fragments.get(position).getName();
-		}
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
 
-	}
+        public CharSequence getPageTitle(int position) {
+            return fragments.get(position).getName();
+        }
+
+    }
 }

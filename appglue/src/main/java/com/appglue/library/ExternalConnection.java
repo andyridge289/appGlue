@@ -6,27 +6,23 @@ import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
 
-public class ExternalConnection 
-{
-	private static ExternalConnection external = null;
-	
-	private ArrayList<ServiceDescription> externalServices;
-	
-	private ExternalConnection()
-	{
-		externalServices = new ArrayList<ServiceDescription>();
-	}
-	
-	public ArrayList<ServiceDescription> getExternalServices()
-	{
-		return externalServices;
-	}
+public class ExternalConnection {
+    private static ExternalConnection external = null;
 
-	public class Async extends AsyncTask<String, Void, ArrayList<ServiceDescription>>
-	{
-		private final int TYPE_SEARCH = 0;
-		private final int TYPE_LOOKUP = 1;
-		
+    private ArrayList<ServiceDescription> externalServices;
+
+    private ExternalConnection() {
+        externalServices = new ArrayList<ServiceDescription>();
+    }
+
+    public ArrayList<ServiceDescription> getExternalServices() {
+        return externalServices;
+    }
+
+    class Async extends AsyncTask<String, Void, ArrayList<ServiceDescription>> {
+        private final int TYPE_SEARCH = 0;
+        private final int TYPE_LOOKUP = 1;
+
 //		private String keyword;
 //		private ServiceDescription description;
 //		private ActivityComponentListOld list;
@@ -38,17 +34,15 @@ public class ExternalConnection
 //			this.list = list;
 //			this.type = TYPE_SEARCH;
 //		}
-		
-		public Async(ServiceDescription description)
-		{
+
+        public Async(ServiceDescription description) {
 //	/		this.description = description;
 //			this.keyword = description.getClassName();
 //			this.type = TYPE_LOOKUP;
-		}
+        }
 
-		@Override
-		protected ArrayList<ServiceDescription> doInBackground(String... params) 
-		{
+        @Override
+        protected ArrayList<ServiceDescription> doInBackground(String... params) {
 //			if(this.type == TYPE_SEARCH)
 //				return serviceSearch();
 //			else if(this.type == TYPE_LOOKUP)
@@ -56,7 +50,7 @@ public class ExternalConnection
 //			else
 //				return null;
 //		}
-		
+
 //		private ArrayList<ServiceDescription> serviceLookup()
 //		{
 //			ArrayList<ServiceDescription> returnedServices = new ArrayList<ServiceDescription>();
@@ -106,9 +100,9 @@ public class ExternalConnection
 //			}
 //			
 //			return returnedServices;
-			return new ArrayList<ServiceDescription>();
-		}
-		
+            return new ArrayList<ServiceDescription>();
+        }
+
 //		private void addService()
 //		{
 //			ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
@@ -178,7 +172,7 @@ public class ExternalConnection
 //				e.printStackTrace();
 //			}
 //		}
-		
+
 		/*private ArrayList<ServiceDescription> serviceSearch()
 		{
 			ArrayList<ServiceDescription> returnedServices = new ArrayList<ServiceDescription>();
@@ -206,12 +200,11 @@ public class ExternalConnection
 			externalServices = returnedServices;
 			return returnedServices;
 		}*/
-		
-		@Override
-		protected void onPostExecute(ArrayList<ServiceDescription> services)
-		{	
+
+        @Override
+        protected void onPostExecute(ArrayList<ServiceDescription> services) {
 //			Registry registry = Registry.getInstance(null);
-			
+
 //			if(this.type == TYPE_SEARCH)
 //			{
 //				list.setRemoteServices(services);
@@ -234,9 +227,9 @@ public class ExternalConnection
 //				
 //				registry.updateServiceFromLookup(service);
 //			}
-		}
-	}
-	
+        }
+    }
+
 //	public void getExternalServices(String keyword, ActivitySimpleServiceList list)
 //	{
 //		AsyncTask<String, Void, ArrayList<ServiceDescription>> async = new Async(keyword, list);
@@ -249,14 +242,12 @@ public class ExternalConnection
 //		async.execute();
 //	}
 
-	
-	public static ExternalConnection getInstance()
-	{
-		if(external == null)
-		{
-			external = new ExternalConnection();
-		}
-		
-		return external;
-	}
+
+    public static ExternalConnection getInstance() {
+        if (external == null) {
+            external = new ExternalConnection();
+        }
+
+        return external;
+    }
 }

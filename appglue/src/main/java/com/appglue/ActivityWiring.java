@@ -40,14 +40,18 @@ public class ActivityWiring extends FragmentActivity
 {
 	private CompositeService cs;
 
-	private ViewPager pager;
-	private WiringPagerAdapter pagerAdapter;
+    private ViewPager wiringPager;
+    private ViewPager valuePager;
+
+    private WiringPagerAdapter wiringPagerAdapter;
+    private WiringPagerAdapter valuePagerAdapter;
+
 	private TextView status;
 
 	private Registry registry;
 
-	public static final int MODE_WIRING = 0;
-	public static final int MODE_SETTING = 1;
+    private static final int MODE_WIRING = 0;
+    public static final int MODE_SETTING = 1;
 
     private final int COMPOSITE_LIST = 0;
     private final int COMPONENT_LIST = 1;
@@ -70,8 +74,9 @@ public class ActivityWiring extends FragmentActivity
 		actionBar.setTitle(R.string.comp_title);
 
 		registry = Registry.getInstance(this);
-        pager = (ViewPager) findViewById(R.id.pager);
 
+        wiringPager = (ViewPager) findViewById(R.id.wiring_pager);
+        valuePager = (ViewPager) findViewById(R.id.value_pager);
 
     }
 
@@ -133,10 +138,9 @@ public class ActivityWiring extends FragmentActivity
             @Override
             public void onClick(View v) {
                 if (mode == MODE_WIRING)
-                    mode = MODE_SETTING;
+                    setMode(MODE_SETTING);
                 else
-                    mode = MODE_WIRING;
-
+                    setMode(MODE_WIRING);
                 redraw();
             }
         });
@@ -144,13 +148,20 @@ public class ActivityWiring extends FragmentActivity
 		Intent intent = this.getIntent();
 		int index = intent.getIntExtra(INDEX, -1);
 
-        pagerAdapter = new WiringPagerAdapter(getFragmentManager());
-        pagerAdapter.notifyDataSetChanged();
-        pager.setAdapter(pagerAdapter);
+        wiringPagerAdapter = new WiringPagerAdapter(getFragmentManager());
+        valuePagerAdapter = new WiringPagerAdapter(getFragmentManager());
 
+        wiringPagerAdapter.notifyDataSetChanged();
+        valuePagerAdapter.notifyDataSetChanged();
+
+        wiringPager.setAdapter(wiringPagerAdapter);
+        valuePager.setAdapter(valuePagerAdapter);
+
+        setMode(mode);
 
         if (index != -1) {
-            pager.setCurrentItem(index);
+            wiringPager.setCurrentItem(index);
+            valuePager.setCurrentItem(index);
         }
 
 		if(source == COMPOSITE_LIST)
@@ -165,9 +176,23 @@ public class ActivityWiring extends FragmentActivity
 		}
 		else
 		{
-			pager.setCurrentItem(index);
-		}
+            wiringPager.setCurrentItem(index);
+        }
 	}
+
+    private void setMode(int mode) {
+        this.mode = mode;
+
+        if (mode == MODE_WIRING) {
+            wiringPager.setVisibility(View.VISIBLE);
+            valuePager.setVisibility(View.GONE);
+        } else {
+            wiringPager.setVisibility(View.GONE);
+            valuePager.setVisibility(View.VISIBLE);
+        }
+
+        redraw();
+    }
 
 	public void onPause()
 	{
@@ -264,18 +289,19 @@ public class ActivityWiring extends FragmentActivity
 	{
 		if(mode == MODE_WIRING)
 		{
-			getActionBar().setSubtitle("Wire up connections");
-		}
+            getActionBar().setTitle("Wiring");
+        }
 		else
 		{
-			getActionBar().setSubtitle("Manually set data");
-		}
+            getActionBar().setSubtitle("Set Inputs and Filters");
+        }
+
+        WiringPagerAdapter adapter = mode == MODE_WIRING ? wiringPagerAdapter : valuePagerAdapter;
 
 		// Tell all the fragments to redraw...
-		for(int i = 0; i < pagerAdapter.getCount(); i++)
-		{
-			FragmentWiring f = (FragmentWiring) pagerAdapter.getItem(i);
-			f.redraw();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            FragmentWiring f = (FragmentWiring) adapter.getItem(i);
+            f.redraw();
 		}
 	}
 
@@ -300,13 +326,13 @@ public class ActivityWiring extends FragmentActivity
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.wiring, menu);
 
-	    menu.findItem(R.id.wiring_previous).setEnabled(pager.getCurrentItem() > 0);
+        menu.findItem(R.id.wiring_previous).setEnabled(wiringPager.getCurrentItem() > 0);
 
         if(cs != null) {
             ArrayList<ServiceDescription> components = cs.getComponents();
 
             if (components != null & components.size() > 0)
-                menu.findItem(R.id.wiring_next).setEnabled(pager.getCurrentItem() < components.size());
+                menu.findItem(R.id.wiring_next).setEnabled(wiringPager.getCurrentItem() < components.size());
         }
 		return true;
 	}
@@ -330,14 +356,14 @@ public class ActivityWiring extends FragmentActivity
 		}
 		else if(item.getItemId() == R.id.wiring_previous)
 		{
-            if(pager != null)
-			    pager.setCurrentItem(pager.getCurrentItem() - 1);
-		}
+            if (wiringPager != null)
+                wiringPager.setCurrentItem(wiringPager.getCurrentItem() - 1);
+        }
 		else if(item.getItemId() == R.id.wiring_next)
 		{
-            if(pager != null)
-			    pager.setCurrentItem(pager.getCurrentItem() + 1);
-		}
+            if (wiringPager != null)
+                wiringPager.setCurrentItem(wiringPager.getCurrentItem() + 1);
+        }
 
 		return true;
 	}

@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
+import com.appglue.layout.ValueMap;
 import com.appglue.layout.WiringMap;
 import com.appglue.library.LocalStorage;
 
@@ -31,9 +33,10 @@ import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 public class FragmentWiring extends Fragment
 {
 	private int position;
-	
-	private WiringMap map;
-	
+
+    private WiringMap wiringMap;
+    private ValueMap valueMap;
+
 	private ServiceDescription first;
 	private ServiceDescription second;
 	
@@ -66,8 +69,8 @@ public class FragmentWiring extends Fragment
 		ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_wiring, container, false);
 		
 		hueMap = new HashMap<String, Integer>();
-		
-		map = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
+
+        wiringMap = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
 
         TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
         TextView secondName = (TextView) rootView.findViewById(R.id.second_name);
@@ -82,10 +85,10 @@ public class FragmentWiring extends Fragment
 		
 		first = position > 0 ? components.get(position - 1) : null;
 		second = position < components.size() ? components.get(position) : null;
-		
-		map.set(first, second);
-		
-		LocalStorage localStorage = LocalStorage.getInstance();
+
+        wiringMap.set(first, second);
+
+        LocalStorage localStorage = LocalStorage.getInstance();
 		
 		// Set the icon of either to be the big purple plus if there's not a component in that position
 		if(first != null)
@@ -95,10 +98,17 @@ public class FragmentWiring extends Fragment
 			
 			try
 			{
-				String iconLocation = first.getApp().getIconLocation();
-				Bitmap b = localStorage.readIcon(iconLocation);
-				firstIcon.setImageBitmap(b);
-			}
+                AppDescription firstApp = first.getApp();
+                Bitmap b;
+
+                if (firstApp == null) {
+                    firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                } else {
+                    String iconLocation = first.getApp().getIconLocation();
+                    b = localStorage.readIcon(iconLocation);
+                    firstIcon.setImageBitmap(b);
+                }
+            }
 			catch (Exception e) 
 			{
 				e.printStackTrace();
@@ -193,14 +203,13 @@ public class FragmentWiring extends Fragment
 	
 	public void redraw()
 	{
-		if(map == null)
-		{
+        if (wiringMap == null) {
 			Log.w(TAG, "Map is null for " + position);
 			return;
 		}
-		
-		map.redraw();
-	}
+
+        wiringMap.redraw();
+    }
 	
 	public void onActivityResult(int requestCode, int resultCode, Intent intent)
 	{

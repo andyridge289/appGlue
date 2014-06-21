@@ -31,17 +31,13 @@ import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
 
-public class FragmentComponentListSearch extends FragmentComponentList
-{
-    private EditText searchEdit;
+public class FragmentComponentListSearch extends FragmentComponentList {
 
-	public FragmentComponentListSearch()
-	{
-		super();
-	}
-	
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle)
-	{
+    public FragmentComponentListSearch() {
+        super();
+    }
+
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View v = inflater.inflate(R.layout.fragment_component_list_search, container, false);
 
         serviceListView = (ListView) v.findViewById(R.id.simple_list);
@@ -54,122 +50,102 @@ public class FragmentComponentListSearch extends FragmentComponentList
         AnimationDrawable ad = (AnimationDrawable) loader.getBackground();
         ad.start();
 
-		((TextView) v.findViewById(R.id.simple_list_none)).setText("No components on this device! (You shouldn't be seeing this.... What have you done!?)");
+        ((TextView) v.findViewById(R.id.simple_list_none)).setText("No components on this device! (You shouldn't be seeing this.... What have you done!?)");
 
-		registry = Registry.getInstance(parent);
+        registry = Registry.getInstance(parent);
 
-		ComponentLoaderTask bl = new ComponentLoaderTask();
-		bl.execute();
+        ComponentLoaderTask bl = new ComponentLoaderTask();
+        bl.execute();
 
-		serviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-		{
-			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id)
-			{
-				Intent intent = new Intent(parent, ActivityComponent.class);
-				intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-				intent.putExtra(CLASSNAME, services.get(position).getClassName());
-				intent.putExtra(JUST_A_LIST, parent.justAList());
-				parent.startActivityForResult(intent, SERVICE_REQUEST);
-				return true;
-			}
-		});
+        serviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
+                Intent intent = new Intent(parent, ActivityComponent.class);
+                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
+                intent.putExtra(CLASSNAME, services.get(position).getClassName());
+                intent.putExtra(JUST_A_LIST, parent.justAList());
+                parent.startActivityForResult(intent, SERVICE_REQUEST);
+                return true;
+            }
+        });
 
-		serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-		{
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View v, int position, long id)
-			{
-				parent.chosenItem(services.get(position).getClassName());
-			}
-		});
+        serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
+                parent.chosenItem(services.get(position).getClassName());
+            }
+        });
 
         // Setup the search bar
-		searchEdit = (EditText) v.findViewById(R.id.component_search);
-		searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener()
-		{
-			@Override
-			public void onFocusChange(View v, boolean hasFocus)
-			{
-				EditText et = (EditText) v;
-				if(hasFocus)
-				{
-					if(et.getText().toString().equals("Search"))
-                    {
-						et.setText("");
-					}
-				}
-				else
-				{
-					if(et.getText().toString().equals(""))
-					{
-						et.setText("Search");
-					}
-				}
-			}
-		});
+        EditText searchEdit = (EditText) v.findViewById(R.id.component_search);
+        searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                EditText et = (EditText) v;
+                if (hasFocus) {
+                    if (et.getText().toString().equals("Search")) {
+                        et.setText("");
+                    }
+                } else {
+                    if (et.getText().toString().equals("")) {
+                        et.setText("Search");
+                    }
+                }
+            }
+        });
 
-		searchEdit.addTextChangedListener(new TextWatcher()
-		{
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        searchEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
-			@Override
-			public void afterTextChanged(Editable s)
-			{
-				AdapterComponentList localAdapter = (AdapterComponentList) serviceListView.getAdapter();
-				if(localAdapter != null)
-				{
-					localAdapter.getFilter().filter(s);
-					localAdapter.notifyDataSetChanged();
-				}
-                else
-                {
-                    if(LOG) Log.d(TAG, "The local adapter is null.");
+            @Override
+            public void afterTextChanged(Editable s) {
+                AdapterComponentList localAdapter = (AdapterComponentList) serviceListView.getAdapter();
+                if (localAdapter != null) {
+                    localAdapter.getFilter().filter(s);
+                    localAdapter.notifyDataSetChanged();
+                } else {
+                    if (LOG) Log.d(TAG, "The local adapter is null.");
                     // Do we just need to create a new one?
                 }
-			}
-		});
+            }
+        });
 
-		return v;
-	}
-	
-	public void onActivityCreated(Bundle icicle)
-	{
-		super.onActivityCreated(icicle);
-	}
-	
-	private class ComponentLoaderTask extends AsyncTask<Void, Void, ArrayList<ServiceDescription>>
-	{
+        return v;
+    }
 
-		@Override
-		protected ArrayList<ServiceDescription> doInBackground(Void... params)
-		{
-			return registry.getComponents();
-		}
+    public void onActivityCreated(Bundle icicle) {
+        super.onActivityCreated(icicle);
+    }
 
-		@Override
-		protected void onPostExecute(ArrayList<ServiceDescription> components)
-		{
-			// Need to set the components to be on this and get rid of the loading spinner
-			services = components;
+    private class ComponentLoaderTask extends AsyncTask<Void, Void, ArrayList<ServiceDescription>> {
 
-			loader.setVisibility(View.GONE);
+        @Override
+        protected ArrayList<ServiceDescription> doInBackground(Void... params) {
+            return registry.getComponents();
+        }
 
-			if(services.size() > 0)
-			{
-				serviceListView.setVisibility(View.VISIBLE);
-				AdapterComponentList adapter = new AdapterComponentListSearch(parent, services,
-                                                                        FragmentComponentListSearch.this);
-				serviceListView.setAdapter(adapter);
-			}
-			else
-				noneFound.setVisibility(View.VISIBLE);
+        @Override
+        protected void onPostExecute(ArrayList<ServiceDescription> components) {
+            // Need to set the components to be on this and get rid of the loading spinner
+            services = components;
 
-		}
+            loader.setVisibility(View.GONE);
 
-	}
+            if (services.size() > 0) {
+                serviceListView.setVisibility(View.VISIBLE);
+                AdapterComponentList adapter = new AdapterComponentListSearch(parent, services,
+                        FragmentComponentListSearch.this);
+                serviceListView.setAdapter(adapter);
+            } else
+                noneFound.setVisibility(View.VISIBLE);
+
+        }
+
+    }
 }
