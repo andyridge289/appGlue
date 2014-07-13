@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Fill"
+    android:layout_width="match_parent">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <RelativeLayout
+            android:id="@+id/value_pre"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/pre_icon"
+                android:contentDescription=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:id="@+id/pre_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pre_icon"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/current_component"
+            android:layout_width="0dip"
+            android:layout_weight="10"
+            android:layout_height="fill_parent">
+
+            <FrameLayout
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:layout_height="fill_parent">
+
+                <LinearLayout
+                    android:id="@+id/inputs"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/wiring_input_list"
+                    android:visibility="visible">
+
+                    <ListView
+                        android:id="@+id/input_list"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:duplicateParentState="true"
+
+                        />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/no_inputs"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:text="@string/none"
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:gravity="center"
+                        android:paddingLeft="20dip"
+                        android:paddingRight="20dip"
+                        android:background="@drawable/wiring_input"
+                        android:textColor="@color/wiring_bg"
+                        android:layout_alignParentRight="true" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/add_input"
+                    android:visibility="invisible">
+
+                    <View
+                        android:layout_width="80dip"
+                        android:layout_height="fill_parent"
+                        android:background="@drawable/wiring_add_input"
+                        android:layout_alignParentRight="true" />
+
+                </RelativeLayout>
+
+            </FrameLayout>
+
+            <RelativeLayout
+                android:id="@+id/value_current"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/current_icon"
+                    android:contentDescription="Something"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/icon"
+                    android:layout_centerInParent="true" />
+
+                <TextView
+                    android:id="@+id/current_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="0dip"
+                android:layout_weight="1"
+                android:layout_height="fill_parent">
+
+                <LinearLayout
+                    android:id="@+id/outputs"
+                    android:background="@drawable/wiring_output_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:visibility="visible">
+
+                    <ListView
+                        android:id="@+id/output_list"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent" />
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/no_outputs"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:visibility="invisible">
+
+                    <TextView
+                        android:text="@string/none"
+                        android:layout_height="fill_parent"
+                        android:layout_width="fill_parent"
+                        android:gravity="center"
+                        android:paddingLeft="20dip"
+                        android:paddingRight="20dip"
+                        android:background="@drawable/wiring_output"
+                        android:textColor="@color/wiring_border" />
+
+                </RelativeLayout>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/value_post"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/post_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription=""
+                android:layout_centerInParent="true"
+                android:src="@drawable/icon" />
+
+            <TextView
+                android:id="@+id/post_name"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/post_icon" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

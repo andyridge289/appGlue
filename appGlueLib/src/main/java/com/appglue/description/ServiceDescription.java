@@ -406,7 +406,6 @@ public class ServiceDescription {
 
 
     // FIXME Check the IDs of the IOs that are being added, and if they are -1 at any time other than the pre-DB create, refuse!
-
     public static ArrayList<ServiceDescription> parseServices(String jsonString, Context context, AppDescription appDescription) throws JSONException {
         ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
 
@@ -487,16 +486,9 @@ public class ServiceDescription {
         for (int i = 0; i < oldList.size(); i++) {
             ServiceIO old = oldList.get(i);
 
-            if (old.getId() == -1) {
-                Log.d(TAG, "WHAT THE FUCK. WHY HAVE WE KEPT ONES WITH A BORKED IUD (" + old.getFriendlyName() + ")");
-            }
-
             ServiceIO io = new ServiceIO(old.getId(), old.getName(), old.getFriendlyName(), old.getType(),
                     old.getDescription(), old.isMandatory(), old.getSampleValues());
-
-            if (io.getId() == -1) {
-                Log.d(TAG, "uhhhh");
-            }
+            io.setIndex(old.getIndex());
 
             newList.add(io);
         }

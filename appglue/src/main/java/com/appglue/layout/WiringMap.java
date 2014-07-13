@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,10 +25,7 @@ import com.appglue.ServiceIO;
 import com.appglue.datatypes.IOType;
 import com.appglue.datatypes.Set;
 import com.appglue.description.ServiceDescription;
-import com.appglue.layout.dialog.DialogApp;
 import com.appglue.layout.dialog.DialogConnection;
-import com.appglue.layout.dialog.DialogFilter;
-import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
 import com.appglue.serviceregistry.Registry;
@@ -116,20 +112,15 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		
 		addOutput = findViewById(R.id.add_output);
 		addInput = findViewById(R.id.add_input);
-		
-		
-		connections = new ArrayList<Point>();
-		
-		iIndex = -1;
+
+
+        connections = new ArrayList<Point>();
+
+        iIndex = -1;
 		oIndex = -1;
 	}
-	
-//	public ArrayList<Point> getConnections()
-//	{
-//		return connections;
-//	}
-	
-	public ServiceDescription getFirst() {
+
+    public ServiceDescription getFirst() {
 		return first;
 	}
 
@@ -145,23 +136,22 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		this.second = second;
 	}
 
-	public void removeConnection(Point p) 
-	{
+    public void removeConnection(Point p) {
 		for(int i = 0; i < connections.size(); i++)
 		{
 			Point q = connections.get(i);
-			
-			if(p.x == q.x && p.y == q.y)
+
+            if(p.x == q.x && p.y == q.y)
 			{
 				// Remove it and decrement so that we carry on checking. Although we could just return...
 				connections.remove(i);
 				i--;
 			}
 		}
-		
-	}
-	
-	public ArrayList<Point> getConnectionsOut(int outputIndex)
+
+    }
+
+    public ArrayList<Point> getConnectionsOut(int outputIndex)
 	{
 		ArrayList<Point> points = new ArrayList<Point>();
 
@@ -169,11 +159,11 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
             if (connection.x == outputIndex)
                 points.add(connection);
         }
-		
-		return points;
+
+        return points;
 	}
-	
-	public ArrayList<Point> getConnectionsIn(int inputIndex)
+
+    public ArrayList<Point> getConnectionsIn(int inputIndex)
 	{
 		ArrayList<Point> points = new ArrayList<Point>();
 
@@ -181,32 +171,31 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
             if (connection.y == inputIndex)
                 points.add(connection);
         }
-		
-		return points;
+
+        return points;
 	}
-	
-	private boolean checkConnection(int oIndex, int iIndex) {
+
+    private boolean checkConnection(int oIndex, int iIndex) {
 
         for (Point p : connections) {
             if (p.x == oIndex && p.y == iIndex)
                 return true;
         }
-		
-		return false;
+
+        return false;
 	}
-	
-	private boolean inputConnection(int index) 
-	{
+
+    private boolean inputConnection(int index) {
         for (Point connection : connections) {
             if (connection.y == index)
                 return true;
         }
-		
-		return false;
+
+        return false;
 	}
 
-	
-	public void set(ServiceDescription first, ServiceDescription second)
+
+    public void set(ServiceDescription first, ServiceDescription second)
 	{
 		this.first = first;
 		if(first != null)
@@ -235,8 +224,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			noOutputs.setVisibility(View.INVISIBLE);
 			addOutput.setVisibility(View.VISIBLE);
 		}
-		
-		this.second = second;
+
+        this.second = second;
 		if(second != null)
 		{
 			ArrayList<ServiceIO> inputs = second.getInputs();
@@ -246,9 +235,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 				inputContainer.setVisibility(View.VISIBLE);
 				noInputs.setVisibility(View.INVISIBLE);
 				addInput.setVisibility(View.INVISIBLE);
-			}
-				
-			else
+			} else
 			{
 				inputContainer.setVisibility(View.INVISIBLE);
 				noInputs.setVisibility(View.VISIBLE);
@@ -261,8 +248,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			noInputs.setVisibility(View.INVISIBLE);
 			addInput.setVisibility(View.VISIBLE);
 		}
-		
-		// Check if there are any set things.
+
+        // Check if there are any set things.
 		if(second != null && second.getInputs() != null)
 		{
 			ArrayList<ServiceIO> in = second.getInputs();
@@ -375,6 +362,11 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
             View selectedOutput = outputList.getChildAt(connection.x);
             View selectedInput = inputList.getChildAt(connection.y);
 
+            if (connection.x == -1 || connection.y == -1) {
+                Log.e(TAG, "Path epic failure, not really sure why");
+                continue;
+            }
+
             String className = first.getOutputs().get(connection.x).getType().getClassName();
             int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
 
@@ -464,26 +456,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		this.outputList.invalidateViews();
 		this.inputList.invalidateViews();
 	}
-	
-	private void showAppDialog(final ServiceIO item)
-	{
-		DialogApp da = new DialogApp(activity, this, item);
-		da.show();
-	}
-	
-	private void showFilterDialog(final ServiceIO item)
-	{
-		DialogFilter df = new DialogFilter(activity, this, item);
-		df.show();
-	}
-	
-	private void showIODialog(final ServiceIO item)
-	{
-		DialogIO di = new DialogIO(activity, this, item);
-		di.show();
-	}
-	
-	private class InputAdapter extends ArrayAdapter<ServiceIO>
+
+
+    private class InputAdapter extends ArrayAdapter<ServiceIO>
 	{
 		public ArrayList<ServiceIO> items;
 		
@@ -527,31 +502,15 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			int visibility = item.isMandatory() ? View.VISIBLE : View.GONE;
 			v.findViewById(R.id.mandatory_bar).setVisibility(visibility);
 			
-			ImageView setButton = (ImageView) v.findViewById(R.id.set_button);
-			setButton.bringToFront();
-			setButton.setOnClickListener(new OnClickListener() 
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					if(item.getType().equals(IOType.Factory.getType(IOType.Factory.APP)))
-						showAppDialog(item);
-					else
-						showIODialog(item);
-				}
-			});
-			
 			if(!item.hasValue())
 			{
 				ioType.setText(item.getType().getName());
-				setButton.setImageResource(R.drawable.ic_add);
 				ioValue.setText("");
 			}
 			else
 			{
 				ioType.setText(item.getType().getName() + ": ");
 				ioValue.setText(item.getManualValue().toString());
-				setButton.setImageResource(R.drawable.ic_add_on);
 			}
 			
 			// If it's not unfiltered, then it's either manual or not
@@ -573,17 +532,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	    			ioValue.setText(item.getChosenSampleValue().name);
 	    		}
 			}
-			
-			if(activity.getMode() == ActivityWiring.MODE_SETTING)
-			{
-				endpoint.setVisibility(View.GONE);
-				setButton.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				endpoint.setVisibility(View.VISIBLE);
-				setButton.setVisibility(View.GONE);
-			}
+
+            endpoint.setVisibility(View.VISIBLE);
+
 			
 			int[] pos = new int[2];
 			endpoint.getLocationOnScreen(pos);
@@ -712,19 +663,6 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 				}
 			});
 			
-			endpoint.setOnLongClickListener(new OnLongClickListener() 
-			{	
-				@Override
-				public boolean onLongClick(View v) 
-				{
-					if(item.getType().equals(IOType.Factory.getType(IOType.Factory.APP)))
-						showAppDialog(item);
-					else
-						showIODialog(item);
-					return false;
-				}
-			});
-			
 			return v;
 		}
 	}
@@ -814,27 +752,14 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			TextView ioType = (TextView) v.findViewById(R.id.io_type);
 			TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
-            ImageView filterButton = (ImageView) v.findViewById(R.id.filter_button);
-			filterButton.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) 
-				{
-					showFilterDialog(item);	
-				}
-			});
-			
-			if(!item.hasValue())
-			{
+            if (!item.hasValue()) {
 				ioType.setText(item.getType().getName());
-				filterButton.setImageResource(R.drawable.filter_small);
 				ioValue.setText("");
 			}
 			else
 			{
 				ioType.setText(item.getType().getName() + ": ");
 				ioValue.setText(item.getManualValue().toString());
-				filterButton.setImageResource(R.drawable.filter_small_on);
 			}
 			
 			// If it's not unfiltered, then it's either manual or not
@@ -862,18 +787,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			}
 			
 			// Change the filter button image if a filter is selected
-			
-			if(activity.getMode() == ActivityWiring.MODE_SETTING)
-			{
-				endpoint.setVisibility(View.GONE);
-				filterButton.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				endpoint.setVisibility(View.VISIBLE);
-				filterButton.setVisibility(View.GONE);
-			}
-			
+            endpoint.setVisibility(View.VISIBLE);
+
 			endpoint.setOnClickListener(new OnClickListener() 
 			{	
 				@Override

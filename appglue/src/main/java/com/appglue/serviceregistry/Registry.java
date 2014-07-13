@@ -158,14 +158,15 @@ public class Registry {
     }
 
     public CompositeService getComposite(long compositeId) {
-        if (compositeId == -1)
+        if (compositeId == -1) {
             return null;
-        else
-            return dbHandler.getComposite(compositeId);
+        } else {
+            service = dbHandler.getComposite(compositeId);
+            return service;
+        }
     }
 
     public ArrayList<CompositeService> getComposites(boolean includeTemp) {
-//        return dbHandler.getComposites(includeTemp);
         return dbHandler.getComposites(includeTemp);
     }
 
@@ -174,6 +175,12 @@ public class Registry {
     }
 
     public long updateCurrent() {
+
+        if (service == null) {
+            Log.e(TAG, "Update current: service is null. This is dire");
+            return -1;
+        }
+
         Log.d(TAG, "Updating current: " + service.getName());
         return dbHandler.updateComposite(service);
     }

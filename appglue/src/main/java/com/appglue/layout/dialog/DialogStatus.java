@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.appglue.ActivityWiring;
 import com.appglue.R;
 import com.appglue.ServiceIO;
-import com.appglue.layout.WiringMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,8 @@ import java.util.List;
 class DialogStatus extends DialogCustom {
     // FIXME Doing the dialog for the statuses
 
-    public DialogStatus(final ActivityWiring activity, WiringMap wm, final ServiceIO item) {
-        super(activity, wm, item);
+    public DialogStatus(final ActivityWiring activity, final ServiceIO item) {
+        super(activity, item);
 
         LayoutInflater inflater = activity.getLayoutInflater();
         final View v = inflater.inflate(R.layout.dialog_status, null);

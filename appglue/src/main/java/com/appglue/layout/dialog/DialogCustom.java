@@ -8,7 +8,6 @@ import android.widget.Spinner;
 import com.appglue.ActivityWiring;
 import com.appglue.IOValue;
 import com.appglue.ServiceIO;
-import com.appglue.layout.WiringMap;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
 import com.appglue.library.IOFilter;
@@ -19,14 +18,12 @@ import java.util.ArrayList;
 
 abstract class DialogCustom extends AlertDialog {
     ActivityWiring activity;
-    WiringMap parent;
     ServiceIO item;
     Registry registry;
 
-    DialogCustom(ActivityWiring context, WiringMap parent, ServiceIO item) {
+    DialogCustom(ActivityWiring context, ServiceIO item) {
         super(context);
         this.activity = context;
-        this.parent = parent;
         this.item = item;
         this.registry = Registry.getInstance(context);
     }

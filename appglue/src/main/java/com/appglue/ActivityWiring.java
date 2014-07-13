@@ -132,15 +132,18 @@ public class ActivityWiring extends FragmentActivity
 			}
 		});
 
-        Button modeButton = (Button) findViewById(R.id.change_mode);
-		modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
+        final Button modeButton = (Button) findViewById(R.id.change_mode);
+        modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
 		modeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mode == MODE_WIRING)
+                if (mode == MODE_WIRING) {
+                    modeButton.setText("Setting mode");
                     setMode(MODE_SETTING);
-                else
+                } else {
+                    modeButton.setText("Wiring mode");
                     setMode(MODE_WIRING);
+                }
                 redraw();
             }
         });
@@ -148,8 +151,8 @@ public class ActivityWiring extends FragmentActivity
 		Intent intent = this.getIntent();
 		int index = intent.getIntExtra(INDEX, -1);
 
-        wiringPagerAdapter = new WiringPagerAdapter(getFragmentManager());
-        valuePagerAdapter = new WiringPagerAdapter(getFragmentManager());
+        wiringPagerAdapter = new WiringPagerAdapter(getFragmentManager(), true);
+        valuePagerAdapter = new WiringPagerAdapter(getFragmentManager(), false);
 
         wiringPagerAdapter.notifyDataSetChanged();
         valuePagerAdapter.notifyDataSetChanged();
@@ -186,9 +189,11 @@ public class ActivityWiring extends FragmentActivity
         if (mode == MODE_WIRING) {
             wiringPager.setVisibility(View.VISIBLE);
             valuePager.setVisibility(View.GONE);
+            wiringPager.setCurrentItem(valuePager.getCurrentItem());
         } else {
             wiringPager.setVisibility(View.GONE);
             valuePager.setVisibility(View.VISIBLE);
+            valuePager.setCurrentItem(valuePager.getCurrentItem());
         }
 
         redraw();
@@ -300,7 +305,7 @@ public class ActivityWiring extends FragmentActivity
 
 		// Tell all the fragments to redraw...
         for (int i = 0; i < adapter.getCount(); i++) {
-            FragmentWiring f = (FragmentWiring) adapter.getItem(i);
+            FragmentVW f = (FragmentVW) adapter.getItem(i);
             f.redraw();
 		}
 	}
@@ -440,34 +445,32 @@ public class ActivityWiring extends FragmentActivity
         }
 	}
 
-	private class WiringPagerAdapter extends FragmentStatePagerAdapter
-	{
-		private Fragment[] fragments;
+    private class WiringPagerAdapter extends FragmentStatePagerAdapter {
+        private Fragment[] fragments;
+        private boolean wiring;
 
-		public WiringPagerAdapter(FragmentManager fragmentManager)
-		{
-			super(fragmentManager);
-			fragments = new Fragment[cs.getComponents().size() + 1];
+        public WiringPagerAdapter(FragmentManager fragmentManager, boolean wiring) {
+            super(fragmentManager);
+            this.wiring = wiring;
+            fragments = new Fragment[cs.getComponents().size() + 1];
 		}
 
 		@Override
         public Fragment getItem(int position)
 		{
-			if(fragments.length <= position)
-			{
-				fragments = new Fragment[cs.getComponents().size() + 1];
+            if (fragments.length <= position) {
+                fragments = new Fragment[cs.getComponents().size() + 1];
 			}
 
 			if(fragments[position] == null)
-				fragments[position] = FragmentWiring.create(position);
+                fragments[position] = FragmentVW.create(position, wiring);
 
             return fragments[position];
         }
 
         @Override
-        public int getCount()
-        {
-        	ArrayList<ServiceDescription> components = cs.getComponents();
+        public int getCount() {
+            ArrayList<ServiceDescription> components = cs.getComponents();
             return components == null ? 0 : components.size() + 1;
         }
     }

@@ -3,6 +3,7 @@ package com.appglue.serviceregistry;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -1988,6 +1989,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             String className = c.getString(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE_HAS_COMPONENT, CLASSNAME)));
+            if (className == null) {
+                String row = DatabaseUtils.dumpCurrentRowToString(c);
+                Log.e(TAG, "No classname: " + row);
+            }
             ServiceDescription currentComponent = null;
 
             if (componentMap.contains(className)) {
@@ -2088,7 +2093,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         long outputId = c.getLong(c.getColumnIndex(prefix + OUTPUT_IO_ID));
         ServiceIO output = out.getOutput(outputId);
 
-        // FIXME The problem is that when they're added the the search thing the ID of the IO is -1, so when we look them up again it doesn't work
         if (output == null) {
             ArrayList<ServiceIO> ios = out.getOutputs();
             for (ServiceIO io : ios)
@@ -2155,10 +2159,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             return componentMap.get(className);
         }
 
+        if (className == null) {
+            Log.e(TAG, "Classname is null..");
+            return null;
+        }
+
         String componentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
         String ioCols = AppGlueLibrary.buildGetAllString(TBL_SERVICEIO, COLS_SERVICEIO);
         String ioSamples = AppGlueLibrary.buildGetAllString(TBL_IO_SAMPLES, COLS_IO_SAMPLES);
-
 
         String query = String.format("SELECT %s FROM %s " +
                         "LEFT JOIN %s ON %s.%s = %s.%s " +
@@ -2182,7 +2190,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (c.getCount() == 0) {
-            Log.e(TAG, "Cursor empty, this should be impossible: " + query);
+            Log.e(TAG, "Cursor empty, this should be impossible, but apparently isn't: " + query);
             return null;
         }
 
