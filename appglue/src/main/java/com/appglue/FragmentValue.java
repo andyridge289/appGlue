@@ -256,7 +256,7 @@ public class FragmentValue extends FragmentVW {
         public ArrayList<ServiceIO> items;
 
         public InputAdapter(Context parent, ArrayList<ServiceIO> items) {
-            super(parent, R.layout.list_item_wiring_out, items);
+            super(parent, R.layout.list_item_value_in, items);
             this.items = items;
         }
 
@@ -315,7 +315,6 @@ public class FragmentValue extends FragmentVW {
             }
 
             setButton.setVisibility(View.VISIBLE);
-            v.findViewById(R.id.endpoint).setVisibility(View.GONE);
 
             return v;
         }

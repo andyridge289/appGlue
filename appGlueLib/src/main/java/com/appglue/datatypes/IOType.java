@@ -1,6 +1,9 @@
 package com.appglue.datatypes;
 
 import android.os.Bundle;
+import android.util.Log;
+
+import static com.appglue.Constants.TAG;
 
 public abstract class IOType
 {
@@ -85,9 +88,9 @@ public abstract class IOType
 		public static final String SET = Set.class.getCanonicalName();
 		public static final String APP = App.class.getCanonicalName();
         public static final String IMAGE = Image.class.getCanonicalName();
-        public static final String IMAGE_DRAWABLE = ImageDrawable.class.getCanonicalName();
-		
-		public static IOType getType(String name)
+        public static final String IMAGE_DRAWABLE = ImageDrawableResource.class.getCanonicalName();
+
+        public static IOType getType(String name)
 		{
 
             if(name.equals(TEXT))
@@ -107,7 +110,9 @@ public abstract class IOType
             else if(name.equals(IMAGE))
                 return new Image();
             else if(name.equals(IMAGE_DRAWABLE))
-                return new ImageDrawable();
+                return new ImageDrawableResource();
+            else
+                Log.e(TAG, "Fail to find type " + name);
 
 			return null;
 		}

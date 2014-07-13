@@ -510,11 +510,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (type.getID() == -1) // Then it hasn't been validated, see if it's in the database
             {
                 long inputId = this.getInputOutputIfExists(type.getName(), type.getClass().getCanonicalName()).getID();
-
-                if (inputId == -1) {
-                    Log.e(TAG, "ID is -1 for " + io.getName());
-                }
-
                 values.put(IO_TYPE, inputId);
             } else {
                 values.put(IO_TYPE, type.getID());
@@ -769,11 +764,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (type == null) {
             long id = addInputOutput(name, className);
-
-            if (id == -1) {
-                Log.w(TAG, "ID -1 for " + name + ", " + className);
-            }
-
             type = getIOType(id);
         }
 
@@ -922,7 +912,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             // We've already saved it once, so we just need to add everything else
             ContentValues values = new ContentValues();
 
-            Log.e(TAG, "Setting name to" + cs.getName());
             values.put(NAME, cs.getName());
             values.put(DESCRIPTION, cs.getDescription());
 
@@ -997,10 +986,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 values.put(INPUT_CLASSNAME, current.getClassName());
                 values.put(INPUT_IO_ID, input.getId());
                 values.put(OUTPUT_IO_ID, output.getId());
-
-                if (output.getParent() == null) {
-                    Log.e(TAG, "Apparently parent is null for " + output.getFriendlyName());
-                }
 
                 values.put(OUTPUT_CLASSNAME, output.getParent().getClassName());
 
@@ -1925,12 +1910,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         do {
             // Just blindly overwrite this stuff, it must be newer in the database than it is in the cache
             long filterId = c2.getLong(c2.getColumnIndex(TBL_FILTER + "_" + ID));
-            if (filterId != -1) {
+            if (filterId > 0) {
                 filterComponents(c2, currentComposite, TBL_FILTER + "_");
             }
 
             long ioConnectionId = c2.getLong(c2.getColumnIndex(TBL_COMPOSITE_IOCONNECTION + "_" + ID));
-            if (ioConnectionId != -1) {
+            if (ioConnectionId > 0) {
                 connectComponents(c2, currentComposite, TBL_COMPOSITE_IOCONNECTION + "_");
             }
 
@@ -2065,14 +2050,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private void connectComponents(Cursor c, CompositeService cs, String prefix) {
 
-//        Log.d(TAG, "Connecting components for " + cs.getName());
-//        for(String col : c.getColumnNames()) {
-//            Log.d(TAG, col);
-//        }
-
         long csId = c.getLong(c.getColumnIndex(prefix + COMPOSITE_ID));
+
+        if (csId == 0) {
+            // Presumably this means that there aren't any components?
+            Log.d(TAG, "Dead CS id (for " + cs.getId() + ")");
+            return;
+        }
+
         if (csId != cs.getId() || csId == 0) { // 0 means it's not there, right?
-            Log.d(TAG, "cd id mis-match: " + csId + " -- " + cs.getId());
+            Log.d(TAG, "cs ID mis-match: " + csId + " -- " + cs.getId());
             return;
         }
 
@@ -2112,7 +2099,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // If we've got to here then everything should have worked. Make a two-way link
         output.setConnection(input);
         input.setConnection(output);
-        Log.d(TAG, "Connected " + output.getFriendlyName() + " to " + input.getFriendlyName());
     }
 
     private void filterComponents(Cursor c, CompositeService cs, String prefix) {
@@ -2221,7 +2207,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 } else if (currentIO == null || currentIO.getId() != ioId) {
 
                     // If it doesn't exist, then use the old one
-                    Log.d(TAG, "-1 ??? " + ioId);
                     currentIO = new ServiceIO(ioId);
                     currentIO.setInfo(TBL_SERVICEIO + "_", c);
                     currentIO.setType(getIOType(ioTypeId));

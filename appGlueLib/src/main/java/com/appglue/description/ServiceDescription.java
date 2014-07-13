@@ -3,7 +3,6 @@ package com.appglue.description;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 
@@ -47,10 +46,10 @@ import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TAGS;
 
 public class ServiceDescription {
+
     // The friendly name of the service
     private String name = "";
 
@@ -249,11 +248,6 @@ public class ServiceDescription {
 
         if (addToSearch) {
             for (ServiceIO in : inputs) {
-
-                if (in.getId() == -1) {
-                    Log.d(TAG, "Bad ID for " + in.getFriendlyName() + " :: " + name);
-                }
-
                 searchInputs.put(in.getId(), in);
             }
         }
@@ -275,10 +269,6 @@ public class ServiceDescription {
 
         if (addToSearch) {
             for (ServiceIO out : outputs) {
-
-                if (out.getId() == -1) {
-                    Log.d(TAG, "Bad ID for " + out.getFriendlyName() + " :: " + name);
-                }
                 searchOutputs.put(out.getId(), out);
             }
         }
@@ -467,12 +457,6 @@ public class ServiceDescription {
         ArrayList<ServiceIO> inputs = cloneIOs(sd.getInputs());
         ArrayList<ServiceIO> outputs = cloneIOs(sd.getOutputs());
 
-        for (ServiceIO io : inputs) {
-            if (io.getId() == -1) {
-                Log.d(TAG, "Problem!!!!");
-            }
-        }
-
         component.setInputs(inputs, true);
         component.setOutputs(outputs, true);
 
@@ -497,8 +481,6 @@ public class ServiceDescription {
     }
 
     public void addIO(ServiceIO io, boolean input, int position) {
-
-        Log.d(TAG, "adding IO " + name + " -> " + io.getId());
 
         if (input) {
             this.inputs.put(position, io);

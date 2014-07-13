@@ -248,9 +248,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
         if(LOG) Log.d(TAG, "Sent to " + service.getClassName() + " " + System.currentTimeMillis());
         isBound = true;
     }
-
-    // FIXME It's starting four of them??
-	
 	
 	private Bundle filter(ArrayList<Bundle> messageData, ServiceDescription service)
 	{
@@ -340,7 +337,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
     // FIXME This stuff might be replaceable with my new way of doing it so we don't have to rely on class checking
     // FIXME Need to store the information about the type of the thing in the bundle too. Then we can invoke the right method.
 
-	@SuppressWarnings("unchecked")
+
+    @SuppressWarnings("unchecked")
 	private Bundle mapOutputs(Bundle bundle, ServiceDescription service)
 	{
 		Log.w(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.mapOutputs(to " + service.getName() + ") " + System.currentTimeMillis());
@@ -390,8 +388,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
             if(LOG) Log.d(TAG, "Mapping outputs for a list");
 			outputList = (ArrayList<Bundle>) o;
 		}
-
-        Log.w(TAG, outputList.size() + " outputs and " + inputs.size() + " inputs");
 
         for (Bundle outputBundle : outputList) {
 
