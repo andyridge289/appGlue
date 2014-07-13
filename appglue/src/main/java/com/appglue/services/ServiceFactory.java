@@ -134,7 +134,7 @@ public class ServiceFactory {
         ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 
-        outputs.add(new ServiceIO(SayHelloService.TAG_HELLO, "Hello text", text, "The service is saying hello.", false, null));
+        outputs.add(new ServiceIO(-1, SayHelloService.TAG_HELLO, "Hello text", text, "The service is saying hello.", false, null));
 
         String[] tags = {"Hello"};
 
@@ -152,7 +152,7 @@ public class ServiceFactory {
         ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
         IOType app = IOType.Factory.getType(IOType.Factory.APP);
 
-        inputs.add(new ServiceIO(LaunchAppService.APP_PACKAGE, "App", app, "The app that you want to launch.", false, null));
+        inputs.add(new ServiceIO(-1, LaunchAppService.APP_PACKAGE, "App", app, "The app that you want to launch.", false, null));
 
         String[] tags = {"App", "Android", "Run", "Launch"};
 
@@ -175,7 +175,7 @@ public class ServiceFactory {
         samples.add(new IOValue("On", true));
         samples.add(new IOValue("Off", false));
 
-        inputs.add(new ServiceIO(BluetoothService.BLUETOOTH_STATE, "New state", bool, "The new state of Bluetooth", false, samples));
+        inputs.add(new ServiceIO(-1, BluetoothService.BLUETOOTH_STATE, "New state", bool, "The new state of Bluetooth", false, samples));
 
         String[] tags = {"Bluetooth", "Setting"};
 
@@ -199,7 +199,7 @@ public class ServiceFactory {
         samples.add(new IOValue("On", true));
         samples.add(new IOValue("Off", false));
 
-        inputs.add(new ServiceIO(WifiService.WIFI_STATE, "New state", bool, "The new state of the wifi", false, samples));
+        inputs.add(new ServiceIO(-1, WifiService.WIFI_STATE, "New state", bool, "The new state of the wifi", false, samples));
 
         String[] tags = {"Wifi", "Setting"};
 
@@ -242,11 +242,11 @@ public class ServiceFactory {
         sampleStatuses.add(new IOValue("Severe delays", "severe delays"));
         sampleStatuses.add(new IOValue("Part Closure", "part closure"));
 
-        outputs.add(new ServiceIO(TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
-        outputs.add(new ServiceIO(TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
-        outputs.add(new ServiceIO(TubeService.LINE_MESSAGE, "Message", text, "The message associated with the line.", false, null));
-        outputs.add(new ServiceIO(TubeService.LINE_URL, "Support website", url, "The URL that links to the page with the problem", false, null));
-        outputs.add(new ServiceIO(TubeService.LINE_ICON, "Line icon", imageDrawable, "An icon representing the line", false, null));
+        outputs.add(new ServiceIO(-1, TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
+        outputs.add(new ServiceIO(-1, TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
+        outputs.add(new ServiceIO(-1, TubeService.LINE_MESSAGE, "Message", text, "The message associated with the line.", false, null));
+        outputs.add(new ServiceIO(-1, TubeService.LINE_URL, "Support website", url, "The URL that links to the page with the problem", false, null));
+        outputs.add(new ServiceIO(-1, TubeService.LINE_ICON, "Line icon", imageDrawable, "An icon representing the line", false, null));
 
         String[] tags = {"Tube", "London", "Underground", "Travel", "tfl"};
 
@@ -264,8 +264,8 @@ public class ServiceFactory {
         ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 
-        inputs.add(new ServiceIO(PebbleNotification.PEBBLE_TITLE, "Pebble Notification Title", text, "The title of the notification to display on the Pebble", true, null));
-        inputs.add(new ServiceIO(PebbleNotification.PEBBLE_NOTIFICATION, "Pebble notification message", text, "the contents of the pebble notification", false, null));
+        inputs.add(new ServiceIO(-1, PebbleNotification.PEBBLE_TITLE, "Pebble Notification Title", text, "The title of the notification to display on the Pebble", true, null));
+        inputs.add(new ServiceIO(-1, PebbleNotification.PEBBLE_NOTIFICATION, "Pebble notification message", text, "the contents of the pebble notification", false, null));
 
         String[] tags = {"Pebble", "Notification", "Watch", "Smart watch"};
 
@@ -284,10 +284,10 @@ public class ServiceFactory {
         IOType url = IOType.Factory.getType(IOType.Factory.URL);
         IOType imageD = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
 
-        inputs.add(new ServiceIO(NotificationService.NOTIFICATION_TITLE, "Notification title", text, "The title of the notification.", true, null));
-        inputs.add(new ServiceIO(NotificationService.NOTIFICATION_TEXT, "Notification message", text, "The message in the notification.", false, null));
-        inputs.add(new ServiceIO(NotificationService.NOTIFICATION_URL, "Notification URL", url, "The URL that the notification points to.", false, null));
-        inputs.add(new ServiceIO(NotificationService.NOTIFICATION_IMAGE, "Notification Image", imageD, "The image to use for the notification", false, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TITLE, "Notification title", text, "The title of the notification.", true, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TEXT, "Notification message", text, "The message in the notification.", false, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_URL, "Notification URL", url, "The URL that the notification points to.", false, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_IMAGE, "Notification Image", imageD, "The image to use for the notification", false, null));
 
         String[] tags = {"Android", "Notification", "Notify"};
 
@@ -304,7 +304,7 @@ public class ServiceFactory {
         ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 
-        inputs.add(new ServiceIO(ToastService.TOAST_MESSAGE, "Message", text, "The text to be displayed", true, null));
+        inputs.add(new ServiceIO(-1, ToastService.TOAST_MESSAGE, "Message", text, "The text to be displayed", true, null));
 
         String[] tags = {"Message", "Notify", "Toast"};
 
@@ -407,7 +407,7 @@ public class ServiceFactory {
         sample.add(new IOValue("Connected", true));
         sample.add(new IOValue("Disconnected", false));
 
-        outputs.add(new ServiceIO(PowerTrigger.CONNECTED, "Connected", bool, "Power connected = true, power disconnected = false", true, sample));
+        outputs.add(new ServiceIO(-1, PowerTrigger.CONNECTED, "Connected", bool, "Power connected = true, power disconnected = false", true, sample));
 
         String[] tags = {"Power", "AC", "Connected", "Disconnected"};
 
@@ -434,7 +434,7 @@ public class ServiceFactory {
 //		samples.add(new IOValue("Connecting", BluetoothAdapter.STATE_CONNECTING));
 //		samples.add(new IOValue("Disconnecting", BluetoothAdapter.STATE_DISCONNECTING));
 
-        outputs.add(new ServiceIO(BluetoothTrigger.STATE, "Bluetooth State", set, "The new state of the bluetooth connection", true, samples));
+        outputs.add(new ServiceIO(-1, BluetoothTrigger.STATE, "Bluetooth State", set, "The new state of the bluetooth connection", true, samples));
 
         String[] tags = {"Bluetooth", "Connected", "Disconnected", "On", "Off"};
 
@@ -453,8 +453,8 @@ public class ServiceFactory {
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
         IOType phoneNumber = IOType.Factory.getType(IOType.Factory.PHONE_NUMBER);
 
-        outputs.add(new ServiceIO(ReceiveSMSTrigger.SMS_NUMBER, "Phone number", phoneNumber, "The number where the SMS came from", true, null));
-        outputs.add(new ServiceIO(ReceiveSMSTrigger.SMS_MESSAGE, "Message", text, "The contents of the SMS", true, null));
+        outputs.add(new ServiceIO(-1, ReceiveSMSTrigger.SMS_NUMBER, "Phone number", phoneNumber, "The number where the SMS came from", true, null));
+        outputs.add(new ServiceIO(-1, ReceiveSMSTrigger.SMS_MESSAGE, "Message", text, "The contents of the SMS", true, null));
 
         String[] tags = {"SMS", "Text message", "Receive"};
 
@@ -474,12 +474,12 @@ public class ServiceFactory {
         ArrayList<IOValue> plugged = new ArrayList<IOValue>();
         plugged.add(new IOValue("Plugged", true));
         plugged.add(new IOValue("Unplugged", false));
-        outputs.add(new ServiceIO(HeadphoneTrigger.STATE, "Headphone State", bool, "The new state of the headphones", true, plugged));
+        outputs.add(new ServiceIO(-1, HeadphoneTrigger.STATE, "Headphone State", bool, "The new state of the headphones", true, plugged));
 
         ArrayList<IOValue> mic = new ArrayList<IOValue>();
         mic.add(new IOValue("Microphone", true));
         mic.add(new IOValue("No microphone", false));
-        outputs.add(new ServiceIO(HeadphoneTrigger.MICROPHONE, "Microphone", bool, "Whether the headphones have a microphone", true, mic));
+        outputs.add(new ServiceIO(-1, HeadphoneTrigger.MICROPHONE, "Microphone", bool, "Whether the headphones have a microphone", true, mic));
 
         String[] tags = {"Headphone", "Headset", "Plugged", "Unplugged", "Connected", "Disconnected"};
 

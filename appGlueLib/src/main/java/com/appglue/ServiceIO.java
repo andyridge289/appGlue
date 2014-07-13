@@ -78,14 +78,18 @@ public class ServiceIO
         this.id = id;
     }
 
-    public ServiceIO(String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> samples) {
-		this();
-		
-		this.name = name;
+    public ServiceIO(String name) {
+        this();
+        this.name = name;
+    }
+
+    public ServiceIO(long id, String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> samples) {
+        this(id);
+
+        this.name = name;
 		this.friendlyName = friendlyName;
 		this.type = type;
 		this.description = description;
-		this.id = -1;
 		this.index = -1;
 		this.mandatory = mandatory;
 
@@ -98,23 +102,13 @@ public class ServiceIO
             sampleSearch.put(v.id, v);
         }
     }
-	
-	public ServiceIO(String name, String friendlyName, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
+
+    public ServiceIO(long id, String name, String friendlyName, int index, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
 	{
-		this(name, friendlyName, type, description, mandatory, sampleValues);
-		this.parent = parent;
-	}
-	
-	public ServiceIO(String name, String friendlyName, int index, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
-	{
-		this(name, friendlyName, type, description, parent, mandatory, sampleValues);
-		this.index = index;
-	}
-	
-	public ServiceIO(long id, String name, String friendlyName, int index, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
-	{
-		this(name, friendlyName, index, type, description, parent, mandatory, sampleValues);
-		this.id = id;
+        this(id, name, friendlyName, type, description, mandatory, sampleValues);
+        this.index = index;
+        this.parent = parent;
+        this.id = id;
 	}
 
     public void setInput(boolean isInput) {

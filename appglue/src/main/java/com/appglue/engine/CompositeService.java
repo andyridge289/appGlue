@@ -229,4 +229,8 @@ public class CompositeService {
 
         this.interval = interval;
     }
+
+    public int size() {
+        return components.size();
+    }
 }

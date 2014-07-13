@@ -142,7 +142,12 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		stuff.putParcelableArrayList(ComposableService.INPUT, input);
 		
 		message.setData(stuff);
-		
+
+        if (position >= cs.size()) {
+            Log.e(TAG, "Trying to execute a component with too high an index");
+            return;
+        }
+
 		registry.startComposite(cs.getId());
 		this.doBindService(cs.getComponents().get(position));
 	}
@@ -388,7 +393,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
         Log.w(TAG, outputList.size() + " outputs and " + inputs.size() + " inputs");
 
-
         for (Bundle outputBundle : outputList) {
 
             Bundle newBundle = new Bundle();
@@ -396,8 +400,12 @@ public class OrchestrationServiceConnection implements ServiceConnection
             for (ServiceIO input : inputs) {
 
                 ServiceIO output = input.getConnection();
-                if (output == null)
+                if (output == null) {
+                    if (LOG) Log.d(TAG, "No connection for " + input.getFriendlyName());
                     continue; // This means that they haven't provided an input for this
+                } else if (LOG) {
+                    Log.d(TAG, "Should be connecting " + output.getFriendlyName() + " to " + input.getFriendlyName());
+                }
 
                 // Find the thing
                 Object thing = outputBundle.get(output.getName());

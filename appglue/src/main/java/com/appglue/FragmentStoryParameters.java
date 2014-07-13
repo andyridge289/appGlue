@@ -398,8 +398,8 @@ public class FragmentStoryParameters extends Fragment
 		}
 		else
 		{
-			matching.add(new ServiceIO("No matching", "", null, null, false, null));
-			// It shouldn't be a sample value, because it ain't a sample. It's a ServiceIO. You tit.
+            matching.add(new ServiceIO("No matching"));
+            // It shouldn't be a sample value, because it ain't a sample. It's a ServiceIO. You tit.
 			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), matching));
 			previousSpinner.setEnabled(false);
 			

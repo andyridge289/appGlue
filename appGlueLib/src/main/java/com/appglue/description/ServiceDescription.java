@@ -3,6 +3,7 @@ package com.appglue.description;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 
@@ -46,6 +47,7 @@ import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TAGS;
 
 public class ServiceDescription {
@@ -103,8 +105,8 @@ public class ServiceDescription {
         this.numReviews = 0;
         this.reviews = new ArrayList<Review>();
 
-        this.setInputs(inputs);
-        this.setOutputs(outputs);
+        this.setInputs(inputs, false);
+        this.setOutputs(outputs, false);
 
 
         this.serviceType = serviceType;
@@ -231,7 +233,7 @@ public class ServiceDescription {
         return getOutput(ioId);
     }
 
-    public void setInputs(ArrayList<ServiceIO> inputs) {
+    public void setInputs(ArrayList<ServiceIO> inputs, boolean addToSearch) {
         this.inputs = new SparseArray<ServiceIO>();
         this.searchInputs = new LongSparseArray<ServiceIO>();
 
@@ -240,16 +242,24 @@ public class ServiceDescription {
 
         if (inputs != null) {
             for (int i = 0; i < inputs.size(); i++) {
+                inputs.get(i).setParent(this);
                 this.inputs.put(i, inputs.get(i));
             }
         }
 
-        for (ServiceIO in : inputs) {
-            searchInputs.put(in.getId(), in);
+        if (addToSearch) {
+            for (ServiceIO in : inputs) {
+
+                if (in.getId() == -1) {
+                    Log.d(TAG, "Bad ID for " + in.getFriendlyName() + " :: " + name);
+                }
+
+                searchInputs.put(in.getId(), in);
+            }
         }
     }
 
-    public void setOutputs(ArrayList<ServiceIO> outputs) {
+    public void setOutputs(ArrayList<ServiceIO> outputs, boolean addToSearch) {
         this.outputs = new SparseArray<ServiceIO>();
         this.searchOutputs = new LongSparseArray<ServiceIO>();
 
@@ -258,12 +268,19 @@ public class ServiceDescription {
 
         if (outputs != null) {
             for (int i = 0; i < outputs.size(); i++) {
+                outputs.get(i).setParent(this);
                 this.outputs.put(i, outputs.get(i));
             }
         }
 
-        for (ServiceIO out : outputs) {
-            searchOutputs.put(out.getId(), out);
+        if (addToSearch) {
+            for (ServiceIO out : outputs) {
+
+                if (out.getId() == -1) {
+                    Log.d(TAG, "Bad ID for " + out.getFriendlyName() + " :: " + name);
+                }
+                searchOutputs.put(out.getId(), out);
+            }
         }
     }
 
@@ -387,6 +404,9 @@ public class ServiceDescription {
      * ********************************
      */
 
+
+    // FIXME Check the IDs of the IOs that are being added, and if they are -1 at any time other than the pre-DB create, refuse!
+
     public static ArrayList<ServiceDescription> parseServices(String jsonString, Context context, AppDescription appDescription) throws JSONException {
         ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
 
@@ -437,7 +457,6 @@ public class ServiceDescription {
         this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE)));
 
         this.app = new AppDescription();
-//        this.app.setInfo(prefix, c);
     }
 
     public static ServiceDescription clone(ServiceDescription sd) {
@@ -446,28 +465,49 @@ public class ServiceDescription {
         ServiceDescription component = new ServiceDescription(sd.getPackageName(), sd.getClassName(), sd.getName(),
                 sd.getDescription(), sd.getPrice(), null, null, sd.getServiceType(), sd.getProcessType());
 
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<ServiceIO> inputs = cloneIOs(sd.getInputs());
+        ArrayList<ServiceIO> outputs = cloneIOs(sd.getOutputs());
 
-        cloneIOs(sd.getInputs(), inputs);
-        cloneIOs(sd.getOutputs(), outputs);
-        component.setInputs(inputs);
-        component.setOutputs(outputs);
+        for (ServiceIO io : inputs) {
+            if (io.getId() == -1) {
+                Log.d(TAG, "Problem!!!!");
+            }
+        }
+
+        component.setInputs(inputs, true);
+        component.setOutputs(outputs, true);
 
         return component;
     }
 
-    private static void cloneIOs(ArrayList<ServiceIO> oldList, ArrayList<ServiceIO> newList) {
+    private static ArrayList<ServiceIO> cloneIOs(ArrayList<ServiceIO> oldList) {
+
+        ArrayList<ServiceIO> newList = new ArrayList<ServiceIO>();
+
         for (int i = 0; i < oldList.size(); i++) {
             ServiceIO old = oldList.get(i);
 
-            ServiceIO io = new ServiceIO(old.getName(), old.getFriendlyName(), old.getType(),
+            if (old.getId() == -1) {
+                Log.d(TAG, "WHAT THE FUCK. WHY HAVE WE KEPT ONES WITH A BORKED IUD (" + old.getFriendlyName() + ")");
+            }
+
+            ServiceIO io = new ServiceIO(old.getId(), old.getName(), old.getFriendlyName(), old.getType(),
                     old.getDescription(), old.isMandatory(), old.getSampleValues());
+
+            if (io.getId() == -1) {
+                Log.d(TAG, "uhhhh");
+            }
+
             newList.add(io);
         }
+
+        return newList;
     }
 
     public void addIO(ServiceIO io, boolean input, int position) {
+
+        Log.d(TAG, "adding IO " + name + " -> " + io.getId());
+
         if (input) {
             this.inputs.put(position, io);
             this.searchInputs.put(io.getId(), io);
@@ -475,6 +515,8 @@ public class ServiceDescription {
             this.outputs.put(position, io);
             this.searchOutputs.put(io.getId(), io);
         }
+
+        io.setParent(this);
     }
 
     public static ServiceDescription createFromCursor(Cursor c, String prefix) {
@@ -521,7 +563,7 @@ public class ServiceDescription {
                 sampleValues.add(new IOValue(obj.getString(SAMPLE_NAME), value));
             }
 
-            list.add(new ServiceIO(ioName, friendlyName, i, type, ioDescription, sd, mandatory, sampleValues));
+            list.add(new ServiceIO(-1, ioName, friendlyName, i, type, ioDescription, sd, mandatory, sampleValues));
         }
 
         return list;
@@ -547,8 +589,8 @@ public class ServiceDescription {
         for (int i = 0; i < outputs.size(); i++)
             outputs.get(i).setIndex(i);
 
-        sd.setInputs(inputs);
-        sd.setOutputs(outputs);
+        sd.setInputs(inputs, false);
+        sd.setOutputs(outputs, false);
 
         JSONArray tags = json.getJSONArray(TAGS);
         for (int i = 0; i < tags.length(); i++) {

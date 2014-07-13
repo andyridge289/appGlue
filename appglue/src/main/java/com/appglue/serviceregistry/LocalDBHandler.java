@@ -633,8 +633,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         do {
             ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-            sd.setInputs(getServiceIOs(sd, true));
-            sd.setOutputs(getServiceIOs(sd, false));
+            sd.setInputs(getServiceIOs(sd, true), true);
+            sd.setOutputs(getServiceIOs(sd, false), true);
             components.add(sd);
         }
         while (c.moveToNext());
@@ -996,6 +996,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 values.put(INPUT_CLASSNAME, current.getClassName());
                 values.put(INPUT_IO_ID, input.getId());
                 values.put(OUTPUT_IO_ID, output.getId());
+
+                if (output.getParent() == null) {
+                    Log.e(TAG, "Apparently parent is null for " + output.getFriendlyName());
+                }
+
                 values.put(OUTPUT_CLASSNAME, output.getParent().getClassName());
 
                 long connectionId = insert(db, TBL_COMPOSITE_IOCONNECTION, null, values);
@@ -1037,10 +1042,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
 
         ArrayList<ServiceIO> inputs = getServiceIOs(sd, true);
-        sd.setInputs(inputs);
+        sd.setInputs(inputs, true);
 
         ArrayList<ServiceIO> outputs = getServiceIOs(sd, false);
-        sd.setOutputs(outputs);
+        sd.setOutputs(outputs, true);
 
         AppDescription app = getAppForService(sd.getPackageName());
         if (app != null)
@@ -1826,11 +1831,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         String query = String.format("SELECT %s FROM %s" +
                         " LEFT JOIN %s ON %s.%s = %s.%s" +
-                        " %s",
+                        " %s %s",
                 new StringBuilder(compositeCols).append(",").append(compositeComponentCols),
                 TBL_COMPOSITE,
                 TBL_COMPOSITE_HAS_COMPONENT, TBL_COMPOSITE, ID, TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID,
-                whereClause
+                whereClause,
+                "ORDER BY " + POSITION
         );
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1916,25 +1922,15 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c2.moveToFirst();
 
         do {
-
-            long compositeId = c2.getLong(c2.getColumnIndex(TBL_COMPOSITE + "_" + ID));
-            long filterId = c2.getLong(c2.getColumnIndex(TBL_FILTER + "_" + ID));
-            CompositeService cs = compositeMap.get(compositeId); // It must be in the thing
-
-            if (cs == null) {
-                Log.d(TAG, "null for " + compositeId);
-                continue;
-            }
-
             // Just blindly overwrite this stuff, it must be newer in the database than it is in the cache
+            long filterId = c2.getLong(c2.getColumnIndex(TBL_FILTER + "_" + ID));
             if (filterId != -1) {
-                filterComponents(c2, cs, TBL_FILTER + "_");
+                filterComponents(c2, currentComposite, TBL_FILTER + "_");
             }
 
             long ioConnectionId = c2.getLong(c2.getColumnIndex(TBL_COMPOSITE_IOCONNECTION + "_" + ID));
-
             if (ioConnectionId != -1) {
-                connectComponents(c2, cs, TBL_COMPOSITE_IOCONNECTION + "_");
+                connectComponents(c2, currentComposite, TBL_COMPOSITE_IOCONNECTION + "_");
             }
 
         } while (c2.moveToNext());
@@ -1950,11 +1946,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         String query = String.format("SELECT %s FROM %s" +
                         " LEFT JOIN %s ON %s.%s = %s.%s" +
-                        " %s",
+                        " %s %s",
                 new StringBuilder(compositeCols).append(",").append(compositeComponentCols),
                 TBL_COMPOSITE,
                 TBL_COMPOSITE_HAS_COMPONENT, TBL_COMPOSITE, ID, TBL_COMPOSITE_HAS_COMPONENT, COMPOSITE_ID,
-                whereClause
+                whereClause,
+                "ORDER BY " + POSITION
         );
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -2029,39 +2026,31 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c2 = rawQuery(db, q2, null);
 
         if (c2 == null) {
-            Log.e(TAG, "Cursor is null for getting composite: " + q2);
+            Log.e(TAG, "Cursor is null for connections for composite: " + q2);
             return null;
         }
 
         if (c2.getCount() == 0) {
-            Log.e(TAG, "Cursor is empty for getting composite: " + q2);
+            Log.e(TAG, "Cursor is empty for connections for composite: " + q2);
             return null;
         }
 
         c2.moveToFirst();
 
         do {
+            // Just blindly overwrite this stuff, it must be newer in the database than it is in the cache
             if (compositeId != c2.getLong(c2.getColumnIndex(TBL_COMPOSITE + "_" + ID))) {
                 continue;
             }
 
             long filterId = c2.getLong(c2.getColumnIndex(TBL_FILTER + "_" + ID));
-            CompositeService cs = compositeMap.get(compositeId); // It must be in the thing
-
-            if (cs == null) {
-                Log.d(TAG, "null for " + compositeId);
-                continue;
-            }
-
-            // Just blindly overwrite this stuff, it must be newer in the database than it is in the cache
-            if (filterId != -1) {
-                filterComponents(c2, cs, TBL_FILTER + "_");
+            if (filterId > 0) {
+                filterComponents(c2, currentComposite, TBL_FILTER + "_");
             }
 
             long ioConnectionId = c2.getLong(c2.getColumnIndex(TBL_COMPOSITE_IOCONNECTION + "_" + ID));
-
             if (ioConnectionId != -1) {
-                connectComponents(c2, cs, TBL_COMPOSITE_IOCONNECTION + "_");
+                connectComponents(c2, currentComposite, TBL_COMPOSITE_IOCONNECTION + "_");
             }
 
         } while (c2.moveToNext());
@@ -2071,33 +2060,55 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private void connectComponents(Cursor c, CompositeService cs, String prefix) {
 
+//        Log.d(TAG, "Connecting components for " + cs.getName());
+//        for(String col : c.getColumnNames()) {
+//            Log.d(TAG, col);
+//        }
+
         long csId = c.getLong(c.getColumnIndex(prefix + COMPOSITE_ID));
-        if (csId != cs.getId())
+        if (csId != cs.getId() || csId == 0) { // 0 means it's not there, right?
+            Log.d(TAG, "cd id mis-match: " + csId + " -- " + cs.getId());
             return;
+        }
 
         String outputClassName = c.getString(c.getColumnIndex(prefix + OUTPUT_CLASSNAME));
         ServiceDescription out = cs.getComponent(outputClassName);
-        if (out == null)
+        if (out == null) {
+            Log.d(TAG, "Out null for " + outputClassName);
             return;
+        }
 
         String inputClassName = c.getString(c.getColumnIndex(prefix + INPUT_CLASSNAME));
         ServiceDescription in = cs.getComponent(inputClassName);
-        if (in == null)
+        if (in == null) {
+            Log.d(TAG, "In null for " + inputClassName);
             return;
+        }
 
         long outputId = c.getLong(c.getColumnIndex(prefix + OUTPUT_IO_ID));
         ServiceIO output = out.getOutput(outputId);
-        if (output == null)
+
+        // FIXME The problem is that when they're added the the search thing the ID of the IO is -1, so when we look them up again it doesn't work
+        if (output == null) {
+            ArrayList<ServiceIO> ios = out.getOutputs();
+            for (ServiceIO io : ios)
+                Log.d(TAG, io.getId() + ": " + io.getFriendlyName());
+            Log.d(TAG, "Output null for " + outputId);
             return;
+        }
 
         long inputId = c.getLong(c.getColumnIndex(prefix + INPUT_IO_ID));
         ServiceIO input = in.getInput(inputId);
-        if (input == null)
+        if (input == null) {
+            Log.d(TAG, "Input null for " + inputId);
             return;
+        }
+
 
         // If we've got to here then everything should have worked. Make a two-way link
         output.setConnection(input);
         input.setConnection(output);
+        Log.d(TAG, "Connected " + output.getFriendlyName() + " to " + input.getFriendlyName());
     }
 
     private void filterComponents(Cursor c, CompositeService cs, String prefix) {
@@ -2202,6 +2213,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 } else if (currentIO == null || currentIO.getId() != ioId) {
 
                     // If it doesn't exist, then use the old one
+                    Log.d(TAG, "-1 ??? " + ioId);
                     currentIO = new ServiceIO(ioId);
                     currentIO.setInfo(TBL_SERVICEIO + "_", c);
                     currentIO.setType(getIOType(ioTypeId));
