@@ -338,7 +338,6 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>, Ab
 
         Log.d(TAG, outputOffsets + " :: " + inputOffsets);
 
-        // FIXME We need to get all of the relative offsets in one go and compound them
         int outputOffset = 0;
         int inputOffset = 0;
 
@@ -359,7 +358,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>, Ab
 
             p.lineTo(path.end.x, path.end.y + inputOffset);
 
-            Log.d(TAG, "Should be drawing path from [" + path.start.x + ", " + (path.start.y + outputOffset) +
+            if (LOG)
+                Log.d(TAG, "Should be drawing path from [" + path.start.x + ", " + (path.start.y + outputOffset) +
                     "] to [" + path.end.x + ", " + (path.end.y + inputOffset) + "]");
 
             canvas.drawPath(p, paint);

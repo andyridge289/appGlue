@@ -58,7 +58,7 @@
 		   	<View
 		   	    android:layout_width="80dip"
 		   	    android:layout_height="fill_parent"
-		   	    android:background="@drawable/wiring_add_output"
+                android:background="@drawable/wiring_add_pre"
 		   	    android:layout_alignParentLeft="true"
 		   	    />
 	   	
@@ -125,8 +125,8 @@
 		    <View
 		        android:layout_width="80dip"
 		   	    android:layout_height="fill_parent"
-		   	    android:background="@drawable/wiring_add_input"
 		   	    android:layout_alignParentRight="true"
+                android:background="@drawable/wiring_add_post"
 		        />
 	    
 	    </RelativeLayout>

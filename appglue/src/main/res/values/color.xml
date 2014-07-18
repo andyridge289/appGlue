@@ -69,8 +69,8 @@
 
     <!-- Wiring -->
     <color name="wiring_bg">#CCC</color>
-    <!--<color name="wiring_border_old">#EEE</color>-->
-    <color name="wiring_border">#80EEEEEE</color>
+    <color name="wiring_none">#EEE</color>
+    <color name="wiring_border">#80444444</color>
 
     <!-- Colours for IO things -->
     <color name="dull_bg">#222</color>

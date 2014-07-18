@@ -3,6 +3,7 @@ package com.appglue;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appglue.datatypes.IOType;
+import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.layout.dialog.DialogApp;
 import com.appglue.layout.dialog.DialogFilter;
@@ -83,8 +85,6 @@ public class FragmentValue extends FragmentVW {
         inputContainer = rootView.findViewById(R.id.inputs);
         noOutputs = rootView.findViewById(R.id.no_outputs);
         noInputs = rootView.findViewById(R.id.no_inputs);
-//        addOutput = findViewById(R.id.add_output);
-//        addInput = findViewById(R.id.add_input);
 
         outputList = (ListView) rootView.findViewById(R.id.output_list);
         outputList.setClickable(false);
@@ -105,25 +105,22 @@ public class FragmentValue extends FragmentVW {
         if (pre != null) {
             preName.setText(pre.getName());
             preName.setTextColor(Color.BLACK);
-//
-//			try
-//			{
-//                AppDescription firstApp = first.getApp();
-//                Bitmap b;
-//
-//                if (firstApp == null) {
-//                    firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
-//                } else {
-//                    String iconLocation = first.getApp().getIconLocation();
-//                    b = localStorage.readIcon(iconLocation);
-//                    firstIcon.setImageBitmap(b);
-//                }
-//            }
-//			catch (Exception e)
-//			{
-//				e.printStackTrace();
-//			}
-//
+
+            try {
+                AppDescription firstApp = pre.getApp();
+                Bitmap b;
+
+                if (firstApp == null) {
+                    preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                } else {
+                    String iconLocation = pre.getApp().getIconLocation();
+                    b = localStorage.readIcon(iconLocation);
+                    preIcon.setImageBitmap(b);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             preContainer.setBackgroundResource(R.drawable.wiring_component);
             preContainer.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -136,7 +133,7 @@ public class FragmentValue extends FragmentVW {
             preName.setText("Add");
             preName.setTextColor(getResources().getColor(R.color.android_purple));
             preIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
-            preContainer.setBackgroundResource(R.drawable.wiring_add);
+            preContainer.setBackgroundResource(R.drawable.add_pre);
 
             // Make it add at this position when we click it
             preContainer.setOnClickListener(new OnClickListener() {
@@ -157,6 +154,21 @@ public class FragmentValue extends FragmentVW {
             postName.setTextColor(Color.BLACK);
             postContainer.setBackgroundResource(R.drawable.wiring_component);
 
+            try {
+                AppDescription firstApp = post.getApp();
+                Bitmap b;
+
+                if (firstApp == null) {
+                    postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                } else {
+                    String iconLocation = post.getApp().getIconLocation();
+                    b = localStorage.readIcon(iconLocation);
+                    postIcon.setImageBitmap(b);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             postContainer.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -167,7 +179,7 @@ public class FragmentValue extends FragmentVW {
         } else {
             postName.setText("Add");
             postName.setTextColor(getResources().getColor(R.color.android_purple));
-            postContainer.setBackgroundResource(R.drawable.wiring_add);
+            postContainer.setBackgroundResource(R.drawable.add_post);
             postIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
 
             // Make it add at this position when we click it
@@ -194,12 +206,10 @@ public class FragmentValue extends FragmentVW {
                 outputList.setAdapter(new OutputAdapter(getActivity(), outputs));
                 outputContainer.setVisibility(View.VISIBLE);
                 noOutputs.setVisibility(View.INVISIBLE);
-//				addOutput.setVisibility(View.INVISIBLE);
             } else {
                 // There are no inputs, show the none, hide the list and the add
                 outputContainer.setVisibility(View.INVISIBLE);
                 noOutputs.setVisibility(View.VISIBLE);
-//				addOutput.setVisibility(View.INVISIBLE);
             }
 
             if (inputs.size() > 0) {
@@ -207,12 +217,10 @@ public class FragmentValue extends FragmentVW {
                 inputList.setAdapter(new InputAdapter(getActivity(), inputs));
                 inputContainer.setVisibility(View.VISIBLE);
                 noInputs.setVisibility(View.INVISIBLE);
-//				addOutput.setVisibility(View.INVISIBLE);
             } else {
                 // There are no inputs, show the none, hide the list and the add
                 inputContainer.setVisibility(View.INVISIBLE);
                 noInputs.setVisibility(View.VISIBLE);
-//				addOutput.setVisibility(View.INVISIBLE);
             }
         }
 

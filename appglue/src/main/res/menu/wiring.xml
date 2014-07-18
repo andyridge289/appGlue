@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/wiring_previous"
-        android:title="@string/wiring_menu_previous"
-        android:showAsAction="always" 
-        />
-    <item
-        android:id="@+id/wiring_next"
-        android:title="@string/wiring_menu_next"
+        android:id="@+id/wiring_value_switch"
+        android:title="Wiring"
         android:showAsAction="always"
         />
 	<item 
         android:id="@+id/wiring_done"
         android:title="@string/wiring_done"
         android:showAsAction="always" 
-        />
-    <item android:id="@+id/wiring_overview"
-        android:title="@string/wiring_menu_overview"
-        android:showAsAction="never"
         />
 </menu>

@@ -31,18 +31,21 @@
                 android:layout_centerHorizontal="true" />
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/current_component"
-            android:layout_width="0dip"
-            android:layout_weight="10"
-            android:layout_height="fill_parent">
+        <!--<LinearLayout-->
+        <!--android:id="@+id/current_component"-->
+        <!--android:layout_width="0dip"-->
+        <!--android:layout_weight="10"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:layout_height="fill_parent"-->
 
-            <FrameLayout
+
+        <FrameLayout
                 android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="fill_parent">
+            android:layout_weight="2"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="20dip">
 
-                <LinearLayout
+            <LinearLayout
                     android:id="@+id/inputs"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -87,17 +90,25 @@
                     <View
                         android:layout_width="80dip"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/wiring_add_input"
+                        android:background="@drawable/wiring_add_post"
                         android:layout_alignParentRight="true" />
 
                 </RelativeLayout>
 
             </FrameLayout>
 
-            <RelativeLayout
-                android:id="@+id/value_current"
+        <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
+            android:background="@color/wiring_border">
+
+            <RelativeLayout
+                android:id="@+id/value_current"
+                    android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:background="@color/white"
+                android:layout_marginTop="5dip"
+                android:layout_marginBottom="5dip"
                 android:orientation="vertical">
 
                 <ImageView
@@ -112,16 +123,20 @@
                     android:id="@+id/current_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/current_icon" />
 
             </RelativeLayout>
 
-            <FrameLayout
-                android:layout_width="0dip"
-                android:layout_weight="1"
-                android:layout_height="fill_parent">
+        </LinearLayout>
 
-                <LinearLayout
+        <FrameLayout
+                android:layout_width="0dip"
+            android:layout_weight="2"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="20dip">
+
+        <LinearLayout
                     android:id="@+id/outputs"
                     android:background="@drawable/wiring_output_list"
                     android:layout_width="fill_parent"
@@ -155,7 +170,7 @@
 
             </FrameLayout>
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
         <RelativeLayout
             android:id="@+id/value_post"

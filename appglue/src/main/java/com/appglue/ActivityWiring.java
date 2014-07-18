@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
+import com.appglue.layout.DepthPageTransformer;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -51,13 +52,13 @@ public class ActivityWiring extends FragmentActivity
 	private Registry registry;
 
     private static final int MODE_WIRING = 0;
-    public static final int MODE_SETTING = 1;
+    public static final int MODE_VALUE = 1;
 
     private final int COMPOSITE_LIST = 0;
     private final int COMPONENT_LIST = 1;
     private int source = COMPOSITE_LIST;
 
-	private int mode = MODE_SETTING;
+    private int mode = MODE_VALUE;
 
     private TextView csNameText;
 	private EditText csNameEdit;
@@ -77,7 +78,7 @@ public class ActivityWiring extends FragmentActivity
 
         wiringPager = (ViewPager) findViewById(R.id.wiring_pager);
         valuePager = (ViewPager) findViewById(R.id.value_pager);
-
+        valuePager.setPageTransformer(true, new DepthPageTransformer());
     }
 
     private void finishWiringSetup()
@@ -139,7 +140,7 @@ public class ActivityWiring extends FragmentActivity
             public void onClick(View v) {
                 if (mode == MODE_WIRING) {
                     modeButton.setText("Setting mode");
-                    setMode(MODE_SETTING);
+                    setMode(MODE_VALUE);
                 } else {
                     modeButton.setText("Wiring mode");
                     setMode(MODE_WIRING);
@@ -330,17 +331,8 @@ public class ActivityWiring extends FragmentActivity
 	{
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.wiring, menu);
-
-        menu.findItem(R.id.wiring_previous).setEnabled(wiringPager.getCurrentItem() > 0);
-
-        if(cs != null) {
-            ArrayList<ServiceDescription> components = cs.getComponents();
-
-            if (components != null & components.size() > 0)
-                menu.findItem(R.id.wiring_next).setEnabled(wiringPager.getCurrentItem() < components.size());
-        }
-		return true;
-	}
+        return true;
+    }
 
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -348,29 +340,31 @@ public class ActivityWiring extends FragmentActivity
 		{
 			finish();
 		}
-		else if(item.getItemId() == R.id.wiring_overview)
-		{
-			Intent intent = new Intent(ActivityWiring.this, ActivityCompositionCanvas.class);
-			intent.putExtra(COMPOSITE_ID, cs.getId());
-			startActivity(intent);
-		}
-
 		else if(item.getItemId() == R.id.wiring_done)
 		{
 			saveDialog();
-		}
-		else if(item.getItemId() == R.id.wiring_previous)
-		{
-            if (wiringPager != null)
-                wiringPager.setCurrentItem(wiringPager.getCurrentItem() - 1);
+		} else if (item.getItemId() == R.id.wiring_value_switch) {
+            if (mode == MODE_WIRING) {
+                mode = MODE_VALUE;
+                item.setTitle("Wiring");
+            } else {
+                mode = MODE_WIRING;
+                item.setTitle("Values");
+            }
         }
 		else if(item.getItemId() == R.id.wiring_next)
 		{
-            if (wiringPager != null)
-                wiringPager.setCurrentItem(wiringPager.getCurrentItem() + 1);
+            if (mode == MODE_WIRING) {
+                if (wiringPager != null)
+                    wiringPager.setCurrentItem(wiringPager.getCurrentItem() + 1);
+            } else {
+                if (valuePager != null)
+                    valuePager.setCurrentItem(valuePager.getCurrentItem() + 1);
+            }
         }
 
-		return true;
+        // FIXME Need to check whether the above are in bounds?
+        return true;
 	}
 
 
@@ -452,8 +446,11 @@ public class ActivityWiring extends FragmentActivity
         public WiringPagerAdapter(FragmentManager fragmentManager, boolean wiring) {
             super(fragmentManager);
             this.wiring = wiring;
-            fragments = new Fragment[cs.getComponents().size() + 1];
-		}
+
+            fragments = wiring ?
+                    new Fragment[cs.getComponents().size() + 1] :
+                    new Fragment[cs.getComponents().size()];
+        }
 
 		@Override
         public Fragment getItem(int position)
@@ -471,7 +468,11 @@ public class ActivityWiring extends FragmentActivity
         @Override
         public int getCount() {
             ArrayList<ServiceDescription> components = cs.getComponents();
-            return components == null ? 0 : components.size() + 1;
+
+            if (wiring)
+                return components == null ? 0 : components.size() + 1;
+            else
+                return components == null ? 0 : components.size();
         }
     }
 }
