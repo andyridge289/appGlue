@@ -18,12 +18,14 @@ public class NotificationService extends ComposableService {
 	public final static String NOTIFICATION_TEXT = "text";
 	public final static String NOTIFICATION_URL = "url";
     public static final String NOTIFICATION_IMAGE = "image";
+    public static final String NOTIFICATION_PRIORITY = "priority";
 
     public IOType textType = IOType.Factory.getType(IOType.Factory.TEXT);
     public IOType url = IOType.Factory.getType(IOType.Factory.URL);
     public IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
+    public IOType set = IOType.Factory.getType(IOType.Factory.SET);
 
-    private void notify(String title, String text, int iconResource, int hashCode) {
+    private void notify(String title, String text, int iconResource, int hashCode, int priority) {
 
         NotificationManager n = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -31,8 +33,7 @@ public class NotificationService extends ComposableService {
                 this)
                 .setContentText(text)
                 .setContentTitle(title)
-                .setSmallIcon(R.drawable.icon) // TODO Include an image for the icon, maybe large icon too
-                .setPriority(NotificationCompat.PRIORITY_MIN) // TODO Priority needs to be added to the notification service
+                .setPriority(priority)
                 .setVibrate(null)
                 .setTicker(title + ": " + text);
 
@@ -50,9 +51,10 @@ public class NotificationService extends ComposableService {
     public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {
         String title = (String) textType.getFromBundle(input, NOTIFICATION_TITLE, "");
         String text = (String) textType.getFromBundle(input, NOTIFICATION_TEXT, "");
-        Integer iconResource = (Integer) imageDrawable.getFromBundle(input, NOTIFICATION_IMAGE, -1);
+        int iconResource = (Integer) imageDrawable.getFromBundle(input, NOTIFICATION_IMAGE, -1);
+        int priority = (Integer) set.getFromBundle(input, NOTIFICATION_PRIORITY, NotificationCompat.PRIORITY_DEFAULT);
 
-        notify(title, text, iconResource, this.hashCode());
+        notify(title, text, iconResource, this.hashCode(), priority);
 
 		return null;
 	}
@@ -65,9 +67,10 @@ public class NotificationService extends ComposableService {
 			
 			String title = b.getString(NOTIFICATION_TITLE);
 			String text = b.getString(NOTIFICATION_TEXT);
-            Integer iconResource = (Integer) imageDrawable.getFromBundle(b, NOTIFICATION_IMAGE, -1);
+            int iconResource = (Integer) imageDrawable.getFromBundle(b, NOTIFICATION_IMAGE, -1);
+            int priority = (Integer) set.getFromBundle(b, NOTIFICATION_PRIORITY, NotificationCompat.PRIORITY_DEFAULT);
 
-            notify(title, text, iconResource, this.hashCode() + i);
+            notify(title, text, iconResource, this.hashCode() + i, priority);
         }
 
 		return null;

@@ -2,6 +2,7 @@ package com.appglue.services;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.appglue.IOValue;
@@ -287,11 +288,18 @@ public class ServiceFactory {
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
         IOType url = IOType.Factory.getType(IOType.Factory.URL);
         IOType imageD = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
 
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TITLE, "Notification title", text, "The title of the notification.", true, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TEXT, "Notification message", text, "The message in the notification.", false, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_URL, "Notification URL", url, "The URL that the notification points to.", false, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_IMAGE, "Notification Image", imageD, "The image to use for the notification", false, null));
+        ArrayList<IOValue> priorities = new ArrayList<IOValue>();
+        priorities.add(new IOValue("Default", NotificationCompat.PRIORITY_DEFAULT));
+        priorities.add(new IOValue("Low", NotificationCompat.PRIORITY_LOW));
+        priorities.add(new IOValue("High", NotificationCompat.PRIORITY_HIGH));
+
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TITLE, "Title", text, "The title of the notification.", true, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TEXT, "Notification Message", text, "The message in the notification.", false, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_URL, "URL", url, "The URL that the notification points to.", false, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_IMAGE, "Image", imageD, "The image to use for the notification", false, null));
+        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_PRIORITY, "Priority", set, "The priority of the notification", false, priorities));
 
         String[] tags = {"Android", "Notification", "Notify"};
 

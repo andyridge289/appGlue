@@ -6,14 +6,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -34,20 +37,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static com.appglue.Constants.FULL_ALPHA;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
-public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
-{
+public class WiringMap extends LinearLayout implements Comparator<ServiceIO>, AbsListView.OnScrollListener {
+    // FIXME Need to react to scrolling events and adapt the thing accordingly
+
 	private ServiceDescription first;
 	private ServiceDescription second;
 	
 	private ListView outputList;
+    private SparseArray<Integer> outputPositions;
+    private Queue<Integer> outputOffsets;
+
 	private ListView inputList;
-	
-	// I don't think we actually care what these are
+    private SparseArray<Integer> inputPositions;
+    private Queue<Integer> inputOffsets;
+
+    // I don't think we actually care what these are
 	private View outputContainer;
 	private View inputContainer;
 	private View noOutputs;
@@ -71,6 +82,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	private Registry registry;
 	
 	private ArrayList<Point> connections;
+    private final Object lock = new Object();
 
     public WiringMap(Context context)
 	{
@@ -100,11 +112,13 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		
 		outputList = (ListView) findViewById(R.id.output_list);
 		outputList.setClickable(false);
-		
-		inputList = (ListView) findViewById(R.id.input_list);
+        outputList.setOnScrollListener(this);
+
+        inputList = (ListView) findViewById(R.id.input_list);
 		inputList.setClickable(false);
-		
-		outputContainer = findViewById(R.id.outputs);
+        inputList.setOnScrollListener(this);
+
+        outputContainer = findViewById(R.id.outputs);
 		inputContainer = findViewById(R.id.inputs);
 		
 		noOutputs = findViewById(R.id.no_outputs);
@@ -113,8 +127,10 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		addOutput = findViewById(R.id.add_output);
 		addInput = findViewById(R.id.add_input);
 
-
         connections = new ArrayList<Point>();
+
+        inputOffsets = new LinkedList<Integer>();
+        outputOffsets = new LinkedList<Integer>();
 
         iIndex = -1;
 		oIndex = -1;
@@ -320,9 +336,33 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 		
 		ArrayList<PathColour> paths = getPaths();
 
+        Log.d(TAG, outputOffsets + " :: " + inputOffsets);
+
+        // FIXME We need to get all of the relative offsets in one go and compound them
+        int outputOffset = 0;
+        int inputOffset = 0;
+
+        synchronized (lock) {
+            while (!outputOffsets.isEmpty()) {
+                outputOffset += outputOffsets.poll();
+            }
+            while (!inputOffsets.isEmpty()) {
+                inputOffset += inputOffsets.poll();
+            }
+        }
+
         for (PathColour path : paths) {
             paint.setColor(path.colour);
-            canvas.drawPath(path.p, paint);
+
+            Path p = new Path();
+            p.moveTo(path.start.x, path.start.y + outputOffset);
+
+            p.lineTo(path.end.x, path.end.y + inputOffset);
+
+            Log.d(TAG, "Should be drawing path from [" + path.start.x + ", " + (path.start.y + outputOffset) +
+                    "] to [" + path.end.x + ", " + (path.end.y + inputOffset) + "]");
+
+            canvas.drawPath(p, paint);
         }
 		
 		super.dispatchDraw(canvas);
@@ -356,7 +396,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 
         for (Point connection : connections)
         {
-            Path path = new Path();
+//            Path path = new Path();
             // Need to get the class of one of the items
 
             View selectedOutput = outputList.getChildAt(connection.x);
@@ -382,16 +422,16 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
             // Move this left a bit to be in the middle of the input
             float startX = outputTab[0] - layout[0] + selectedOutput.getWidth() - px;
             float startY = outputTab[1] - layout[1] + (selectedOutput.getHeight() / 2);
-            path.moveTo(startX, startY);
+            PointF start = new PointF(startX, startY);
 
             int[] inputTab = new int[2];
             selectedInput.getLocationOnScreen(inputTab);
 
             float endX = inputTab[0] - layout[0] + px;
             float endY = inputTab[1] - layout[1] + (selectedInput.getHeight() / 2);
-            path.lineTo(endX, endY);
+            PointF end = new PointF(endX, endY);
 
-            paths.add(new PathColour(path, col));
+            paths.add(new PathColour(start, end, col));
         }
 		
 		return paths;
@@ -449,13 +489,75 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			}
 		}
 	}
-	
-	public void redraw()
-	{
+
+    public void redraw(boolean doLists) {
 		this.postInvalidate();
-		this.outputList.invalidateViews();
-		this.inputList.invalidateViews();
-	}
+
+        if (outputList != null && doLists) {
+            this.outputList.invalidateViews();
+        }
+
+        if (doLists && inputList != null) {
+            this.inputList.invalidateViews();
+        }
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int i) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView v, int firstPosition, int visibleItems, int totalItems) {
+
+        int incOffset = calculateIncrementalOffset(v, firstPosition, visibleItems, v.equals(inputList));
+        if (incOffset == 0)
+            return;
+
+        synchronized (lock) {
+            if (v.equals(outputList)) {
+                outputOffsets.add(incOffset);
+            } else {
+                inputOffsets.add(incOffset);
+            }
+        }
+
+        redraw(false);
+    }
+
+    public int calculateIncrementalOffset(AbsListView v, final int firstPosition, final int visibleItems, boolean input) {
+
+        // Remember previous positions, if any
+        SparseArray<Integer> previousPositions = input ? inputPositions : outputPositions;
+
+        // Store new positions
+        if (input) {
+            inputPositions = new SparseArray<Integer>();
+            for (int i = 0; i < visibleItems; i++) {
+                inputPositions.put(firstPosition + i, v.getChildAt(i).getTop());
+            }
+        } else {
+            outputPositions = new SparseArray<Integer>();
+            for (int i = 0; i < visibleItems; i++) {
+                outputPositions.put(firstPosition + i, v.getChildAt(i).getTop());
+            }
+        }
+
+        if (previousPositions != null) {
+            // Find position which exists in both mPositions and previousPositions, then return the difference
+            // of the new and old Y values.
+            for (int i = 0; i < previousPositions.size(); i++) {
+                int position = previousPositions.keyAt(i);
+                int previousTop = previousPositions.get(position);
+                Integer newTop = input ? inputPositions.get(position) : outputPositions.get(position);
+                if (newTop != null) {
+                    return newTop - previousTop;
+                }
+            }
+        }
+
+        return 0; // No view's position was in both previousPositions and mPositions
+    }
 
 
     private class InputAdapter extends ArrayAdapter<ServiceIO>
@@ -601,10 +703,10 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 								}
 							)
 						);
-						
-						redraw();
-						
-						// Update the drawing a bit later...
+
+                        redraw(true);
+
+                        // Update the drawing a bit later...
 						Handler h = new Handler();
 						h.postDelayed(new RedrawRunnable(oIndex, iIndex), 200);
 					}
@@ -636,9 +738,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 							iIndex = position;
 							activity.setStatus("Selected " + item.getName());
 						}
-						
-						redraw();
-					}
+
+                        redraw(true);
+                    }
 					else
 					{
 						setHighlight(item.getType(), parent);
@@ -706,8 +808,8 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 			in.setConnection(out);
 			
 			registry.updateCurrent();
-			redraw();
-		}
+            redraw(true);
+        }
 		
 	}
 
@@ -854,10 +956,10 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 								}
 							)
 						);
-						
-						redraw();
-						
-						// Update the drawing a bit later...
+
+                        redraw(true);
+
+                        // Update the drawing a bit later...
 						Handler h = new Handler();
 						h.postDelayed(new RedrawRunnable(oIndex, iIndex), 200);
 					}
@@ -889,9 +991,9 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 							oIndex = position;
 							activity.setStatus("Selected " + item.getName());
 						}
-						
-						redraw();
-					}
+
+                        redraw(true);
+                    }
 					else
 					{
 						if(LOG) Log.d(TAG, "Output " + position + " (else....)");
@@ -935,13 +1037,14 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>
 	
 	private class PathColour
 	{
-		private Path p;
-		private int colour;
-		
-		private PathColour(Path p, int colour)
-		{
-			this.p = p;
-			this.colour = colour;
+        private PointF start;
+        private PointF end;
+        private int colour;
+
+        private PathColour(PointF start, PointF end, int colour) {
+            this.start = start;
+            this.end = end;
+            this.colour = colour;
 		}
 	}
 }

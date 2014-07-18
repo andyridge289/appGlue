@@ -79,7 +79,7 @@ public class DialogConnection extends DialogCustom {
                         registry.updateCurrent();
 
                         // Redraw so that the connection disappears
-                        parent.redraw();
+                        parent.redraw(true);
                     }
 
                 });

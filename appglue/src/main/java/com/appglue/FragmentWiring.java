@@ -187,7 +187,7 @@ public class FragmentWiring extends FragmentVW {
             return;
         }
 
-        wiringMap.redraw();
+        wiringMap.redraw(true);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
