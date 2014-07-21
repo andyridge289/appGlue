@@ -7,11 +7,13 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Pair;
 
+import com.appglue.ComposableService;
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.IOValue;
@@ -23,7 +25,7 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
-import com.appglue.library.TST;
+import com.appglue.TST;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -1553,7 +1555,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
 
-    public boolean addToLog(long compositeId, String className, String message, int status) {
+    public boolean addToLog(long compositeId, ServiceDescription component, String message, Bundle inputData, Bundle outputData, int status) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
@@ -1561,10 +1563,44 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(COMPOSITE_ID, compositeId);
-        values.put(CLASSNAME, className);
+
+        if(component != null)
+            values.put(CLASSNAME, component.getClassName());
+        else
+            values.put(CLASSNAME, "");
+
         values.put(MESSAGE, message);
         values.put(TIME, sdf.format(date));
         values.put(LOG_TYPE, status);
+
+        if(inputData != null) {
+            ArrayList<Bundle> data = inputData.getParcelableArrayList(ComposableService.INPUT);
+            for(Bundle b : data) {
+                String strung = AppGlueLibrary.bundleToJSON(b, component, true);
+                // FIXME Work out how the fuck we're going to do this with multiple bundles
+            }
+        } else {
+
+        }
+
+//        private void put(SQLiteDatabase db, String name, Bundle bundle) {
+//            ByteArrayOutputStream valueStream = new ByteArrayOutputStream();
+//            try {
+//                ContentValues rows = new ContentValues();
+//                rows.put("name", name);
+//                Parcel p = Parcel.obtain();
+//                value.writeToParcel(p, 0);
+//
+//                valueStream.write(p.marshall());
+//                rows.put("value", valueStream.toByteArray());
+//
+//                db.insert("bundles", null, rows);
+//
+//                valueStream.close();
+//            } catch (IOException e) {
+//                Log.e("error writing object", e.toString());
+//            }
+//        }
 
         long id = insert(db, TBL_EXECUTION_LOG, null, values);
         return id != -1;

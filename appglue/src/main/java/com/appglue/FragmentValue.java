@@ -136,7 +136,7 @@ public class FragmentValue extends FragmentVW {
             preName.setText("Add");
             preName.setTextColor(getResources().getColor(R.color.android_purple));
             preIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
-            preContainer.setBackgroundResource(R.drawable.add_pre);
+            preContainer.setBackgroundResource(R.drawable.wiring_add);
 
             // Make it add at this position when we click it
             preContainer.setOnClickListener(new OnClickListener() {
@@ -185,7 +185,7 @@ public class FragmentValue extends FragmentVW {
         } else {
             postName.setText("Add");
             postName.setTextColor(getResources().getColor(R.color.android_purple));
-            postContainer.setBackgroundResource(R.drawable.add_post);
+            postContainer.setBackgroundResource(R.drawable.wiring_add);
             postIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
 
             // Make it add at this position when we click it

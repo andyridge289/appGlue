@@ -1,6 +1,7 @@
 package com.appglue.serviceregistry;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 
@@ -253,26 +254,35 @@ public class Registry {
 //		return dbHandler.setAppInstalled(packageName, false);
 //	}
 
-    public boolean success(long compositeId) {
+    public boolean compositeSuccess(long compositeId) {
         this.setIsntRunning(compositeId);
-        return dbHandler.addToLog(compositeId, "", "", LogItem.LOG_SUCCESS);
+        // If a composite is successful, we don't need to worry about the input or output data
+        return dbHandler.addToLog(compositeId, null, "", null, null, LogItem.LOG_COMPOSITE_SUCCESS);
     }
 
-    public boolean fail(long compositeId, String className, String message) {
-        this.setIsntRunning(compositeId);
-        return dbHandler.addToLog(compositeId, className, message, LogItem.LOG_FAIL);
+    public boolean componentSuccess(long compositeId, ServiceDescription component, String message, Bundle outputData) {
+        // If a component works, then say what output it gave back to the orchestrator
+        return dbHandler.addToLog(compositeId, component, message, null, outputData, LogItem.LOG_SUCCESS);
     }
 
-    public boolean stopped(long compositeId, String message) {
+    public boolean componentFail(long compositeId, ServiceDescription component, Bundle inputData, String message) {
         this.setIsntRunning(compositeId);
-        boolean ret = dbHandler.addToLog(compositeId, "", message, LogItem.LOG_STOP);
+        // If a component fails, we should tell the user what the input to the component was when it failed
+        return dbHandler.addToLog(compositeId, component, message, inputData, null, LogItem.LOG_FAIL);
+    }
+
+    public boolean compositeStopped(long compositeId, String message) {
+        this.setIsntRunning(compositeId);
+        // If a composite stops, I'm not really sure what we want to be honest
+        boolean ret = dbHandler.addToLog(compositeId, null, message, null, null, LogItem.LOG_STOP);
         this.finishComposite(compositeId);
         return ret;
     }
 
-    public boolean filter(CompositeService cs, ServiceDescription sd, ServiceIO io, String condition, Object value) {
+    public boolean filter(CompositeService cs, ServiceDescription sd, ServiceIO io, String condition, Bundle inputData, Object value) {
         this.setIsntRunning(cs.getId());
-        return dbHandler.addToLog(cs.getId(), sd.getClassName(), "Stopped execution: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"", LogItem.LOG_FILTER);
+        // When we stop at a filter, say what the data was at that point
+        return dbHandler.addToLog(cs.getId(), sd, "Stopped execution: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"", inputData, null, LogItem.LOG_FILTER);
     }
 
     public ArrayList<LogItem> getLog() {
@@ -340,5 +350,9 @@ public class Registry {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public ServiceDescription getComponent(String className) {
+        return dbHandler.getComponent(className);
     }
 }

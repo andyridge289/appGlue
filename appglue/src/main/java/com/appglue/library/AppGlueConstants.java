@@ -245,6 +245,8 @@ public class AppGlueConstants {
     public static final String TIME = "time";
     public static final String MESSAGE = "message";
     public static final String LOG_TYPE = "log_type";
+    public static final String OUTPUT_DATA = "output_data";
+    public static final String INPUT_DATA = "input_data";
 
     public static final String[][] COLS_EXECUTION_LOG = new String[][]
             {
@@ -253,6 +255,8 @@ public class AppGlueConstants {
                     {CLASSNAME, "TEXT", TBL_COMPONENT, CLASSNAME},
                     {TIME, "TEXT"},
                     {MESSAGE, "TEXT"},
+                    {INPUT_DATA, "BLOB"},
+                    {OUTPUT_DATA, "BLOB"},
                     {LOG_TYPE, "INTEGER"}
             };
 

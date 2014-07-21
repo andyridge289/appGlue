@@ -1,5 +1,6 @@
 package com.appglue.services.triggers;
 
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.appglue.Constants.ProcessType;
+import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
@@ -46,7 +48,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
         {
             // There has been a failure in executing the trigger, so don't start. Just record it to the log
             // The compositeId is -1 because nothing actually started.
-            registry.fail(-1L, this.getClass().getCanonicalName(), error);
+            registry.componentFail(-1L, registry.getComponent(this.getClass().getCanonicalName()), data, error);
             return;
         }
 

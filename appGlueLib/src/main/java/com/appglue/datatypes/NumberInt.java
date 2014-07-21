@@ -14,7 +14,7 @@ public class NumberInt extends IOType
 
     @Override
     public Object getFromBundle(Bundle bundle, String key, Object defautValue) {
-        return null;
+        return bundle.getInt(key, (Integer) defautValue);
     }
 
     @Override

@@ -14,6 +14,7 @@ import static com.appglue.library.AppGlueConstants.TIME;
 
 public class LogItem 
 {
+    public static final int LOG_COMPOSITE_SUCCESS = 0x5;
     public static final int LOG_SUCCESS = 0x1;
     public static final int LOG_FAIL = 0x2;
     public static final int LOG_STOP = 0x3;

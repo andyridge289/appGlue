@@ -1,4 +1,4 @@
-package com.appglue.library;
+package com.appglue;
 
 import java.util.ArrayList;
 

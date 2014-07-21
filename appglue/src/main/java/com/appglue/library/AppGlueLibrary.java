@@ -1,5 +1,19 @@
 package com.appglue.library;
 
+import android.os.Bundle;
+import android.util.Log;
+
+import com.appglue.datatypes.IOType;
+import com.appglue.description.ServiceDescription;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.appglue.Constants.TAG;
+
+import java.util.Iterator;
+import java.util.Set;
+
 public class AppGlueLibrary {
     public static String createTableString(String tableName, String[][] cols) {
         StringBuilder createTable = new StringBuilder(String.format("CREATE TABLE %s (", tableName));
@@ -41,5 +55,42 @@ public class AppGlueLibrary {
         }
 
         return out.toString();
+    }
+
+    public static String bundleToJSON(Bundle data, ServiceDescription component, boolean input) {
+        Set<String> keys = data.keySet();
+        JSONObject json = new JSONObject();
+        try {
+            for (String key : keys) {
+                IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
+                String stringThing = type.toString(type.getFromBundle(data, key, "ARGH FAIL"));
+                json.put(key, stringThing);
+            }
+        } catch(JSONException e) {
+            Log.e(TAG, "bundle to JSON string Fail");
+            // TODO Put something in the log maybe?
+        }
+        return json.toString();
+    }
+
+    public static Bundle JSONToBundle(String stringJSON, ServiceDescription component, boolean input) {
+
+        Bundle b = new Bundle();
+
+        try {
+            JSONObject json = new JSONObject(stringJSON);
+            Iterator<String> keys = json.keys();
+            while(keys.hasNext()) {
+                String key = keys.next();
+                IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
+                type.addToBundle(b, type.fromString(json.getString(key)), key);
+            }
+
+        } catch(JSONException e) {
+            Log.e(TAG, "JSON string to bundle Fail FUCKSITCKS");
+            // TODO Put something in the log maybe?
+        }
+
+        return b;
     }
 }

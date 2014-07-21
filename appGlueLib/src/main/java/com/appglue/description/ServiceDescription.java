@@ -11,6 +11,7 @@ import com.appglue.Constants.ServiceType;
 import com.appglue.IOValue;
 import com.appglue.Review;
 import com.appglue.ServiceIO;
+import com.appglue.TST;
 import com.appglue.Tag;
 import com.appglue.datatypes.IOType;
 
@@ -74,8 +75,10 @@ public class ServiceDescription {
     // Inputs and outputs to/from the service
     private SparseArray<ServiceIO> inputs = new SparseArray<ServiceIO>();
     private SparseArray<ServiceIO> outputs = new SparseArray<ServiceIO>();
-    private LongSparseArray<ServiceIO> searchInputs = new LongSparseArray<ServiceIO>();
-    private LongSparseArray<ServiceIO> searchOutputs = new LongSparseArray<ServiceIO>();
+    private LongSparseArray<ServiceIO> idSearchInputs = new LongSparseArray<ServiceIO>();
+    private LongSparseArray<ServiceIO> idSearchOutputs = new LongSparseArray<ServiceIO>();
+    private TST<ServiceIO> nameSearchInputs = new TST<ServiceIO>();
+    private TST<ServiceIO> nameSearchOutputs = new TST<ServiceIO>();
 
     // The average rating of the service
     private double averageReviewRating = 0;
@@ -215,12 +218,14 @@ public class ServiceDescription {
      * @return The object representing the output
      */
     public ServiceIO getOutput(long outputId) {
-        return searchOutputs.get(outputId);
+        return idSearchOutputs.get(outputId);
     }
+    public ServiceIO getOutput(String outputName) { return nameSearchOutputs.get(outputName); }
 
     public ServiceIO getInput(long inputId) {
-        return searchInputs.get(inputId);
+        return idSearchInputs.get(inputId);
     }
+    public ServiceIO getInput(String inputName) { return nameSearchInputs.get(inputName); }
 
     public ServiceIO getIO(long ioId) {
 
@@ -234,7 +239,7 @@ public class ServiceDescription {
 
     public void setInputs(ArrayList<ServiceIO> inputs, boolean addToSearch) {
         this.inputs = new SparseArray<ServiceIO>();
-        this.searchInputs = new LongSparseArray<ServiceIO>();
+        this.idSearchInputs = new LongSparseArray<ServiceIO>();
 
         if (inputs == null)
             return;
@@ -248,14 +253,15 @@ public class ServiceDescription {
 
         if (addToSearch) {
             for (ServiceIO in : inputs) {
-                searchInputs.put(in.getId(), in);
+                idSearchInputs.put(in.getId(), in);
+                nameSearchInputs.put(in.getName(), in);
             }
         }
     }
 
     public void setOutputs(ArrayList<ServiceIO> outputs, boolean addToSearch) {
         this.outputs = new SparseArray<ServiceIO>();
-        this.searchOutputs = new LongSparseArray<ServiceIO>();
+        this.idSearchOutputs = new LongSparseArray<ServiceIO>();
 
         if (outputs == null)
             return;
@@ -269,7 +275,8 @@ public class ServiceDescription {
 
         if (addToSearch) {
             for (ServiceIO out : outputs) {
-                searchOutputs.put(out.getId(), out);
+                idSearchOutputs.put(out.getId(), out);
+                nameSearchOutputs.put(out.getName(), out);
             }
         }
     }
@@ -484,10 +491,12 @@ public class ServiceDescription {
 
         if (input) {
             this.inputs.put(position, io);
-            this.searchInputs.put(io.getId(), io);
+            this.idSearchInputs.put(io.getId(), io);
+            this.nameSearchInputs.put(io.getName(), io);
         } else {
             this.outputs.put(position, io);
-            this.searchOutputs.put(io.getId(), io);
+            this.idSearchOutputs.put(io.getId(), io);
+            this.nameSearchOutputs.put(io.getName(), io);
         }
 
         io.setParent(this);
@@ -578,6 +587,4 @@ public class ServiceDescription {
 
         return sd;
     }
-
-
 }
