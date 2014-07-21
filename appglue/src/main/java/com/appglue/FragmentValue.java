@@ -93,7 +93,7 @@ public class FragmentValue extends FragmentVW {
         inputList.setClickable(false);
 
         ArrayList<ServiceDescription> components = ((ActivityWiring) getActivity()).getComponents();
-        pre = position > 1 ? components.get(position - 1) : null;
+        pre = position > 0 ? components.get(position - 1) : null;
         current = position >= 0 ?
                 (position < components.size() ? components.get(position) : null) :
                 null;
@@ -114,6 +114,9 @@ public class FragmentValue extends FragmentVW {
                     preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
                     String iconLocation = pre.getApp().getIconLocation();
+                    if (iconLocation.equals("")) {
+                        preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    }
                     b = localStorage.readIcon(iconLocation);
                     preIcon.setImageBitmap(b);
                 }
@@ -121,7 +124,7 @@ public class FragmentValue extends FragmentVW {
                 e.printStackTrace();
             }
 
-            preContainer.setBackgroundResource(R.drawable.wiring_component);
+            preContainer.setBackgroundResource(R.drawable.wiring_output);
             preContainer.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -152,7 +155,7 @@ public class FragmentValue extends FragmentVW {
         if (post != null) {
             postName.setText(post.getName());
             postName.setTextColor(Color.BLACK);
-            postContainer.setBackgroundResource(R.drawable.wiring_component);
+            postContainer.setBackgroundResource(R.drawable.wiring_input);
 
             try {
                 AppDescription firstApp = post.getApp();
@@ -162,6 +165,9 @@ public class FragmentValue extends FragmentVW {
                     postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
                     String iconLocation = post.getApp().getIconLocation();
+                    if (iconLocation.equals("")) {
+                        postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    }
                     b = localStorage.readIcon(iconLocation);
                     postIcon.setImageBitmap(b);
                 }

@@ -10,8 +10,9 @@
         android:layout_alignParentTop="true"
         android:orientation="horizontal"
         >
-        
-        <LinearLayout
+
+         <!-- TODO Should this be a framelayout? -->
+         <LinearLayout
             android:id="@+id/cs_name_container"
             android:layout_width="0dip"
             android:layout_weight="4"
@@ -55,16 +56,24 @@
 			android:layout_weight="3"
             android:layout_height="wrap_content"
             />
-        
-        <Button
-            android:id="@+id/change_mode"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/change_mode"
-            />
-        
-    </LinearLayout>
+
+         <!--<Button
+             android:id="@+id/change_mode"
+             android:layout_width="0dip"
+             android:layout_height="wrap_content"
+             android:layout_weight="2"
+             android:text="@string/change_mode"
+             />-->
+
+         <TextView
+             android:id="@+id/page_index"
+             android:layout_width="0dip"
+             android:layout_weight="1"
+             android:layout_height="wrap_content"
+             android:text="hello" />
+
+
+     </LinearLayout>
 
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/wiring_pager"

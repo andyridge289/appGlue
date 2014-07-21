@@ -96,6 +96,9 @@ public class FragmentWiring extends FragmentVW {
                     firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
                     String iconLocation = first.getApp().getIconLocation();
+                    if (iconLocation.equals("")) {
+                        firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    }
                     b = localStorage.readIcon(iconLocation);
                     firstIcon.setImageBitmap(b);
                 }
@@ -136,6 +139,24 @@ public class FragmentWiring extends FragmentVW {
             secondName.setText(second.getName());
             secondName.setTextColor(Color.BLACK);
             secondContainer.setBackgroundResource(R.drawable.wiring_component);
+
+            try {
+                AppDescription secondApp = second.getApp();
+                Bitmap b;
+
+                if (secondApp == null) {
+                    secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                } else {
+                    String iconLocation = first.getApp().getIconLocation();
+                    if (iconLocation.equals("")) {
+                        secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    }
+                    b = localStorage.readIcon(iconLocation);
+                    secondIcon.setImageBitmap(b);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             secondContainer.setOnLongClickListener(new OnLongClickListener() {
                 @Override

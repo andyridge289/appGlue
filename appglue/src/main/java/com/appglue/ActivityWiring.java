@@ -37,8 +37,7 @@ import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.FIRST;
 import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
-public class ActivityWiring extends FragmentActivity
-{
+public class ActivityWiring extends FragmentActivity implements ViewPager.OnPageChangeListener {
 	private CompositeService cs;
 
     private ViewPager wiringPager;
@@ -63,6 +62,7 @@ public class ActivityWiring extends FragmentActivity
     private TextView csNameText;
 	private EditText csNameEdit;
 	private Button csNameSet;
+    private TextView pageIndexText;
 
 	@Override
 	public void onCreate(Bundle icicle)
@@ -133,21 +133,23 @@ public class ActivityWiring extends FragmentActivity
 			}
 		});
 
-        final Button modeButton = (Button) findViewById(R.id.change_mode);
-        modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
-		modeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mode == MODE_WIRING) {
-                    modeButton.setText("Setting mode");
-                    setMode(MODE_VALUE);
-                } else {
-                    modeButton.setText("Wiring mode");
-                    setMode(MODE_WIRING);
-                }
-                redraw();
-            }
-        });
+//        final Button modeButton = (Button) findViewById(R.id.change_mode);
+//        modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
+//		modeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (mode == MODE_WIRING) {
+//                    modeButton.setText("Setting mode");
+//                    setMode(MODE_VALUE);
+//                } else {
+//                    modeButton.setText("Wiring mode");
+//                    setMode(MODE_WIRING);
+//                }
+//                redraw();
+//            }
+//        });
+
+        pageIndexText = (TextView) findViewById(R.id.page_index);
 
 		Intent intent = this.getIntent();
 		int index = intent.getIntExtra(INDEX, -1);
@@ -159,7 +161,10 @@ public class ActivityWiring extends FragmentActivity
         valuePagerAdapter.notifyDataSetChanged();
 
         wiringPager.setAdapter(wiringPagerAdapter);
+        wiringPager.setOnPageChangeListener(this);
+
         valuePager.setAdapter(valuePagerAdapter);
+        valuePager.setOnPageChangeListener(this);
 
         setMode(mode);
 
@@ -191,10 +196,12 @@ public class ActivityWiring extends FragmentActivity
             wiringPager.setVisibility(View.VISIBLE);
             valuePager.setVisibility(View.GONE);
             wiringPager.setCurrentItem(valuePager.getCurrentItem());
+            pageIndexText.setText((wiringPager.getCurrentItem() + 1) + "/" + wiringPagerAdapter.getCount());
         } else {
             wiringPager.setVisibility(View.GONE);
             valuePager.setVisibility(View.VISIBLE);
             valuePager.setCurrentItem(valuePager.getCurrentItem());
+            pageIndexText.setText((valuePager.getCurrentItem() + 1) + "/" + valuePagerAdapter.getCount());
         }
 
         redraw();
@@ -345,27 +352,18 @@ public class ActivityWiring extends FragmentActivity
 			saveDialog();
 		} else if (item.getItemId() == R.id.wiring_value_switch) {
             if (mode == MODE_WIRING) {
-                mode = MODE_VALUE;
-                item.setTitle("Wiring");
-            } else {
-                mode = MODE_WIRING;
+                setMode(MODE_VALUE);
                 item.setTitle("Values");
-            }
-        }
-		else if(item.getItemId() == R.id.wiring_next)
-		{
-            if (mode == MODE_WIRING) {
-                if (wiringPager != null)
-                    wiringPager.setCurrentItem(wiringPager.getCurrentItem() + 1);
-            } else {
-                if (valuePager != null)
-                    valuePager.setCurrentItem(valuePager.getCurrentItem() + 1);
-            }
-        }
 
-        // FIXME Need to check whether the above are in bounds?
+            } else {
+                setMode(MODE_WIRING);
+                item.setTitle("Wiring");
+            }
+        }
         return true;
 	}
+
+    // FIXME Get composites get app might not be working -- that would explain why it doesn't load the icon first time round
 
 
     private void saveDialog()
@@ -438,6 +436,25 @@ public class ActivityWiring extends FragmentActivity
             }
         }
 	}
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (mode == MODE_WIRING) {
+            pageIndexText.setText(position + " - " + (position + 1) + " / " + valuePagerAdapter.getCount());
+        } else {
+            pageIndexText.setText(position + " / " + valuePagerAdapter.getCount());
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 
     private class WiringPagerAdapter extends FragmentStatePagerAdapter {
         private Fragment[] fragments;

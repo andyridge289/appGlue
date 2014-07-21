@@ -24,6 +24,7 @@ public class AppDescription {
         this.packageName = "";
         this.description = "";
         this.developer = "";
+        this.iconLocation = "";
     }
 
     public AppDescription(String name, String packageName, String iconLocation, String description, String developer) {
