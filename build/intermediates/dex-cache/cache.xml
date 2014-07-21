@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pre-dex-items>
+
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ead42585a020d0705facdf0cad75eea51b57ce5a.jar"
+        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/gridlayout-v7/19.0.1/classes.jar"
+        jumboMode="false" revision="19.1.0" sha1="b1701c49371231e0423b7588539f24bdab485019" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/support-v4-19.1.0-ddf10571a47422fab8f110b8a761a70cd43016ad.jar"
+        jar="/Users/andyridge/Code/android-sdk-macosx/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        jumboMode="false" revision="19.1.0" sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/support-v13-19.1.0-baee422b10ede55907f04386ef2795cbb456c604.jar"
+        jar="/Users/andyridge/Code/android-sdk-macosx/extras/android/m2repository/com/android/support/support-v13/19.1.0/support-v13-19.1.0.jar"
+        jumboMode="false" revision="19.1.0" sha1="6b852a232f642c75a7fdfc7212b841b8c8f8959c" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ece9fbe6caeb7d7edb4c1c1a427559851440e927.jar"
+        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/classes.jar"
+        jumboMode="false" revision="19.1.0" sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-2e7834f100e4daf029f5c1e2e0dceb4b3ac998da.jar"
+        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
+        jumboMode="false" revision="19.1.0" sha1="e908c48d688b8ffa5321ca02de85a8e73fa6df30" />
+
+</pre-dex-items>
