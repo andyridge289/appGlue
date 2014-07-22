@@ -32,7 +32,7 @@ public class FragmentSettings extends PreferenceFragment implements SharedPrefer
                 SharedPreferences prefs = getPreferenceScreen().getSharedPreferences();
                 SharedPreferences.Editor e = prefs.edit();
                 e.putBoolean(getResources().getString(R.string.prefs_notifications), checked);
-                e.commit();
+                e.apply();
 
                 return false;
             }

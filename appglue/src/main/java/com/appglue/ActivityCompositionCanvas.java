@@ -294,7 +294,7 @@ public class ActivityCompositionCanvas extends Activity {
 
     @Override
     public void onDestroy() {
-        registry.stopTemp();
+//        registry.stopTemp();
         super.onDestroy();
     }
 

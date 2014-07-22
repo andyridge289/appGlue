@@ -113,7 +113,7 @@
 
                 <ImageView
                     android:id="@+id/current_icon"
-                    android:contentDescription="Something"
+                    android:contentDescription="@string/value_current_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/icon"

@@ -161,4 +161,6 @@
     <string name="example_image">Example image</string>
     <string name="example_icon2">Example icon 2</string>
     <string name="remove_connection">Remove the connection</string>
+    <string name="wiring_switch">Wiring</string>
+    <string name="value_current_icon">Something</string>
 </resources>

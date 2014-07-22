@@ -4,9 +4,7 @@
     <style name="Theme.FixedSize" parent="@android:style/Theme.Holo.Light">
         <item name="android:actionBarSize">48dip</item> 
     </style> 
-    
-    <style name="AppTheme" parent="@style/Theme.AppCompat.Light"></style>
-    
+
 	<style name="Fill">
 		<item name="android:layout_width">fill_parent</item>
 		<item name="android:layout_height">fill_parent</item>

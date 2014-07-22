@@ -84,6 +84,7 @@ import static com.appglue.library.AppGlueConstants.DB_VERSION;
 import static com.appglue.library.AppGlueConstants.END_TIME;
 import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
 import static com.appglue.library.AppGlueConstants.FILTER_STATE;
+import static com.appglue.library.AppGlueConstants.EXECUTION_INSTANCE;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_IOCONNECTION;
@@ -92,7 +93,6 @@ import static com.appglue.library.AppGlueConstants.INDEX_FILTER;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.INDEX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
-import static com.appglue.library.AppGlueConstants.IS_RUNNING;
 import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_IOCONNECTION;
@@ -105,7 +105,7 @@ import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
 import static com.appglue.library.AppGlueConstants.SERVICE_IO;
-import static com.appglue.library.AppGlueConstants.SHOULD_BE_RUNNING;
+import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.START_TIME;
 import static com.appglue.library.AppGlueConstants.TAG_ID;
 import static com.appglue.library.AppGlueConstants.TBL_APP;
@@ -279,12 +279,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             String name = cv.getAsString(NAME);
             String description = cv.getAsString(DESCRIPTION);
             int activeOrTimer = cv.getAsInteger(ACTIVE_OR_TIMER);
-            int isRunning = cv.getAsInteger(IS_RUNNING);
-            int should = cv.getAsInteger(SHOULD_BE_RUNNING);
+            int should = cv.getAsInteger(ENABLED);
             int numeral = cv.getAsInteger(NUMERAL);
             int interval = cv.getAsInteger(INTERVAL);
-            q.append(String.format("'','%s','%s', %d, %d, %d, %d, %d",
-                    name, description, activeOrTimer, isRunning, should, numeral, interval));
+            q.append(String.format("'','%s','%s', %d, %d, %d, %d",
+                    name, description, activeOrTimer, should, numeral, interval));
         } else if (table.equals(TBL_COMPONENT)) {
             String className = cv.getAsString(CLASSNAME);
             String name = cv.getAsString(NAME);
@@ -389,8 +388,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(NAME, "temp");
         cv.put(DESCRIPTION, "This is ALWAYS the temporary composite");
         cv.put(ACTIVE_OR_TIMER, 1);
-        cv.put(IS_RUNNING, 0);
-        cv.put(SHOULD_BE_RUNNING, 1);
+        cv.put(ENABLED, 1);
         cv.put(NUMERAL, -1);
         cv.put(INTERVAL, 0);
         insert(db, TBL_COMPOSITE, null, cv);
@@ -403,8 +401,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(NAME, name);
         cv.put(DESCRIPTION, "You haven't entered a description yet");
         cv.put(ACTIVE_OR_TIMER, 1);
-        cv.put(IS_RUNNING, 0);
-        cv.put(SHOULD_BE_RUNNING, 1);
+        cv.put(ENABLED, 1);
         cv.put(NUMERAL, -1);
         cv.put(INTERVAL, 0);
         long id = insert(db, TBL_COMPOSITE, null, cv);
@@ -877,8 +874,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(NAME, "");
             values.put(DESCRIPTION, "");
-            values.put(IS_RUNNING, 0);
-            values.put(SHOULD_BE_RUNNING, 1);
+            values.put(ENABLED, 1);
             values.put(ACTIVE_OR_TIMER, 0);
 
             ArrayList<ServiceDescription> components = cs.getComponents();
@@ -1199,7 +1195,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * @param id The id of the composite to find out about the running status
      * @return The running status of the composite
      */
-    public Pair<Boolean, Boolean> compositeRunning(long id) {
+    public Boolean compositeEnabled(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         if (id == -1) {
@@ -1207,30 +1203,17 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             return null;
         }
 
-        Cursor c = db.query(TBL_COMPOSITE, new String[]{ACTIVE_OR_TIMER, IS_RUNNING}, ID + "=?", new String[]{"" + id}, null, null, null);
+        Cursor c = db.query(TBL_COMPOSITE, new String[]{ACTIVE_OR_TIMER}, ID + "=?", new String[]{"" + id}, null, null, null);
 
         if (c == null)
-            return new Pair<Boolean, Boolean>(false, false);
+            return false;
 
         c.moveToFirst();
 
-        long is = c.getLong(c.getColumnIndex(IS_RUNNING));
         long should = c.getLong(c.getColumnIndex(ACTIVE_OR_TIMER));
 
-        return new Pair<Boolean, Boolean>((should == 1), (is == 1));
+        return should == 1;
     }
-
-    /**
-     * Set whether a composite service is currently running or not
-     *
-     * @param id      The id of the composite
-     * @param running The new running status
-     * @return The success?
-     */
-    public boolean setCompositeIsRunning(long id, long running) {
-        return setCompositeRunning(id, running, IS_RUNNING);
-    }
-
 
     /**
      * Sets whether the composite service should be running or not
@@ -1569,15 +1552,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return db.insert(TBL_COMPOSITE_EXECUTION_LOG, null, cv);
     }
 
-    public boolean stopComposite(long id) {
+    public boolean stopComposite(long id, long executionInstance, int logFlag) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(END_TIME, System.currentTimeMillis());
-        int ret = db.update(TBL_COMPOSITE_EXECUTION_LOG, cv, id + " = ?", new String[]{"" + id});
+        cv.put(LOG_TYPE, logFlag);
+        int ret = db.update(TBL_COMPOSITE_EXECUTION_LOG, cv, ID + " = ? AND " + COMPOSITE_ID + " = ?", new String[]{"" + executionInstance, "" + id});
         return ret == 1;
     }
 
-    public boolean addToLog(long compositeId, ServiceDescription component, String message, Bundle inputData, Bundle outputData, int status) {
+    public boolean addToLog(long compositeId, long executionInstance, ServiceDescription component, String message, Bundle inputData, Bundle outputData, int status) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
@@ -1585,6 +1569,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(COMPOSITE_ID, compositeId);
+        values.put(EXECUTION_INSTANCE, executionInstance);
 
         if(component != null)
             values.put(CLASSNAME, component.getClassName());
@@ -1594,12 +1579,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(MESSAGE, message);
         values.put(TIME, sdf.format(date));
         values.put(LOG_TYPE, status);
+        values.put(TIME, System.currentTimeMillis());
 
         if(inputData != null) {
             ArrayList<Bundle> data = inputData.getParcelableArrayList(ComposableService.INPUT);
             for(Bundle b : data) {
                 String strung = AppGlueLibrary.bundleToJSON(b, component, true);
-                // FIXME Work out how the fuck we're going to do this with multiple bundles
+                // FIXME Work out how the fuck we're going to do this with multiple bundles, and what to do with the output one
             }
         } else {
 
@@ -1626,6 +1612,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         long id = insert(db, TBL_EXECUTION_LOG, null, values);
         return id != -1;
+    }
+
+    public ArrayList<LogItem> getLog(long compositeId) {
+        // FIXME Need to implement this
+        return null;
     }
 
     public ArrayList<LogItem> getLog() {
@@ -1769,10 +1760,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return tags;
     }
 
-    public boolean shouldBeRunning(long id) {
+    public boolean isEnabled(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor c = db.query(TBL_COMPOSITE, new String[]{SHOULD_BE_RUNNING},
+        Cursor c = db.query(TBL_COMPOSITE, new String[]{ENABLED},
                 ID + " = ?", new String[]{"" + id},
                 null, null, null, null);
 
@@ -1784,7 +1775,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         c.moveToFirst();
 
-        int ret = c.getInt((c.getColumnIndex(SHOULD_BE_RUNNING)));
+        int ret = c.getInt((c.getColumnIndex(ENABLED)));
 
         return ret == 1;
     }
@@ -2488,5 +2479,15 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
     }
 
+    public boolean isInstanceRunning(long compositeId, long executionInstance) {
+        // FIXME Do this
+        // Look for a row with the instance and the composite id. If the timestamp is set then we're good. otherwise not.
+        return false;
+    }
 
+    public long isCompositeRunning(long compositeId) {
+        // Look through all the rows for that compositeId, and see if there are any instances with the timestamp not set
+        // Return the instance ID so that we can control it
+        return -1L;
+    }
 }

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/wiring_value_switch"
-        android:title="Wiring"
+        android:title="@string/wiring_switch"
         android:showAsAction="always"
         />
 	<item 

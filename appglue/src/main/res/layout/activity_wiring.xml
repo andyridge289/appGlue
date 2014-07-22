@@ -11,13 +11,11 @@
         android:orientation="horizontal"
         >
 
-         <!-- TODO Should this be a framelayout? -->
-         <LinearLayout
+         <FrameLayout
             android:id="@+id/cs_name_container"
             android:layout_width="0dip"
             android:layout_weight="4"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             >
             
             <TextView
@@ -39,7 +37,7 @@
                 android:hint="@string/hint_wiring_csname"
                 />
             
-        </LinearLayout>
+        </FrameLayout>
         
         <Button
             android:id="@+id/cs_name_edit_button"
@@ -70,7 +68,7 @@
              android:layout_width="0dip"
              android:layout_weight="1"
              android:layout_height="wrap_content"
-             android:text="hello" />
+             />
 
 
      </LinearLayout>
