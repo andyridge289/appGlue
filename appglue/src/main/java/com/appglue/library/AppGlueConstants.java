@@ -55,6 +55,7 @@ public class AppGlueConstants {
     public static final String TBL_COMPONENT_HAS_TAG = "component_has_tag";
 
     public static final String TBL_EXECUTION_LOG = "execution_log";
+    public static final String TBL_COMPOSITE_EXECUTION_LOG = "composite_execution_log";
 
     public static final String JUST_A_LIST = "atomic_list";
 
@@ -241,6 +242,16 @@ public class AppGlueConstants {
                     {INSTALLED, "TINYINT"}
             };
 
+    public static final String START_TIME = "start_time";
+    public static final String END_TIME = "start_time";
+
+    public static final String[][] COLS_COMPOSITE_EXECUTION_LOG = new String[][]
+            {
+                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+                    {COMPOSITE_ID, "INTEGER"},
+                    {START_TIME, "INTEGER"},
+                    {END_TIME, "INTEGER"}
+            };
 
     public static final String TIME = "time";
     public static final String MESSAGE = "message";

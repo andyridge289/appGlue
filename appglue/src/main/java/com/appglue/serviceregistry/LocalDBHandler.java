@@ -18,6 +18,7 @@ import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.IOValue;
 import com.appglue.ServiceIO;
+import com.appglue.TST;
 import com.appglue.Tag;
 import com.appglue.datatypes.IOType;
 import com.appglue.description.AppDescription;
@@ -25,7 +26,6 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
-import com.appglue.TST;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -70,6 +70,7 @@ import static com.appglue.library.AppGlueConstants.COLS_APP;
 import static com.appglue.library.AppGlueConstants.COLS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.COLS_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE;
+import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.COLS_EXECUTION_LOG;
@@ -80,6 +81,7 @@ import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.COLS_TAG;
 import static com.appglue.library.AppGlueConstants.DB_NAME;
 import static com.appglue.library.AppGlueConstants.DB_VERSION;
+import static com.appglue.library.AppGlueConstants.END_TIME;
 import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
 import static com.appglue.library.AppGlueConstants.FILTER_STATE;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
@@ -104,11 +106,13 @@ import static com.appglue.library.AppGlueConstants.MESSAGE;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
 import static com.appglue.library.AppGlueConstants.SERVICE_IO;
 import static com.appglue.library.AppGlueConstants.SHOULD_BE_RUNNING;
+import static com.appglue.library.AppGlueConstants.START_TIME;
 import static com.appglue.library.AppGlueConstants.TAG_ID;
 import static com.appglue.library.AppGlueConstants.TBL_APP;
 import static com.appglue.library.AppGlueConstants.TBL_COMPONENT;
 import static com.appglue.library.AppGlueConstants.TBL_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE;
+import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.TBL_EXECUTION_LOG;
@@ -228,6 +232,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // references Composite and component
         execSQL(db, String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_HAS_COMPONENT));
         execSQL(db, AppGlueLibrary.createTableString(TBL_COMPOSITE_HAS_COMPONENT, COLS_COMPOSITE_HAS_COMPONENT));
+
+        execSQL(db, String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE_EXECUTION_LOG));
+        execSQL(db, AppGlueLibrary.createTableString(TBL_COMPOSITE_EXECUTION_LOG, COLS_COMPOSITE_EXECUTION_LOG));
 
         execSQL(db, String.format("DROP TABLE IF EXISTS %s", TBL_EXECUTION_LOG));
         execSQL(db, AppGlueLibrary.createTableString(TBL_EXECUTION_LOG, COLS_EXECUTION_LOG));
@@ -1554,6 +1561,21 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
+    public long startComposite(long compositeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(COMPOSITE_ID, compositeId);
+        cv.put(START_TIME, System.currentTimeMillis());
+        return db.insert(TBL_COMPOSITE_EXECUTION_LOG, null, cv);
+    }
+
+    public boolean stopComposite(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(END_TIME, System.currentTimeMillis());
+        int ret = db.update(TBL_COMPOSITE_EXECUTION_LOG, cv, id + " = ?", new String[]{"" + id});
+        return ret == 1;
+    }
 
     public boolean addToLog(long compositeId, ServiceDescription component, String message, Bundle inputData, Bundle outputData, int status) {
         SQLiteDatabase db = this.getWritableDatabase();

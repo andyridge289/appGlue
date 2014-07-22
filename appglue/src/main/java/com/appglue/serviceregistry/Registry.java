@@ -253,6 +253,9 @@ public class Registry {
 //	{
 //		return dbHandler.setAppInstalled(packageName, false);
 //	}
+//    public long startComposite(long compositeId) {
+//        return dbHandler.startComposite(compositeId);
+//    }
 
     public boolean compositeSuccess(long compositeId) {
         this.setIsntRunning(compositeId);
@@ -321,6 +324,7 @@ public class Registry {
     public void startComposite(long id) {
         setIsRunning(id);
         setShouldBeRunning(id);
+        dbHandler.startComposite(id); // FIXME We need to return this somewhere so the orchestrator knows what it is
     }
 
     public void stopComposite(long id) {
