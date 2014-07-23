@@ -25,6 +25,7 @@ import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.AppGlueLibrary;
+import com.appglue.library.ComponentLogItem;
 import com.appglue.library.LogItem;
 
 import java.io.File;
@@ -157,7 +158,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -1614,37 +1615,102 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return id != -1;
     }
 
-    public ArrayList<LogItem> getLog(long compositeId) {
-        // FIXME Need to implement this
-        return null;
-    }
+    public ArrayList<LogItem> getLog(CompositeService cs) {
 
-    public ArrayList<LogItem> getLog() {
-        ArrayList<LogItem> items = new ArrayList<LogItem>();
-
-        String query = String.format("SELECT * FROM %s", TBL_EXECUTION_LOG);
-
+        ArrayList<LogItem> logs = new ArrayList<LogItem>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = rawQuery(db, query, null);
 
-        if (c == null) {
-            return null;
+        String compositeLogCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_EXECUTION_LOG, COLS_COMPOSITE_EXECUTION_LOG);
+        String logCols = AppGlueLibrary.buildGetAllString(TBL_EXECUTION_LOG, COLS_EXECUTION_LOG);
+
+        String q = String.format("SELECT %s, %s FROM %s " +
+                        "LEFT JOIN %s ON %s.%s = %s.%s " +
+                        "WHERE %s.%s = %d " +
+                        "ORDER BY %s.%s DESC",
+                compositeLogCols, logCols, TBL_COMPOSITE_EXECUTION_LOG,
+                TBL_EXECUTION_LOG, TBL_COMPOSITE_EXECUTION_LOG, EXECUTION_INSTANCE, TBL_EXECUTION_LOG, EXECUTION_INSTANCE,
+                TBL_COMPOSITE_EXECUTION_LOG, COMPOSITE_ID, cs.getId(),
+                TBL_COMPOSITE_EXECUTION_LOG, EXECUTION_INSTANCE);
+
+        Cursor c = db.rawQuery(q, null);
+
+        if(c == null){
+            Log.e(TAG, "Cursor null for " + q);
+            return logs;
         }
 
-        if (c.getCount() == 0) {
-            return null;
+        if(c.getCount() == 0) {
+            Log.d(TAG, "Cursor empty for " + q);
+            return logs;
         }
 
+        LogItem current = null;
         c.moveToFirst();
 
         do {
-            items.add(new LogItem(c));
-        }
-        while (c.moveToNext());
-        c.close();
+            long id = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + ID));
+            if (current == null || current.getId() != id) {
 
-        return items;
+                long instanceId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + EXECUTION_INSTANCE));
+
+                long rowCompositeId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + COMPOSITE_ID));
+                if(rowCompositeId != cs.getId()) {
+                    Log.e(TAG, "log composite id isn't what we asked for, this is a problem..");
+                    return logs;
+                }
+
+                String message = c.getString(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + MESSAGE));
+                long startTime = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + START_TIME));
+                long endTime = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + END_TIME));
+                int status = c.getInt(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + LOG_TYPE));
+
+                current = new LogItem(id, instanceId, cs, startTime, endTime, message, status);
+                logs.add(current);
+            }
+
+            // And now get the stuff for the component log
+
+            long componentLogId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + ID));
+            String className = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + CLASSNAME));
+            String componentMsg = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + MESSAGE));
+
+            // FIXME Get the Bundles out, however we're doing this
+            int componentStatus = c.getInt(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + LOG_TYPE));
+            long time = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + TIME));
+            ComponentLogItem cli = new ComponentLogItem(id, className, componentMsg, null, null, componentStatus, time);
+            current.addComponentLog(cli);
+
+        } while(c.moveToNext());
+
+        return logs;
     }
+
+//    public ArrayList<LogItem> getLog() {
+//        ArrayList<LogItem> items = new ArrayList<LogItem>();
+//
+//        String query = String.format("SELECT * FROM %s", TBL_EXECUTION_LOG);
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c = rawQuery(db, query, null);
+//
+//        if (c == null) {
+//            return null;
+//        }
+//
+//        if (c.getCount() == 0) {
+//            return null;
+//        }
+//
+//        c.moveToFirst();
+//
+//        do {
+//            items.add(new LogItem(c));
+//        }
+//        while (c.moveToNext());
+//        c.close();
+//
+//        return items;
+//    }
 
     public Tag addTag(String name) {
         SQLiteDatabase db = this.getWritableDatabase();

@@ -26,6 +26,7 @@ import com.appglue.Constants.ProcessType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalStorage;
+import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -57,7 +58,9 @@ public class ActivityComposite extends Activity
 		if(compositeId == -1){ finish(); return; }
 		
 		cs = registry.getComposite(compositeId);
-		
+        ArrayList<LogItem> logs = registry.getLog(compositeId);
+        Log.d(TAG, "Lots of logs: " + logs.size());
+
 		edit = false;
 		
 		setup();

@@ -338,10 +338,6 @@ public class Registry {
         return dbHandler.isInstanceRunning(compositeId, executionInstance);
     }
 
-    public ArrayList<LogItem> getLog() {
-        return dbHandler.getLog();
-    }
-
     public boolean updateWiring(CompositeService cs) {
         dbHandler.updateWiring(cs);
         boolean filters = dbHandler.updateFiltersAndValues(cs);
@@ -377,5 +373,9 @@ public class Registry {
 
     public ServiceDescription getComponent(String className) {
         return dbHandler.getComponent(className);
+    }
+
+    public ArrayList<LogItem> getLog(CompositeService cs) {
+        return dbHandler.getLog(cs);
     }
 }

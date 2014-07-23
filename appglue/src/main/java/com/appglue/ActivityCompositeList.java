@@ -133,9 +133,9 @@ public class ActivityCompositeList extends Activity {
                     createTimerDialog(composites.get((selected.get(0))));
                     break;
 
-//				case R.id.comp_context_view:
-//					view(composites.get((selected.get(0))));
-//					break;
+				case R.id.comp_context_view:
+					view(composites.get((selected.get(0))));
+					break;
 
                 case R.id.comp_context_edit:
                     edit(composites.get((selected.get(0))));

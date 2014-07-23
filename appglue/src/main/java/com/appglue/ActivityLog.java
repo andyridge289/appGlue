@@ -88,7 +88,7 @@ public class ActivityLog extends Activity
 			logTitle.setText(log.getComposite().getName());
 			
 			TextView logTime = (TextView) v.findViewById(R.id.log_time);
-			logTime.setText(log.getTime());
+//			logTime.setText(log.getTime());
 			
 			TextView logMessage = (TextView) v.findViewById(R.id.log_message);
 			logMessage.setText(log.getMessage());

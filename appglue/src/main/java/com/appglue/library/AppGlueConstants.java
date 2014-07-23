@@ -243,6 +243,7 @@ public class AppGlueConstants {
     public static final String START_TIME = "start_time";
     public static final String END_TIME = "end_time";
     public static final String LOG_TYPE = "log_type";
+    public static final String MESSAGE = "message";
 
     public static final String[][] COLS_COMPOSITE_EXECUTION_LOG = new String[][]
             {
@@ -250,11 +251,12 @@ public class AppGlueConstants {
                     {COMPOSITE_ID, "INTEGER"},
                     {START_TIME, "INTEGER"},
                     {END_TIME, "INTEGER"},
-                    {LOG_TYPE, "INTEGER"}
+                    {LOG_TYPE, "INTEGER"},
+                    {MESSAGE, "TEXT"}
             };
 
     public static final String TIME = "time";
-    public static final String MESSAGE = "message";
+
     public static final String OUTPUT_DATA = "output_data";
     public static final String INPUT_DATA = "input_data";
     public static final String EXECUTION_INSTANCE = "execution_instance";
