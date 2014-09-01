@@ -7,6 +7,7 @@ public class App extends Text
 		super();
 		this.name = "App";
 		this.className = App.class.getCanonicalName();
+        this.sensitivity = Sensitivity.NORMAL;
 	}
 	
 	public App(String value)

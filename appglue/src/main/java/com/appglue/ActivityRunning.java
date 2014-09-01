@@ -78,8 +78,10 @@ public class ActivityRunning extends Activity
 			
 			TextView name = (TextView) v.findViewById(R.id.running_name);
 			name.setText(service.getName());
-			
-			Pair<Boolean, Boolean> running = registry.running(service.getId());
+
+            boolean enabled = registry.enabled(service.getId());
+
+//			Pair<Boolean, Boolean> running = registry.running(service.getId());
 
 				
 			final Button startButton = (Button) v.findViewById(R.id.running_go_button);
@@ -96,7 +98,7 @@ public class ActivityRunning extends Activity
 				startButton.setVisibility(View.GONE);
 				pauseButton.setVisibility(View.GONE);
 				
-				if(running.first)
+				if(enabled)
 					stopButton.setText(getResources().getString(R.string.disable));
 				else
 					stopButton.setText(getResources().getString(R.string.enable));
@@ -106,16 +108,16 @@ public class ActivityRunning extends Activity
 					@Override
 					public void onClick(View v)
 					{
-						Pair<Boolean, Boolean> running = registry.running(service.getId());
+                        boolean enabled = registry.enabled(service.getId());
 						
-						if(running.first)
+						if(enabled)
 						{
-							registry.setShouldntBeRunning(service.getId());
+							registry.setEnabled(service.getId(), false);
 							stopButton.setText(getResources().getString(R.string.enable));
 						}
 						else
 						{
-							registry.setShouldBeRunning(service.getId());
+							registry.setEnabled(service.getId(), true);
 							stopButton.setText(getResources().getString(R.string.disable));
 						}
 					}
@@ -123,61 +125,63 @@ public class ActivityRunning extends Activity
 			}
 			else	
 			{
-				if(running.second) // It's running
-				{
-					startButton.setEnabled(false);
-					pauseButton.setEnabled(true);
-				}
-				else
-				{
-					startButton.setEnabled(true);
-					pauseButton.setEnabled(false);
-				}
-				
-				startButton.setVisibility(View.VISIBLE);
-				startButton.setOnClickListener(new OnClickListener()
-				{
-					@Override	
-					public void onClick(View v)
-					{
-						Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
-						registry.setIsRunning(service.getId());
-						
-						Intent intent = new Intent(ActivityRunning.this, OrchestrationService.class);
-						intent.putExtra(COMPOSITE_ID, service.getId());
-						intent.putExtra(DURATION, timings.first * timings.second.value);
-						intent.putExtra(RUN_NOW, true);
-						startService(intent);
-						
-						startButton.setEnabled(false);
-						pauseButton.setEnabled(true);
-					}
-				});
-				
-				pauseButton.setVisibility(View.VISIBLE);
-				pauseButton.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View v)
-					{
-						// This should stop it from running again
-						registry.setIsntRunning(service.getId());
-						
-						startButton.setEnabled(true);
-						pauseButton.setEnabled(false);
-					}
-				});
-				
-				stopButton.setOnClickListener(new OnClickListener()
-				{
-					@Override
-					public void onClick(View v)
-					{
-						registry.setShouldntBeRunning(service.getId());
-						adapter.remove(service);
-						adapter.notifyDataSetChanged();
-					}
-				});
+
+                // FIXME NEed to do something with starting and stopping the bastard based on the executionInstanceID
+//				if(running.second) // It's running
+//				{
+//					startButton.setEnabled(false);
+//					pauseButton.setEnabled(true);
+//				}
+//				else
+//				{
+//					startButton.setEnabled(true);
+//					pauseButton.setEnabled(false);
+//				}
+//
+//				startButton.setVisibility(View.VISIBLE);
+//				startButton.setOnClickListener(new OnClickListener()
+//				{
+//					@Override
+//					public void onClick(View v)
+//					{
+//						Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
+//						registry.setIsRunning(service.getId());
+//
+//						Intent intent = new Intent(ActivityRunning.this, OrchestrationService.class);
+//						intent.putExtra(COMPOSITE_ID, service.getId());
+//						intent.putExtra(DURATION, timings.first * timings.second.value);
+//						intent.putExtra(RUN_NOW, true);
+//						startService(intent);
+//
+//						startButton.setEnabled(false);
+//						pauseButton.setEnabled(true);
+//					}
+//				});
+//
+//				pauseButton.setVisibility(View.VISIBLE);
+//				pauseButton.setOnClickListener(new OnClickListener()
+//				{
+//					@Override
+//					public void onClick(View v)
+//					{
+//						// This should stop it from running again
+//						registry.setIsntRunning(service.getId());
+//
+//						startButton.setEnabled(true);
+//						pauseButton.setEnabled(false);
+//					}
+//				});
+//
+//				stopButton.setOnClickListener(new OnClickListener()
+//				{
+//					@Override
+//					public void onClick(View v)
+//					{
+//						registry.setDisabled(service.getId());
+//						adapter.remove(service);
+//						adapter.notifyDataSetChanged();
+//					}
+//				});
 			}
 			
 			return v;

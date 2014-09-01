@@ -14,7 +14,7 @@ import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
-import static com.appglue.library.AppGlueConstants.SHOULD_BE_RUNNING;
+import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService {
@@ -25,7 +25,7 @@ public class CompositeService {
     private long numeral;
     private Interval interval;
 
-    private boolean shouldBeRunning;
+    private boolean enabled;
 
     public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 
@@ -40,7 +40,7 @@ public class CompositeService {
         this.name = ""; // We know that the name can never be blank so we're good
         this.description = "";
         this.components = new ArrayList<ServiceDescription>();
-        this.shouldBeRunning = false;
+        this.enabled = false;
         this.componentSearch = new TST<ServiceDescription>();
     }
 
@@ -59,21 +59,21 @@ public class CompositeService {
         return new CompositeService("Nothing", "Nothing", null, false);
     }
 
-    public CompositeService(long id, String name, String description, boolean shouldBeRunning) {
+    public CompositeService(long id, String name, String description, boolean enabled) {
         this(false);
         this.id = id;
         this.name = name;
         this.description = description;
-        this.shouldBeRunning = shouldBeRunning;
+        this.enabled = enabled;
     }
 
-    public CompositeService(String name, String description, ArrayList<ServiceDescription> services, boolean shouldBeRunning) {
+    public CompositeService(String name, String description, ArrayList<ServiceDescription> services, boolean enabled) {
         this(false);
         this.id = (long) CompositeService.NEW_COMPOSITE_PLACEHOLDER;
         this.name = name;
         this.components = services;
         this.description = description;
-        this.shouldBeRunning = shouldBeRunning;
+        this.enabled = enabled;
 
         if (services == null)
             return;
@@ -98,7 +98,7 @@ public class CompositeService {
         this.numeral = numeral;
         this.interval = interval;
 
-        this.shouldBeRunning = false;
+        this.enabled = false;
     }
 
 
@@ -114,7 +114,7 @@ public class CompositeService {
             this.componentSearch.put(s.getClassName(), s);
         }
 
-        this.shouldBeRunning = false;
+        this.enabled = false;
     }
 
     /**
@@ -191,12 +191,12 @@ public class CompositeService {
         this.components = components;
     }
 
-    public boolean isShouldBeRunning() {
-        return shouldBeRunning;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setShouldBeRunning(boolean shouldBeRunning) {
-        this.shouldBeRunning = shouldBeRunning;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public boolean containsTrigger() {
@@ -211,7 +211,7 @@ public class CompositeService {
 
         // FIXME WHAT ABOUT ACTIVE_OR_TIMER and IS_RUNNING?
 
-        this.shouldBeRunning = c.getInt(c.getColumnIndex(prefix + SHOULD_BE_RUNNING)) == 1;
+        this.enabled = c.getInt(c.getColumnIndex(prefix + ENABLED)) == 1;
         this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
 
         int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));

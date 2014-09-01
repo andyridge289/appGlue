@@ -209,16 +209,8 @@ public class Registry {
      * @param id The id of the service to check
      * @return And indication of whether the thing is running or not
      */
-    public Pair<Boolean, Boolean> running(long id) {
-        return dbHandler.compositeRunning(id);
-    }
-
-    public boolean isCompositeActive(long id) {
-        return dbHandler.compositeRunning(id).first;
-    }
-
-    public boolean isCompositeRunning(long id) {
-        return dbHandler.compositeRunning(id).second;
+    public boolean enabled(long id) {
+        return dbHandler.compositeEnabled(id);
     }
 
     public ArrayList<CompositeService> getIntendedRunningServices() {
@@ -257,39 +249,93 @@ public class Registry {
 //        return dbHandler.startComposite(compositeId);
 //    }
 
-    public boolean compositeSuccess(long compositeId) {
-        this.setIsntRunning(compositeId);
-        // If a composite is successful, we don't need to worry about the input or output data
-        return dbHandler.addToLog(compositeId, null, "", null, null, LogItem.LOG_COMPOSITE_SUCCESS);
+    /**
+     * Start the composite and give back the execution id of the instance of the running composite.
+     *
+     * @param id The composite to start
+     * @return The execution ID of the running instance of the composite
+     */
+    public long startComposite(long id) {
+        return dbHandler.startComposite(id);
     }
 
-    public boolean componentSuccess(long compositeId, ServiceDescription component, String message, Bundle outputData) {
+    public boolean compositeSuccess(long compositeId, long executionInstance) {
+        return dbHandler.stopComposite(compositeId, executionInstance, LogItem.SUCCESS);
+    }
+
+    public boolean componentSuccess(long compositeId, long executionInstance, ServiceDescription component, String message, Bundle outputData) {
         // If a component works, then say what output it gave back to the orchestrator
-        return dbHandler.addToLog(compositeId, component, message, null, outputData, LogItem.LOG_SUCCESS);
+        return dbHandler.addToLog(compositeId, executionInstance, component, message, null, outputData, LogItem.SUCCESS);
     }
 
-    public boolean componentFail(long compositeId, ServiceDescription component, Bundle inputData, String message) {
-        this.setIsntRunning(compositeId);
+    public void genericTriggerFail(ServiceDescription component, Bundle inputData, String error) {
+        dbHandler.addToLog(-1L, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL);
+    }
+
+    /**
+     * Record that a component has failed to execute properly, and stop the associated composite
+     *
+     * @param compositeId
+     * @param executionInstance
+     * @param component
+     * @param inputData
+     * @param message
+     * @return
+     */
+    public boolean componentFail(long compositeId, long executionInstance, ServiceDescription component, Bundle inputData, String message) {
         // If a component fails, we should tell the user what the input to the component was when it failed
-        return dbHandler.addToLog(compositeId, component, message, inputData, null, LogItem.LOG_FAIL);
+        boolean logComponent = dbHandler.addToLog(compositeId, executionInstance, component, message, inputData, null, LogItem.COMPONENT_FAIL);
+        boolean logComposite = dbHandler.stopComposite(compositeId, executionInstance, LogItem.COMPONENT_FAIL);
+
+        if(logComponent && logComposite) {
+            return true;
+        } else {
+            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, inputs set: %b", compositeId,
+                    executionInstance, component.getClassName(), inputData != null));
+            return false;
+        }
     }
 
-    public boolean compositeStopped(long compositeId, String message) {
-        this.setIsntRunning(compositeId);
-        // If a composite stops, I'm not really sure what we want to be honest
-        boolean ret = dbHandler.addToLog(compositeId, null, message, null, null, LogItem.LOG_STOP);
-        this.finishComposite(compositeId);
-        return ret;
+    public boolean messageFail(long compositeId, long executionInstance, ServiceDescription component, Bundle inputData) {
+        boolean logComponent = dbHandler.addToLog(compositeId, executionInstance, component, "Failed to send message with data ", inputData, null, LogItem.MESSAGE_FAIL);
+        boolean logComposite = dbHandler.stopComposite(compositeId, executionInstance, LogItem.COMPONENT_FAIL);
+
+        if(logComponent && logComposite) {
+            return true;
+        } else {
+            Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, inputs set: %b", compositeId,
+                    executionInstance, component.getClassName(), inputData != null));
+            return false;
+        }
     }
 
-    public boolean filter(CompositeService cs, ServiceDescription sd, ServiceIO io, String condition, Bundle inputData, Object value) {
-        this.setIsntRunning(cs.getId());
+    public boolean compositeStopped(long compositeId, long executionInstance, String message) {
+        // If a composite stops, I'm not really sure what we want to be honest, jsut record that the user has stopped it?
+        return dbHandler.stopComposite(compositeId, executionInstance, LogItem.COMPOSITE_STOP);
+    }
+
+    public boolean filter(CompositeService cs, long executionInstance, ServiceDescription sd, ServiceIO io, String condition, Bundle inputData, Object value) {
         // When we stop at a filter, say what the data was at that point
-        return dbHandler.addToLog(cs.getId(), sd, "Stopped execution: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"", inputData, null, LogItem.LOG_FILTER);
+        boolean logComponent = dbHandler.addToLog(cs.getId(), executionInstance, sd,
+                "Stopped execution at filter: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"",
+                inputData, null, LogItem.FILTER);
+        boolean logComposite = dbHandler.stopComposite(cs.getId(), executionInstance, LogItem.FILTER);
+
+        if(logComposite && logComponent) {
+            return true;
+        } else {
+            Log.e(TAG, String.format("Failed to register component filter stop: %d, %d, %s, inputs set: %b", cs.getId(),
+                    executionInstance, sd.getClassName(), inputData != null));
+            return false;
+        }
     }
 
-    public ArrayList<LogItem> getLog() {
-        return dbHandler.getLog();
+    public long isCompositeRunning(long compositeId) {
+        return dbHandler.isCompositeRunning(compositeId);
+    }
+
+    public boolean isInstanceRunning(long compositeId, long executionInstance) {
+        return dbHandler.isInstanceRunning(compositeId, executionInstance);
     }
 
     public boolean updateWiring(CompositeService cs) {
@@ -300,44 +346,13 @@ public class Registry {
 
     }
 
-    public boolean setIsRunning(long id) {
-        return dbHandler.setCompositeIsRunning(id, 1);
+    public boolean setEnabled(long id, boolean enabled) {
+        return dbHandler.setCompositeActive(id, enabled ? 1 : 0);
     }
 
-    public boolean setIsntRunning(long id) {
-        return dbHandler.setCompositeIsRunning(id, 0);
-    }
-
-    public boolean setShouldBeRunning(long id) {
-        return dbHandler.setCompositeActive(id, 1);
-    }
-
-    public boolean setShouldntBeRunning(long id) {
-        return dbHandler.setCompositeActive(id, 0);
-    }
-
-
-    public boolean shouldBeRunning(long id) {
-        return dbHandler.shouldBeRunning(id);
-    }
-
-    public void startComposite(long id) {
-        setIsRunning(id);
-        setShouldBeRunning(id);
-        dbHandler.startComposite(id); // FIXME We need to return this somewhere so the orchestrator knows what it is
-    }
-
-    public void stopComposite(long id) {
-        setShouldntBeRunning(id);
-    }
-
-    public void stopTemp() {
-        stopComposite(this.service.getId());
-    }
-
-    public void finishComposite(long id) {
-        setIsntRunning(id);
-        setShouldntBeRunning(id);
+    public boolean hasFinished(long id) {
+        // FIXME This needs doing
+        return false;
     }
 
     public ArrayList<ServiceDescription> getMatchingForOutputs(ServiceDescription prior) {
@@ -358,5 +373,9 @@ public class Registry {
 
     public ServiceDescription getComponent(String className) {
         return dbHandler.getComponent(className);
+    }
+
+    public ArrayList<LogItem> getLog(CompositeService cs) {
+        return dbHandler.getLog(cs);
     }
 }

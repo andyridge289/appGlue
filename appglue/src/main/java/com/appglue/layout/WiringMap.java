@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,11 +52,11 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>, Ab
 	private ServiceDescription second;
 	
 	private ListView outputList;
-    private SparseArray<Integer> outputPositions;
+    private SparseIntArray outputPositions;
     private Queue<Integer> outputOffsets;
 
 	private ListView inputList;
-    private SparseArray<Integer> inputPositions;
+    private SparseIntArray inputPositions;
     private Queue<Integer> inputOffsets;
 
     // I don't think we actually care what these are
@@ -528,16 +529,16 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>, Ab
     public int calculateIncrementalOffset(AbsListView v, final int firstPosition, final int visibleItems, boolean input) {
 
         // Remember previous positions, if any
-        SparseArray<Integer> previousPositions = input ? inputPositions : outputPositions;
+        SparseIntArray previousPositions = input ? inputPositions : outputPositions;
 
         // Store new positions
         if (input) {
-            inputPositions = new SparseArray<Integer>();
+            inputPositions = new SparseIntArray();
             for (int i = 0; i < visibleItems; i++) {
                 inputPositions.put(firstPosition + i, v.getChildAt(i).getTop());
             }
         } else {
-            outputPositions = new SparseArray<Integer>();
+            outputPositions = new SparseIntArray();
             for (int i = 0; i < visibleItems; i++) {
                 outputPositions.put(firstPosition + i, v.getChildAt(i).getTop());
             }

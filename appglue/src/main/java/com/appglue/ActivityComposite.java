@@ -26,6 +26,7 @@ import com.appglue.Constants.ProcessType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.library.LocalStorage;
+import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -57,7 +58,9 @@ public class ActivityComposite extends Activity
 		if(compositeId == -1){ finish(); return; }
 		
 		cs = registry.getComposite(compositeId);
-		
+        ArrayList<LogItem> logs = registry.getLog(compositeId);
+        Log.d(TAG, "Lots of logs: " + logs.size());
+
 		edit = false;
 		
 		setup();
@@ -125,7 +128,9 @@ public class ActivityComposite extends Activity
 		
 		// Do a look up in the DB to see if the composite is currently running (right now) or not
         CheckBox runningCheck = (CheckBox) findViewById(R.id.composite_running);
-		runningCheck.setChecked(registry.isCompositeRunning(cs.getId()));
+
+        long instanceId = registry.isCompositeRunning(cs.getId());
+		runningCheck.setChecked(instanceId != -1);
 
         CheckBox activeCheck = (CheckBox) findViewById(R.id.composite_active);
 		if(cs.getComponents().get(0).getProcessType() == ProcessType.TRIGGER)
@@ -138,7 +143,7 @@ public class ActivityComposite extends Activity
 		}
 		
 		// It doesn't matter what it is, just set the check or not
-		activeCheck.setChecked(registry.isCompositeActive(cs.getId()));
+		activeCheck.setChecked(registry.enabled(cs.getId()));
 		
 		ListView componentList = (ListView) findViewById(R.id.composite_component_list);
 		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponents()));

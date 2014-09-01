@@ -8,6 +8,7 @@ public class PhoneNumber extends Text
 		this.name = "Phone Number";
 		this.className = PhoneNumber.class.getCanonicalName();
 		this.value = "+440000000000";
+        this.sensitivity = Sensitivity.SENSITIVE;
 	}
 	
 	public PhoneNumber(String value)

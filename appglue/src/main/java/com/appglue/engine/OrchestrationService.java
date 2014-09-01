@@ -90,10 +90,10 @@ public class OrchestrationService extends Service
                     return false;
                 }
 
-                Pair<Boolean, Boolean> runningStatus = registry.running(cs.getId());
+                boolean enabled = registry.enabled(cs.getId());
 
                 if (!test) {
-                    if ((!runningStatus.first || !runningStatus.second) && duration != 0) // Then it shouldn't be running
+                    if ((!enabled) && duration != 0) // Then it shouldn't be running
                     {
                         // So say it isn't
                         return false;

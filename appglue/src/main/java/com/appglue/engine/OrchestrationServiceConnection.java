@@ -31,11 +31,11 @@ import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -68,6 +68,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
     private Bundle[] sent;
     private Bundle[] received;
+
+    private long executionInstance = -1L; // Initialise this to -1
     
     public OrchestrationServiceConnection(Context context, CompositeService cs, boolean test)
     {   
@@ -76,7 +78,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
     	this.context = context;
     	
     	this.cs = cs;
-        Log.e(TAG, " Got this many components in the composite: " + cs.getComponents().size());
     	this.index = 0;
     	this.test = test;
     	
@@ -97,18 +98,18 @@ public class OrchestrationServiceConnection implements ServiceConnection
         {	
         	Test.isValidBundle(index, cs.getComponents().size(), message.getData(), true);
         	
-        	if(registry.shouldBeRunning(cs.getId())) {
+        	if(registry.hasFinished(cs.getId())) {
                 sent[index] = message.getData();
                 messageSender.send(message);
             } else {
                 // Indicate that we've stopped prematurely
                 if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely");
-                registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
+//                registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
         	}
         }
         catch (RemoteException e) 
         {
-            registry.componentFail(cs.getId(), cs.getComponents().get(index), null, "Execution stopped because of a failure with messages, probably best to restart the service and try again");
+            registry.messageFail(cs.getId(), executionInstance, cs.getComponents().get(index), sent[index]);
         }
 	}
 
@@ -126,7 +127,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		message = Message.obtain(null, ComposableService.MSG_OBJECT);
     	message.replyTo = messageReceiver;
     	
-    	registry.startComposite(cs.getId());
+    	executionInstance = registry.startComposite(cs.getId());
 		this.doBindService(cs.getComponents().get(0));
 	}
 	
@@ -155,7 +156,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
             return;
         }
 
-		registry.startComposite(cs.getId());
+		executionInstance = registry.startComposite(cs.getId());
 		this.doBindService(cs.getComponents().get(position));
 	}
 	
@@ -172,11 +173,11 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		Bundle messageData = message.getData();
         Library.printBundle(messageData);
 		
-		if(!registry.shouldBeRunning(cs.getId()))
+		if(registry.hasFinished(cs.getId()))
     	{
             // Indicate that we've stopped prematurely
             if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely");
-            registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
+//            registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
 			return;
     	}
 		
@@ -185,7 +186,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
 			// Make the composition execution thing take into account the filter values
 			ArrayList<Bundle> outputs = messageData.getParcelableArrayList(ComposableService.INPUT);
 
-            // FIXME Apparently outputs is dead here?
             if(outputs == null)
                 Log.e(TAG, "Message data is null...?");
             else if(outputs.size() > 0) {
@@ -208,7 +208,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
                         long outputId = b.getLong(FILTER_OUTPUTID);
                         ServiceIO io = currentComponent.getOutput(outputId);
 
-                        registry.filter(cs, currentComponent, io, b.getString(FILTER_CONDITION), messageData, b.getString(FILTER_VALUE));
+                        registry.filter(cs, executionInstance, currentComponent, io, b.getString(FILTER_CONDITION), messageData, b.getString(FILTER_VALUE));
                     }
 					return;
 				}
@@ -233,11 +233,11 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		messageData.putBundle(ComposableService.DESCRIPTION, description);
 		
 		// Do one last check before we send
-		if(!registry.shouldBeRunning(cs.getId()))
+		if(registry.hasFinished(cs.getId()))
     	{
             // Indicate that we've stopped prematurely
             if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely");
-            registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
+//            registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
 			return;
     	}
 		
@@ -496,9 +496,9 @@ public class OrchestrationServiceConnection implements ServiceConnection
         		osc.doUnbindService();
         		
         		if(!osc.test && m.what != ComposableService.MSG_FAIL)
-        			osc.registry.compositeSuccess(osc.cs.getId());
+        			osc.registry.compositeSuccess(osc.cs.getId(), executionInstance);
         		else if(!osc.test)
-        			osc.registry.componentFail(osc.cs.getId(), components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
+        			osc.registry.componentFail(osc.cs.getId(), executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
 
         		return null;
         	}
@@ -559,7 +559,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
                     Bundle b = m.getData();
                     ArrayList<Bundle> dummyList = b.getParcelableArrayList(ComposableService.INPUT);
                     Bundle errorBundle = dummyList.get(0);
-                    Registry.getInstance(context).componentFail(osc.cs.getId(), osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
+                    Registry.getInstance(context).componentFail(osc.cs.getId(), executionInstance, osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
 
                     SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 
