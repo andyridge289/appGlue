@@ -3,6 +3,5 @@
     <item
         android:id="@+id/story_components_wiring"
         android:title="@string/change_view"
-        android:showAsAction="never"
         />
 </menu>

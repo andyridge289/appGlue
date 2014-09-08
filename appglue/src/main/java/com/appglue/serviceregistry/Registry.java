@@ -31,12 +31,13 @@ public class Registry {
     // Save things in a variable
     // Null the variable when something relevant changes
     // Then do a lookup and if it ain't null just use it
+    // FIXME The caches should be in this rather than the local DB handler
 
     // This is whatever the current service being edited (or the last one to be edited).
     private CompositeService service;
 
     private Registry(Context context) {
-        dbHandler = new LocalDBHandler(context);
+        dbHandler = new LocalDBHandler(context, this);
 
         remoteCache = new HashMap<String, ServiceDescription>();
     }
@@ -275,12 +276,12 @@ public class Registry {
     /**
      * Record that a component has failed to execute properly, and stop the associated composite
      *
-     * @param compositeId
-     * @param executionInstance
-     * @param component
-     * @param inputData
-     * @param message
-     * @return
+     * @param compositeId ID of the composite containing the component that failed
+     * @param executionInstance The instance of the running composite that caused the problem
+     * @param component The class of the component that failed
+     * @param inputData The input that was passed to the component when it failed
+     * @param message The message that the component gave when it failed
+     * @return An indicator of the success or failure of the logging
      */
     public boolean componentFail(long compositeId, long executionInstance, ServiceDescription component, Bundle inputData, String message) {
         // If a component fails, we should tell the user what the input to the component was when it failed
@@ -310,7 +311,7 @@ public class Registry {
     }
 
     public boolean compositeStopped(long compositeId, long executionInstance, String message) {
-        // If a composite stops, I'm not really sure what we want to be honest, jsut record that the user has stopped it?
+        // If a composite stops, I'm not really sure what we want to be honest, just record that the user has stopped it?
         return dbHandler.stopComposite(compositeId, executionInstance, LogItem.COMPOSITE_STOP);
     }
 
@@ -340,9 +341,7 @@ public class Registry {
 
     public boolean updateWiring(CompositeService cs) {
         dbHandler.updateWiring(cs);
-        boolean filters = dbHandler.updateFiltersAndValues(cs);
-
-        return filters;
+        return dbHandler.updateFiltersAndValues(cs);
 
     }
 
@@ -375,7 +374,7 @@ public class Registry {
         return dbHandler.getComponent(className);
     }
 
-    public ArrayList<LogItem> getLog(CompositeService cs) {
-        return dbHandler.getLog(cs);
+    public ArrayList<LogItem> getLog(long csId) {
+        return dbHandler.getLog(getComposite(csId));
     }
 }

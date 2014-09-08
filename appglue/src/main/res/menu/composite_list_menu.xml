@@ -1,34 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!--<item -->
-    <!--android:id="@+id/comp_list_simple"-->
-    <!--android:title="@string/comp_list_simple"-->
-    <!--android:showAsAction="ifRoom|withText" />-->
     <item
         android:id="@+id/comp_list_new"
         android:title="@string/comp_list_new"
-        android:showAsAction="ifRoom|withText" />
-    <!--<item-->
-    <!--android:id="@+id/composite_list_gplus_login"-->
-    <!--android:title="@string/google_plus_login"-->
-    <!--android:showAsAction="never" -->
-    <!--/>-->
-    <!--<item-->
-    <!--android:id="@+id/comp_list_running"-->
-    <!--android:title="@string/comp_list_running"-->
-    <!--android:showAsAction="never" />-->
+        />
     <item
         android:id="@+id/comp_list_log"
         android:title="@string/view_log"
-        android:showAsAction="never" />
-    <!--<item-->
-    <!--android:id="@+id/comp_list_story"-->
-    <!--android:title="@string/new_story"-->
-    <!--android:showAsAction="never"-->
-    <!--/>-->
+        />
     <item
         android:id="@+id/comp_list_settings"
         android:title="@string/settings"
-        android:showAsAction="never" />
+        />
 
 </menu>

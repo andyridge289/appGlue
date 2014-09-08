@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.ActionMode;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -35,6 +37,7 @@ import android.widget.Toast;
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
+import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.library.LocalStorage;
@@ -281,12 +284,12 @@ public class ActivityCompositeList extends Activity {
 //		}
     }
 
-    protected void onSaveInstanceState(Bundle icicle) {
+    protected void onSaveInstanceState(@NonNull Bundle icicle) {
         icicle.describeContents();
         // Not sure we need to save anything here
     }
 
-    protected void onRestoreInstanceState(Bundle icicle) {
+    protected void onRestoreInstanceState(@NonNull Bundle icicle) {
         icicle.describeContents();
         // So we probably don't need to restore anything back
     }
@@ -524,7 +527,14 @@ public class ActivityCompositeList extends Activity {
                 nameText.setText(cs.getName());
 
             ImageView icon = (ImageView) v.findViewById(R.id.service_icon);
-            AppDescription app = cs.getComponents().get(0).getApp();
+            ArrayList<ServiceDescription> components = cs.getComponents();
+
+//            Log.d(TAG, cs.getName() + ": " + components.size());
+//            for (int i = 0; i < components.size(); i++) {
+//                Log.d(TAG, components.keyAt(i) + ": alive");
+//            }
+
+            AppDescription app = components.get(0).getApp();
 
 
             if (app == null || app.getIconLocation() == null) {

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import com.appglue.Constants.ProcessType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
 import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
@@ -85,17 +87,17 @@ public class ActivityComposite extends Activity
             EditText descriptionEdit = (EditText) findViewById(R.id.composite_description_edit);
 			descriptionEdit.setText(cs.getDescription());
 			
-			ImageButton editComposition = (ImageButton) findViewById(R.id.composite_edit_composition);
-			editComposition.setOnClickListener(new OnClickListener() 
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					Intent intent = new Intent(ActivityComposite.this, ActivityCompositionCanvas.class);
-					intent.putExtra(KEY_COMPOSITE, cs.getId());
-					startActivity(intent);
-				}
-			});
+//			ImageButton editComposition = (ImageButton) findViewById(R.id.composite_edit_composition);
+//			editComposition.setOnClickListener(new OnClickListener()
+//			{
+//				@Override
+//				public void onClick(View v)
+//				{
+//					Intent intent = new Intent(ActivityComposite.this, ActivityCompositionCanvas.class);
+//					intent.putExtra(KEY_COMPOSITE, cs.getId());
+//					startActivity(intent);
+//				}
+//			});
 		}
 		else
 		{
@@ -201,8 +203,7 @@ public class ActivityComposite extends Activity
 		
 		public CompositeComponentAdapter(Context context, ArrayList<ServiceDescription> items)
 		{
-			super(context, R.layout.li_component_in_composite, items);
-			
+            super(context, R.layout.li_component_in_composite, items);
 			this.items = items;
 		}
 		

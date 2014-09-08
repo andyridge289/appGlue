@@ -48,10 +48,11 @@ public class CompositeService {
         this(false);
         this.name = name;
         this.description = description;
+
         this.components = components;
 
-        for (ServiceDescription s : components) {
-            this.componentSearch.put(s.getClassName(), s);
+        for (ServiceDescription sd : components) {
+            this.componentSearch.put(sd.getClassName(), sd);
         }
     }
 
@@ -78,11 +79,9 @@ public class CompositeService {
         if (services == null)
             return;
 
-        for (ServiceDescription s : services) {
-            this.componentSearch.put(s.getClassName(), s);
+        for (ServiceDescription sd : components) {
+            this.componentSearch.put(sd.getClassName(), sd);
         }
-
-
     }
 
     public CompositeService(long id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval) {
@@ -91,8 +90,8 @@ public class CompositeService {
         this.name = name;
         this.components = services;
 
-        for (ServiceDescription s : services) {
-            this.componentSearch.put(s.getClassName(), s);
+        for (ServiceDescription sd : components) {
+            this.componentSearch.put(sd.getClassName(), sd);
         }
 
         this.numeral = numeral;
@@ -110,8 +109,8 @@ public class CompositeService {
 
         this.components = orchestration;
 
-        for (ServiceDescription s : orchestration) {
-            this.componentSearch.put(s.getClassName(), s);
+        for (ServiceDescription sd : components) {
+            this.componentSearch.put(sd.getClassName(), sd);
         }
 
         this.enabled = false;
@@ -133,13 +132,18 @@ public class CompositeService {
         this.name = name;
     }
 
-    public void addComponent(ServiceDescription service) {
+    public void addAtEnd(ServiceDescription service) {
         this.componentSearch.put(service.getClassName(), service);
         this.components.add(service);
     }
 
     public void addComponent(int position, ServiceDescription component) {
         this.componentSearch.put(component.getClassName(), component);
+
+        if(components.size() < position - 1) {
+            // FIXME Then it needs to be added after another one has been put in
+        }
+
         this.components.add(position, component);
     }
 

@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 
 			if(position == -1)
 			{
-				cs.addComponent(registry.getAtomic(className));
+				cs.addComponent(0, registry.getAtomic(className));
 			}
 			else
 			{

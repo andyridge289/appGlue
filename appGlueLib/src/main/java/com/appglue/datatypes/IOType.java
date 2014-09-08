@@ -90,7 +90,7 @@ public abstract class IOType
         this.sensitivity = sensitivity;
     }
 
-    public abstract Object getFromBundle(Bundle b, String key, Object defautValue);
+    public abstract Object getFromBundle(Bundle b, String key, Object defaultValue);
     public abstract void addToBundle(Bundle b, Object o, String key);
 	
 	public abstract String toString(Object value); // One for any OTHER iotype

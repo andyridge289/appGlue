@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.appglue.engine.CompositeService;
 import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 
@@ -32,7 +33,12 @@ public class ActivityLog extends Activity
 		TextView noLog = (TextView) findViewById(R.id.no_log);
 		
 		Registry registry = Registry.getInstance(this);
-		ArrayList<LogItem> log = registry.getLog();
+        ArrayList<CompositeService> composites = registry.getComposites(false);
+
+        if(composites.size() == 0)
+            return;
+
+		ArrayList<LogItem> log = registry.getLog(composites.get(0).getId()); // TODO This needs to be clever
 		
 		if(log == null || log.size() == 0)
 		{
@@ -88,7 +94,7 @@ public class ActivityLog extends Activity
 			logTitle.setText(log.getComposite().getName());
 			
 			TextView logTime = (TextView) v.findViewById(R.id.log_time);
-//			logTime.setText(log.getTime());
+			logTime.setText("");
 			
 			TextView logMessage = (TextView) v.findViewById(R.id.log_message);
 			logMessage.setText(log.getMessage());

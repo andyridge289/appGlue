@@ -10,8 +10,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.util.LongSparseArray;
+import android.support.v4.util.LongSparseArray;
 import android.util.Pair;
+import android.util.SparseArray;
 
 import com.appglue.ComposableService;
 import com.appglue.Constants.Interval;
@@ -138,12 +139,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private ArrayList<String> queries = new ArrayList<String>();
 
+    private Registry registry;
+
     /**
      * Creates a new class to handle all the database crap
      *
      * @param context The context we need to create the stuff
      */
-    public LocalDBHandler(Context context) {
+    public LocalDBHandler(Context context, Registry registry) {
         super(context, DB_NAME, null, DB_VERSION);
 
         appMap = new TST<AppDescription>();
@@ -153,6 +156,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ioMap = new LongSparseArray<ServiceIO>();
         typeMap = new LongSparseArray<IOType>();
         tagMap = new LongSparseArray<Tag>();
+
+        this.registry = registry;
 
         cacheIOTypes();
         cacheTags();
@@ -978,8 +983,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         boolean allSuccess = true;
 
         // Loop through the inputs to the second service in each pair, and then add a connection for the relevant output to the relevant input
-        for (ServiceDescription current : services) {
+        for (int i = 0; i < services.size(); i++) {
             // Loop through the current inputs
+            ServiceDescription current = services.get(i);
+
             ArrayList<ServiceIO> currentInputs = current.getInputs();
             for (ServiceIO input : currentInputs) {
                 ServiceIO output = input.getConnection();
@@ -1065,7 +1072,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             // Get the output atomic
             ServiceDescription first = null;
             String firstClassName = c.getString(c.getColumnIndex(OUTPUT_CLASSNAME));
-            for (ServiceDescription service : cs.getComponents()) {
+
+            ArrayList<ServiceDescription> components = cs.getComponents();
+            for (int i = 0; i < components.size(); i++) {
+                ServiceDescription service = components.get(i);
                 if (service.getClassName().equals(firstClassName)) {
                     first = service;
                 }
@@ -1074,10 +1084,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (first == null)
                 continue;
 
+            // FIXME This won't work if the services have the same name
+
             // Get the ID of the input atomic
             ServiceDescription second = null;
             String secondClassName = c.getString(c.getColumnIndex(INPUT_CLASSNAME));
-            for (ServiceDescription service : cs.getComponents()) {
+
+            for (int i = 0; i < components.size(); i++) {
+                ServiceDescription service = components.get(i);
                 if (service.getClassName().equals(secondClassName)) {
                     second = service;
                 }
@@ -1130,8 +1144,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         // This could be zero to be fair
         addIOConnections(cs.getId(), cs.getComponents());
-
-        return;
     }
 
     public boolean deleteComposite(CompositeService cs) {
@@ -1353,8 +1365,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         if (LOG)
             Log.d(TAG, "Removed " + numRemoved + " from Filter for " + cs.getId() + "(" + cs.getName() + ")");
 
-        for (ServiceDescription c : components) {
+        for (int i = 0; i < components.size(); i++) {
             // Do the filter conditions on the outputs first
+            ServiceDescription c = components.get(i);
             ArrayList<ServiceIO> inputs = c.getInputs();
             for (ServiceIO o : inputs) {
                 if (o.isFiltered() != ServiceIO.UNFILTERED) {
@@ -1669,8 +1682,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             // And now get the stuff for the component log
-
-            long componentLogId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + ID));
+            // TODO Work out what to do with the component log id
+//            long componentLogId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + ID));
             String className = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + CLASSNAME));
             String componentMsg = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + MESSAGE));
 
@@ -1975,7 +1988,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             String className = c.getString(c.getColumnIndex(String.format("%s_%s", TBL_COMPOSITE_HAS_COMPONENT, CLASSNAME)));
-            ServiceDescription currentComponent = null;
+            ServiceDescription currentComponent;
 
             if (componentMap.contains(className)) {
                 // Get the component out if it's already in there
@@ -2093,7 +2106,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 String row = DatabaseUtils.dumpCurrentRowToString(c);
                 Log.e(TAG, "No classname: " + row);
             }
-            ServiceDescription currentComponent = null;
+            ServiceDescription currentComponent;
 
             if (componentMap.contains(className)) {
                 // Get the component out if it's already in there

@@ -33,7 +33,7 @@
         <activity
             android:name=".ActivityCompositeList"
             android:label="@string/application_name"
-            android:theme="@android:style/Theme.Holo.Light">
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
 
         <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,54 +44,49 @@
 
         <activity
             android:name=".ActivityComponentList"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivityStory"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".ActivityStoryParameters"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name=".ActivityStoryComponents"
-            android:theme="@style/Theme.AppCompat.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivityComponent"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivityApp"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivityLog"
-            android:theme="@android:style/Theme.Holo.Light" />
-
-
-        <activity
-            android:name=".ActivityCompositionCanvas"
-            android:theme="@style/Theme.FixedSize" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivityComposite"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivityWiring"
             android:label="@string/application_name"
-            android:theme="@android:style/Theme.Holo.Light"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             android:screenOrientation="landscape" />
 
         <activity
             android:name=".ActivityRunning"
             android:label="@string/application_name"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <activity
             android:name=".ActivitySettings"
             android:label="appGlue"
-            android:theme="@android:style/Theme.Holo.Light" />
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
 
         <activity android:name=".ShortcutActivity">
@@ -190,17 +185,17 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-        // android.intent.action.PACKAGE_ADDED
-        // android.intent.action.PACKAGE_CHANGED
-        // android.intent.action.PACKAGE_DATA_CLEARED
-        // android.intent.action.PACKAGE_FIRST_LAUNCH
-        // android.intent.action.PACKAGE_FULLY_REMOVED
-        // android.intent.action.PACKAGE_INSTALL
-        // android.intent.action.PACKAGE_NEEDS_VERIFICATION
-        // android.intent.action.PACKAGE_REMOVED
-        // android.intent.action.PACKAGE_REPLACED
-        // android.intent.action.PACKAGE_RESTARTED
-        // android.intent.action.PACKAGE_VERIFIED
+        <!--// android.intent.action.PACKAGE_ADDED-->
+        <!--// android.intent.action.PACKAGE_CHANGED-->
+        <!--// android.intent.action.PACKAGE_DATA_CLEARED-->
+        <!--// android.intent.action.PACKAGE_FIRST_LAUNCH-->
+        <!--// android.intent.action.PACKAGE_FULLY_REMOVED-->
+        <!--// android.intent.action.PACKAGE_INSTALL-->
+        <!--// android.intent.action.PACKAGE_NEEDS_VERIFICATION-->
+        <!--// android.intent.action.PACKAGE_REMOVED-->
+        <!--// android.intent.action.PACKAGE_REPLACED-->
+        <!--// android.intent.action.PACKAGE_RESTARTED-->
+        <!--// android.intent.action.PACKAGE_VERIFIED-->
 
 
     </application>

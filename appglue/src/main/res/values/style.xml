@@ -53,7 +53,6 @@
 	    <item name="android:layout_height">wrap_content</item>
 	    <item name="android:gravity">center</item>
         <item name="android:scaleType">center</item>
-        <item name="android:textAllCaps">true</item>
        	<item name="android:paddingLeft">10dip</item>
        	<item name="android:paddingRight">0dip</item>
        	<item name="android:paddingTop">0dip</item>
@@ -85,7 +84,6 @@
 	    <item name="android:background">@drawable/title_bg</item>
 	    <item name="android:textColor">@color/dim_text</item>
 	    <item name="android:gravity">center</item>
-	    <item name="android:textAllCaps">true</item>
 	    <item name="android:layout_gravity">center</item>
 	    <item name="android:paddingTop">5dip</item>
 	    <item name="android:paddingBottom">5dip</item>

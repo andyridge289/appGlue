@@ -193,7 +193,7 @@ public abstract class ComposableService extends Service
             	return returnMessage;
             }
             
-            // At this point, o should be an arraylist of returned values
+            // At this point, o should be an array list of returned values
             
             Bundle newMessageData = new Bundle();
             newMessageData.putParcelableArrayList(INPUT, o);

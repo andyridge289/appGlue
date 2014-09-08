@@ -19,7 +19,7 @@ class AdapterComponentListSearch extends AdapterComponentList {
     public AdapterComponentListSearch(Context context, ArrayList<ServiceDescription> items,
                                       FragmentComponentListSearch searchFragment) {
         super(context, items);
-        FragmentComponentListSearch searchFragment1 = searchFragment;
+//        FragmentComponentListSearch searchFragment1 = searchFragment;
     }
 
     public Filter getFilter() {

@@ -1,41 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
     <group android:id="@+id/comp_context_rungroup">
         <item
+
             android:id="@+id/comp_context_run"
             android:title="@string/run"
-            android:showAsAction="ifRoom|withText" />
-        <!--android:icon="@drawable/ab_run"-->
+            />
         <item
             android:id="@+id/comp_context_timer"
             android:title="@string/schedule"
-            android:showAsAction="ifRoom|withText" />
-        <!--android:icon="@drawable/ab_timer"-->
+            />
         <item
             android:id="@+id/comp_context_shortcut"
             android:title="@string/create_shortcut"
             android:icon="@drawable/ab_shortcut"
-            android:showAsAction="ifRoom|withText" />
+            />
     </group>
     <group android:id="@+id/comp_context_singlegroup">
         <item
         android:id="@+id/comp_context_view"
         android:title="@string/view"
         android:icon="@drawable/ab_about"
-        android:showAsAction="ifRoom|withText" />
+        />
         <item
             android:id="@+id/comp_context_edit"
             android:title="@string/edit"
-            android:showAsAction="ifRoom|withText" />
-        <!--android:icon="@drawable/ab_edit"-->
-        <!--<item -->
-        <!--android:id="@+id/comp_context_editstory"-->
-        <!--android:title="@string/edit_story"-->
-        <!--android:showAsAction="ifRoom|withText" />-->
-    </group>
+            />
+            </group>
     <item
         android:id="@+id/comp_context_delete"
         android:title="@string/delete"
-        android:showAsAction="ifRoom|withText" />
-    <!--android:icon="@drawable/ab_delete"-->
+        />
 </menu>

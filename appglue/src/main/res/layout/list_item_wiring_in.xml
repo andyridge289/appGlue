@@ -8,7 +8,8 @@
         android:id="@+id/endpoint_container"
         android:layout_width="48dip"
         android:layout_height="48dip"
-        android:layout_alignParentLeft="true" >
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true">
 
         <LinearLayout
             android:id="@+id/endpoint"

@@ -3,7 +3,6 @@ package com.appglue;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -17,22 +16,15 @@ import android.widget.TextView;
 
 import com.appglue.Constants.Interval;
 import com.appglue.engine.CompositeService;
-import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.RUN_NOW;
 
 public class ActivityRunning extends Activity
 {
 	private Registry registry;
 
-    private RunningAdapter adapter;
-	
-	@Override
+    @Override
 	public void onCreate(Bundle icicle)
 	{
 		setContentView(R.layout.running);
@@ -42,7 +34,7 @@ public class ActivityRunning extends Activity
         ArrayList<CompositeService> runningServices = registry.getIntendedRunningServices();
 		
 		ListView runningList = (ListView) findViewById(R.id.running_list);
-		adapter = new RunningAdapter(this, runningServices);
+        RunningAdapter adapter = new RunningAdapter(this, runningServices);
 		runningList.setAdapter(adapter);
 		
 		ActionBar actionBar = getActionBar();

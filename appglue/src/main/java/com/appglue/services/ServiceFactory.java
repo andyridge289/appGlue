@@ -43,7 +43,6 @@ import static com.appglue.Constants.TAG;
 public class ServiceFactory {
 
     private static ServiceFactory factory;
-    private Context context;
 
     public static ServiceFactory getInstance(Registry registry, Context context) throws JSONException {
         if (factory == null) {
@@ -57,7 +56,6 @@ public class ServiceFactory {
     private ServiceFactory(Registry registry, Context context) throws JSONException {
 
         String appData = setupComposer();
-        this.context = context;
 
         ArrayList<String> services = new ArrayList<String>();
         services.add(setupHelloService());

@@ -20,6 +20,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.appglue.ActivityLog;
 import com.appglue.ComposableService;
@@ -31,7 +32,6 @@ import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
-import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 
 import java.lang.reflect.InvocationTargetException;
@@ -99,12 +99,12 @@ public class OrchestrationServiceConnection implements ServiceConnection
         	Test.isValidBundle(index, cs.getComponents().size(), message.getData(), true);
         	
         	if(registry.hasFinished(cs.getId())) {
+                // Indicate that we've stopped prematurely
+                if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely: onServiceConnected");
+                //          TODO      registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
+            } else {
                 sent[index] = message.getData();
                 messageSender.send(message);
-            } else {
-                // Indicate that we've stopped prematurely
-                if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely");
-//                registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
         	}
         }
         catch (RemoteException e) 
@@ -176,8 +176,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		if(registry.hasFinished(cs.getId()))
     	{
             // Indicate that we've stopped prematurely
-            if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely");
-//            registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
+            if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely: doBindService");
+//          TODO  registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
 			return;
     	}
 		
@@ -236,8 +236,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		if(registry.hasFinished(cs.getId()))
     	{
             // Indicate that we've stopped prematurely
-            if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely");
-//            registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
+            if(LOG) Log.w(TAG, cs.getName() + " stopped prematurely - has Finished doBindService");
+//          TODO  registry.compositeStopped(cs.getId(), "Shouldn't be running but tried to execute.");
 			return;
     	}
 		

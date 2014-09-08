@@ -1,21 +1,8 @@
 package com.appglue.library;
 
-import android.database.Cursor;
-import android.os.Bundle;
-
 import com.appglue.engine.CompositeService;
-import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.ID;
-import static com.appglue.library.AppGlueConstants.LOG_TYPE;
-import static com.appglue.library.AppGlueConstants.MESSAGE;
-import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE;
-import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_EXECUTION_LOG;
-import static com.appglue.library.AppGlueConstants.TIME;
 
 public class LogItem 
 {
@@ -53,6 +40,9 @@ public class LogItem
         componentLogs = new ArrayList<ComponentLogItem>();
 	}
 
+    public long getLogId() {
+        return id;
+    }
 	public long getId() 
 	{
 		return executionInstanceId;
@@ -84,5 +74,13 @@ public class LogItem
 
     public void addComponentLog(ComponentLogItem cli) {
         componentLogs.add(cli);
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
     }
 }

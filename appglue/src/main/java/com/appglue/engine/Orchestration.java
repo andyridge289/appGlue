@@ -8,9 +8,6 @@ import com.appglue.TST;
 
 import java.util.ArrayList;
 
-/**
- * Created by andyridge on 03/06/2014.
- */
 public class Orchestration {
     private TST<ServiceDescription> components;
     private ArrayList<ArrayList<Edge>> edges;

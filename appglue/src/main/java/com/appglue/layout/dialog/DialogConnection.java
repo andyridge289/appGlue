@@ -18,11 +18,9 @@ import com.appglue.layout.WiringMap;
 import java.util.ArrayList;
 
 public class DialogConnection extends DialogCustom {
-    private WiringMap parent;
 
     public DialogConnection(final ActivityWiring context, final WiringMap parent, final ListView outputList, final ListView inputList, final ServiceIO item, final int position) {
         super(context, item);
-        this.parent = parent;
 
         // Show something to delete the links to this one
 

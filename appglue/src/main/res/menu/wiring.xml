@@ -3,11 +3,9 @@
     <item
         android:id="@+id/wiring_value_switch"
         android:title="@string/wiring_switch"
-        android:showAsAction="always"
         />
 	<item 
         android:id="@+id/wiring_done"
         android:title="@string/wiring_done"
-        android:showAsAction="always" 
         />
 </menu>

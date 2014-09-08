@@ -3,11 +3,9 @@
     <item
         android:id="@+id/story_params_ok"
         android:title="@string/param_done"
-        android:showAsAction="always" 
         />
     <item
         android:id="@+id/story_params_back"
         android:title="@string/param_cancel"
-        android:showAsAction="always"
         />
 </menu>

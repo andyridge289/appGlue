@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.util.Pair;
 
 import com.appglue.serviceregistry.Registry;
 

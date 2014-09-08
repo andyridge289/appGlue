@@ -71,7 +71,7 @@ public class FragmentStory extends Fragment implements OnClickListener
 
 			if(position == -1)
 			{
-				cs.addComponent(registry.getAtomic(className));
+				cs.addComponent(0, registry.getAtomic(className));
 			}
 			else
 			{

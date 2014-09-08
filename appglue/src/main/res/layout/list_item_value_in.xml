@@ -6,6 +6,7 @@
 
     <ImageView
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:id="@+id/set_button"
         android:layout_width="48dip"
         android:layout_height="48dip"
@@ -19,6 +20,7 @@
         android:layout_width="2dip"
         android:layout_height="48dip"
         android:layout_toRightOf="@id/set_button"
+        android:layout_toEndOf="@id/set_button"
         android:background="@color/black" />
 
     <TextView
@@ -27,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@id/mandatory_bar"
+        android:layout_toEndOf="@id/mandatory_bar"
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:textStyle="bold" />

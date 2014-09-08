@@ -2,9 +2,6 @@ package com.appglue;
 
 import java.util.ArrayList;
 
-/**
- * Created by andyridge on 30/05/2014.
- */
 public class TST<E> {
 
     private int N;

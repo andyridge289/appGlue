@@ -1,6 +1,5 @@
 package com.appglue;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -9,9 +8,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.CompositeService;
 import com.appglue.layout.DepthPageTransformer;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -37,7 +39,7 @@ import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.FIRST;
 import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
-public class ActivityWiring extends FragmentActivity implements ViewPager.OnPageChangeListener {
+public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPageChangeListener {
 	private CompositeService cs;
 
     private ViewPager wiringPager;
@@ -70,7 +72,7 @@ public class ActivityWiring extends FragmentActivity implements ViewPager.OnPage
 		super.onCreate(icicle);
 		setContentView(R.layout.activity_wiring);
 
-		ActionBar actionBar = getActionBar();
+		ActionBar actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setTitle(R.string.comp_title);
 
@@ -373,10 +375,12 @@ public class ActivityWiring extends FragmentActivity implements ViewPager.OnPage
             // Then it's the temp, we should save it
             String name = csNameEdit.getText().toString();
 
+            ArrayList<ServiceDescription> comps = cs.getComponents();
+
             if(name.equals("Temp name"))
             {
                 String tempName = "";
-                for(ServiceDescription sd : cs.getComponents())
+                for(ServiceDescription sd : comps)
                     tempName += sd.getName() + "  ";
 
                 name = tempName;
@@ -429,7 +433,7 @@ public class ActivityWiring extends FragmentActivity implements ViewPager.OnPage
                 if (first) {
                     cs.addComponent(position, component);
                 } else {
-                    cs.addComponent(component);
+                    cs.addComponent(0, component);
                 }
 
                 registry.updateCurrent();

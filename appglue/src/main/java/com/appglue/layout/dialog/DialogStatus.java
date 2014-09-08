@@ -96,7 +96,7 @@ class DialogStatus extends DialogCustom {
                 v = vi.inflate(R.layout.list_item_status, parent);
             }
 
-            TextView tv = (TextView) v.findViewById(R.id.status_text);
+//            TextView tv = (TextView) v.findViewById(R.id.status_text);
 
             return v;
         }

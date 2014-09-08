@@ -1,7 +1,7 @@
 package com.appglue;
 
 import android.database.Cursor;
-import android.util.LongSparseArray;
+import android.support.v4.util.LongSparseArray;
 
 import com.appglue.datatypes.IOType;
 import com.appglue.datatypes.Text;

@@ -16,7 +16,11 @@ public class Text extends IOType
     @Override
 	public Object getFromBundle(Bundle bundle, String key, Object defaultValue)
     {
-        return bundle.getString(key, (String) defaultValue);
+        String ret = bundle.getString(key);
+        if(ret == null)
+            return defaultValue;
+
+        return ret;
     }
 
     @Override

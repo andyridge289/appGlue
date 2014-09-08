@@ -14,7 +14,7 @@ public class Bool extends IOType
 	}
 
     @Override
-    public Object getFromBundle(Bundle bundle, String key, Object defautValue) {
+    public Object getFromBundle(Bundle bundle, String key, Object defaultValue) {
         return bundle.getBoolean(key, false);
     }
 

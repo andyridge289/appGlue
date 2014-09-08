@@ -1,12 +1,6 @@
 package com.appglue.library;
 
-import android.database.Cursor;
 import android.os.Bundle;
-
-import com.appglue.engine.CompositeService;
-
-import static com.appglue.Constants.ID;
-import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_EXECUTION_LOG;
 
 public class ComponentLogItem
 {
@@ -26,5 +20,33 @@ public class ComponentLogItem
         this.outputBundle = outputBundle;
         this.logType = logType;
         this.time = time;
+    }
+
+    public long id() {
+        return id;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Bundle getInputBundle() {
+        return inputBundle;
+    }
+
+    public Bundle getOutputBundle() {
+        return outputBundle;
+    }
+
+    public int getType() {
+        return logType;
+    }
+
+    public long time() {
+        return time;
     }
 }

@@ -110,6 +110,8 @@ public class TubeService extends ComposableService {
                     messages[j] = jsonMessages.getString(j);
                 }
 
+                // FIXME Add line message
+
                 Bundle lineBundle = new Bundle();
                 text.addToBundle(lineBundle, lineName, LINE_NAME);
                 text.addToBundle(lineBundle, status, LINE_STATUS);

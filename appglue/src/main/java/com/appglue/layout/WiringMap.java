@@ -10,9 +10,9 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -322,7 +322,7 @@ public class WiringMap extends LinearLayout implements Comparator<ServiceIO>, Ab
 	}
 	
 	@Override
-	protected void dispatchDraw(Canvas canvas) 
+	protected void dispatchDraw(@NonNull Canvas canvas)
 	{
         Paint paint = new Paint();
 		paint.setDither(true);

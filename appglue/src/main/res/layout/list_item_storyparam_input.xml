@@ -15,6 +15,7 @@
 	        android:layout_height="wrap_content"
 	        android:text="@string/io_name"
 	        android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
 	        android:layout_alignParentTop="true"
 	        android:textSize="20sp" />
 	
@@ -23,6 +24,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
 	        android:layout_below="@id/param_input_name"
 	        android:text="@string/io_type" />
     

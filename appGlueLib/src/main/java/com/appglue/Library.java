@@ -197,9 +197,9 @@ public class Library
 		for(int i = 0; i < data.length; i++)
 		{
 			if(addQuotes)
-				out.append("\"").append(data[i]).append("\"").append(i < data.length - 1 ? "," : "");
+				out.append("\"").append(data[i]).append("\"").append(i < data.length - 1 ? delimeter : "");
 			else
-				out.append(data[i]).append(i < data.length - 1 ? "," : "");
+				out.append(data[i]).append(i < data.length - 1 ? delimeter : "");
 		}
 		
 		return out.toString();

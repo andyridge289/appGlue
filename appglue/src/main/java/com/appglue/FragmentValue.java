@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,18 +36,6 @@ import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 public class FragmentValue extends FragmentVW {
     private int position;
 
-    private ServiceDescription pre;
-    private ServiceDescription current;
-    private ServiceDescription post;
-
-    private ListView outputList;
-    private ListView inputList;
-
-    private View noOutputs;
-    private View noInputs;
-    private View outputContainer;
-    private View inputContainer;
-
     public static Fragment create(int position) {
         FragmentValue fragment = new FragmentValue();
         Bundle args = new Bundle();
@@ -74,30 +63,28 @@ public class FragmentValue extends FragmentVW {
         TextView postName = (TextView) rootView.findViewById(R.id.post_name);
 
         ImageView preIcon = (ImageView) rootView.findViewById(R.id.pre_icon);
-        ImageView currentIcon = (ImageView) rootView.findViewById(R.id.current_icon);
         ImageView postIcon = (ImageView) rootView.findViewById(R.id.post_icon);
 
         RelativeLayout preContainer = (RelativeLayout) rootView.findViewById(R.id.value_pre);
-        RelativeLayout currentContainer = (RelativeLayout) rootView.findViewById(R.id.value_current);
         RelativeLayout postContainer = (RelativeLayout) rootView.findViewById(R.id.value_post);
 
-        outputContainer = rootView.findViewById(R.id.outputs);
-        inputContainer = rootView.findViewById(R.id.inputs);
-        noOutputs = rootView.findViewById(R.id.no_outputs);
-        noInputs = rootView.findViewById(R.id.no_inputs);
+        View outputContainer = rootView.findViewById(R.id.outputs);
+        View inputContainer = rootView.findViewById(R.id.inputs);
+        View noOutputs = rootView.findViewById(R.id.no_outputs);
+        View noInputs = rootView.findViewById(R.id.no_inputs);
 
-        outputList = (ListView) rootView.findViewById(R.id.output_list);
+        ListView outputList = (ListView) rootView.findViewById(R.id.output_list);
         outputList.setClickable(false);
 
-        inputList = (ListView) rootView.findViewById(R.id.input_list);
+        ListView inputList = (ListView) rootView.findViewById(R.id.input_list);
         inputList.setClickable(false);
 
         ArrayList<ServiceDescription> components = ((ActivityWiring) getActivity()).getComponents();
-        pre = position > 0 ? components.get(position - 1) : null;
-        current = position >= 0 ?
+        ServiceDescription pre = position > 0 ? components.get(position - 1) : null;
+        ServiceDescription current = position >= 0 ?
                 (position < components.size() ? components.get(position) : null) :
                 null;
-        post = position < components.size() - 1 ? components.get(position + 1) : null;
+        ServiceDescription post = position < components.size() - 1 ? components.get(position + 1) : null;
 
         LocalStorage localStorage = LocalStorage.getInstance();
 
@@ -111,11 +98,13 @@ public class FragmentValue extends FragmentVW {
                 Bitmap b;
 
                 if (firstApp == null) {
-                    preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    //FIXME Set background pre-13
+//                    preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
                     String iconLocation = pre.getApp().getIconLocation();
                     if (iconLocation.equals("")) {
-                        preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        //FIXME Set background pre-13
+//                        preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                     }
                     b = localStorage.readIcon(iconLocation);
                     preIcon.setImageBitmap(b);
@@ -162,11 +151,13 @@ public class FragmentValue extends FragmentVW {
                 Bitmap b;
 
                 if (firstApp == null) {
-                    postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    //FIXME Set background pre-13
+//                    postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
                     String iconLocation = post.getApp().getIconLocation();
                     if (iconLocation.equals("")) {
-                        postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        //FIXME Set background pre-13
+//                        postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                     }
                     b = localStorage.readIcon(iconLocation);
                     postIcon.setImageBitmap(b);

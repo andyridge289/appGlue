@@ -19,8 +19,7 @@ import com.appglue.library.LocalStorage;
 import java.util.ArrayList;
 
 class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
-    private final Context context;
-    private final int textViewResourceId;
+
     ArrayList<ServiceDescription> originalItems;
     private ArrayList<ServiceDescription> items;
 
@@ -32,8 +31,6 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
 
     public AdapterComponentList(Context context, ArrayList<ServiceDescription> items) {
         super(context, R.layout.component_list_item, items);
-        this.context = context;
-        this.textViewResourceId = R.layout.component_list_item;
 
         localStorage = LocalStorage.getInstance();
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -229,7 +230,7 @@ public class ActivityComponent extends ActionBarActivity {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle icicle) {
+    public void onRestoreInstanceState(@NonNull Bundle icicle) {
         super.onRestoreInstanceState(icicle);
 
         if (!icicle.containsKey(CLASSNAME))

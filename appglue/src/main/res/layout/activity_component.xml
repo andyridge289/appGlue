@@ -199,7 +199,6 @@
                     android:gravity="center_horizontal"
                     android:id="@+id/no_inputs"
                     android:text="@string/no_inputs"
-                    android:textAllCaps="true"
                     android:visibility="gone"
                     android:textColor="@color/dimmer_text" />
             </LinearLayout>

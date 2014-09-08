@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -492,7 +493,7 @@ public class FragmentStoryParameters extends Fragment
 		typeText.setText(type.getName());
 		
 		final View container = v.findViewById(R.id.filter_container);
-		final Button doneButton = (Button) v.findViewById(R.id.done_button);
+		final Button doneButton = (Button) v.findViewById(R.id.story_done_button);
 		final LinearLayout doneContainer = (LinearLayout) v.findViewById(R.id.button_container);
 		final Button filterButton = (Button) v.findViewById(R.id.filter_button_story);
 		final Button dontFilterButton = (Button) v.findViewById(R.id.dont_filter_button);

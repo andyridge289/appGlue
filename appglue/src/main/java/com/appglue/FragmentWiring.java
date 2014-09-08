@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -93,11 +94,14 @@ public class FragmentWiring extends FragmentVW {
                 Bitmap b;
 
                 if (firstApp == null) {
-                    firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    //FIXME Set background pre-13
+//                    firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+
                 } else {
                     String iconLocation = first.getApp().getIconLocation();
                     if (iconLocation.equals("")) {
-                        firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        //FIXME Set background pre-13
+//                        firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                     }
                     b = localStorage.readIcon(iconLocation);
                     firstIcon.setImageBitmap(b);
@@ -145,11 +149,13 @@ public class FragmentWiring extends FragmentVW {
                 Bitmap b;
 
                 if (secondApp == null) {
-                    secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    //FIXME Set background pre-13
+//                    secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
                     String iconLocation = first.getApp().getIconLocation();
                     if (iconLocation.equals("")) {
-                        secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+//                        secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        //FIXME Set background pre-13
                     }
                     b = localStorage.readIcon(iconLocation);
                     secondIcon.setImageBitmap(b);

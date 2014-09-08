@@ -3,12 +3,10 @@
     <item 
         android:id="@+id/simple_use_button"
         android:title="@string/simple_use"
-        android:showAsAction="always" 
         />
     <item
         android:id="@+id/simple_get_button"
         android:title="@string/simple_get"
         android:icon="@drawable/ic_menu_download"
-        android:showAsAction="always" 
         />
 </menu>

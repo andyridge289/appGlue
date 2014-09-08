@@ -21,9 +21,12 @@ public class Image extends IOType
 	}
 
     @Override
-    public Object getFromBundle(Bundle bundle, String key, Object defautValue)
+    public Object getFromBundle(Bundle bundle, String key, Object defaultValue)
     {
-        String filename = bundle.getString(key, (String) defautValue);
+        String filename = bundle.getString(key);
+        if(filename == null)
+            filename = (String) defaultValue;
+
         File f = new File(filename);
 
         try {

@@ -14,6 +14,7 @@
 	        android:layout_height="wrap_content"
 	        android:text="@string/io_name"
 	        android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
 	        android:layout_alignParentTop="true"
 	        android:textSize="20sp" />
 	
@@ -22,6 +23,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
 	        android:layout_below="@id/param_output_name"
 	        android:text="@string/io_type" />
     
@@ -31,11 +33,13 @@
     	    android:layout_height="wrap_content"
 			android:text="@string/filter"
 			android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
     	    />
     	
     	<LinearLayout
     	    android:id="@+id/button_container"
     	    android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
     	    android:layout_width="wrap_content"
     	    android:layout_height="wrap_content"
             style="?android:attr/buttonBarButtonStyle"
@@ -51,7 +55,7 @@
 	    	    />
 	    	
 	    	<Button
-	    	    android:id="@+id/done_button"
+	    	    android:id="@+id/story_done_button"
 	    	    android:layout_width="wrap_content"
 	    	    android:layout_height="wrap_content"
                 style="?android:attr/buttonBarButtonStyle"
@@ -106,13 +110,16 @@
 		    		    android:layout_width="fill_parent" 
 		    		    android:layout_height="wrap_content"
 		    		    android:layout_alignParentTop="true"
-		    		    android:layout_alignParentLeft="true" />
+		    		    android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        />
 	    		
 				    <FrameLayout 
 				        android:id="@android:id/tabcontent" 
 				        android:layout_width="fill_parent" 
 				        android:layout_height="wrap_content"
 				        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
 				        android:layout_below="@android:id/tabs"
 				        android:layout_alignParentBottom="true" >
 				    
@@ -137,31 +144,7 @@
 			    
 			    </RelativeLayout>
   			</TabHost>
-  			
-	   		
-	   		
-	   		<!-- <LinearLayout
-	   		    android:id="@+id/button_container"
-	   		    style="@style/FillWrap">
-	   		    
-	   		    <Button
-	   		        android:layout_width="0dip"
-	   		        android:layout_height="wrap_content"
-	   		        android:layout_weight="1"
-	   		        android:text="Sample Value"
-	   		        />
-	   		    
-	   		    <Button
-	   		        android:layout_width="0dip"
-	   		        android:layout_height="wrap_content"
-	   		        android:layout_weight="1"
-	   		        android:text="Custom Value"
-	   		        />
-			 
-   		    </LinearLayout> -->
-   		    
-	   		
-				 
+
    		</LinearLayout>
 		    
 	</LinearLayout>

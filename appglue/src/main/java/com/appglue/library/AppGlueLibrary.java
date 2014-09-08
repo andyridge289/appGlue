@@ -2,6 +2,7 @@ package com.appglue.library;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.appglue.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import static com.appglue.Constants.TAG;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -73,6 +75,24 @@ public class AppGlueLibrary {
         return json.toString();
     }
 
+    /**
+     * The positions should only go up as far as the size.
+     * i.e. the indexes and the keys should be the same set but might be in a different order.
+     *
+     * @param sparse The sparse array to convert
+     * @return The resultant ArrayList
+     */
+    public static ArrayList<ServiceDescription> sparseToList(SparseArray<ServiceDescription> sparse) {
+
+        ArrayList<ServiceDescription> list = new ArrayList<ServiceDescription>();
+
+        for(int i = 0; i < sparse.size(); i++) {
+            list.add(sparse.get(i));
+        }
+
+        return list;
+    }
+
     public static Bundle JSONToBundle(String stringJSON, ServiceDescription component, boolean input) {
 
         Bundle b = new Bundle();
@@ -87,7 +107,7 @@ public class AppGlueLibrary {
             }
 
         } catch(JSONException e) {
-            Log.e(TAG, "JSON string to bundle Fail FUCKSITCKS");
+            Log.e(TAG, "JSON string to bundle Fail FUCKSTICKS");
             // TODO Put something in the log maybe?
         }
 

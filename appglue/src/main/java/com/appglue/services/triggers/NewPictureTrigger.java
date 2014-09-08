@@ -7,9 +7,6 @@ import android.util.Log;
 
 import static com.appglue.Constants.TAG;
 
-/**
- * Created by andyridge on 04/06/2014.
- */
 public class NewPictureTrigger extends GenericTrigger {
 
     @Override

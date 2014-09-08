@@ -3,7 +3,7 @@ package com.appglue.description;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.util.LongSparseArray;
+import android.support.v4.util.LongSparseArray;
 import android.util.SparseArray;
 
 import com.appglue.Constants.ProcessType;
