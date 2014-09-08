@@ -528,7 +528,8 @@ public class ActivityCompositeList extends Activity {
 
 
             if (app == null || app.getIconLocation() == null) {
-                icon.setBackground(getResources().getDrawable(R.drawable.icon));
+                // FIXME Work out how to do the below
+//                icon.setBackground(getResources().getDrawable(R.drawable.icon));
             } else {
                 String iconLocation = app.getIconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);

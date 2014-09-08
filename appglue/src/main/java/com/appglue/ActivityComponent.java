@@ -1,12 +1,13 @@
 package com.appglue;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -42,7 +43,7 @@ import static com.appglue.library.AppGlueConstants.MARKET_LOOKUP;
 import static com.appglue.library.AppGlueConstants.NOT_SET;
 import static com.appglue.library.AppGlueConstants.SUCCESS;
 
-public class ActivityComponent extends Activity {
+public class ActivityComponent extends ActionBarActivity {
     private ServiceDescription service;
 
     private boolean atomicList = false;
@@ -205,7 +206,7 @@ public class ActivityComponent extends Activity {
             findViewById(R.id.eg_none).setVisibility(View.VISIBLE);
         }
 
-        ActionBar actionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setIcon(R.drawable.ic_menu_back);
             actionBar.setHomeButtonEnabled(true);

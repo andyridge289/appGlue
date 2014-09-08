@@ -33,10 +33,9 @@
         <activity
             android:name=".ActivityCompositeList"
             android:label="@string/application_name"
-            android:theme="@android:style/Theme.Holo.Light"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:theme="@android:style/Theme.Holo.Light">
 
-            <intent-filter>
+        <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -72,13 +71,11 @@
 
         <activity
             android:name=".ActivityCompositionCanvas"
-            android:theme="@style/Theme.FixedSize"
-            android:uiOptions="splitActionBarWhenNarrow" />
+            android:theme="@style/Theme.FixedSize" />
 
         <activity
             android:name=".ActivityComposite"
-            android:theme="@android:style/Theme.Holo.Light"
-            android:uiOptions="splitActionBarWhenNarrow" />
+            android:theme="@android:style/Theme.Holo.Light" />
 
         <activity
             android:name=".ActivityWiring"
@@ -89,7 +86,7 @@
         <activity
             android:name=".ActivityRunning"
             android:label="@string/application_name"
-            android:theme="@android:style/Theme.Holo"></activity>
+            android:theme="@android:style/Theme.Holo.Light" />
 
         <activity
             android:name=".ActivitySettings"

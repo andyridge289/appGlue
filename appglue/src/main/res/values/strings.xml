@@ -155,8 +155,8 @@
     <string name="trigger_icon">Trigger icon</string>
     <string name="trigger">Trigger</string>
     <string name="filter_icon">Filter icon</string>
-    <string name="no_inputs">No inputs</string>
-    <string name="no_outputs">No outputs</string>
+    <string name="no_inputs">NO INPUTS</string>
+    <string name="no_outputs">NO OUTPUTS</string>
     <string name="example_icon">Example icon</string>
     <string name="example_image">Example image</string>
     <string name="example_icon2">Example icon 2</string>

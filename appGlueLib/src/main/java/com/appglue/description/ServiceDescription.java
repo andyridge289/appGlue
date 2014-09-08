@@ -474,9 +474,7 @@ public class ServiceDescription {
 
         ArrayList<ServiceIO> newList = new ArrayList<ServiceIO>();
 
-        for (int i = 0; i < oldList.size(); i++) {
-            ServiceIO old = oldList.get(i);
-
+        for (ServiceIO old : oldList) {
             ServiceIO io = new ServiceIO(old.getId(), old.getName(), old.getFriendlyName(), old.getType(),
                     old.getDescription(), old.isMandatory(), old.getSampleValues());
             io.setIndex(old.getIndex());
