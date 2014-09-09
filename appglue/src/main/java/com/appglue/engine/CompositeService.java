@@ -1,12 +1,15 @@
 package com.appglue.engine;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.TST;
 
 import java.util.ArrayList;
 
+import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.Interval;
@@ -132,18 +135,28 @@ public class CompositeService {
         this.name = name;
     }
 
-    public void addAtEnd(ServiceDescription service) {
-        this.componentSearch.put(service.getClassName(), service);
-        this.components.add(service);
+    public void addAtEnd(ServiceDescription component) {
+        this.componentSearch.put(component.getClassName(), component);
+        this.components.add(component);
+        if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getClassName(), name, components.size() - 1));
     }
 
     public void addComponent(int position, ServiceDescription component) {
         this.componentSearch.put(component.getClassName(), component);
 
-        if(components.size() < position - 1) {
-            // FIXME Then it needs to be added after another one has been put in
+        while(components.size() < position - 1) {
+            // Then it needs to be added after another one has been put in
+            components.add(new EmptyServiceDescription());
         }
 
+        // Remove any placeholder that might be in the position already
+        if(components.size() > position + 1) {
+            if(components.get(position).getClassName().equals("")) {
+                components.remove(position);
+            }
+        }
+
+        if(LOG) Log.d(TAG, String.format("Adding %s to %s at %d", component.getClassName(), name, position));
         this.components.add(position, component);
     }
 

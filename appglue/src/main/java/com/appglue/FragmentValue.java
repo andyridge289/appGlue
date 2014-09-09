@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.appglue.library.LocalStorage;
 
 import java.util.ArrayList;
 
+import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.library.AppGlueConstants.FIRST;
@@ -184,7 +186,8 @@ public class FragmentValue extends FragmentVW {
                 @Override
                 public void onClick(View v) {
                     Intent i = new Intent(getActivity(), ActivityComponentList.class);
-                    i.putExtra(POSITION, position);
+                    i.putExtra(POSITION, position + 1); // Plus one because we need to add to the right of whatever we already have?
+                    Log.e(TAG, "Adding at position: " + position);
                     i.putExtra(FIRST, false);
                     getActivity().startActivityForResult(i, SERVICE_REQUEST);
                 }
@@ -251,10 +254,6 @@ public class FragmentValue extends FragmentVW {
     private void showIODialog(final ServiceIO item) {
         DialogIO di = new DialogIO((ActivityWiring) getActivity(), item);
         di.show();
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
     }
 
     private class InputAdapter extends ArrayAdapter<ServiceIO> {

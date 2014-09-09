@@ -425,15 +425,14 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
             if(resultCode == Activity.RESULT_OK) {
                 String className = intent.getStringExtra(CLASSNAME);
                 int position = intent.getIntExtra(INDEX, -1);
-                Log.w(TAG, "Got " + className + " at " + position);
 
                 ServiceDescription component = registry.getAtomic(className);
                 final boolean first = intent.getBooleanExtra(FIRST, false);
 
-                if (first) {
+                if (position > -1) {
                     cs.addComponent(position, component);
                 } else {
-                    cs.addComponent(0, component);
+                    cs.addAtEnd(component);
                 }
 
                 registry.updateCurrent();

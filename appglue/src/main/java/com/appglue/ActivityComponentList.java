@@ -63,6 +63,8 @@ public class ActivityComponentList extends ActionBarActivity {
         position = intent.getIntExtra(POSITION, -1);
         Registry registry = Registry.getInstance(this);
 
+        Log.d(TAG, "ACL.java: got " + position);
+
         boolean showMatching = false;
 
         if (registry.getService() != null) {
@@ -200,6 +202,8 @@ public class ActivityComponentList extends ActionBarActivity {
         i.putExtra(CLASSNAME, className);
         i.putExtra(SERVICE_TYPE, serviceType);
         i.putExtra(POSITION, position);
+
+        Log.d(TAG, "ACL.java: sending back " + position);
 
         if (getParent() == null) {
             setResult(Activity.RESULT_OK, i);

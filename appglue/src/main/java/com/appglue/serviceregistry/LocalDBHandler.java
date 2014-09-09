@@ -900,9 +900,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 long linkId = this.addCompositeHasAtomic(compositeId, components.get(i).getClassName(), i);
 
                 if (linkId == -1)
-                    Log.e(TAG, "Failed to add " + components.get(i).getClassName() + " to " + cs.getId());
+                    Log.e(TAG, "Failed to add " + components.get(i).getClassName() + " to CS#" + cs.getId());
                 else if (LOG)
-                    Log.d(TAG, "Added component: " + components.get(i).getClassName() + " to " + cs.getId());
+                    Log.d(TAG, "Added component: " + components.get(i).getClassName() + " to CS#" + cs.getId());
             }
 
             // Now we need to connect the ServiceIOs

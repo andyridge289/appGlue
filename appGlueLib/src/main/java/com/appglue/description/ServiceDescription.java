@@ -61,7 +61,7 @@ public class ServiceDescription {
     private ProcessType processType = ProcessType.NORMAL;
 
     // The classname of the service itself
-    private String className = "";
+    protected String className = "";
 
     // The package that the service lives in - this should double as what to search for in the market
     private String packageName = "com.appglue";

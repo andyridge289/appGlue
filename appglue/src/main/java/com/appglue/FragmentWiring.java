@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -152,7 +151,7 @@ public class FragmentWiring extends FragmentVW {
                     //FIXME Set background pre-13
 //                    secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                 } else {
-                    String iconLocation = first.getApp().getIconLocation();
+                    String iconLocation = secondApp.getIconLocation();
                     if (iconLocation.equals("")) {
 //                        secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
                         //FIXME Set background pre-13
