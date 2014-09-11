@@ -1,6 +1,12 @@
-package com.appglue;
+package com.appglue.description;
 
-public class IOValue 
+import android.content.ContentValues;
+
+import static com.appglue.Constants.ID;
+import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.VALUE;
+
+public class IOValue
 {
 	public long id;
 	public String name;
@@ -10,7 +16,6 @@ public class IOValue
 	{
 		this.id = -1;
 		this.name = "";
-		this.value = null;
 	}
 	
 	public IOValue(String name, Object value)

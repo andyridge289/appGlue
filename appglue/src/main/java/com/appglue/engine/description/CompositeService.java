@@ -1,10 +1,9 @@
-package com.appglue.engine;
+package com.appglue.engine.description;
 
 import android.database.Cursor;
+import android.support.v4.util.LongSparseArray;
 import android.util.Log;
-
-import com.appglue.description.ServiceDescription;
-import com.appglue.TST;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
 
@@ -32,8 +31,8 @@ public class CompositeService {
 
     public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 
-    private ArrayList<ServiceDescription> components;
-    private TST<ServiceDescription> componentSearch;
+    private SparseArray<ComponentService> components;
+    private LongSparseArray<ComponentService> componentSearch;
 
     public CompositeService(boolean temp) {
         if (temp)
@@ -42,20 +41,23 @@ public class CompositeService {
             this.id = -1;
         this.name = ""; // We know that the name can never be blank so we're good
         this.description = "";
-        this.components = new ArrayList<ServiceDescription>();
+        this.components = new SparseArray<ComponentService>();
         this.enabled = false;
-        this.componentSearch = new TST<ServiceDescription>();
+        this.componentSearch = new LongSparseArray<ComponentService>();
     }
 
-    public CompositeService(String name, String description, ArrayList<ServiceDescription> components) {
+    public CompositeService(String name, String description, ArrayList<ComponentService> services) {
         this(false);
         this.name = name;
         this.description = description;
 
-        this.components = components;
+        this.components = new SparseArray<ComponentService>();
+        for(int i = 0; i < services.size(); i++) {
+            components.put(i, services.get(i));
+        }
 
-        for (ServiceDescription sd : components) {
-            this.componentSearch.put(sd.getClassName(), sd);
+        for (ComponentService comps : services) {
+            this.componentSearch.put(comps.id(), comps);
         }
     }
 
@@ -71,7 +73,7 @@ public class CompositeService {
         this.enabled = enabled;
     }
 
-    public CompositeService(String name, String description, ArrayList<ServiceDescription> services, boolean enabled) {
+    public CompositeService(String name, String description, SparseArray<ComponentService> services, boolean enabled) {
         this(false);
         this.id = (long) CompositeService.NEW_COMPOSITE_PLACEHOLDER;
         this.name = name;
@@ -79,52 +81,50 @@ public class CompositeService {
         this.description = description;
         this.enabled = enabled;
 
-        if (services == null)
-            return;
-
-        for (ServiceDescription sd : components) {
-            this.componentSearch.put(sd.getClassName(), sd);
+        for(int i = 0; i < services.size(); i++) {
+            ComponentService cs = services.valueAt(i);
+            componentSearch.put(cs.id(), cs);
         }
     }
 
-    public CompositeService(long id, String name, ArrayList<ServiceDescription> services, long numeral, Interval interval) {
+    public CompositeService(long id, String name, SparseArray<ComponentService> services, long numeral, Interval interval) {
         this(false);
         this.id = id;
         this.name = name;
         this.components = services;
 
-        for (ServiceDescription sd : components) {
-            this.componentSearch.put(sd.getClassName(), sd);
-        }
-
         this.numeral = numeral;
         this.interval = interval;
 
         this.enabled = false;
+
+        for(int i = 0; i < services.size(); i++) {
+            ComponentService cs = services.valueAt(i);
+            componentSearch.put(cs.id(), cs);
+        }
     }
 
 
-    public CompositeService(ArrayList<ServiceDescription> orchestration) {
+    public CompositeService(ArrayList<ComponentService> services) {
         this(false);
         // Generate a random name
         this.id = -1;
         this.name = "Random Service";
 
-        this.components = orchestration;
+        this.components = new SparseArray<ComponentService>();
+        for(int i = 0; i < services.size(); i++) {
+            components.put(i, services.get(i));
+        }
 
-        for (ServiceDescription sd : components) {
-            this.componentSearch.put(sd.getClassName(), sd);
+        for (ComponentService cs : services) {
+            this.componentSearch.put(cs.id(), cs);
         }
 
         this.enabled = false;
     }
 
-    /**
-     * @param className The name of the class
-     * @return The Component
-     */
-    public ServiceDescription getComponent(String className) {
-        return this.componentSearch.get(className);
+    public ComponentService getComponent(long id) {
+        return this.componentSearch.get(id);
     }
 
     public String getName() {
@@ -135,33 +135,27 @@ public class CompositeService {
         this.name = name;
     }
 
-    public void addAtEnd(ServiceDescription component) {
-        this.componentSearch.put(component.getClassName(), component);
-        this.components.add(component);
-        if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getClassName(), name, components.size() - 1));
+    public void addAtEnd(ComponentService component) {
+
+        this.components.put(components.size(), component);
+        if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.description().className(), name, components.size() - 1));
     }
 
-    public void addComponent(int position, ServiceDescription component) {
-        this.componentSearch.put(component.getClassName(), component);
+    public void addComponent(int position, ComponentService component) {
 
-        while(components.size() < position - 1) {
-            // Then it needs to be added after another one has been put in
-            components.add(new EmptyServiceDescription());
+        if(components.get(position) == null) {
+            // If there isn't a component at that position, then add one
+            components.put(position, component);
+        } else {
+            // If there is a component at that position, we need to move everything back
+            ComponentService replacee = components.get(position);
+            components.put(position, component);
+            addComponent(position + 1, replacee);
         }
-
-        // Remove any placeholder that might be in the position already
-        if(components.size() > position + 1) {
-            if(components.get(position).getClassName().equals("")) {
-                components.remove(position);
-            }
-        }
-
-        if(LOG) Log.d(TAG, String.format("Adding %s to %s at %d", component.getClassName(), name, position));
-        this.components.add(position, component);
     }
 
-    public boolean containsComponent(String className) {
-        return this.getComponent(className) != null;
+    public boolean containsComponent(long componentId) {
+        return this.getComponent(componentId) != null;
     }
 
     public void resetOrchestration() {
@@ -200,11 +194,22 @@ public class CompositeService {
         this.interval = interval;
     }
 
-    public ArrayList<ServiceDescription> getComponents() {
+    public ArrayList<ComponentService> getComponentsAL() {
+        ArrayList<ComponentService> comps = new ArrayList<ComponentService>();
+        for(int i = 0 ; i < components.size(); i++) {
+            int k = components.keyAt(i);
+            ComponentService v = components.get(k);
+            comps.add(k, v);
+        }
+
+        return comps;
+    }
+
+    public SparseArray<ComponentService> getComponents() {
         return components;
     }
 
-    public void setComponents(ArrayList<ServiceDescription> components) {
+    public void setComponents(SparseArray<ComponentService> components) {
         this.components = components;
     }
 
@@ -217,7 +222,7 @@ public class CompositeService {
     }
 
     public boolean containsTrigger() {
-        return this.components.get(0).getProcessType() == ProcessType.TRIGGER;
+        return this.components.get(0).description().getProcessType() == ProcessType.TRIGGER;
     }
 
     public void setInfo(String prefix, Cursor c) {

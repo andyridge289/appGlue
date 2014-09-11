@@ -62,7 +62,7 @@ public class FragmentComponentListSearch extends FragmentComponentList {
             public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
                 Intent intent = new Intent(parent, ActivityComponent.class);
                 intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-                intent.putExtra(CLASSNAME, services.get(position).getClassName());
+                intent.putExtra(CLASSNAME, services.get(position).className());
                 intent.putExtra(JUST_A_LIST, parent.justAList());
                 parent.startActivityForResult(intent, SERVICE_REQUEST);
                 return true;
@@ -72,7 +72,7 @@ public class FragmentComponentListSearch extends FragmentComponentList {
         serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                parent.chosenItem(services.get(position).getClassName());
+                parent.chosenItem(services.get(position).className());
             }
         });
 

@@ -27,7 +27,7 @@ public class AppUninstalledReceiver extends BroadcastReceiver
         
         for(String packageName : packages)
         {
-        	AppDescription app = registry.getApp(packageName);
+        	AppDescription app = registry.app(packageName);
         	
         	if(app == null)
         		continue;

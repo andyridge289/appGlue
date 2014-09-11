@@ -2,9 +2,11 @@ package com.appglue;
 
 import android.database.Cursor;
 import android.support.v4.util.LongSparseArray;
+import android.util.Log;
 
-import com.appglue.datatypes.IOType;
-import com.appglue.datatypes.Text;
+import com.appglue.description.datatypes.IOType;
+import com.appglue.description.datatypes.Text;
+import com.appglue.description.IOValue;
 import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
@@ -13,10 +15,12 @@ import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.IO_INDEX;
 import static com.appglue.Constants.I_OR_O;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.TAG;
 
-public class ServiceIO 
+public class IODescription
 {
 	private long id;
 	
@@ -33,27 +37,17 @@ public class ServiceIO
 	
 	// A user friendly text description of the type
 	private String description;
-	
-	private ServiceIO connection;
+
 	private ServiceDescription parent;
-	
-	// Value if it's an input / filter value if it's an output
-	private int filterState = UNFILTERED;
-	private Object manualValue; // This is used for outputs on filtering, or its hardcoded value if its an input
-	private IOValue chosenSampleValue;
 
     private LongSparseArray<IOValue> sampleSearch;
     private ArrayList<IOValue> sampleValues;
 
-    private int condition;
 	
 	private boolean mandatory;
+
 	
-	public static final int UNFILTERED = 0;
-	public static final int MANUAL_FILTER = 1;
-	public static final int SAMPLE_FILTER = 2;
-	
-	public ServiceIO()
+	public IODescription()
 	{
 		this.id = -1;
 		this.index = -1;
@@ -61,29 +55,25 @@ public class ServiceIO
 		this.friendlyName = "";
 		this.type = new Text(); // Just default to text?
 		this.description = "";
-		this.connection = null;
 		this.parent = null;
-		this.manualValue = null;
-		this.chosenSampleValue = null;
-		this.condition = -1;
 		this.mandatory = false;
 
         this.sampleValues = new ArrayList<IOValue>();
         this.sampleSearch = new LongSparseArray<IOValue>();
     }
 
-    public ServiceIO(long id)
+    public IODescription(long id)
     {
         this();
         this.id = id;
     }
 
-    public ServiceIO(String name) {
+    public IODescription(String name) {
         this();
         this.name = name;
     }
 
-    public ServiceIO(long id, String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> samples) {
+    public IODescription(long id, String name, String friendlyName, IOType type, String description, boolean mandatory, ArrayList<IOValue> samples) {
         this(id);
 
         this.name = name;
@@ -103,7 +93,7 @@ public class ServiceIO
         }
     }
 
-    public ServiceIO(long id, String name, String friendlyName, int index, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
+    public IODescription(long id, String name, String friendlyName, int index, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
 	{
         this(id, name, friendlyName, type, description, mandatory, sampleValues);
         this.index = index;
@@ -117,17 +107,16 @@ public class ServiceIO
 
     public boolean isInput() { return this.isInput; }
 	
-	public long getId()
+	public long id()
 	{
 		return id;
 	}
 	
-	public void setId(long id)
-	{
+	public void setId(long id) {
 		this.id = id;
 	}
 	
-	public int getIndex()
+	public int index()
 	{
 		return index;
 	}
@@ -142,23 +131,12 @@ public class ServiceIO
 		this.parent = parent;
 	}
 	
-	public ServiceDescription getParent()
+	public ServiceDescription parent()
 	{
 		return parent;
 	}
-	
-	public ServiceIO getConnection()
-	{
-		return connection;
-	}
-	
-	public void setConnection(ServiceIO connection)
-	{
-		this.connection = connection;
-	}
-	
 
-	public String getName() {
+	public String name() {
 		return name;
 	}
 
@@ -166,7 +144,7 @@ public class ServiceIO
 		this.name = name;
 	}
 	
-	public String getFriendlyName()
+	public String friendlyName()
 	{
 		return friendlyName;
 	}
@@ -176,7 +154,7 @@ public class ServiceIO
 		this.friendlyName = friendlyName;
 	}
 
-	public IOType getType() {
+	public IOType type() {
 		return type;
 	}
 
@@ -184,7 +162,7 @@ public class ServiceIO
 		this.type = type;
 	}
 
-	public String getDescription() {
+	public String description() {
 		return description;
 	}
 
@@ -192,74 +170,82 @@ public class ServiceIO
 		this.description = description;
 	}
 	
-	public boolean equals(ServiceIO io)
+	public boolean equals(Object o)
 	{
-        return this.description.equals(io.getDescription());
+        if(o == null)  {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: null");
+            return false;
+        }
 
-    }
-	
-	public int isFiltered()
-	{
-		return filterState;
-	}
-	
-	public void setFilterState(int filterState)
-	{
-		this.filterState = filterState;
-	}
-	
-	public Object getManualValue()
-	{
-		if(manualValue == null)
-			return "";
-		
-		return manualValue;
-	}
+        if(!(o instanceof IODescription)) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: not ServiceIO");
+            return false;
+        }
 
-    public Object getValue()
-    {
-        if(this.isFiltered() == MANUAL_FILTER)
-            return this.getManualValue();
-        else if(this.isFiltered() == SAMPLE_FILTER)
-            return this.getChosenSampleValue();
-        else
-            return null;
+        IODescription other = (IODescription) o;
+
+        if(id != other.id()) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: id - [" + id + " :: " + other.id() + "]");
+            return false;
+        }
+
+        if(index != other.index()) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: index");
+            return false;
+        }
+
+        if(isInput != other.isInput()) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: is input");
+            return false;
+        }
+
+        if(!name.equals(other.name())) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: name");
+            return false;
+        }
+
+        if(!friendlyName.equals(other.friendlyName())) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: friendly name");
+            return false;
+        }
+
+        if(!type.equals(other.type())) { // FIXME Do equals for types
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: type");
+            return false;
+        }
+
+        if(!description.equals(other.description())) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: description");
+            return false;
+        }
+
+        if(!parent.className().equals(other.parent.className())) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: parent");
+            return false;
+        }
+
+        if(mandatory != other.mandatory) {
+            if(LOG) Log.d(TAG, "ServiceIO->Equals: mandatory");
+            return false;
+        }
+
+        for(int i = 0; i < sampleSearch.size(); i++) {
+            long k = sampleSearch.keyAt(i);
+            if(!sampleSearch.get(k).equals(other.getSampleValue(k))) {
+                if(LOG) Log.d(TAG, "ServiceIO->Equals: sample value " + k + " (index " + i + ")");
+                return false;
+            }
+        }
+
+        // FIXME This is the static one, needs to have the dynamic one
+//        private ServiceIO connection;
+//        private int filterState = UNFILTERED;
+//        private Object manualValue; // This is used for outputs on filtering, or its hardcoded value if its an input
+//        private IOValue chosenSampleValue;
+//        private int condition;
+
+        return true;
     }
-	
-	public void setManualValue(Object value)
-	{
-		this.manualValue = value;
-		this.filterState = MANUAL_FILTER;
-	}
-	
-	public IOValue getChosenSampleValue()
-	{
-		if(chosenSampleValue == null)
-			return new IOValue();
-		
-		return chosenSampleValue;
-	}
-	
-	public void setChosenSampleValue(IOValue value)
-	{
-		this.chosenSampleValue = value;
-		this.filterState = SAMPLE_FILTER;
-	}
-	
-	public int getCondition()
-	{
-		return condition;
-	}
-	
-	public void setCondition(int condition)
-	{
-		this.condition = condition;
-	}
-	
-	public boolean hasValue()
-	{
-        return this.manualValue != null || this.chosenSampleValue != null;
-	}
 	
 	public boolean isMandatory()
 	{

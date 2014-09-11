@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 public class FragmentStoryAnnotate extends Fragment implements OnClickListener

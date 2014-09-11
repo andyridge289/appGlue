@@ -1,6 +1,7 @@
 package com.appglue.description;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -8,8 +9,10 @@ import org.json.JSONObject;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.ICON;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
+import static com.appglue.Constants.TAG;
 
 public class AppDescription {
     private String name;
@@ -38,16 +41,7 @@ public class AppDescription {
         this();
         this.name = name;
         this.packageName = packageName;
-        this.iconLocation = null;
-    }
-
-    public void setInfo(String p, Cursor c) {
-        this.packageName = c.getString(c.getColumnIndex(p + PACKAGENAME));
-        this.name = c.getString(c.getColumnIndex(p + NAME));
-        this.iconLocation = c.getString(c.getColumnIndex(p + ICON));
-        this.description = c.getString(c.getColumnIndex(p + DESCRIPTION));
-        this.developer = c.getString(c.getColumnIndex(p + DEVELOPER));
-
+        this.iconLocation = "";
     }
 
     public String getName() {
@@ -66,7 +60,7 @@ public class AppDescription {
         this.packageName = packageName;
     }
 
-    public String getIconLocation() {
+    public String iconLocation() {
         return iconLocation;
     }
 
@@ -90,6 +84,49 @@ public class AppDescription {
         this.developer = developer;
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+        if(o == null)  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: null");
+            return false;
+        }
+
+        if(!(o instanceof AppDescription))  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: not AppDescription");
+            return false;
+        }
+        AppDescription other = (AppDescription) o;
+
+        if(!name.equals(other.getName()))  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: name");
+            return false;
+        }
+
+        if(!packageName.equals(other.getPackageName()))  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: package name");
+            return false;
+        }
+
+        if(!developer.equals(other.getDeveloper()))  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: developer");
+            return false;
+        }
+
+        if(!iconLocation.equals(other.iconLocation()))  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: icon location");
+            Log.d(TAG, "[" + iconLocation + "] :: [" + other.iconLocation() + "]");
+            return false;
+        }
+
+        if(!description.equals(other.getDescription()))  {
+            if(LOG) Log.d(TAG, "AppDescription->Equals: description");
+            return false;
+        }
+
+        return true;
+    }
+
     public static AppDescription parseFromCursor(Cursor c) {
         String name = c.getString(c.getColumnIndex(NAME));
         String packageName = c.getString(c.getColumnIndex(PACKAGENAME));
@@ -107,7 +144,8 @@ public class AppDescription {
         String packagename = json.getString(PACKAGENAME);
         String description = json.getString(DESCRIPTION);
         String developerName = json.getString(DEVELOPER);
+        String iconLocation = json.getString(ICON);
 
-        return new AppDescription(name, packagename, null, description, developerName);
+        return new AppDescription(name, packagename, iconLocation, description, developerName);
     }
 }

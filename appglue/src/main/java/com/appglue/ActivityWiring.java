@@ -22,9 +22,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.DepthPageTransformer;
-import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -65,6 +65,8 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 	private EditText csNameEdit;
 	private Button csNameSet;
     private TextView pageIndexText;
+
+    private MenuItem modeMenuItem;
 
 	@Override
 	public void onCreate(Bundle icicle)
@@ -135,22 +137,6 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 			}
 		});
 
-//        final Button modeButton = (Button) findViewById(R.id.change_mode);
-//        modeButton.setText(mode == MODE_WIRING ? "Setting Mode" : "Wiring Mode");
-//		modeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (mode == MODE_WIRING) {
-//                    modeButton.setText("Setting mode");
-//                    setMode(MODE_VALUE);
-//                } else {
-//                    modeButton.setText("Wiring mode");
-//                    setMode(MODE_WIRING);
-//                }
-//                redraw();
-//            }
-//        });
-
         pageIndexText = (TextView) findViewById(R.id.page_index);
 
 		Intent intent = this.getIntent();
@@ -167,8 +153,6 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 
         valuePager.setAdapter(valuePagerAdapter);
         valuePager.setOnPageChangeListener(this);
-
-        setMode(mode);
 
         if (index != -1) {
             wiringPager.setCurrentItem(index);
@@ -197,13 +181,21 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
         if (mode == MODE_WIRING) {
             wiringPager.setVisibility(View.VISIBLE);
             valuePager.setVisibility(View.GONE);
-            wiringPager.setCurrentItem(valuePager.getCurrentItem());
-            pageIndexText.setText((wiringPager.getCurrentItem() + 1) + "/" + wiringPagerAdapter.getCount());
+
+            int current = valuePager.getCurrentItem();
+            wiringPager.setCurrentItem(current);
+
+            pageIndexText.setText(current + " - " + (current + 1) + " / " + (wiringPagerAdapter.getCount() + 1));
+            modeMenuItem.setTitle("Value");
+
         } else {
             wiringPager.setVisibility(View.GONE);
             valuePager.setVisibility(View.VISIBLE);
+
             valuePager.setCurrentItem(valuePager.getCurrentItem());
-            pageIndexText.setText((valuePager.getCurrentItem() + 1) + "/" + valuePagerAdapter.getCount());
+
+            pageIndexText.setText((valuePager.getCurrentItem() + 1) + " / " + valuePagerAdapter.getCount());
+            modeMenuItem.setTitle("Wiring");
         }
 
         redraw();
@@ -304,11 +296,11 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 	{
 		if(mode == MODE_WIRING)
 		{
-            getActionBar().setTitle("Wiring");
+            getSupportActionBar().setTitle("Wiring");
         }
 		else
 		{
-            getActionBar().setSubtitle("Set Inputs and Filters");
+            getSupportActionBar().setSubtitle("Set Inputs and Filters");
         }
 
         WiringPagerAdapter adapter = mode == MODE_WIRING ? wiringPagerAdapter : valuePagerAdapter;
@@ -320,9 +312,9 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 		}
 	}
 
-	public ArrayList<ServiceDescription> getComponents()
+	public ArrayList<ComponentService> getComponents()
 	{
-		return cs.getComponents();
+		return cs.getComponentsAL();
 	}
 
 	public int getMode()
@@ -340,6 +332,9 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 	{
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.wiring, menu);
+
+        modeMenuItem = menu.findItem(R.id.wiring_value_switch);
+        setMode(mode);
         return true;
     }
 
@@ -353,14 +348,10 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 		{
 			saveDialog();
 		} else if (item.getItemId() == R.id.wiring_value_switch) {
-            if (mode == MODE_WIRING) {
+            if (mode == MODE_WIRING)
                 setMode(MODE_VALUE);
-                item.setTitle("Values");
-
-            } else {
+            else
                 setMode(MODE_WIRING);
-                item.setTitle("Wiring");
-            }
         }
         return true;
 	}
@@ -375,16 +366,17 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
             // Then it's the temp, we should save it
             String name = csNameEdit.getText().toString();
 
-            ArrayList<ServiceDescription> comps = cs.getComponents();
+            SparseArray<ComponentService> comps = cs.getComponents();
 
-            if(name.equals("Temp name"))
-            {
-                String tempName = "";
-                for(ServiceDescription sd : comps)
-                    tempName += sd.getName() + "  ";
-
-                name = tempName;
-            }
+//            if(name.equals("Temp name"))
+//            {
+//                String tempName = "";
+//                for(ServiceDescription sd : comps)
+//                    tempName += sd.name() + "  ";
+//
+//                name = tempName;
+//            }
+//            FIXME Make the name setting work
 
             registry.saveTemp(name);
         }
@@ -423,17 +415,18 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
             source = COMPONENT_LIST;
 
             if(resultCode == Activity.RESULT_OK) {
+
                 String className = intent.getStringExtra(CLASSNAME);
                 int position = intent.getIntExtra(INDEX, -1);
 
                 ServiceDescription component = registry.getAtomic(className);
-                final boolean first = intent.getBooleanExtra(FIRST, false);
 
-                if (position > -1) {
-                    cs.addComponent(position, component);
-                } else {
-                    cs.addAtEnd(component);
-                }
+//                if (position > -1) {
+//                    cs.addServiceDescription(position, component);
+//                } else {
+//                    cs.addAtEnd(component);
+//                }
+                // FIXME Make the above work
 
                 registry.updateCurrent();
             }
@@ -448,7 +441,7 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
     @Override
     public void onPageSelected(int position) {
         if (mode == MODE_WIRING) {
-            pageIndexText.setText(position + " - " + (position + 1) + " / " + valuePagerAdapter.getCount());
+            pageIndexText.setText(position + " - " + (position + 1) + " / " + (valuePagerAdapter.getCount() + 1));
         } else {
             pageIndexText.setText(position + " / " + valuePagerAdapter.getCount());
         }
@@ -487,7 +480,7 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 
         @Override
         public int getCount() {
-            ArrayList<ServiceDescription> components = cs.getComponents();
+            SparseArray<ComponentService> components = cs.getComponents();
 
             if (wiring)
                 return components == null ? 0 : components.size() + 1;

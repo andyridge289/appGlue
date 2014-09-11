@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.description.ComponentService;
 import com.appglue.layout.WiringMap;
 import com.appglue.library.LocalStorage;
 
@@ -34,8 +35,8 @@ public class FragmentWiring extends FragmentVW {
 
     private WiringMap wiringMap;
 
-    private ServiceDescription first;
-    private ServiceDescription second;
+    private ComponentService first;
+    private ComponentService second;
 
     HashMap<String, Integer> hueMap;
 
@@ -74,7 +75,7 @@ public class FragmentWiring extends FragmentVW {
         RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
         RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
 
-        ArrayList<ServiceDescription> components = ((ActivityWiring) getActivity()).getComponents();
+        ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
 
         first = position > 0 ? components.get(position - 1) : null;
         second = position < components.size() ? components.get(position) : null;
@@ -85,22 +86,20 @@ public class FragmentWiring extends FragmentVW {
 
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (first != null) {
-            firstName.setText(first.getName());
+            firstName.setText(first.description().getName());
             firstName.setTextColor(Color.BLACK);
 
             try {
-                AppDescription firstApp = first.getApp();
+                AppDescription firstApp = first.description().app();
                 Bitmap b;
 
                 if (firstApp == null) {
-                    //FIXME Set background pre-13
-//                    firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    firstIcon.setBackgroundResource(R.drawable.icon);
 
                 } else {
-                    String iconLocation = first.getApp().getIconLocation();
+                    String iconLocation = first.description().app().iconLocation();
                     if (iconLocation.equals("")) {
-                        //FIXME Set background pre-13
-//                        firstIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        firstIcon.setBackgroundResource(R.drawable.icon);
                     }
                     b = localStorage.readIcon(iconLocation);
                     firstIcon.setImageBitmap(b);
@@ -133,28 +132,24 @@ public class FragmentWiring extends FragmentVW {
                     getActivity().startActivityForResult(i, SERVICE_REQUEST);
                 }
             });
-
         }
 
         // Make the right icon be the left half, Make the left icon be the right half
-
         if (second != null) {
-            secondName.setText(second.getName());
+            secondName.setText(second.description().getName());
             secondName.setTextColor(Color.BLACK);
             secondContainer.setBackgroundResource(R.drawable.wiring_component);
 
             try {
-                AppDescription secondApp = second.getApp();
+                AppDescription secondApp = second.description().app();
                 Bitmap b;
 
                 if (secondApp == null) {
-                    //FIXME Set background pre-13
-//                    secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    firstIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = secondApp.getIconLocation();
+                    String iconLocation = secondApp.iconLocation();
                     if (iconLocation.equals("")) {
-//                        secondIcon.setBackground(getResources().getDrawable(R.drawable.icon));
-                        //FIXME Set background pre-13
+                      firstIcon.setBackgroundResource(R.drawable.icon);
                     }
                     b = localStorage.readIcon(iconLocation);
                     secondIcon.setImageBitmap(b);
@@ -199,11 +194,11 @@ public class FragmentWiring extends FragmentVW {
         super.onResume();
     }
 
-    public ServiceDescription getFirst() {
+    public ComponentService getFirst() {
         return first;
     }
 
-    public ServiceDescription getSecond() {
+    public ComponentService getSecond() {
         return second;
     }
 

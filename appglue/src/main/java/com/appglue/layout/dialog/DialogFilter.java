@@ -12,10 +12,11 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IOValue;
+import com.appglue.IODescription;
+import com.appglue.description.IOValue;
 import com.appglue.R;
-import com.appglue.ServiceIO;
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.IOFilter.FilterValue;
 
 import java.util.ArrayList;
@@ -34,14 +35,14 @@ public class DialogFilter extends DialogCustom {
         final View v = inflater.inflate(R.layout.dialog_filter, null);
 
         // 1 - Work out what we're filtering and set up the shit
-        setTitle("Filter: " + item.getFriendlyName());
+        setTitle("Filter: " + description.friendlyName());
 
         final EditText filterValueText = (EditText) v.findViewById(R.id.filter_value_text);
         final Spinner filterValueSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
         final Spinner filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
 
-        IOType type = item.getType();
-        ArrayList<IOValue> values = item.getSampleValues();
+        IOType type = description.type();
+        ArrayList<IOValue> values = description.getSampleValues();
         if (values == null)
             values = new ArrayList<IOValue>();
 
@@ -128,17 +129,17 @@ public class DialogFilter extends DialogCustom {
             public void onClick(View v) {
                 // Get the value they entered - not sure what happens
                 if (textRadio.isChecked()) {
-                    Object value = item.getType().fromString(filterValueText.getText().toString());
+                    Object value = description.type().fromString(filterValueText.getText().toString());
                     // This should work, it's the same as the other stuff. But it might not...
                     item.setManualValue(value);
                     item.setFilterState(ServiceIO.MANUAL_FILTER);
-                    DialogFilter.this.activity.setStatus("Set manual filter for " + item.getName());
+                    DialogFilter.this.activity.setStatus("Set manual filter for " + description.name());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
                     IOValue value = (IOValue) filterValueSpinner.getSelectedItem();
                     item.setChosenSampleValue(value);
                     item.setFilterState(ServiceIO.SAMPLE_FILTER);
-                    DialogFilter.this.activity.setStatus("Set sample filter for " + item.getName());
+                    DialogFilter.this.activity.setStatus("Set sample filter for " + description.name());
                 }
 
                 // Now we just need to make sure that the condition is set
@@ -162,7 +163,7 @@ public class DialogFilter extends DialogCustom {
             @Override
             public void onClick(View v) {
                 item.setFilterState(ServiceIO.UNFILTERED);
-                DialogFilter.this.activity.setStatus("Cleared filter for " + item.getName());
+                DialogFilter.this.activity.setStatus("Cleared filter for " + description.name());
                 registry.updateCurrent();
 //				FIXME What about parent.redraw();
             }

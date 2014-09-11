@@ -9,10 +9,11 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IOValue;
+import com.appglue.IODescription;
+import com.appglue.description.IOValue;
 import com.appglue.R;
-import com.appglue.ServiceIO;
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.description.ServiceIO;
 
 import java.util.ArrayList;
 
@@ -32,8 +33,8 @@ public class DialogIO extends DialogCustom {
         final EditText ioText = (EditText) v.findViewById(R.id.io_value_text);
         final Spinner ioSpinner = (Spinner) v.findViewById(R.id.io_value_spinner);
 
-        final IOType type = item.getType();
-        ArrayList<IOValue> values = item.getSampleValues();
+        final IOType type = description.type();
+        ArrayList<IOValue> values = description.getSampleValues();
         if (values == null)
             values = new ArrayList<IOValue>();
 
@@ -80,14 +81,14 @@ public class DialogIO extends DialogCustom {
                     // Then look up the text value
 
                     // This should work, but it might not...
-                    Object value = item.getType().fromString(ioText.getText().toString());
+                    Object value = description.type().fromString(ioText.getText().toString());
                     item.setManualValue(value);
-                    DialogIO.this.activity.setStatus("Set manual value for " + item.getName());
+                    DialogIO.this.activity.setStatus("Set manual value for " + description.name());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
                     IOValue value = (IOValue) ioSpinner.getSelectedItem();
                     item.setChosenSampleValue(value);
-                    DialogIO.this.activity.setStatus("Set sample value for " + item.getName());
+                    DialogIO.this.activity.setStatus("Set sample value for " + description.name());
                 }
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
@@ -101,7 +102,7 @@ public class DialogIO extends DialogCustom {
             @Override
             public void onClick(View v) {
                 item.setFilterState(ServiceIO.UNFILTERED);
-                DialogIO.this.activity.setStatus("Removed for " + item.getName());
+                DialogIO.this.activity.setStatus("Removed for " + description.name());
                 registry.updateCurrent();
                 // FIXME What about a parent.redraw();
                 cancel();

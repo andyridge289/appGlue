@@ -17,6 +17,7 @@ import android.view.Window;
 
 import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.description.ComponentService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -68,7 +69,7 @@ public class ActivityComponentList extends ActionBarActivity {
         boolean showMatching = false;
 
         if (registry.getService() != null) {
-            ArrayList<ServiceDescription> components = registry.getService().getComponents();
+            SparseArray<ComponentService> components = registry.getService().getComponents();
             showMatching = components.size() != 0;
         }
 

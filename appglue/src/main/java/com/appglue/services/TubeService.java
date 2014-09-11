@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.library.Network;
 
 import org.apache.http.NameValuePair;

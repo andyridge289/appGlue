@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,9 +17,11 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.dialog.DialogApp;
 import com.appglue.layout.dialog.DialogFilter;
 import com.appglue.layout.dialog.DialogIO;
@@ -81,32 +82,30 @@ public class FragmentValue extends FragmentVW {
         ListView inputList = (ListView) rootView.findViewById(R.id.input_list);
         inputList.setClickable(false);
 
-        ArrayList<ServiceDescription> components = ((ActivityWiring) getActivity()).getComponents();
-        ServiceDescription pre = position > 0 ? components.get(position - 1) : null;
-        ServiceDescription current = position >= 0 ?
+        ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
+        ComponentService pre = position > 0 ? components.get(position - 1) : null;
+        ComponentService current = position >= 0 ?
                 (position < components.size() ? components.get(position) : null) :
                 null;
-        ServiceDescription post = position < components.size() - 1 ? components.get(position + 1) : null;
+        ComponentService post = position < components.size() - 1 ? components.get(position + 1) : null;
 
         LocalStorage localStorage = LocalStorage.getInstance();
 
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (pre != null) {
-            preName.setText(pre.getName());
+            preName.setText(pre.description().getName());
             preName.setTextColor(Color.BLACK);
 
             try {
-                AppDescription firstApp = pre.getApp();
+                AppDescription firstApp = pre.description().app();
                 Bitmap b;
 
                 if (firstApp == null) {
-                    //FIXME Set background pre-13
-//                    preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    preIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = pre.getApp().getIconLocation();
+                    String iconLocation = pre.description().app().iconLocation();
                     if (iconLocation.equals("")) {
-                        //FIXME Set background pre-13
-//                        preIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        preIcon.setBackgroundResource(R.drawable.icon);
                     }
                     b = localStorage.readIcon(iconLocation);
                     preIcon.setImageBitmap(b);
@@ -144,22 +143,20 @@ public class FragmentValue extends FragmentVW {
         // Make the right icon be the left half, Make the left icon be the right half
 
         if (post != null) {
-            postName.setText(post.getName());
+            postName.setText(post.description().getName());
             postName.setTextColor(Color.BLACK);
             postContainer.setBackgroundResource(R.drawable.wiring_input);
 
             try {
-                AppDescription firstApp = post.getApp();
+                AppDescription firstApp = post.description().app();
                 Bitmap b;
 
                 if (firstApp == null) {
-                    //FIXME Set background pre-13
-//                    postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                    postIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = post.getApp().getIconLocation();
+                    String iconLocation = post.description().app().iconLocation();
                     if (iconLocation.equals("")) {
-                        //FIXME Set background pre-13
-//                        postIcon.setBackground(getResources().getDrawable(R.drawable.icon));
+                        postIcon.setBackgroundResource(R.drawable.icon);
                     }
                     b = localStorage.readIcon(iconLocation);
                     postIcon.setImageBitmap(b);
@@ -195,12 +192,11 @@ public class FragmentValue extends FragmentVW {
         }
 
         if (current != null) {
-            currentName.setText(current.getName());
+            currentName.setText(current.description().getName());
             currentName.setTextColor(Color.BLACK);
 
-            ArrayList<ServiceIO> inputs = current.getInputs();
-
-            ArrayList<ServiceIO> outputs = current.getOutputs();
+            ArrayList<ServiceIO> inputs = current.inputs();
+            ArrayList<ServiceIO> outputs = current.outputs();
             if (outputs.size() > 0) {
                 // There are outputs, show the list, hide the none and the add
                 outputList.setAdapter(new OutputAdapter(getActivity(), outputs));
@@ -272,14 +268,15 @@ public class FragmentValue extends FragmentVW {
 
             final View v = convertView;
             final ServiceIO item = items.get(position);
+            final IODescription description = item.description();
 
             TextView ioName = (TextView) v.findViewById(R.id.io_name);
-            ioName.setText(item.getFriendlyName());
+            ioName.setText(item.description().friendlyName());
 
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
-            int visibility = item.isMandatory() ? View.VISIBLE : View.GONE;
+            int visibility = item.description().isMandatory() ? View.VISIBLE : View.GONE;
             v.findViewById(R.id.mandatory_bar).setVisibility(visibility);
 
             ImageView setButton = (ImageView) v.findViewById(R.id.set_button);
@@ -287,7 +284,7 @@ public class FragmentValue extends FragmentVW {
             setButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (item.getType().equals(IOType.Factory.getType(IOType.Factory.APP)))
+                    if (item.description().type().equals(IOType.Factory.getType(IOType.Factory.APP)))
                         showAppDialog(item);
                     else
                         showIODialog(item);
@@ -295,22 +292,22 @@ public class FragmentValue extends FragmentVW {
             });
 
             if (!item.hasValue()) {
-                ioType.setText(item.getType().getName());
+                ioType.setText(item.description().type().getName());
                 setButton.setImageResource(R.drawable.ic_add);
                 ioValue.setText("");
             } else {
-                ioType.setText(item.getType().getName() + ": ");
+                ioType.setText(item.description().type().getName() + ": ");
                 ioValue.setText(item.getManualValue().toString());
                 setButton.setImageResource(R.drawable.ic_add_on);
             }
 
             // If it's not unfiltered, then it's either manual or not
             if (item.isFiltered() == ServiceIO.UNFILTERED) {
-                ioType.setText(item.getType().getName());
+                ioType.setText(item.description().type().getName());
             } else {
                 // This is for a manual one
                 if (item.isFiltered() == ServiceIO.MANUAL_FILTER) {
-                    String value = item.getType().toString(item.getManualValue());
+                    String value = item.description().type().toString(item.getManualValue());
                     ioValue.setText(value);
                 } else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
                     // Need to look up what the value for this thing is, but return the friendly name not the other thing
@@ -340,9 +337,10 @@ public class FragmentValue extends FragmentVW {
 
             final View v = convertView;
             final ServiceIO item = items.get(position);
+            final IODescription description = item.description();
 
             TextView ioName = (TextView) v.findViewById(R.id.io_name);
-            ioName.setText(item.getFriendlyName());
+            ioName.setText(description.friendlyName());
 
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
@@ -357,25 +355,25 @@ public class FragmentValue extends FragmentVW {
             });
 
             if (!item.hasValue()) {
-                ioType.setText(item.getType().getName());
+                ioType.setText(item.description().type().getName());
                 filterButton.setImageResource(R.drawable.filter_small);
                 ioValue.setText("");
             } else {
-                ioType.setText(item.getType().getName() + ": ");
+                ioType.setText(item.description().type().getName() + ": ");
                 ioValue.setText(item.getManualValue().toString());
                 filterButton.setImageResource(R.drawable.filter_small_on);
             }
 
             if (item.isFiltered() == ServiceIO.UNFILTERED) {
-                ioType.setText(item.getType().getName());
+                ioType.setText(item.description().type().getName());
             } else {
                 IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
 
-                ioType.setText(item.getType().getName() + ": " + fv.text + " ");
+                ioType.setText(item.description().type().getName() + ": " + fv.text + " ");
 
                 // This is for a manual one
                 if (item.isFiltered() == ServiceIO.MANUAL_FILTER) {
-                    String value = item.getType().toString(item.getManualValue());
+                    String value = item.description().type().toString(item.getManualValue());
                     ioValue.setText(value);
                 } else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
                     // Need to look up what the value for this thing is, but return the friendly name not the other thing

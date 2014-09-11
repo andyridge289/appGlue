@@ -1,4 +1,4 @@
-package com.appglue.datatypes;
+package com.appglue.description.datatypes;
 
 public class PhoneNumber extends Text 
 {

@@ -11,8 +11,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.ActivityWiring;
+import com.appglue.IODescription;
 import com.appglue.R;
-import com.appglue.ServiceIO;
+import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.WiringMap;
 
 import java.util.ArrayList;
@@ -42,18 +43,18 @@ public class DialogConnection extends DialogCustom {
                 TextView connectionOut = (TextView) v.findViewById(R.id.connection_out);
                 ImageButton removeButton = (ImageButton) v.findViewById(R.id.connection_remove);
 
-                final ServiceIO out = parent.getFirst().getOutputs().get(p.x);
-                final ServiceIO in = parent.getSecond().getInputs().get(p.y);
+                final IODescription out = parent.getFirst().description().outputs().get(p.x);
+                final IODescription in = parent.getSecond().description().inputs().get(p.y);
 
-                connectionOut.setText(out.getFriendlyName());
-                connectionIn.setText(in.getFriendlyName());
+                connectionOut.setText(out.friendlyName());
+                connectionIn.setText(in.friendlyName());
 
                 removeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         parent.removeConnection(p);
                         ps.remove(p);
-                        context.setStatus("Removed connection between " + out.getName() + " and " + in.getName());
+                        context.setStatus("Removed connection between " + out.name() + " and " + in.name());
 
                         // If there aren't any other connections for this output
                         if (parent.getConnectionsOut(p.x).size() == 0) {
@@ -87,7 +88,7 @@ public class DialogConnection extends DialogCustom {
         });
 
         setView(lv);
-        setTitle("Edit connections for " + item.getFriendlyName());
+        setTitle("Edit connections for " + description.friendlyName());
 
         show();
     }

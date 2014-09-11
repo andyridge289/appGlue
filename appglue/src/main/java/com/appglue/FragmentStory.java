@@ -11,7 +11,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import static com.appglue.Constants.CLASSNAME;
@@ -69,14 +69,15 @@ public class FragmentStory extends Fragment implements OnClickListener
 			String className = intent.getStringExtra(CLASSNAME);
 			final int position = intent.getIntExtra(INDEX, -1);
 
-			if(position == -1)
-			{
-				cs.addComponent(0, registry.getAtomic(className));
-			}
-			else
-			{
-				cs.addComponent(position, registry.getAtomic(className));
-			}
+//			if(position == -1)
+//			{
+//				cs.addServiceDescription(0, registry.getAtomic(className));
+//			}
+//			else
+//			{
+//				cs.addServiceDescription(position, registry.getAtomic(className));
+//			}
+            // FIXME Change the above to work with ComponentService
 			
 			Intent i = new Intent(getActivity(), ActivityStoryParameters.class);
 			i.putExtra(CLASSNAME, className);

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Filter;
 
 import com.appglue.description.ServiceDescription;
+import com.appglue.description.Tag;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -82,7 +83,7 @@ class AdapterComponentListSearch extends AdapterComponentList {
             ArrayList<Tag> tags = item.getTags();
             Log.w(TAG, item.getName() + " has " + tags.size() + " tags");
             for (Tag tag : tags) {
-                String tagName = tag.getName().toLowerCase(Locale.US);
+                String tagName = tag.name().toLowerCase(Locale.US);
                 Log.d(TAG, "Comparing " + tagName + " to " + term);
                 if (tagName.contains(term)) {
                     return true;

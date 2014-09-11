@@ -1,6 +1,6 @@
 package com.appglue.engine.io;
 
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
 
 
 public class IORepository 

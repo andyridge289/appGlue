@@ -15,7 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.Constants.Interval;
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class ActivityRunning extends Activity
 
             boolean enabled = registry.enabled(service.getId());
 
-//			Pair<Boolean, Boolean> running = registry.running(service.getId());
+//			Pair<Boolean, Boolean> running = registry.running(service.id());
 
 				
 			final Button startButton = (Button) v.findViewById(R.id.running_go_button);
@@ -136,11 +136,11 @@ public class ActivityRunning extends Activity
 //					@Override
 //					public void onClick(View v)
 //					{
-//						Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
-//						registry.setIsRunning(service.getId());
+//						Pair<Long, Interval> timings = registry.getTimerDuration(service.id());
+//						registry.setIsRunning(service.id());
 //
 //						Intent intent = new Intent(ActivityRunning.this, OrchestrationService.class);
-//						intent.putExtra(COMPOSITE_ID, service.getId());
+//						intent.putExtra(COMPOSITE_ID, service.id());
 //						intent.putExtra(DURATION, timings.first * timings.second.value);
 //						intent.putExtra(RUN_NOW, true);
 //						startService(intent);
@@ -157,7 +157,7 @@ public class ActivityRunning extends Activity
 //					public void onClick(View v)
 //					{
 //						// This should stop it from running again
-//						registry.setIsntRunning(service.getId());
+//						registry.setIsntRunning(service.id());
 //
 //						startButton.setEnabled(true);
 //						pauseButton.setEnabled(false);
@@ -169,7 +169,7 @@ public class ActivityRunning extends Activity
 //					@Override
 //					public void onClick(View v)
 //					{
-//						registry.setDisabled(service.getId());
+//						registry.setDisabled(service.id());
 //						adapter.remove(service);
 //						adapter.notifyDataSetChanged();
 //					}

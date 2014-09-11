@@ -7,7 +7,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOValue;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -39,20 +40,20 @@ import static com.appglue.Constants.TAGS;
 public class Library 
 {
 	public static String makeJSON(int id, String packageName, String className, String name, String description, 
-			int processType, int price, ArrayList<ServiceIO> inputList, ArrayList<ServiceIO> outputList, String[] tags)
+			int processType, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags)
 	{
 		String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", \"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %d, \"%s\": %d, ", 
 				ID, id, PACKAGENAME, packageName, CLASSNAME, className, NAME, name, DESCRIPTION, description, PROCESS_TYPE, processType, PRICE, price);
 	
-		inputList = inputList == null ? new ArrayList<ServiceIO>() : inputList;
-		outputList = outputList == null ? new ArrayList<ServiceIO>() : outputList;
+		inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
+		outputList = outputList == null ? new ArrayList<IODescription>() : outputList;
 		
 		StringBuilder inputBuilder = new StringBuilder();
 		inputBuilder.append(String.format("\"%s\": [", INPUTS));
 		for(int i = 0; i < inputList.size(); i++)
 		{
-			ServiceIO input = inputList.get(i);
-			IOType type = input.getType();
+			IODescription input = inputList.get(i);
+			IOType type = input.type();
 			
 			StringBuilder sampleBuilder = new StringBuilder();
 			ArrayList<IOValue> values = input.getSampleValues();
@@ -72,8 +73,8 @@ public class Library
 			sampleBuilder.append("]");
 			
 			inputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}", 
-					INPUT_NAME, input.getName(), FRIENDLY_NAME, input.getFriendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), 
-					INPUT_DESCRIPTION, input.getDescription(), MANDATORY, input.isMandatory(), SAMPLES, sampleBuilder.toString()));
+					INPUT_NAME, input.name(), FRIENDLY_NAME, input.friendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(),
+					INPUT_DESCRIPTION, input.description(), MANDATORY, input.isMandatory(), SAMPLES, sampleBuilder.toString()));
 		
 			if(i < inputList.size() - 1)
 				inputBuilder.append(",");
@@ -85,8 +86,8 @@ public class Library
 		outputBuilder.append(String.format("\"%s\": [", OUTPUTS));
 		for(int i = 0; i < outputList.size(); i++)
 		{
-			ServiceIO output = outputList.get(i);
-			IOType type = output.getType();
+			IODescription output = outputList.get(i);
+			IOType type = output.type();
 			
 			StringBuilder sampleBuilder = new StringBuilder();
 			ArrayList<IOValue> values = output.getSampleValues();
@@ -106,7 +107,7 @@ public class Library
 			sampleBuilder.append("]");
 			
 			outputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}",
-					OUTPUT_NAME, output.getName(), FRIENDLY_NAME, output.getFriendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.getDescription(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
+					OUTPUT_NAME, output.name(), FRIENDLY_NAME, output.friendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.description(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
 			
 			if(i < outputList.size() - 1)
 				outputBuilder.append(",");

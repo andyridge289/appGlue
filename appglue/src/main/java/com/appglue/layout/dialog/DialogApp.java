@@ -14,8 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appglue.ActivityWiring;
+import com.appglue.IODescription;
 import com.appglue.R;
-import com.appglue.ServiceIO;
+import com.appglue.engine.description.ServiceIO;
 
 import java.util.List;
 

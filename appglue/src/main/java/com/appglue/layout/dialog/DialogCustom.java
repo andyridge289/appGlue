@@ -6,8 +6,9 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IOValue;
-import com.appglue.ServiceIO;
+import com.appglue.IODescription;
+import com.appglue.description.IOValue;
+import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
 import com.appglue.library.IOFilter;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 
 abstract class DialogCustom extends AlertDialog {
     ActivityWiring activity;
+    IODescription description;
     ServiceIO item;
     Registry registry;
 
@@ -25,6 +27,7 @@ abstract class DialogCustom extends AlertDialog {
         super(context);
         this.activity = context;
         this.item = item;
+        this.description = item.description();
         this.registry = Registry.getInstance(context);
     }
 
@@ -63,7 +66,7 @@ abstract class DialogCustom extends AlertDialog {
         // Make it load the saved filter value
         if (item.isFiltered() == ServiceIO.MANUAL_FILTER) {
 
-            String result = item.getType().toString(item.getManualValue());
+            String result = item.description().type().toString(item.getManualValue());
             fvt.setText(result);
             rt.setChecked(true);
         } else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {

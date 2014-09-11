@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 

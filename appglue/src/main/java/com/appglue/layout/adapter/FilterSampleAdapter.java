@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.appglue.IOValue;
+import com.appglue.description.IOValue;
 
 import java.util.ArrayList;
 

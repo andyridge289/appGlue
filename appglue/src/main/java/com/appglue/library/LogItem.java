@@ -1,6 +1,6 @@
 package com.appglue.library;
 
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 
 import java.util.ArrayList;
 

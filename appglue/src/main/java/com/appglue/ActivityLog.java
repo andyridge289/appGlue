@@ -12,7 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 

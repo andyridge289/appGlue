@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
@@ -99,21 +99,21 @@ public class ActivityComponent extends ActionBarActivity {
         description.setText(service.getDescription());
 
         TextView developerName = (TextView) findViewById(R.id.component_dev);
-        developerName.setText(service.getApp().getDeveloper());
+        developerName.setText(service.app().getDeveloper());
 
         TextView appName = (TextView) findViewById(R.id.component_app_name);
         ImageView appIcon = (ImageView) findViewById(R.id.component_app_icon);
 
         if (service.getServiceType() != ServiceType.REMOTE) {
 
-            if (service.getApp() == null)
+            if (service.app() == null)
                 appName.setText("");
             else
-                appName.setText(service.getApp().getName());
+                appName.setText(service.app().getName());
 
 
-            if (service.getApp() != null)
-                appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(service.getApp().getIconLocation()));
+            if (service.app() != null)
+                appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(service.app().iconLocation()));
 
         } else {
             appName.setVisibility(View.GONE);
@@ -123,7 +123,7 @@ public class ActivityComponent extends ActionBarActivity {
 
 
         ListView inputList = (ListView) findViewById(R.id.input_list);
-        ArrayList<ServiceIO> inputs = service.getInputs();
+        ArrayList<IODescription> inputs = service.inputs();
 
         if (inputs == null || inputs.size() == 0) {
             inputList.setVisibility(View.GONE);
@@ -135,7 +135,7 @@ public class ActivityComponent extends ActionBarActivity {
 
 
         ListView outputList = (ListView) findViewById(R.id.output_list);
-        ArrayList<ServiceIO> outputs = service.getOutputs();
+        ArrayList<IODescription> outputs = service.outputs();
 
         if (outputs == null || outputs.size() == 0) {
             outputList.setVisibility(View.GONE);
@@ -154,11 +154,11 @@ public class ActivityComponent extends ActionBarActivity {
                     PackageManager pm = ActivityComponent.this.getPackageManager();
 
                     if (pm != null) {
-                        Intent i = pm.getLaunchIntentForPackage(service.getApp().getPackageName());
+                        Intent i = pm.getLaunchIntentForPackage(service.app().getPackageName());
                         ActivityComponent.this.startActivity(i);
                     } else {
                         // Do something?
-                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + service.getApp().getPackageName());
+                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + service.app().getPackageName());
                     }
                 } catch (Exception e) {
                     Log.e(TAG, "Trying to launch app? " + e.getMessage());
@@ -171,12 +171,12 @@ public class ActivityComponent extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ActivityComponent.this, ActivityApp.class);
-                intent.putExtra(PACKAGENAME, service.getApp().getPackageName());
+                intent.putExtra(PACKAGENAME, service.app().getPackageName());
                 startActivity(intent);
             }
         });
 
-        final ArrayList<CompositeService> examples = registry.getExamples(service.getClassName());
+        final ArrayList<CompositeService> examples = registry.getExamples(service.className());
         LayoutInflater inflater = this.getLayoutInflater();
 
         LinearLayout exampleContainer = (LinearLayout) findViewById(R.id.component_eg_container);
@@ -224,7 +224,7 @@ public class ActivityComponent extends ActionBarActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle icicle) {
-        icicle.putString(CLASSNAME, service.getClassName());
+        icicle.putString(CLASSNAME, service.className());
         icicle.putBoolean(JUST_A_LIST, atomicList);
         icicle.putInt(SERVICE_TYPE, this.type);
     }
@@ -312,7 +312,7 @@ public class ActivityComponent extends ActionBarActivity {
 
                 Intent i = new Intent();
                 i.putExtra(RESULT, result);
-                i.putExtra(CLASSNAME, service.getClassName());
+                i.putExtra(CLASSNAME, service.className());
                 i.putExtra(SERVICE_TYPE, type);
 
                 if (getParent() == null) {
@@ -342,11 +342,11 @@ public class ActivityComponent extends ActionBarActivity {
         finish();
     }
 
-    private class IOAdapter extends ArrayAdapter<ServiceIO> {
-        private ArrayList<ServiceIO> items;
+    private class IOAdapter extends ArrayAdapter<IODescription> {
+        private ArrayList<IODescription> items;
         private boolean inputs;
 
-        public IOAdapter(Context context, int textViewResourceId, ArrayList<ServiceIO> items, boolean inputs) {
+        public IOAdapter(Context context, int textViewResourceId, ArrayList<IODescription> items, boolean inputs) {
             super(context, textViewResourceId, items);
 
             this.items = items;
@@ -368,11 +368,11 @@ public class ActivityComponent extends ActionBarActivity {
             if (v == null)
                 return null;
 
-            final ServiceIO io = items.get(position);
+            final IODescription io = items.get(position);
 
 
-            ((TextView) v.findViewById(R.id.io_name)).setText(io.getFriendlyName());
-            ((TextView) v.findViewById(R.id.io_type)).setText(io.getType().getName());
+            ((TextView) v.findViewById(R.id.io_name)).setText(io.friendlyName());
+            ((TextView) v.findViewById(R.id.io_type)).setText(io.type().getName());
 
             // It needs to say whether it's mandatory or not
             if (io.isMandatory() && inputs) {
@@ -384,7 +384,7 @@ public class ActivityComponent extends ActionBarActivity {
             v.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ActivityComponent.this, io.getFriendlyName() + ": " + io.getDescription(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ActivityComponent.this, io.friendlyName() + ": " + io.description(), Toast.LENGTH_LONG).show();
                 }
             });
 

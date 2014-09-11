@@ -37,7 +37,7 @@ public class ExternalConnection {
 
         public Async(ServiceDescription description) {
 //	/		this.description = description;
-//			this.keyword = description.getClassName();
+//			this.keyword = description.className();
 //			this.type = TYPE_LOOKUP;
         }
 
@@ -84,7 +84,7 @@ public class ExternalConnection {
 //					if(errno == ERR_CLASSNAME)
 //						return returnedServices; // The class name wasn't set, this is just a bit of a cock up
 //					else if(errno == ERR_NOSERVICE)
-//						addService();
+//						addServiceDescription();
 //						
 //				}
 //				else if(!json.has(ID))
@@ -103,24 +103,24 @@ public class ExternalConnection {
             return new ArrayList<ServiceDescription>();
         }
 
-//		private void addService()
+//		private void addServiceDescription()
 //		{
 //			ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
 //			
-//			postData.add(new BasicNameValuePair(CLASSNAME, description.getClassName()));
+//			postData.add(new BasicNameValuePair(CLASSNAME, description.className()));
 //			postData.add(new BasicNameValuePair(PACKAGENAME, description.getPackageName()));
-//			postData.add(new BasicNameValuePair(NAME, description.getName()));
+//			postData.add(new BasicNameValuePair(NAME, description.name()));
 //			
-//			postData.add(new BasicNameValuePair(DESCRIPTION, description.getDescription()));
+//			postData.add(new BasicNameValuePair(DESCRIPTION, description.description()));
 //			postData.add(new BasicNameValuePair(DEVELOPER, description.getDeveloper()));
 //			postData.add(new BasicNameValuePair(PROCESS_TYPE, "" + description.getProcessType().index));
 //			
 //			if(description.hasInput())
 //			{
 //				ServiceIO input = description.getInput();
-//				postData.add(new BasicNameValuePair(INPUT_NAME, input.getName()));
-//				postData.add(new BasicNameValuePair(INPUT_DESCRIPTION, input.getDescription()));
-//				postData.add(new BasicNameValuePair(INPUT_TYPE, input.getType().getName()));
+//				postData.add(new BasicNameValuePair(INPUT_NAME, input.name()));
+//				postData.add(new BasicNameValuePair(INPUT_DESCRIPTION, input.description()));
+//				postData.add(new BasicNameValuePair(INPUT_TYPE, input.type().name()));
 //			}
 //			else
 //			{
@@ -132,9 +132,9 @@ public class ExternalConnection {
 //			if(description.hasOutput())
 //			{
 //				ServiceIO output = description.getOutput();
-//				postData.add(new BasicNameValuePair(OUTPUT_NAME, output.getName()));
-//				postData.add(new BasicNameValuePair(OUTPUT_DESCRIPTION, output.getDescription()));
-//				postData.add(new BasicNameValuePair(OUTPUT_TYPE, output.getType().getName()));
+//				postData.add(new BasicNameValuePair(OUTPUT_NAME, output.name()));
+//				postData.add(new BasicNameValuePair(OUTPUT_DESCRIPTION, output.description()));
+//				postData.add(new BasicNameValuePair(OUTPUT_TYPE, output.type().name()));
 //			}
 //			else
 //			{

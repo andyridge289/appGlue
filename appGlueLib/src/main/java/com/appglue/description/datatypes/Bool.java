@@ -1,26 +1,26 @@
-package com.appglue.datatypes;
+package com.appglue.description.datatypes;
 
 import android.os.Bundle;
 
-public class NumberInt extends IOType
+public class Bool extends IOType
 {
-	public NumberInt()
+	public Bool()
 	{
 		super();
-		this.name = "NumberInt";
-		this.className = NumberInt.class.getCanonicalName();
-		this.value = 0;
+		this.name = "Bool";
+		this.className = Bool.class.getCanonicalName();
+		this.value = false;
         this.sensitivity = Sensitivity.NORMAL;
 	}
 
     @Override
     public Object getFromBundle(Bundle bundle, String key, Object defaultValue) {
-        return bundle.getInt(key, (Integer) defaultValue);
+        return bundle.getBoolean(key, false);
     }
 
     @Override
     public void addToBundle(Bundle b, Object o, String key) {
-        b.putInt(key, (Integer) o);
+        b.putBoolean(key, (Boolean) o);
     }
 
 
@@ -31,7 +31,6 @@ public class NumberInt extends IOType
 	
 	public Object fromString(String value)
 	{
-		return Integer.parseInt(value);
+		return Boolean.parseBoolean(value);
 	}
-	
 }

@@ -17,8 +17,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.CompositeService;
-import com.appglue.library.AppGlueLibrary;
+import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
         registry = Registry.getInstance(getActivity());
         
         ListView componentList = (ListView) v.findViewById(R.id.story_composite_components);
-        componentList.setAdapter(new ComponentAdapter(getActivity(), registry.getService().getComponents()));
+        componentList.setAdapter(new ComponentAdapter(getActivity(), registry.getService().getComponentsAL()));
         
         addLayout = (LinearLayout) v.findViewById(R.id.choice_carry_on);
         addLayout.setOnClickListener(this);
@@ -85,14 +85,15 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			String className = intent.getStringExtra(CLASSNAME);
 			final int position = intent.getIntExtra(INDEX, -1);
 
-			if(position == -1)
-			{
-				cs.addComponent(0, registry.getAtomic(className));
-			}
-			else
-			{
-				cs.addComponent(position, registry.getAtomic(className));
-			}
+//			if(position == -1)
+//			{
+//				cs.addServiceDescription(0, registry.getAtomic(className));
+//			}
+//			else
+//			{
+//				cs.addServiceDescription(position, registry.getAtomic(className));
+//			}
+            // FIXME Fix the above
 			
 			Intent i = new Intent(getActivity(), ActivityStoryParameters.class);
 			i.putExtra(CLASSNAME, className);
@@ -107,10 +108,10 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 		}
 	}
 	
-	private class ComponentAdapter extends ArrayAdapter<ServiceDescription>
+	private class ComponentAdapter extends ArrayAdapter<ComponentService>
 	{
 
-		public ComponentAdapter(Context context, ArrayList<ServiceDescription> objects) {
+		public ComponentAdapter(Context context, ArrayList<ComponentService> objects) {
 			super(context, R.layout.list_item_storycomponent, objects);
 			
 		}
@@ -126,13 +127,13 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 				v = vi.inflate(R.layout.list_item_storycomponent, null);
 			}
 			
-			ServiceDescription component = getItem(position);
+			ServiceDescription component = getItem(position).description();
 			
 			TextView nameText = (TextView) v.findViewById(R.id.story_component_name);
 			nameText.setText(component.getName());
 			
-			ArrayList<ServiceIO> inputs = component.getInputs();
-			ArrayList<ServiceIO> outputs = component.getOutputs();
+			ArrayList<IODescription> inputs = component.inputs();
+			ArrayList<IODescription> outputs = component.outputs();
 			
 			LinearLayout in = (LinearLayout) v.findViewById(R.id.storycomponent_input_list);
 			in.removeAllViews();
@@ -156,22 +157,17 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			}
 			else
 			{
-				for(int i = 0; i < component.getInputs().size(); i++)
+				for(int i = 0; i < component.inputs().size(); i++)
 				{
-					ServiceIO sio = component.getInputs().get(i);
+					IODescription sio = component.inputs().get(i);
 					
 					ImageView iv = new ImageView(this.getContext());
-					
-					if(sio.hasValue())
-						iv.setImageResource(R.drawable.empty_input);
-					else
-						iv.setImageResource(R.drawable.empty_input);
-					
+    				iv.setImageResource(R.drawable.empty_input);
 					in.addView(iv);
 				}
 			}
 			
-			// FIXME Setting inputs needs to set text to EditFilter
+			// TODO Setting inputs needs to set text to EditFilter (I don't remember what this means)
 			
 			// Show placeholders if they aren't set
 			if(outputs == null || outputs.size() == 0)
@@ -187,17 +183,12 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			}
 			else
 			{   
-				for(int i = 0; i < component.getOutputs().size(); i++)
+				for(int i = 0; i < component.outputs().size(); i++)
 				{
-					ServiceIO sio = component.getOutputs().get(i);
+					IODescription sio = component.outputs().get(i);
 					
 					ImageView iv = new ImageView(this.getContext());
-					
-					if(sio.hasValue())
-						iv.setImageResource(R.drawable.empty_input);
-					else
-						iv.setImageResource(R.drawable.empty_input);
-					
+                    iv.setImageResource(R.drawable.empty_input);
 					out.addView(iv);
 				}
 			}

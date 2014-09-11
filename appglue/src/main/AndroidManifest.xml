@@ -103,7 +103,7 @@
         <!-- Services that can be composed -->
         <service android:name=".services.SayHelloService" />
         <service android:name=".services.NotificationService" />
-        <service android:name=".services.ClockService" />
+        <service android:name=".services.AlarmService" />
         <service android:name=".services.TubeService" />
         <service android:name=".services.ToastService" />
         <service android:name=".services.SendSMSService" />

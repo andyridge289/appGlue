@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,12 +19,13 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOValue;
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
-import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
 import com.appglue.serviceregistry.Registry;
 
@@ -135,10 +135,10 @@ public class FragmentStoryParameters extends Fragment
 			registry = Registry.getInstance(getActivity());
 
         CompositeService cs = registry.getService();
-		ArrayList<ServiceDescription> components = cs.getComponents();
+		ArrayList<ComponentService> components = cs.getComponentsAL();
 		position = position == -1 ? components.size() - 1 : position;
-        ServiceDescription component = components.get(position);
-		previous = position > 0 ? components.get(position - 1) : null;
+        ServiceDescription component = components.get(position).description(); // FIXME SparseArray
+		previous = position > 0 ? components.get(position - 1).description() : null;
 		Log.w(TAG, "And now position " + position);
 		
 		nameText.setText(component.getName());
@@ -147,7 +147,7 @@ public class FragmentStoryParameters extends Fragment
 		{
 			// Show the list, hide the text, set the adapter
 			inputContainer.setVisibility(View.VISIBLE);
-			setupInputs(inputContainer, component.getInputs());
+			setupInputs(inputContainer, component.inputs());
 			noInputText.setVisibility(View.GONE);
 		}
 		else
@@ -161,7 +161,7 @@ public class FragmentStoryParameters extends Fragment
 		{
 			// Show the list, hide the text, set the adapter
 			outputContainer.setVisibility(View.VISIBLE);
-			setupOutputs(outputContainer, component.getOutputs());
+			setupOutputs(outputContainer, component.outputs());
 			noOutputText.setVisibility(View.GONE);
 		}
 		else
@@ -179,7 +179,7 @@ public class FragmentStoryParameters extends Fragment
 	 * 
 	 *********************************/
 	
-	private void setupInputs(LinearLayout inputContainer, ArrayList<ServiceIO> inputs)
+	private void setupInputs(LinearLayout inputContainer, ArrayList<IODescription> inputs)
 	{
 		for(int i = 0; i < inputs.size(); i++)
 		{
@@ -188,16 +188,16 @@ public class FragmentStoryParameters extends Fragment
 		}
 	}
 	
-	private View setInput(ArrayList<ServiceIO> inputs, final int index)
+	private View setInput(ArrayList<IODescription> inputs, final int index)
 	{
 		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View v = vi.inflate(R.layout.list_item_storyparam_input, null);
 		
-		final ServiceIO item = inputs.get(index);
-		IOType type = item.getType();
+		final IODescription item = inputs.get(index);
+		IOType type = item.type();
 		
 		TextView nameText = (TextView) v.findViewById(R.id.param_input_name);
-		nameText.setText(item.getFriendlyName());
+		nameText.setText(item.friendlyName());
 		
 		TextView typeText = (TextView) v.findViewById(R.id.param_input_type);
 		typeText.setText(type.getName());
@@ -249,28 +249,28 @@ public class FragmentStoryParameters extends Fragment
 				{
 					// It's the sample one
 					IOValue value = (IOValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
-					item.setChosenSampleValue(value);
-					item.setFilterState(ServiceIO.SAMPLE_FILTER);
+//					item.setChosenSampleValue(value);
+//					item.setFilterState(IODescription.SAMPLE_FILTER); TODO ServiceIO not IODescription
 				}
 				else if(tabs.getCurrentTab() == 1)
 				{
 					// It's the custom one
 					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
-					Object value = item.getType().fromString(sValue);
-					item.setManualValue(value);
-					item.setFilterState(ServiceIO.MANUAL_FILTER);
+					Object value = item.type().fromString(sValue);
+//					item.setManualValue(value);
+//					item.setFilterState(IODescription.MANUAL_FILTER); TODO ServiceIO not IODescription
 				}
 				else if(tabs.getCurrentTab() == 2)
 				{
 					// It needs to be linked to a previous one.. This could be more complicated!
-					ServiceIO value = (ServiceIO) ((Spinner) container.findViewById(R.id.param_previous_spinner)).getSelectedItem();
-					Log.e(TAG, value.getFriendlyName());
+					IODescription value = (IODescription) ((Spinner) container.findViewById(R.id.param_previous_spinner)).getSelectedItem();
+					Log.e(TAG, value.friendlyName());
 					
 					
 					// get previous output from the last component and then match them up
-					ServiceIO previousOut = previous.getOutput(value.getId());
-					item.setConnection(previousOut);
-					previousOut.setConnection(item);
+					IODescription previousOut = previous.getOutput(value.id());
+//					item.setConnection(previousOut);
+//					previousOut.setConnection(item); TODO ServiceIO not IODescription
 				}
 				
 				doneContainer.setVisibility(View.GONE);
@@ -346,8 +346,8 @@ public class FragmentStoryParameters extends Fragment
 	
 	
 	
-	private void setupInput(ServiceIO current, int type,
-                            boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
+	private void setupInput(IODescription current, int type,
+                            boolean hasSamples, ArrayList<IOValue> values, IODescription item,
                             View v)
 	{
 		
@@ -356,14 +356,14 @@ public class FragmentStoryParameters extends Fragment
 		final Spinner previousSpinner = (Spinner) v.findViewById(R.id.param_previous_spinner);	
 		final Spinner conditionSpinner = (Spinner) v.findViewById(R.id.param_condition_spinner);
 		
-		ArrayList<ServiceIO> matching = new ArrayList<ServiceIO>();
+		ArrayList<IODescription> matching = new ArrayList<IODescription>();
 		
 		if(previous != null)
 		{
-			ArrayList<ServiceIO> outputs = previous.getOutputs();
+			ArrayList<IODescription> outputs = previous.outputs();
 
-            for (ServiceIO output : outputs) {
-                if (output.getType().equals(current.getType())) {
+            for (IODescription output : outputs) {
+                if (output.type().equals(current.type())) {
                     matching.add(output);
                 }
             }
@@ -399,7 +399,7 @@ public class FragmentStoryParameters extends Fragment
 		}
 		else
 		{
-            matching.add(new ServiceIO("No matching"));
+            matching.add(new IODescription("No matching"));
             // It shouldn't be a sample value, because it ain't a sample. It's a ServiceIO. You tit.
 			previousSpinner.setAdapter(new MatchingAdapter(getActivity(), matching));
 			previousSpinner.setEnabled(false);
@@ -437,39 +437,40 @@ public class FragmentStoryParameters extends Fragment
 		
 
 		// Make it load the saved filter value
-		if (item.isFiltered() == ServiceIO.MANUAL_FILTER) 
-		{
-			String result = item.getType().toString(item.getManualValue());
-			valueText.setText(result);
-		}
-		else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) 
-		{
-			IOValue selected = item.getChosenSampleValue();
-			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
-				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
-				if (ioValue.equals(selected)) {
-					valueSpinner.setSelection(i, true);
-					break;
-				}
-			}
-		}
+//		if (item.isFiltered() == IODescription.MANUAL_FILTER)
+//		{
+//			String result = item.type().toString(item.getManualValue());
+//			valueText.setText(result);
+//		}
+//		else if (item.isFiltered() == IODescription.SAMPLE_FILTER)
+//		{
+//			IOValue selected = item.getChosenSampleValue();
+//			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
+//				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
+//				if (ioValue.equals(selected)) {
+//					valueSpinner.setSelection(i, true);
+//					break;
+//				}
+//			}
+//		}
+//
+//		if (item.isFiltered() != IODescription.UNFILTERED && conditionSpinner != null) {
+//			FilterValue fv = IOFilter.filters.get(item.getCondition());
+//
+//			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
+//				FilterValue fv2 = (FilterValue) conditionSpinner.getItemAtPosition(i);
+//				if (fv.index == fv2.index) {
+//					conditionSpinner.setSelection(i, true);
+//					break;
+//				}
+//			}
+//		}
 
-		if (item.isFiltered() != ServiceIO.UNFILTERED && conditionSpinner != null) {
-			FilterValue fv = IOFilter.filters.get(item.getCondition());
-
-			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
-				FilterValue fv2 = (FilterValue) conditionSpinner.getItemAtPosition(i);
-				if (fv.index == fv2.index) {
-					conditionSpinner.setSelection(i, true);
-					break;
-				}
-			}
-		}
-		
+        // TODO ServiceIO not IODescription
 		// And now look up if anything had a type in the other service TODO ?????	
 	}
 	
-	private void setupOutputs(LinearLayout outputContainer, ArrayList<ServiceIO> outputs)
+	private void setupOutputs(LinearLayout outputContainer, ArrayList<IODescription> outputs)
 	{
 		for(int i = 0; i < outputs.size(); i++)
 		{
@@ -478,16 +479,16 @@ public class FragmentStoryParameters extends Fragment
 		}
 	}
 	
-	private View setupOutput(final ArrayList<ServiceIO> outputs, final int index)
+	private View setupOutput(final ArrayList<IODescription> outputs, final int index)
 	{
 		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View v = vi.inflate(R.layout.list_item_storyparam_output, null);
 	
-		final ServiceIO item = outputs.get(index);
-		IOType type = item.getType();
+		final IODescription item = outputs.get(index);
+		IOType type = item.type();
 		
 		final TextView nameText = (TextView) v.findViewById(R.id.param_output_name);
-		nameText.setText(item.getFriendlyName());
+		nameText.setText(item.friendlyName());
 		
 		TextView typeText = (TextView) v.findViewById(R.id.param_output_type);
 		typeText.setText(type.getName());
@@ -540,16 +541,16 @@ public class FragmentStoryParameters extends Fragment
 				{
 					// It's the sample one
 					IOValue value = (IOValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
-					item.setChosenSampleValue(value);
-					item.setFilterState(ServiceIO.SAMPLE_FILTER);
+//					item.setChosenSampleValue(value);
+//					item.setFilterState(IODescription.SAMPLE_FILTER); TODO ServiceIO not IODescription
 				}
 				else if(tabs.getCurrentTab() == 1)
 				{
 					// It's the custom one
 					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
-					Object value = item.getType().fromString(sValue);
-					item.setManualValue(value);
-					item.setFilterState(ServiceIO.MANUAL_FILTER);
+					Object value = item.type().fromString(sValue);
+//					item.setManualValue(value);
+//					item.setFilterState(IODescription.MANUAL_FILTER); TODO ServiceIO not IODescription
 				}			
 				
 				doneContainer.setVisibility(View.GONE);
@@ -625,7 +626,7 @@ public class FragmentStoryParameters extends Fragment
 	}
 	
 	private void setupOutput(FilterValue[] conditions, int type,
-                             boolean hasSamples, ArrayList<IOValue> values, ServiceIO item,
+                             boolean hasSamples, ArrayList<IOValue> values, IODescription item,
                              View v) {
 
 		final Spinner valueSpinner = (Spinner) v.findViewById(R.id.param_value_spinner);
@@ -689,39 +690,39 @@ public class FragmentStoryParameters extends Fragment
 		}
 
 		// Make it load the saved filter value
-		if (item.isFiltered() == ServiceIO.MANUAL_FILTER) 
-		{
-
-			String result = item.getType().toString(item.getManualValue());
-			valueText.setText(result);
-		}
-		else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
-			IOValue selected = item.getChosenSampleValue();
-			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
-				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
-				if (ioValue.equals(selected)) {
-					valueSpinner.setSelection(i, true);
-					break;
-				}
-			}
-		}
-
-		if (item.isFiltered() != ServiceIO.UNFILTERED && conditionSpinner != null) {
-			FilterValue fv = IOFilter.filters.get(item.getCondition());
-
-			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
-				FilterValue fv2 = (FilterValue) conditionSpinner.getItemAtPosition(i);
-				if (fv.index == fv2.index) {
-					conditionSpinner.setSelection(i, true);
-					break;
-				}
-			}
-		}
+//		if (item.isFiltered() == IODescription.MANUAL_FILTER)
+//		{
+//
+//			String result = item.type().toString(item.getManualValue());
+//			valueText.setText(result);
+//		}
+//		else if (item.isFiltered() == IODescription.SAMPLE_FILTER) {
+//			IOValue selected = item.getChosenSampleValue();
+//			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
+//				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
+//				if (ioValue.equals(selected)) {
+//					valueSpinner.setSelection(i, true);
+//					break;
+//				}
+//			}
+//		}
+//
+//		if (item.isFiltered() != IODescription.UNFILTERED && conditionSpinner != null) {
+//			FilterValue fv = IOFilter.filters.get(item.getCondition());
+//
+//			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
+//				FilterValue fv2 = (FilterValue) conditionSpinner.getItemAtPosition(i);
+//				if (fv.index == fv2.index) {
+//					conditionSpinner.setSelection(i, true);
+//					break;
+//				}
+//			}
+//		} TODO ServiceIO not IODescription
 	}
 	
-	private class MatchingAdapter extends ArrayAdapter<ServiceIO>
+	private class MatchingAdapter extends ArrayAdapter<IODescription>
 	{	
-		public MatchingAdapter(Context context, ArrayList<ServiceIO> objects)
+		public MatchingAdapter(Context context, ArrayList<IODescription> objects)
 		{
 			super(context, android.R.layout.simple_dropdown_item_1line, objects);
 		}
@@ -735,10 +736,10 @@ public class FragmentStoryParameters extends Fragment
 			if(v == null)
                 v = vi.inflate(android.R.layout.simple_dropdown_item_1line, null);
 			
-			ServiceIO other = getItem(position);
+			IODescription other = getItem(position);
 			
 			TextView tv = (TextView) v.findViewById(android.R.id.text1);
-			tv.setText(other.getFriendlyName());
+			tv.setText(other.friendlyName());
 			
 			return v;
 		}
@@ -753,10 +754,10 @@ public class FragmentStoryParameters extends Fragment
 				v = vi.inflate(android.R.layout.simple_dropdown_item_1line, null);
 			}
 			
-			ServiceIO other = getItem(position);
+			IODescription other = getItem(position);
 			
 			TextView tv = (TextView) v.findViewById(android.R.id.text1);
-			tv.setText(other.getFriendlyName());
+			tv.setText(other.friendlyName());
 			
 			return v;
 		}

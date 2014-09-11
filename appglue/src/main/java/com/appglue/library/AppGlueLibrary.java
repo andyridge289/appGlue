@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
 
 import org.json.JSONException;
@@ -64,7 +64,7 @@ public class AppGlueLibrary {
         JSONObject json = new JSONObject();
         try {
             for (String key : keys) {
-                IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
+                IOType type = input ? component.getInput(key).type() : component.getOutput(key).type();
                 String stringThing = type.toString(type.getFromBundle(data, key, "ARGH FAIL"));
                 json.put(key, stringThing);
             }
@@ -102,7 +102,7 @@ public class AppGlueLibrary {
             Iterator<String> keys = json.keys();
             while(keys.hasNext()) {
                 String key = keys.next();
-                IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
+                IOType type = input ? component.getInput(key).type() : component.getOutput(key).type();
                 type.addToBundle(b, type.fromString(json.getString(key)), key);
             }
 

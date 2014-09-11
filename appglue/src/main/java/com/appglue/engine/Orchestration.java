@@ -1,7 +1,7 @@
 package com.appglue.engine;
 
-import com.appglue.IOValue;
-import com.appglue.ServiceIO;
+import com.appglue.IODescription;
+import com.appglue.description.IOValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.IOFilter;
 import com.appglue.TST;
@@ -24,7 +24,7 @@ public class Orchestration {
 
         // Save it to the list of components that are in this composite, we don't care if there are duplicates for this case.
         if (!this.contains(component)) {
-            components.put(component.getClassName(), component);
+            components.put(component.className(), component);
         }
 
         while (nodes.size() <= position) {
@@ -39,18 +39,18 @@ public class Orchestration {
 
     public void addConnection(int startIndex, int endIndex,
                               ServiceDescription start, ServiceDescription end,
-                              ServiceIO out, ServiceIO in) {
+                              IODescription out, IODescription in) {
         Edge e = new Edge(startIndex, endIndex, start, end, out, in);
 
         this.edges.get(startIndex).add(e);
     }
 
-    public void addFilter(int index, ServiceDescription component, ServiceIO io) {
+    public void addFilter(int index, ServiceDescription component, IODescription io) {
         Edge e = new Edge(index, component, io, new IOFilter());
         // FIXME This needs to actually do something with the filter information
     }
 
-    public void addValue(int index, ServiceDescription component, ServiceIO io) {
+    public void addValue(int index, ServiceDescription component, IODescription io) {
         Edge e = new Edge(index, component, io, new IOValue());
         // FIXME This actually needs to do something with the values from the thing
     }
@@ -60,7 +60,7 @@ public class Orchestration {
     }
 
     public boolean contains(ServiceDescription component) {
-        return contains(component.getClassName());
+        return contains(component.className());
     }
 
     private class Node {
@@ -85,14 +85,14 @@ public class Orchestration {
         private ServiceDescription start;
         private ServiceDescription end;
 
-        private ServiceIO out;
-        private ServiceIO in;
+        private IODescription out;
+        private IODescription in;
 
         private IOFilter filter;
         private IOValue value;
 
         private Edge(int startIndex, int endIndex, ServiceDescription start, ServiceDescription end,
-                     ServiceIO out, ServiceIO in) {
+                     IODescription out, IODescription in) {
             this.startIndex = startIndex;
             this.endIndex = endIndex;
             this.start = start;
@@ -101,13 +101,13 @@ public class Orchestration {
             this.in = in;
         }
 
-        private Edge(int index, ServiceDescription component, ServiceIO io, IOFilter filter) {
+        private Edge(int index, ServiceDescription component, IODescription io, IOFilter filter) {
             this.startIndex = index;
             this.start = component;
             this.out = io;
         }
 
-        private Edge(int index, ServiceDescription component, ServiceIO io, IOValue value) {
+        private Edge(int index, ServiceDescription component, IODescription io, IOValue value) {
             this.endIndex = index;
             this.end = component;
             this.in = io;

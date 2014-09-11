@@ -86,9 +86,21 @@ public abstract class ComposableService extends Service
         failureBundle.putString(ERROR, message);
     }
 
-    public void send(Object o)
+    public void send(Bundle b)
     {
-        // FIXME Need to re-implement this. Think I must have deleted it when I gave up with Play Services.
+        Message returnMessage = isList ? Message.obtain(null, MSG_LIST, 0, 0) : Message.obtain(null, MSG_OBJECT, 0, 0);
+        Bundle newMessageData = new Bundle();
+        ArrayList<Bundle> o = new ArrayList<Bundle>();
+        o.add(b);
+        newMessageData.putParcelableArrayList(INPUT, o);
+        returnMessage.setData(newMessageData);
+
+        try {
+            messageSender.send(returnMessage);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            Log.e(TAG, "Failed to send data back");
+        }
     }
 
     class Async extends AsyncTask<Message, Void, Message>

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.appglue.Constants.ProcessType;
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 
@@ -81,7 +81,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
             intentData.add(b);
         }
 		
-//		Log.w(TAG, "Started service " + services.get(i).getName() + " " + System.currentTimeMillis());
+//		Log.w(TAG, "Started service " + services.get(i).name() + " " + System.currentTimeMillis());
 		serviceIntent.putParcelableArrayListExtra(DATA, intentData);
 		
 		context.startService(serviceIntent);

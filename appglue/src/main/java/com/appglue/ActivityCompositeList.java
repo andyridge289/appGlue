@@ -37,8 +37,8 @@ import android.widget.Toast;
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
-import com.appglue.description.ServiceDescription;
-import com.appglue.engine.CompositeService;
+import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
@@ -97,7 +97,7 @@ public class ActivityCompositeList extends Activity {
             if (selected.size() > 1) {
                 menu.setGroupVisible(R.id.comp_context_rungroup, false);
                 menu.setGroupVisible(R.id.comp_context_singlegroup, false);
-            } else if (composites.get(selected.get(0)).getComponents().get(0).getProcessType() == ProcessType.TRIGGER) {
+            } else if (composites.get(selected.get(0)).getComponents().get(0).description().getProcessType() == ProcessType.TRIGGER) {
                 menu.setGroupVisible(R.id.comp_context_rungroup, false);
                 menu.setGroupVisible(R.id.comp_context_singlegroup, true);
             } else {
@@ -527,21 +527,21 @@ public class ActivityCompositeList extends Activity {
                 nameText.setText(cs.getName());
 
             ImageView icon = (ImageView) v.findViewById(R.id.service_icon);
-            ArrayList<ServiceDescription> components = cs.getComponents();
+            SparseArray<ComponentService> components = cs.getComponents();
 
-//            Log.d(TAG, cs.getName() + ": " + components.size());
+//            Log.d(TAG, cs.name() + ": " + components.size());
 //            for (int i = 0; i < components.size(); i++) {
 //                Log.d(TAG, components.keyAt(i) + ": alive");
 //            }
 
-            AppDescription app = components.get(0).getApp();
+            AppDescription app = components.get(0).description().app();
 
 
-            if (app == null || app.getIconLocation() == null) {
+            if (app == null || app.iconLocation() == null) {
                 // FIXME Work out how to do the below
 //                icon.setBackground(getResources().getDrawable(R.drawable.icon));
             } else {
-                String iconLocation = app.getIconLocation();
+                String iconLocation = app.iconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);
                 icon.setImageBitmap(b);
             }
@@ -568,10 +568,10 @@ public class ActivityCompositeList extends Activity {
                     v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
 
                     if (actionMode != null) {
-                        actionMode.setSubtitle(selected.size() + " selected."); //cs.getName());
+                        actionMode.setSubtitle(selected.size() + " selected."); //cs.name());
 
                         if (selected.size() == 1) {
-                            if (cs.getComponents().get(0).getProcessType() == ProcessType.TRIGGER) {
+                            if (cs.getComponents().get(0).description().getProcessType() == ProcessType.TRIGGER) {
                                 actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
                                 actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
                             } else {
@@ -602,7 +602,9 @@ public class ActivityCompositeList extends Activity {
         @Override
         protected ArrayList<CompositeService> doInBackground(Void... arg0) {
             try {
-                ServiceFactory.getInstance(registry, ActivityCompositeList.this);
+                ServiceFactory sf = ServiceFactory.getInstance(registry, ActivityCompositeList.this);
+                sf.setupServices();
+
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException - Failed to create services (CompositeListActivity) " + e.getMessage());
             }

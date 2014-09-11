@@ -231,9 +231,7 @@ public class Constants
 	
 	// Database - atomic_has_parameter
 	public static final String PARAMETER_ID = "param_id";
-	
-	public static final String OUTPUT_CLASSNAME = "output_classname";
-	public static final String INPUT_CLASSNAME = "input_classname";
+
 	public static final String OUTPUT_IO_ID = "output_io_id";
 	public static final String INPUT_IO_ID = "input_io_id";
 	

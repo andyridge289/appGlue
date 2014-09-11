@@ -1,4 +1,4 @@
-package com.appglue.datatypes;
+package com.appglue.description.datatypes;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -112,7 +112,6 @@ public abstract class IOType
 
         public static IOType getType(String name)
 		{
-
             if(name.equals(TEXT))
                 return new Text();
             else if(name.equals(URL))
@@ -140,7 +139,5 @@ public abstract class IOType
 
 			return null;
 		}
-		
-		
 	}
 }

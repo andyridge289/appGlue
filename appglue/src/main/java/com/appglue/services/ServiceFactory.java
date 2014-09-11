@@ -5,11 +5,11 @@ import android.content.Context;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.appglue.IOValue;
+import com.appglue.IODescription;
+import com.appglue.description.IOValue;
 import com.appglue.Library;
 import com.appglue.R;
-import com.appglue.ServiceIO;
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
@@ -39,10 +39,14 @@ import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.ICON;
 
 public class ServiceFactory {
 
     private static ServiceFactory factory;
+    private AppDescription appDescription;
+    private Context context;
+    private Registry registry;
 
     public static ServiceFactory getInstance(Registry registry, Context context) throws JSONException {
         if (factory == null) {
@@ -52,10 +56,29 @@ public class ServiceFactory {
         return factory;
     }
 
-
     private ServiceFactory(Registry registry, Context context) throws JSONException {
+        this.context = context;
+        this.registry = registry;
 
-        String appData = setupComposer();
+        String appData = setupComposer("");
+        JSONObject jsonApp = new JSONObject(appData);
+        appDescription = AppDescription.parseFromJSON(jsonApp);
+
+        String iconString = Library.drawableToString(context.getResources().getDrawable(R.drawable.icon));
+        LocalStorage storage = LocalStorage.getInstance();
+        try {
+            String filename = storage.writeIcon(appDescription.getPackageName(), iconString);
+            appDescription.setIconLocation(filename);
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Icon creating - File not found!!!!");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e(TAG, "Icon creating - IOException other than file not found!!!!");
+            e.printStackTrace();
+        }
+    }
+
+    public void setupServices() throws JSONException {
 
         ArrayList<String> services = new ArrayList<String>();
         services.add(setupHelloService());
@@ -75,28 +98,11 @@ public class ServiceFactory {
         services.add(setupBluetoothTrigger());
         services.add(setupHeadphoneTrigger());
 
-        String iconString = Library.drawableToString(context.getResources().getDrawable(R.drawable.icon));
-
-        JSONObject jsonApp = new JSONObject(appData);
-        AppDescription app = AppDescription.parseFromJSON(jsonApp);
-
-        LocalStorage storage = LocalStorage.getInstance();
-        try {
-            String filename = storage.writeIcon(app.getPackageName(), iconString);
-            app.setIconLocation(filename);
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "Icon creating - File not found!!!!");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e(TAG, "Icon creating - IOException other than file not found!!!!");
-            e.printStackTrace();
-        }
-
-        String all = setupServiceList(appData, services);
-        ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, app);
+        String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
+        ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
 
         for (ServiceDescription sd : serviceList) {
-            long atomicId = registry.addService(sd);
+            long atomicId = registry.addServiceDescription(sd);
 
             if (atomicId == -1) {
                 Log.d(TAG, "The atomic ID is -1, apparently this is bad");
@@ -104,13 +110,18 @@ public class ServiceFactory {
         }
     }
 
-    private String setupComposer() {
+    public AppDescription getAppDescription() {
+        return appDescription;
+    }
+
+    private String setupComposer(String iconLocation) {
         String[][] appData = new String[][]
                 {
                         {NAME, "appGlue"},
                         {PACKAGENAME, "com.appglue",},
                         {DESCRIPTION, "This is the app that does all the gluing, or is it glueing?"},
-                        {DEVELOPER, "Andy Ridge"}
+                        {DEVELOPER, "Andy Ridge"},
+                        {ICON, iconLocation }
                 };
 
         return setupApp(appData);
@@ -134,10 +145,10 @@ public class ServiceFactory {
     }
 
     private String setupHelloService() {
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 
-        outputs.add(new ServiceIO(-1, SayHelloService.TAG_HELLO, "Hello text", text, "The service is saying hello.", false, null));
+        outputs.add(new IODescription(-1, SayHelloService.TAG_HELLO, "Hello text", text, "The service is saying hello.", false, null));
 
         String[] tags = {"Hello"};
 
@@ -146,16 +157,16 @@ public class ServiceFactory {
                 "This service says hello.",
                 SayHelloService.processType.index,
                 0,
-                new ArrayList<ServiceIO>(), outputs, tags);
+                new ArrayList<IODescription>(), outputs, tags);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, helloJSON);
     }
 
     private String setupLaunchAppService() {
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType app = IOType.Factory.getType(IOType.Factory.APP);
 
-        inputs.add(new ServiceIO(-1, LaunchAppService.APP_PACKAGE, "App", app, "The app that you want to launch.", false, null));
+        inputs.add(new IODescription(-1, LaunchAppService.APP_PACKAGE, "App", app, "The app that you want to launch.", false, null));
 
         String[] tags = {"App", "Android", "Run", "Launch"};
 
@@ -171,14 +182,14 @@ public class ServiceFactory {
 
 
     private String setupBluetoothService() {
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
         ArrayList<IOValue> samples = new ArrayList<IOValue>();
         samples.add(new IOValue("On", true));
         samples.add(new IOValue("Off", false));
 
-        inputs.add(new ServiceIO(-1, BluetoothService.BLUETOOTH_STATE, "New state", bool, "The new state of Bluetooth", false, samples));
+        inputs.add(new IODescription(-1, BluetoothService.BLUETOOTH_STATE, "New state", bool, "The new state of Bluetooth", false, samples));
 
         String[] tags = {"Bluetooth", "Setting"};
 
@@ -187,7 +198,7 @@ public class ServiceFactory {
                 "Turns bluetooth on or off!",
                 BluetoothService.processType.index,
                 0,
-                inputs, new ArrayList<ServiceIO>(), tags);
+                inputs, new ArrayList<IODescription>(), tags);
 
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, btJSON);
     }
@@ -195,14 +206,14 @@ public class ServiceFactory {
     // TODO Need to make sure all the text is escaped
 
     private String setupWifiService() {
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
         ArrayList<IOValue> samples = new ArrayList<IOValue>();
         samples.add(new IOValue("On", true));
         samples.add(new IOValue("Off", false));
 
-        inputs.add(new ServiceIO(-1, WifiService.WIFI_STATE, "New state", bool, "The new state of the wifi", false, samples));
+        inputs.add(new IODescription(-1, WifiService.WIFI_STATE, "New state", bool, "The new state of the wifi", false, samples));
 
         String[] tags = {"Wifi", "Setting"};
 
@@ -211,14 +222,14 @@ public class ServiceFactory {
                 "Turns wifi on or off!",
                 WifiService.processType.index,
                 0,
-                inputs, new ArrayList<ServiceIO>(), tags);
+                inputs, new ArrayList<IODescription>(), tags);
 
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, wifiJSON);
     }
 
 
     private String setupTubeService() {
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
         IOType url = IOType.Factory.getType(IOType.Factory.URL);
         IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
@@ -245,11 +256,11 @@ public class ServiceFactory {
         sampleStatuses.add(new IOValue("Severe delays", "severe delays"));
         sampleStatuses.add(new IOValue("Part Closure", "part closure"));
 
-        outputs.add(new ServiceIO(-1, TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
-        outputs.add(new ServiceIO(-1, TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
-        outputs.add(new ServiceIO(-1, TubeService.LINE_MESSAGE, "Message", text, "The message associated with the line.", false, null));
-        outputs.add(new ServiceIO(-1, TubeService.LINE_URL, "Support website", url, "The URL that links to the page with the problem", false, null));
-        outputs.add(new ServiceIO(-1, TubeService.LINE_ICON, "Line icon", imageDrawable, "An icon representing the line", false, null));
+        outputs.add(new IODescription(-1, TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
+        outputs.add(new IODescription(-1, TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
+        outputs.add(new IODescription(-1, TubeService.LINE_MESSAGE, "Message", text, "The message associated with the line.", false, null));
+        outputs.add(new IODescription(-1, TubeService.LINE_URL, "Support website", url, "The URL that links to the page with the problem", false, null));
+        outputs.add(new IODescription(-1, TubeService.LINE_ICON, "Line icon", imageDrawable, "An icon representing the line", false, null));
 
         String[] tags = {"Tube", "London", "Underground", "Travel", "tfl"};
 
@@ -258,17 +269,17 @@ public class ServiceFactory {
                 "This service returns information about problems that occur on the tube. It is accurate to within 10 minutes. It will return information about the line that is affected as well as the problem that is affecting it.",
                 TubeService.processType.index,
                 0,
-                new ArrayList<ServiceIO>(), outputs, tags);
+                new ArrayList<IODescription>(), outputs, tags);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, tubeJSON);
     }
 
     private String setupPebbleService() {
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 
-        inputs.add(new ServiceIO(-1, PebbleNotification.PEBBLE_TITLE, "Pebble Notification Title", text, "The title of the notification to display on the Pebble", true, null));
-        inputs.add(new ServiceIO(-1, PebbleNotification.PEBBLE_NOTIFICATION, "Pebble notification message", text, "the contents of the pebble notification", false, null));
+        inputs.add(new IODescription(-1, PebbleNotification.PEBBLE_TITLE, "Pebble Notification Title", text, "The title of the notification to display on the Pebble", true, null));
+        inputs.add(new IODescription(-1, PebbleNotification.PEBBLE_NOTIFICATION, "Pebble notification message", text, "the contents of the pebble notification", false, null));
 
         String[] tags = {"Pebble", "Notification", "Watch", "Smart watch"};
 
@@ -282,7 +293,7 @@ public class ServiceFactory {
     }
 
     private String setupNotificationService() {
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
         IOType url = IOType.Factory.getType(IOType.Factory.URL);
         IOType imageD = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
@@ -293,11 +304,11 @@ public class ServiceFactory {
         priorities.add(new IOValue("Low", NotificationCompat.PRIORITY_LOW));
         priorities.add(new IOValue("High", NotificationCompat.PRIORITY_HIGH));
 
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TITLE, "Title", text, "The title of the notification.", true, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_TEXT, "Notification Message", text, "The message in the notification.", false, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_URL, "URL", url, "The URL that the notification points to.", false, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_IMAGE, "Image", imageD, "The image to use for the notification", false, null));
-        inputs.add(new ServiceIO(-1, NotificationService.NOTIFICATION_PRIORITY, "Priority", set, "The priority of the notification", false, priorities));
+        inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_TITLE, "Title", text, "The title of the notification.", true, null));
+        inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_TEXT, "Notification Message", text, "The message in the notification.", false, null));
+        inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_URL, "URL", url, "The URL that the notification points to.", false, null));
+        inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_IMAGE, "Image", imageD, "The image to use for the notification", false, null));
+        inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_PRIORITY, "Priority", set, "The priority of the notification", false, priorities));
 
         String[] tags = {"Android", "Notification", "Notify"};
 
@@ -311,10 +322,10 @@ public class ServiceFactory {
     }
 
     private String setupToastService() {
-        ArrayList<ServiceIO> inputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
 
-        inputs.add(new ServiceIO(-1, ToastService.TOAST_MESSAGE, "Message", text, "The text to be displayed", true, null));
+        inputs.add(new IODescription(-1, ToastService.TOAST_MESSAGE, "Message", text, "The text to be displayed", true, null));
 
         String[] tags = {"Message", "Notify", "Toast"};
 
@@ -330,8 +341,8 @@ public class ServiceFactory {
 //	private String setupLocationService()
 //	{
 //		ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
-//		IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
-//		IOType number = IOType.Factory.getType(IOType.Factory.NUMBER);
+//		IOType text = IOType.Factory.type(IOType.Factory.TEXT);
+//		IOType number = IOType.Factory.type(IOType.Factory.NUMBER);
 //		
 //		outputs.add(new ServiceIO(LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false));
 //		outputs.add(new ServiceIO(LocationService.REGION_NAME, "Region", text, "The state/county you're in.", false));
@@ -410,14 +421,14 @@ public class ServiceFactory {
     ///////////////////
 
     private String setupPowerConnectedTrigger() {
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
         ArrayList<IOValue> sample = new ArrayList<IOValue>();
         sample.add(new IOValue("Connected", true));
         sample.add(new IOValue("Disconnected", false));
 
-        outputs.add(new ServiceIO(-1, PowerTrigger.CONNECTED, "Connected", bool, "Power connected = true, power disconnected = false", true, sample));
+        outputs.add(new IODescription(-1, PowerTrigger.CONNECTED, "Connected", bool, "Power connected = true, power disconnected = false", true, sample));
 
         String[] tags = {"Power", "AC", "Connected", "Disconnected"};
 
@@ -431,7 +442,7 @@ public class ServiceFactory {
     }
 
     private String setupBluetoothTrigger() {
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType set = IOType.Factory.getType(IOType.Factory.SET);
 
         ArrayList<IOValue> samples = new ArrayList<IOValue>();
@@ -444,7 +455,7 @@ public class ServiceFactory {
 //		samples.add(new IOValue("Connecting", BluetoothAdapter.STATE_CONNECTING));
 //		samples.add(new IOValue("Disconnecting", BluetoothAdapter.STATE_DISCONNECTING));
 
-        outputs.add(new ServiceIO(-1, BluetoothTrigger.STATE, "Bluetooth State", set, "The new state of the bluetooth connection", true, samples));
+        outputs.add(new IODescription(-1, BluetoothTrigger.STATE, "Bluetooth State", set, "The new state of the bluetooth connection", true, samples));
 
         String[] tags = {"Bluetooth", "Connected", "Disconnected", "On", "Off"};
 
@@ -459,12 +470,12 @@ public class ServiceFactory {
     }
 
     private String setupReceiveSMSTrigger() {
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
         IOType phoneNumber = IOType.Factory.getType(IOType.Factory.PHONE_NUMBER);
 
-        outputs.add(new ServiceIO(-1, ReceiveSMSTrigger.SMS_NUMBER, "Phone number", phoneNumber, "The number where the SMS came from", true, null));
-        outputs.add(new ServiceIO(-1, ReceiveSMSTrigger.SMS_MESSAGE, "Message", text, "The contents of the SMS", true, null));
+        outputs.add(new IODescription(-1, ReceiveSMSTrigger.SMS_NUMBER, "Phone number", phoneNumber, "The number where the SMS came from", true, null));
+        outputs.add(new IODescription(-1, ReceiveSMSTrigger.SMS_MESSAGE, "Message", text, "The contents of the SMS", true, null));
 
         String[] tags = {"SMS", "Text message", "Receive"};
 
@@ -478,18 +489,18 @@ public class ServiceFactory {
     }
 
     private String setupHeadphoneTrigger() {
-        ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
         ArrayList<IOValue> plugged = new ArrayList<IOValue>();
         plugged.add(new IOValue("Plugged", true));
         plugged.add(new IOValue("Unplugged", false));
-        outputs.add(new ServiceIO(-1, HeadphoneTrigger.STATE, "Headphone State", bool, "The new state of the headphones", true, plugged));
+        outputs.add(new IODescription(-1, HeadphoneTrigger.STATE, "Headphone State", bool, "The new state of the headphones", true, plugged));
 
         ArrayList<IOValue> mic = new ArrayList<IOValue>();
         mic.add(new IOValue("Microphone", true));
         mic.add(new IOValue("No microphone", false));
-        outputs.add(new ServiceIO(-1, HeadphoneTrigger.MICROPHONE, "Microphone", bool, "Whether the headphones have a microphone", true, mic));
+        outputs.add(new IODescription(-1, HeadphoneTrigger.MICROPHONE, "Microphone", bool, "Whether the headphones have a microphone", true, mic));
 
         String[] tags = {"Headphone", "Headset", "Plugged", "Unplugged", "Connected", "Disconnected"};
 

@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/wiring_value_switch"
         android:title="@string/wiring_switch"
+        app:showAsAction="always"
         />
 	<item 
         android:id="@+id/wiring_done"
         android:title="@string/wiring_done"
+        app:showAsAction="always"
         />
 </menu>

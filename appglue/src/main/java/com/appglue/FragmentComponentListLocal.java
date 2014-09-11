@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +13,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.TextView;
 
-import com.appglue.datatypes.IOType;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.description.ComponentService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -67,7 +67,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
             public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
                 Intent intent = new Intent(parent, ActivityComponent.class);
                 intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-                intent.putExtra(CLASSNAME, services.get(position).getClassName());
+                intent.putExtra(CLASSNAME, services.get(position).className());
                 intent.putExtra(JUST_A_LIST, parent.justAList());
                 parent.startActivityForResult(intent, SERVICE_REQUEST);
                 return true;
@@ -77,7 +77,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
         serviceListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                parent.chosenItem(services.get(position).getClassName());
+                parent.chosenItem(services.get(position).className());
             }
         });
 
@@ -100,14 +100,16 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                 // Need to get the matching components
                 if (registry.getService() != null) {
                     // Get the current list, find the components before and/or after where we're trying to add
-                    ArrayList<ServiceDescription> currentComponents = registry.getService().getComponents();
+                    // FIXME Below needs to work with SparseArray
+
+                    ArrayList<ComponentService> currentComponents = registry.getService().getComponentsAL();
                     Log.w(TAG, "position is " + position + " and size is" + currentComponents.size());
 
                     if (position == -1) {
                         services = registry.getOutputOnlyComponents();
                     } else {
-                        ServiceDescription prior = position == 0 ? null : currentComponents.get(position - 1);
-                        ServiceDescription next = position < currentComponents.size() - 1 ? currentComponents.get(position + 1) : null;
+                        ServiceDescription prior = position == 0 ? null : currentComponents.get(position - 1).description();
+                        ServiceDescription next = position < currentComponents.size() - 1 ? currentComponents.get(position + 1).description() : null;
 
                         if (prior == null && next == null) {
                             // Both null, get everything
@@ -140,20 +142,20 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                         // We need to find the types of the inputs of the next one and compare these with the outputs we've got in our service list
 
                                         // Then filter it based on the inputs of the other one
-                                        ArrayList<ServiceIO> nextInputs = next.getInputs();
+                                        ArrayList<IODescription> nextInputs = next.inputs();
                                         HashMap<String, Long> types = new HashMap<String, Long>();
-                                        for (ServiceIO nextInput : nextInputs) {
-                                            IOType type = nextInput.getType();
+                                        for (IODescription nextInput : nextInputs) {
+                                            IOType type = nextInput.type();
                                             if (!types.containsKey(type.getClassName()))
                                                 types.put(type.getClassName(), type.getID());
                                         }
 
                                         for (int i = 0; i < services.size(); ) {
-                                            ArrayList<ServiceIO> outputs = services.get(i).getOutputs();
+                                            ArrayList<IODescription> outputs = services.get(i).outputs();
                                             boolean match = false;
 
-                                            for (ServiceIO output : outputs) {
-                                                if (types.containsKey(output.getType().getClassName()))
+                                            for (IODescription output : outputs) {
+                                                if (types.containsKey(output.type().getClassName()))
                                                     match = true;
                                             }
 
