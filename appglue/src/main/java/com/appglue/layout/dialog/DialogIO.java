@@ -9,7 +9,6 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IODescription;
 import com.appglue.description.IOValue;
 import com.appglue.R;
 import com.appglue.description.datatypes.IOType;
@@ -83,12 +82,12 @@ public class DialogIO extends DialogCustom {
                     // This should work, but it might not...
                     Object value = description.type().fromString(ioText.getText().toString());
                     item.setManualValue(value);
-                    DialogIO.this.activity.setStatus("Set manual value for " + description.name());
+                    DialogIO.this.activity.setStatus("Set manual value for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
                     IOValue value = (IOValue) ioSpinner.getSelectedItem();
                     item.setChosenSampleValue(value);
-                    DialogIO.this.activity.setStatus("Set sample value for " + description.name());
+                    DialogIO.this.activity.setStatus("Set sample value for " + description.getName());
                 }
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
@@ -102,7 +101,7 @@ public class DialogIO extends DialogCustom {
             @Override
             public void onClick(View v) {
                 item.setFilterState(ServiceIO.UNFILTERED);
-                DialogIO.this.activity.setStatus("Removed for " + description.name());
+                DialogIO.this.activity.setStatus("Removed for " + description.getName());
                 registry.updateCurrent();
                 // FIXME What about a parent.redraw();
                 cancel();

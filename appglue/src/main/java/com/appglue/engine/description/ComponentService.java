@@ -21,19 +21,19 @@ public class ComponentService
     private LongSparseArray<ServiceIO> inputSearch;
     private LongSparseArray<ServiceIO> outputSearch;
 
-    public ComponentService() {
-
+    public ComponentService(ServiceDescription description) {
+        this.description = description;
     }
 
     public long id() {
         return id;
     }
 
-    public ServiceDescription description() {
+    public ServiceDescription getDescription() {
         return description;
     }
 
-    public ArrayList<ServiceIO> inputs() {
+    public ArrayList<ServiceIO> getInputs() {
         return inputs;
     }
 
@@ -41,7 +41,7 @@ public class ComponentService
         return inputSearch.get(id);
     }
 
-    public ArrayList<ServiceIO> outputs() {
+    public ArrayList<ServiceIO> getOutputs() {
         return outputs;
     }
 

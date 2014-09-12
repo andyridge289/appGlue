@@ -171,8 +171,8 @@ public class Constants
 	public static final String IS_LIST = "is_list";
 	public static final String DATA = "data";
 	
-	public static final String INPUTS = "inputs";
-	public static final String OUTPUTS = "outputs";
+	public static final String INPUTS = "getInputs";
+	public static final String OUTPUTS = "getOutputs";
 	
 	public static final String INPUT_NAME = "input_name";
 	public static final String INPUT_TYPE = "input_type";
@@ -203,10 +203,7 @@ public class Constants
 	public static final String CLASSNAME = "classname";
 	public static final String PACKAGENAME = "packagename";
 	public static final String DEVELOPER = "developer";
-	
-	public static final String AVG_RATING = "average_rating";
-	public static final String NUM_RATINGS = "number_of_ratings";
-	public static final String PRICE = "price";
+
 	public static final String SERVICE_TYPE = "service_type";
 	public static final String PROCESS_TYPE = "process_type";
 	

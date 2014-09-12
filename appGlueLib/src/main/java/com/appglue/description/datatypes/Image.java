@@ -1,5 +1,6 @@
 package com.appglue.description.datatypes;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
@@ -16,7 +17,6 @@ public class Image extends IOType
 		super();
 		this.name = "Image";
 		this.className = Image.class.getCanonicalName();
-		this.value = null;
         this.sensitivity = Sensitivity.NORMAL;
 	}
 
@@ -28,6 +28,7 @@ public class Image extends IOType
             filename = (String) defaultValue;
 
         File f = new File(filename);
+        Bitmap value = null;
 
         try {
             value = BitmapFactory.decodeStream(new FileInputStream(f));
@@ -46,6 +47,7 @@ public class Image extends IOType
     public void loadFile()
     {
         File f = new File(this.location);
+        Bitmap value = null;
 
         try {
             value = BitmapFactory.decodeStream(new FileInputStream(f));

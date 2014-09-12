@@ -1,4 +1,4 @@
-package com.appglue;
+package com.appglue.description;
 
 public class Review 
 {
@@ -57,7 +57,9 @@ public class Review
 		this.device = device;
 	}
 	
-	
+	public boolean equals(Object o) {
+        return false;
+    }
 	
 	
 }

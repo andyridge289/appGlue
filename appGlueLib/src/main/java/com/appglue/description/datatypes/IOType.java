@@ -3,6 +3,7 @@ package com.appglue.description.datatypes;
 import android.os.Bundle;
 import android.util.Log;
 
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
 public abstract class IOType
@@ -13,8 +14,6 @@ public abstract class IOType
 	protected String className;
 
     protected Sensitivity sensitivity;
-	
-	protected Object value;
 
     enum Sensitivity {
         NORMAL,
@@ -77,9 +76,41 @@ public abstract class IOType
 		this.name = name;
 	}
 
-	public boolean equals(IOType other)
-	{
-        return this.className.equals(other.getClassName());
+	public boolean equals(Object o) {
+
+        if(o == null)  {
+            if(LOG) Log.d(TAG, "IOType->Equals: null");
+            return false;
+        }
+
+        if(!(o instanceof IOType)) {
+            if(LOG) Log.d(TAG, "IOType->Equals: not ServiceIO");
+            return false;
+        }
+
+        IOType other = (IOType) o;
+
+        if(id != other.getID()) {
+            if(LOG) Log.d(TAG, "IOType->Equals: id - [" + id + " :: " + other.getID() + "]");
+            return false;
+        }
+
+        if(!name.equals(other.getName())) {
+            if(LOG) Log.d(TAG, "IOType->Equals: name - [" + name + " :: " + other.getName() + "]");
+            return false;
+        }
+
+        if(!className.equals(other.getClassName())) {
+            if(LOG) Log.d(TAG, "IOType->Equals: class name - [" + className + " :: " + other.getClassName() + "]");
+            return false;
+        }
+
+        if(sensitivity != other.getSensitivity()) {
+            if(LOG) Log.d(TAG, "IOType->Equals: sensitivity - [" + sensitivity + " :: " + other.getSensitivity() + "]");
+            return false;
+        }
+
+        return true;
     }
 
     public Sensitivity getSensitivity() {

@@ -138,7 +138,7 @@ public class CompositeService {
     public void addAtEnd(ComponentService component) {
 
         this.components.put(components.size(), component);
-        if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.description().className(), name, components.size() - 1));
+        if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getDescription().getClassName(), name, components.size() - 1));
     }
 
     public void addComponent(int position, ComponentService component) {
@@ -222,7 +222,7 @@ public class CompositeService {
     }
 
     public boolean containsTrigger() {
-        return this.components.get(0).description().getProcessType() == ProcessType.TRIGGER;
+        return this.components.get(0).getDescription().getProcessType() == ProcessType.TRIGGER;
     }
 
     public void setInfo(String prefix, Cursor c) {
@@ -254,5 +254,9 @@ public class CompositeService {
 
     public int size() {
         return components.size();
+    }
+
+    public boolean equals(Object o) {
+        return false;
     }
 }

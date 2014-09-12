@@ -102,9 +102,9 @@ public class ServiceFactory {
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
 
         for (ServiceDescription sd : serviceList) {
-            long atomicId = registry.addServiceDescription(sd);
+            ServiceDescription atomicId = registry.addServiceDescription(sd);
 
-            if (atomicId == -1) {
+            if (atomicId == null) {
                 Log.d(TAG, "The atomic ID is -1, apparently this is bad");
             }
         }
@@ -340,22 +340,22 @@ public class ServiceFactory {
 
 //	private String setupLocationService()
 //	{
-//		ArrayList<ServiceIO> outputs = new ArrayList<ServiceIO>();
+//		ArrayList<ServiceIO> getOutputs = new ArrayList<ServiceIO>();
 //		IOType text = IOType.Factory.type(IOType.Factory.TEXT);
 //		IOType number = IOType.Factory.type(IOType.Factory.NUMBER);
 //		
-//		outputs.add(new ServiceIO(LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false));
-//		outputs.add(new ServiceIO(LocationService.REGION_NAME, "Region", text, "The state/county you're in.", false));
-////		outputs.add(new ServiceIO(LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near"));
-//		outputs.add(new ServiceIO(LocationService.LATITUDE, "Latitude", number, "The rough latitude of where you are", false));
-//		outputs.add(new ServiceIO(LocationService.LONGITUDE, "Longitude", number, "The rough longitude of where you are", false));
+//		getOutputs.add(new ServiceIO(LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false));
+//		getOutputs.add(new ServiceIO(LocationService.REGION_NAME, "Region", text, "The state/county you're in.", false));
+////		getOutputs.add(new ServiceIO(LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near"));
+//		getOutputs.add(new ServiceIO(LocationService.LATITUDE, "Latitude", number, "The rough latitude of where you are", false));
+//		getOutputs.add(new ServiceIO(LocationService.LONGITUDE, "Longitude", number, "The rough longitude of where you are", false));
 //		
 //		String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(), 
 //				"Location lookup", 
 //				"Returns your location",
 //				TubeService.processType.index,
 //				0, 
-//				new ArrayList<ServiceIO>(), outputs);
+//				new ArrayList<ServiceIO>(), getOutputs);
 //		
 //		return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, locationJSON);
 //		return "";

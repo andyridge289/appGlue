@@ -72,11 +72,11 @@ public class ActivityStory extends Activity implements OnClickListener
 //
 //			if(position == -1)
 //			{
-//				cs.addServiceDescription(registry.getAtomic(className));
+//				cs.addServiceDescription(registry.getServiceDescription(className));
 //			}
 //			else
 //			{
-//				cs.addServiceDescription(position, registry.getAtomic(className));
+//				cs.addServiceDescription(position, registry.getServiceDescription(className));
 //			}
 //			
 //			Intent i = new Intent(ActivityStory.this, ActivityStoryParameters.class);

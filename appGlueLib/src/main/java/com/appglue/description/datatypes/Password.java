@@ -13,6 +13,5 @@ public class Password extends Text
 	public Password(String value)
 	{
 		this();
-		this.value = value;
 	}
 }

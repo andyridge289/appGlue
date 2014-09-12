@@ -37,7 +37,7 @@ public class ExternalConnection {
 
         public Async(ServiceDescription description) {
 //	/		this.description = description;
-//			this.keyword = description.className();
+//			this.keyword = description.getClassName();
 //			this.type = TYPE_LOOKUP;
         }
 
@@ -107,7 +107,7 @@ public class ExternalConnection {
 //		{
 //			ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
 //			
-//			postData.add(new BasicNameValuePair(CLASSNAME, description.className()));
+//			postData.add(new BasicNameValuePair(CLASSNAME, description.getClassName()));
 //			postData.add(new BasicNameValuePair(PACKAGENAME, description.getPackageName()));
 //			postData.add(new BasicNameValuePair(NAME, description.name()));
 //			

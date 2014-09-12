@@ -9,7 +9,6 @@ public class Text extends IOType
 		super();
 		this.name = "Text";
 		this.className = Text.class.getCanonicalName();
-		this.value = "";
         this.sensitivity = Sensitivity.NORMAL;
 	}
 

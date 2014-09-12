@@ -75,7 +75,7 @@ public class ActivityComponent extends ActionBarActivity {
 
         Registry registry = Registry.getInstance(this);
         if (type == ServiceType.LOCAL.index || type == ServiceType.DEVICE.index)
-            service = registry.getAtomic(className);
+            service = registry.getServiceDescription(className);
         else if (type == ServiceType.REMOTE.index)
             service = registry.getRemote(className);
         else
@@ -123,7 +123,7 @@ public class ActivityComponent extends ActionBarActivity {
 
 
         ListView inputList = (ListView) findViewById(R.id.input_list);
-        ArrayList<IODescription> inputs = service.inputs();
+        ArrayList<IODescription> inputs = service.getInputs();
 
         if (inputs == null || inputs.size() == 0) {
             inputList.setVisibility(View.GONE);
@@ -135,7 +135,7 @@ public class ActivityComponent extends ActionBarActivity {
 
 
         ListView outputList = (ListView) findViewById(R.id.output_list);
-        ArrayList<IODescription> outputs = service.outputs();
+        ArrayList<IODescription> outputs = service.getOutputs();
 
         if (outputs == null || outputs.size() == 0) {
             outputList.setVisibility(View.GONE);
@@ -176,7 +176,7 @@ public class ActivityComponent extends ActionBarActivity {
             }
         });
 
-        final ArrayList<CompositeService> examples = registry.getExamples(service.className());
+        final ArrayList<CompositeService> examples = registry.getExamples(service.getClassName());
         LayoutInflater inflater = this.getLayoutInflater();
 
         LinearLayout exampleContainer = (LinearLayout) findViewById(R.id.component_eg_container);
@@ -224,7 +224,7 @@ public class ActivityComponent extends ActionBarActivity {
      */
     @Override
     public void onSaveInstanceState(Bundle icicle) {
-        icicle.putString(CLASSNAME, service.className());
+        icicle.putString(CLASSNAME, service.getClassName());
         icicle.putBoolean(JUST_A_LIST, atomicList);
         icicle.putInt(SERVICE_TYPE, this.type);
     }
@@ -246,7 +246,7 @@ public class ActivityComponent extends ActionBarActivity {
 
         Registry registry = Registry.getInstance(this);
         if (type == ServiceType.LOCAL.index || type == ServiceType.DEVICE.index)
-            service = registry.getAtomic(className);
+            service = registry.getServiceDescription(className);
         else if (type == ServiceType.REMOTE.index)
             service = registry.getRemote(className);
     }
@@ -312,7 +312,7 @@ public class ActivityComponent extends ActionBarActivity {
 
                 Intent i = new Intent();
                 i.putExtra(RESULT, result);
-                i.putExtra(CLASSNAME, service.className());
+                i.putExtra(CLASSNAME, service.getClassName());
                 i.putExtra(SERVICE_TYPE, type);
 
                 if (getParent() == null) {

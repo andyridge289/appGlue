@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.AppDescription;
-import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.dialog.DialogApp;
@@ -93,17 +92,17 @@ public class FragmentValue extends FragmentVW {
 
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (pre != null) {
-            preName.setText(pre.description().getName());
+            preName.setText(pre.getDescription().getName());
             preName.setTextColor(Color.BLACK);
 
             try {
-                AppDescription firstApp = pre.description().app();
+                AppDescription firstApp = pre.getDescription().app();
                 Bitmap b;
 
                 if (firstApp == null) {
                     preIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = pre.description().app().iconLocation();
+                    String iconLocation = pre.getDescription().app().iconLocation();
                     if (iconLocation.equals("")) {
                         preIcon.setBackgroundResource(R.drawable.icon);
                     }
@@ -143,18 +142,18 @@ public class FragmentValue extends FragmentVW {
         // Make the right icon be the left half, Make the left icon be the right half
 
         if (post != null) {
-            postName.setText(post.description().getName());
+            postName.setText(post.getDescription().getName());
             postName.setTextColor(Color.BLACK);
             postContainer.setBackgroundResource(R.drawable.wiring_input);
 
             try {
-                AppDescription firstApp = post.description().app();
+                AppDescription firstApp = post.getDescription().app();
                 Bitmap b;
 
                 if (firstApp == null) {
                     postIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = post.description().app().iconLocation();
+                    String iconLocation = post.getDescription().app().iconLocation();
                     if (iconLocation.equals("")) {
                         postIcon.setBackgroundResource(R.drawable.icon);
                     }
@@ -192,29 +191,29 @@ public class FragmentValue extends FragmentVW {
         }
 
         if (current != null) {
-            currentName.setText(current.description().getName());
+            currentName.setText(current.getDescription().getName());
             currentName.setTextColor(Color.BLACK);
 
-            ArrayList<ServiceIO> inputs = current.inputs();
-            ArrayList<ServiceIO> outputs = current.outputs();
+            ArrayList<ServiceIO> inputs = current.getInputs();
+            ArrayList<ServiceIO> outputs = current.getOutputs();
             if (outputs.size() > 0) {
-                // There are outputs, show the list, hide the none and the add
+                // There are getOutputs, show the list, hide the none and the add
                 outputList.setAdapter(new OutputAdapter(getActivity(), outputs));
                 outputContainer.setVisibility(View.VISIBLE);
                 noOutputs.setVisibility(View.INVISIBLE);
             } else {
-                // There are no inputs, show the none, hide the list and the add
+                // There are no getInputs, show the none, hide the list and the add
                 outputContainer.setVisibility(View.INVISIBLE);
                 noOutputs.setVisibility(View.VISIBLE);
             }
 
             if (inputs.size() > 0) {
-                // There are outputs, show the list, hide the none and the add
+                // There are getOutputs, show the list, hide the none and the add
                 inputList.setAdapter(new InputAdapter(getActivity(), inputs));
                 inputContainer.setVisibility(View.VISIBLE);
                 noInputs.setVisibility(View.INVISIBLE);
             } else {
-                // There are no inputs, show the none, hide the list and the add
+                // There are no getInputs, show the none, hide the list and the add
                 inputContainer.setVisibility(View.INVISIBLE);
                 noInputs.setVisibility(View.VISIBLE);
             }

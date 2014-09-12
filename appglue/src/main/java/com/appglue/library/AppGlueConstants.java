@@ -2,7 +2,6 @@ package com.appglue.library;
 
 import com.appglue.library.IOFilter.FilterValue;
 
-import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.COMPOSITE_ID;
 import static com.appglue.Constants.DESCRIPTION;
@@ -17,11 +16,9 @@ import static com.appglue.Constants.IO_TYPE;
 import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.NUM_RATINGS;
 import static com.appglue.Constants.OUTPUT_IO_ID;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
@@ -122,9 +119,6 @@ public class AppGlueConstants {
                     {NAME, "TEXT"},
                     {PACKAGENAME, "TEXT"},
                     {DESCRIPTION, "TEXT"},
-                    {AVG_RATING, "FLOAT"},
-                    {NUM_RATINGS, "INTEGER"},
-                    {PRICE, "FLOAT"},
                     {SERVICE_TYPE, "INTEGER"},
                     {PROCESS_TYPE, "INTEGER"}
             };

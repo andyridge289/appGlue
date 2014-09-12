@@ -87,11 +87,11 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 
 //			if(position == -1)
 //			{
-//				cs.addServiceDescription(0, registry.getAtomic(className));
+//				cs.addServiceDescription(0, registry.getServiceDescription(className));
 //			}
 //			else
 //			{
-//				cs.addServiceDescription(position, registry.getAtomic(className));
+//				cs.addServiceDescription(position, registry.getServiceDescription(className));
 //			}
             // FIXME Fix the above
 			
@@ -127,13 +127,13 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 				v = vi.inflate(R.layout.list_item_storycomponent, null);
 			}
 			
-			ServiceDescription component = getItem(position).description();
+			ServiceDescription component = getItem(position).getDescription();
 			
 			TextView nameText = (TextView) v.findViewById(R.id.story_component_name);
 			nameText.setText(component.getName());
 			
-			ArrayList<IODescription> inputs = component.inputs();
-			ArrayList<IODescription> outputs = component.outputs();
+			ArrayList<IODescription> inputs = component.getInputs();
+			ArrayList<IODescription> outputs = component.getOutputs();
 			
 			LinearLayout in = (LinearLayout) v.findViewById(R.id.storycomponent_input_list);
 			in.removeAllViews();
@@ -157,9 +157,9 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			}
 			else
 			{
-				for(int i = 0; i < component.inputs().size(); i++)
+				for(int i = 0; i < component.getInputs().size(); i++)
 				{
-					IODescription sio = component.inputs().get(i);
+					IODescription sio = component.getInputs().get(i);
 					
 					ImageView iv = new ImageView(this.getContext());
     				iv.setImageResource(R.drawable.empty_input);
@@ -167,7 +167,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 				}
 			}
 			
-			// TODO Setting inputs needs to set text to EditFilter (I don't remember what this means)
+			// TODO Setting getInputs needs to set text to EditFilter (I don't remember what this means)
 			
 			// Show placeholders if they aren't set
 			if(outputs == null || outputs.size() == 0)
@@ -183,9 +183,9 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			}
 			else
 			{   
-				for(int i = 0; i < component.outputs().size(); i++)
+				for(int i = 0; i < component.getOutputs().size(); i++)
 				{
-					IODescription sio = component.outputs().get(i);
+					IODescription sio = component.getOutputs().get(i);
 					
 					ImageView iv = new ImageView(this.getContext());
                     iv.setImageResource(R.drawable.empty_input);

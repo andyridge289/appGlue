@@ -18,15 +18,19 @@ public class ServiceIO
 
     private int filterState = UNFILTERED;
 
-    private Object manualValue; // This is used for outputs on filtering, or its hardcoded value if its an input
+    private Object manualValue; // This is used for getOutputs on filtering, or its hardcoded value if its an input
     private IOValue chosenSampleValue;
 
     private int condition;
 
-    public ServiceIO(long id, ComponentService parentComponent, IODescription io) {
-        this.id = id;
+    public ServiceIO(ComponentService parentComponent, IODescription io) {
         this.parentComponent = parentComponent;
         this.io = io;
+    }
+
+    public ServiceIO(long id, ComponentService parentComponent, IODescription io) {
+        this(parentComponent, io);
+        this.id = id;
     }
 
     public long id() {

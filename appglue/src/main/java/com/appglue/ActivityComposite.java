@@ -84,14 +84,14 @@ public class ActivityComposite extends Activity
             EditText descriptionEdit = (EditText) findViewById(R.id.composite_description_edit);
 			descriptionEdit.setText(cs.getDescription());
 			
-//			ImageButton editComposition = (ImageButton) findViewById(R.id.composite_edit_composition);
+//			ImageButton editComposition = (ImageButton) findViewById(R.getID.composite_edit_composition);
 //			editComposition.setOnClickListener(new OnClickListener()
 //			{
 //				@Override
 //				public void onClick(View v)
 //				{
 //					Intent intent = new Intent(ActivityComposite.this, ActivityCompositionCanvas.class);
-//					intent.putExtra(KEY_COMPOSITE, cs.id());
+//					intent.putExtra(KEY_COMPOSITE, cs.getID());
 //					startActivity(intent);
 //				}
 //			});
@@ -112,7 +112,7 @@ public class ActivityComposite extends Activity
 		
 		try 
 		{
-			String iconLocation = cs.getComponents().get(0).description().app().iconLocation();
+			String iconLocation = cs.getComponents().get(0).getDescription().app().iconLocation();
 			Bitmap b = ls.readIcon(iconLocation);
 			
 			if(b != null)
@@ -132,7 +132,7 @@ public class ActivityComposite extends Activity
 		runningCheck.setChecked(instanceId != -1);
 
         CheckBox activeCheck = (CheckBox) findViewById(R.id.composite_active);
-		if(cs.getComponents().get(0).description().getProcessType() == ProcessType.TRIGGER)
+		if(cs.getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER)
 		{
 			activeCheck.setText("Active");
 		}
@@ -217,14 +217,14 @@ public class ActivityComposite extends Activity
             if(v == null)
                 return null;
 
-			final ServiceDescription item = items.get(position).description();
+			final ServiceDescription item = items.get(position).getDescription();
 			
 			ImageView icon = (ImageView) v.findViewById(R.id.component_icon);
 			TextView name = (TextView) v.findViewById(R.id.component_name);
 			
 			try 
 			{
-				String iconLocation = cs.getComponents().get(0).description().app().iconLocation();
+				String iconLocation = cs.getComponents().get(0).getDescription().app().iconLocation();
 				Bitmap b = localStorage.readIcon(iconLocation);
 				
 				if(b != null)
@@ -253,7 +253,7 @@ public class ActivityComposite extends Activity
 				public void onClick(View v) 
 				{
 					Intent intent = new Intent(ActivityComposite.this, ActivityComponent.class);
-					intent.putExtra(CLASSNAME, item.className());
+					intent.putExtra(CLASSNAME, item.getClassName());
 					startActivity(intent);
 				}
 				

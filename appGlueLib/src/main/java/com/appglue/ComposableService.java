@@ -141,7 +141,7 @@ public abstract class ComposableService extends Service
                 {
                 	// They have sent a single object, process it
                 	
-                	// Get the inputs
+                	// Get the getInputs
                 	ArrayList<Bundle> inputs = messageData.getParcelableArrayList(INPUT);
                 	Bundle input = inputs == null || inputs.size() == 0 ? new Bundle() : inputs.get(0); // Either get the first thing, or if there aren't any things, just make a new thing so that shit doesn't go down
                 	
@@ -157,7 +157,7 @@ public abstract class ComposableService extends Service
                 	
                 case MSG_LIST:
                 {
-                	// Get the inputs
+                	// Get the getInputs
                 	ArrayList<Bundle> inputs = messageData.getParcelableArrayList(INPUT);
                 	
                 	// Get the parameters

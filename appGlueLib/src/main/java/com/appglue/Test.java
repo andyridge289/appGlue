@@ -64,11 +64,11 @@ public class Test
 		{
 			// If input is an ArrayList, each element should have a TEXT
 			
-//			ArrayList<Bundle> inputs = (ArrayList<Bundle>) obj;
+//			ArrayList<Bundle> getInputs = (ArrayList<Bundle>) obj;
 			 
-//			for(int i = 0; i < inputs.size(); i++)
+//			for(int i = 0; i < getInputs.size(); i++)
 //			{
-//				if(!inputs.get(i).containsKey(ComposableService.TEXT))
+//				if(!getInputs.get(i).containsKey(ComposableService.TEXT))
 //				{
 //					Log.e(TAG, String.format("Bundle error: Input [%s] doesn't have TEXT (" + index + ", " + sending + ")", "" + i));
 //					return false;

@@ -84,7 +84,7 @@ public class Registry {
     }
 
     public void addRemote(ServiceDescription service) {
-        remoteCache.put(service.className(), service);
+        remoteCache.put(service.getClassName(), service);
     }
 
     public void addRemotes(ArrayList<ServiceDescription> services) {
@@ -105,23 +105,34 @@ public class Registry {
         return dbHandler.atomicAtPosition(className, position);
     }
 
-    public long addServiceFromBroadcast(ServiceDescription sd) {
+    public ServiceDescription addServiceFromBroadcast(ServiceDescription sd) {
         // Don't care what it says it is, it's lying.
         sd.setServiceType(ServiceType.LOCAL);
         return dbHandler.addServiceDescription(sd);
     }
 
-    public long addServiceDescription(ServiceDescription sd) {
+    public ServiceDescription addServiceDescription(ServiceDescription sd) {
+
+        ServiceDescription alreadyThere = dbHandler.getServiceDescription(sd.getClassName());
+        if(alreadyThere != null) {
+            Log.d(TAG, "It's already there: " + alreadyThere.getClassName());
+            return alreadyThere;
+        }
+
         // Don't care what it says it is, it's lying.
         sd.setServiceType(ServiceType.IN_APP);
         return dbHandler.addServiceDescription(sd);
+    }
+
+    public ServiceDescription getServiceDescription(String className) {
+        return dbHandler.getServiceDescription(className);
     }
 
     public ArrayList<ServiceDescription> getInputOnlyComponents() {
         ArrayList<ServiceDescription> components = dbHandler.getServiceDescriptions(null);
 
         for (int i = 0; i < components.size(); ) {
-            if (components.get(i).outputs().size() > 0)
+            if (components.get(i).getOutputs().size() > 0)
                 components.remove(i);
             else
                 i++;
@@ -134,7 +145,7 @@ public class Registry {
         ArrayList<ServiceDescription> components = dbHandler.getServiceDescriptions(null);
 
         for (int i = 0; i < components.size(); ) {
-            if (components.get(i).inputs().size() > 0)
+            if (components.get(i).getInputs().size() > 0)
                 components.remove(i);
             else
                 i++;
@@ -143,22 +154,7 @@ public class Registry {
         return components;
     }
 
-//	public ArrayList<ServiceDescription> getServiceDescriptions(String classString)
-//	{
-//		String[] classes = classString.split(",");
-//
-//		ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
-//		for(String s : classes)
-//		{
-//			services.add(this.getAtomic(s));
-//		}
-//
-//		return services;
-//	}
 
-    public ServiceDescription getAtomic(String className) {
-        return dbHandler.getServiceDescription(className);
-    }
 
     public CompositeService getComposite(long compositeId) {
         if (compositeId == -1) {
@@ -208,7 +204,7 @@ public class Registry {
      * whether it should be running
      * whether it is running
      *
-     * @param id The id of the service to check
+     * @param id The getID of the service to check
      * @return And indication of whether the thing is running or not
      */
     public boolean enabled(long id) {
@@ -252,7 +248,7 @@ public class Registry {
 //    }
 
     /**
-     * Start the composite and give back the execution id of the instance of the running composite.
+     * Start the composite and give back the execution getID of the instance of the running composite.
      *
      * @param id The composite to start
      * @return The execution ID of the running instance of the composite
@@ -292,8 +288,8 @@ public class Registry {
         if(logComponent && logComposite) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, inputs set: %b", compositeId,
-                    executionInstance, component.className(), inputData != null));
+            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", compositeId,
+                    executionInstance, component.getClassName(), inputData != null));
             return false;
         }
     }
@@ -305,8 +301,8 @@ public class Registry {
         if(logComponent && logComposite) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, inputs set: %b", compositeId,
-                    executionInstance, component.className(), inputData != null));
+            Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, getInputs set: %b", compositeId,
+                    executionInstance, component.getClassName(), inputData != null));
             return false;
         }
     }
@@ -319,7 +315,7 @@ public class Registry {
     public boolean filter(CompositeService cs, long executionInstance, ComponentService component, ServiceIO io, String condition, Bundle inputData, Object value) {
         // When we stop at a filter, say what the data was at that point
 
-        ServiceDescription sd = component.description();
+        ServiceDescription sd = component.getDescription();
         boolean logComponent = dbHandler.addToLog(cs.getId(), executionInstance, sd,
                 "Stopped execution at filter: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"",
                 inputData, null, LogItem.FILTER);
@@ -328,8 +324,8 @@ public class Registry {
         if(logComposite && logComponent) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register component filter stop: %d, %d, %s, inputs set: %b", cs.getId(),
-                    executionInstance, sd.className(), inputData != null));
+            Log.e(TAG, String.format("Failed to register component filter stop: %d, %d, %s, getInputs set: %b", cs.getId(),
+                    executionInstance, sd.getClassName(), inputData != null));
             return false;
         }
     }

@@ -67,7 +67,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
             public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
                 Intent intent = new Intent(parent, ActivityComponent.class);
                 intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-                intent.putExtra(CLASSNAME, services.get(position).className());
+                intent.putExtra(CLASSNAME, services.get(position).getClassName());
                 intent.putExtra(JUST_A_LIST, parent.justAList());
                 parent.startActivityForResult(intent, SERVICE_REQUEST);
                 return true;
@@ -77,7 +77,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
         serviceListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                parent.chosenItem(services.get(position).className());
+                parent.chosenItem(services.get(position).getClassName());
             }
         });
 
@@ -108,14 +108,14 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                     if (position == -1) {
                         services = registry.getOutputOnlyComponents();
                     } else {
-                        ServiceDescription prior = position == 0 ? null : currentComponents.get(position - 1).description();
-                        ServiceDescription next = position < currentComponents.size() - 1 ? currentComponents.get(position + 1).description() : null;
+                        ServiceDescription prior = position == 0 ? null : currentComponents.get(position - 1).getDescription();
+                        ServiceDescription next = position < currentComponents.size() - 1 ? currentComponents.get(position + 1).getDescription() : null;
 
                         if (prior == null && next == null) {
                             // Both null, get everything
                             services = registry.getComponents();
                         } else if (prior != null && next == null) {
-                            // Prior is alive, next isn't, just use priors outputs
+                            // Prior is alive, next isn't, just use priors getOutputs
 
                             // If there's nothing to match, just get everything
                             if (prior.hasOutputs())
@@ -124,7 +124,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                 services = registry.getComponents();
                         } else {
                             if (prior == null && next != null) {
-                                // Prior is dead, next is alive, just use next's inputs
+                                // Prior is dead, next is alive, just use next's getInputs
 
                                 // IF there's nothing to match, just get everything
                                 if (next.hasInputs())
@@ -132,17 +132,17 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                 else
                                     services = registry.getComponents();
                             } else {
-                                // Both are alive, so get them based on the outputs and then filter on the inputs
+                                // Both are alive, so get them based on the getOutputs and then filter on the getInputs
                                 if (prior.hasOutputs()) {
                                     services = registry.getMatchingForOutputs(prior);
 
-                                    // So here we have a list of services whose inputs match the outputs of the prior one
+                                    // So here we have a list of services whose getInputs match the getOutputs of the prior one
 
                                     if (next.hasInputs()) {
-                                        // We need to find the types of the inputs of the next one and compare these with the outputs we've got in our service list
+                                        // We need to find the types of the getInputs of the next one and compare these with the getOutputs we've got in our service list
 
-                                        // Then filter it based on the inputs of the other one
-                                        ArrayList<IODescription> nextInputs = next.inputs();
+                                        // Then filter it based on the getInputs of the other one
+                                        ArrayList<IODescription> nextInputs = next.getInputs();
                                         HashMap<String, Long> types = new HashMap<String, Long>();
                                         for (IODescription nextInput : nextInputs) {
                                             IOType type = nextInput.type();
@@ -151,7 +151,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                         }
 
                                         for (int i = 0; i < services.size(); ) {
-                                            ArrayList<IODescription> outputs = services.get(i).outputs();
+                                            ArrayList<IODescription> outputs = services.get(i).getOutputs();
                                             boolean match = false;
 
                                             for (IODescription output : outputs) {

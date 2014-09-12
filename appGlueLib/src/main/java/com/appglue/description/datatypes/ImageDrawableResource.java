@@ -9,7 +9,6 @@ public class ImageDrawableResource extends IOType {
         super();
         this.name = "Image";
         this.className = ImageDrawableResource.class.getCanonicalName();
-        this.value = null;
         this.sensitivity = Sensitivity.NORMAL;
     }
 

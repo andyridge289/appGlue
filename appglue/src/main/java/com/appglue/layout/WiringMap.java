@@ -220,10 +220,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 		this.first = first;
 		if(first != null)
 		{
-			ArrayList<ServiceIO> outputs = first.outputs();
+			ArrayList<ServiceIO> outputs = first.getOutputs();
 			if(outputs.size() > 0)
 			{
-				// There are outputs, show the list, hide the none and the add
+				// There are getOutputs, show the list, hide the none and the add
 				outputList.setAdapter(new OutputAdapter(activity, outputs));
 				outputContainer.setVisibility(View.VISIBLE);
 				noOutputs.setVisibility(View.INVISIBLE);
@@ -231,7 +231,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			}
 			else
 			{
-				// There are no inputs, show the none, hide the list and the add
+				// There are no getInputs, show the none, hide the list and the add
 				outputContainer.setVisibility(View.INVISIBLE);
 				noOutputs.setVisibility(View.VISIBLE);
 				addOutput.setVisibility(View.INVISIBLE);
@@ -248,7 +248,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         this.second = second;
 		if(second != null)
 		{
-			ArrayList<ServiceIO> inputs = second.inputs();
+			ArrayList<ServiceIO> inputs = second.getInputs();
 			if(inputs.size() > 0)
 			{
 				inputList.setAdapter(new InputAdapter(activity, inputs));
@@ -270,15 +270,15 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 		}
 
         // Check if there are any set things.
-		if(second != null && second.inputs() != null)
+		if(second != null && second.getInputs() != null)
 		{
-			ArrayList<ServiceIO> in = second.inputs();
+			ArrayList<ServiceIO> in = second.getInputs();
 			for(int i = 0; i < in.size(); i++)
 			{
 				ServiceIO connection = in.get(i).connection();
 				if(connection != null)
 				{
-					// It's connected to something so work out what position the other thing is in the outputs
+					// It's connected to something so work out what position the other thing is in the getOutputs
 					connections.add(new Point(connection.description().index(), i));
 				}
 			}
@@ -294,8 +294,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 	{
 		// Count the number of distinct IO types that are available across both services
 		ArrayList<IODescription> ios = new ArrayList<IODescription>();
-		if(second != null && second.description().inputs() != null) ios.addAll(second.description().inputs());
-		if(first != null && first.description().outputs() != null) ios.addAll(first.description().outputs());
+		if(second != null && second.getDescription().getInputs() != null) ios.addAll(second.getDescription().getInputs());
+		if(first != null && first.getDescription().getOutputs() != null) ios.addAll(first.getDescription().getOutputs());
 		
 		ArrayList<IOType> distinctTypes = new ArrayList<IOType>();
 		Collections.sort(ios, WiringMap.this);
@@ -411,7 +411,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 continue;
             }
 
-            String className = first.description().outputs().get(connection.x).type().getClassName();
+            String className = first.getDescription().getOutputs().get(connection.x).type().getClassName();
             int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
 
             // This should be half the width of the ``tab'' you click on
@@ -447,18 +447,18 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 		
 		if(outputContainer.getVisibility() == View.VISIBLE)
 		{
-			setListAlpha(outputList, first.description().outputs(), 0, null, false);
+			setListAlpha(outputList, first.getDescription().getOutputs(), 0, null, false);
 			
 			if(!parent.equals(outputList) && type != null)
-				setListAlpha(outputList, first.description().outputs(), FULL_ALPHA / LOWLIGHT_ALPHA, type, false);
+				setListAlpha(outputList, first.getDescription().getOutputs(), FULL_ALPHA / LOWLIGHT_ALPHA, type, false);
 		}
 		
 		if(inputContainer.getVisibility() == View.VISIBLE)
 		{
-			setListAlpha(inputList, second.description().inputs(), 0, null, true);
+			setListAlpha(inputList, second.getDescription().getInputs(), 0, null, true);
 			
 			if(!parent.equals(inputList) & type != null)
-				setListAlpha(inputList, second.description().inputs(), FULL_ALPHA / LOWLIGHT_ALPHA, type, true);
+				setListAlpha(inputList, second.getDescription().getInputs(), FULL_ALPHA / LOWLIGHT_ALPHA, type, true);
 		}
 	}
 	
@@ -670,7 +670,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						iSelected = item;
 						iIndex = position;
-						activity.setStatus("Selected " + description.name());
+						activity.setStatus("Selected " + description.getName());
 					}
 					else if(oSelected != null && oSelected.description().type().equals(description.type()) && iSelected == null)
 					{	
@@ -684,7 +684,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						iSelected = item;
 						iIndex = position;
-						activity.setStatus("Selected " + description.name());
+						activity.setStatus("Selected " + description.getName());
 						
 						// This one
 						b.setBackgroundColor(
@@ -741,7 +741,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 							
 							iSelected = item;
 							iIndex = position;
-							activity.setStatus("Selected " + description.name());
+							activity.setStatus("Selected " + description.getName());
 						}
 
                         redraw(true);
@@ -763,7 +763,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						iSelected = item;
 						iIndex = position;
-						activity.setStatus("Selected " + description.name());
+						activity.setStatus("Selected " + description.getName());
 						oSelected = null;
 						oIndex = -1;
 					}		
@@ -791,8 +791,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			View outElement = outputList.getChildAt(outputIndex);
 			View inElement = inputList.getChildAt(inputIndex);
 
-            ServiceIO out = first.outputs().get(outputIndex);
-            ServiceIO in = second.inputs().get(inputIndex);
+            ServiceIO out = first.getOutputs().get(outputIndex);
+            ServiceIO in = second.getInputs().get(inputIndex);
 			
 			activity.setStatus("Connected " + out.description().friendlyName() + " to " + in.description().friendlyName());
 			
@@ -924,7 +924,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						oSelected = item;
 						oIndex = position;
-						activity.setStatus("Selected " + item.description().name());
+						activity.setStatus("Selected " + item.description().getName());
 					}
 					else if(iSelected != null && iSelected.description().type().equals(item.description().type()) && oSelected == null)
 					{
@@ -938,7 +938,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						oSelected = item;
 						oIndex = position;
-						activity.setStatus("Selected " + item.description().name());
+						activity.setStatus("Selected " + item.description().getName());
 						
 						// This one
 						b.setBackgroundColor(
@@ -995,7 +995,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 							
 							oSelected = item;
 							oIndex = position;
-							activity.setStatus("Selected " + item.description().name());
+							activity.setStatus("Selected " + item.description().getName());
 						}
 
                         redraw(true);
@@ -1018,7 +1018,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						oSelected = item;
 						oIndex = position;
-						activity.setStatus("Selected " + item.description().name());
+						activity.setStatus("Selected " + item.description().getName());
 						iSelected = null;
 						iIndex = -1;
 					}		

@@ -10,7 +10,6 @@ import android.util.SparseArray;
 import com.appglue.Constants.ProcessType;
 import com.appglue.Constants.ServiceType;
 import com.appglue.IODescription;
-import com.appglue.Review;
 import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
 
@@ -20,7 +19,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
@@ -34,13 +32,11 @@ import static com.appglue.Constants.JSON_SERVICE_DATA;
 import static com.appglue.Constants.JSON_SERVICE_LIST;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.NUM_RATINGS;
 import static com.appglue.Constants.OUTPUTS;
 import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
 import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
@@ -73,7 +69,7 @@ public class ServiceDescription {
     // The price of the service - this will just be the price of the app
     private double price = 0;
 
-    // Inputs and outputs to/from the service
+    // Inputs and getOutputs to/from the service
     private SparseArray<IODescription> inputs = new SparseArray<IODescription>();
     private SparseArray<IODescription> outputs = new SparseArray<IODescription>();
     private LongSparseArray<IODescription> idSearchInputs = new LongSparseArray<IODescription>();
@@ -81,14 +77,6 @@ public class ServiceDescription {
     private TST<IODescription> nameSearchInputs = new TST<IODescription>();
     private TST<IODescription> nameSearchOutputs = new TST<IODescription>();
 
-    // The average rating of the service
-    private double averageReviewRating = 0;
-
-    // The number of ratings/reviews the service has received
-    private int numReviews = 0;
-
-    // The reviews that the service has received
-    private ArrayList<Review> reviews = new ArrayList<Review>();
     private ArrayList<Tag> tags = new ArrayList<Tag>();
 
     // Representations of the icon of the service
@@ -96,7 +84,7 @@ public class ServiceDescription {
 
     private ServiceDescription(
             String packageName, String className, String name,
-            String description, double price,
+            String description,
             ArrayList<IODescription> inputs, ArrayList<IODescription> outputs,
             ServiceType serviceType, ProcessType processType) {
         this.name = name;
@@ -104,12 +92,9 @@ public class ServiceDescription {
         this.packageName = packageName;
         this.description = description;
         this.price = price;
-        this.averageReviewRating = 0;
-        this.numReviews = 0;
-        this.reviews = new ArrayList<Review>();
 
-        this.setInputs(inputs, false);
-        this.setOutputs(outputs, false);
+        this.setInputs(inputs);
+        this.setOutputs(outputs);
 
         this.serviceType = serviceType;
         this.processType = processType;
@@ -121,9 +106,6 @@ public class ServiceDescription {
         this.packageName = "";
         this.description = "";
         this.price = 0.0f;
-        this.averageReviewRating = 0;
-        this.numReviews = 0;
-        this.reviews = new ArrayList<Review>();
 
         this.inputs = new SparseArray<IODescription>();
         this.outputs = new SparseArray<IODescription>();
@@ -132,7 +114,7 @@ public class ServiceDescription {
         this.processType = ProcessType.NORMAL;
     }
 
-    public String className() {
+    public String getClassName() {
         return this.className;
     }
 
@@ -190,7 +172,7 @@ public class ServiceDescription {
 
     }
 
-    public ArrayList<IODescription> inputs() {
+    public ArrayList<IODescription> getInputs() {
         ArrayList<IODescription> in = new ArrayList<IODescription>();
 
         for (int i = 0; i < inputs.size(); i++) {
@@ -201,7 +183,7 @@ public class ServiceDescription {
     }
 
 
-    public ArrayList<IODescription> outputs() {
+    public ArrayList<IODescription> getOutputs() {
         ArrayList<IODescription> out = new ArrayList<IODescription>();
 
         for (int i = 0; i < outputs.size(); i++) {
@@ -212,7 +194,7 @@ public class ServiceDescription {
     }
 
     /**
-     * This is for filters - I don't think we'll ever need to get the inputs
+     * This is for filters - I don't think we'll ever need to get the getInputs
      *
      * @param outputId The ID of the output to get
      * @return The object representing the output
@@ -220,7 +202,9 @@ public class ServiceDescription {
     public IODescription getOutput(long outputId) {
         return idSearchOutputs.get(outputId);
     }
-    public IODescription getOutput(String outputName) { return nameSearchOutputs.get(outputName); }
+    public IODescription getOutput(String outputName) {
+        return nameSearchOutputs.get(outputName);
+    }
 
     public IODescription getInput(long inputId) {
         return idSearchInputs.get(inputId);
@@ -237,9 +221,10 @@ public class ServiceDescription {
         return getOutput(ioId);
     }
 
-    public void setInputs(ArrayList<IODescription> inputs, boolean addToSearch) {
+    public void setInputs(ArrayList<IODescription> inputs) {
         this.inputs = new SparseArray<IODescription>();
         this.idSearchInputs = new LongSparseArray<IODescription>();
+        this.nameSearchInputs = new TST<IODescription>();
 
         if (inputs == null)
             return;
@@ -251,15 +236,16 @@ public class ServiceDescription {
             }
         }
 
-        if (addToSearch) {
-            for (IODescription in : inputs) {
-                idSearchInputs.put(in.id(), in);
-                nameSearchInputs.put(in.name(), in);
-            }
+        for (IODescription in : inputs) {
+            if(idSearchInputs.get(in.getID()) == null)
+                idSearchInputs.put(in.getID(), in);
+
+            if(nameSearchInputs.get(in.getName()) == null)
+                nameSearchInputs.put(in.getName(), in);
         }
     }
 
-    public void setOutputs(ArrayList<IODescription> outputs, boolean addToSearch) {
+    public void setOutputs(ArrayList<IODescription> outputs) {
         this.outputs = new SparseArray<IODescription>();
         this.idSearchOutputs = new LongSparseArray<IODescription>();
 
@@ -273,24 +259,13 @@ public class ServiceDescription {
             }
         }
 
-        if (addToSearch) {
-            for (IODescription out : outputs) {
-                idSearchOutputs.put(out.id(), out);
-                nameSearchOutputs.put(out.name(), out);
-            }
+        for (IODescription out : outputs) {
+            if(idSearchOutputs.get(out.getID()) == null)
+                idSearchOutputs.put(out.getID(), out);
+
+            if(nameSearchOutputs.get(out.getName()) == null)
+                nameSearchOutputs.put(out.getName(), out);
         }
-    }
-
-    public double getAverageRating() {
-        return this.averageReviewRating;
-    }
-
-    public int getNumReviews() {
-        return this.numReviews;
-    }
-
-    public ArrayList<Review> getReviews() {
-        return reviews;
     }
 
     public AppDescription app() {
@@ -328,13 +303,10 @@ public class ServiceDescription {
         b.putString(CLASSNAME, this.className);
         b.putString(NAME, this.name);
 
-        b.putDouble(AVG_RATING, this.averageReviewRating);
-        b.putInt(NUM_RATINGS, this.numReviews);
         b.putString(DESCRIPTION, this.description);
-        b.putDouble(PRICE, this.price);
 
         if (this.hasInputs()) {
-            b.putString(INPUT_NAME, this.inputs.get(0).name());
+            b.putString(INPUT_NAME, this.inputs.get(0).getName());
             b.putString(INPUT_TYPE, this.inputs.get(0).type().getName());
             b.putString(INPUT_DESCRIPTION, this.inputs.get(0).description());
         } else {
@@ -344,7 +316,7 @@ public class ServiceDescription {
         }
 
         if (this.hasOutputs()) {
-            b.putString(OUTPUT_NAME, this.outputs.get(0).name());
+            b.putString(OUTPUT_NAME, this.outputs.get(0).getName());
             b.putString(OUTPUT_TYPE, this.outputs.get(0).type().getName());
             b.putString(OUTPUT_DESCRIPTION, this.outputs.get(0).description());
         } else {
@@ -409,7 +381,7 @@ public class ServiceDescription {
             return false;
         }
 
-        if(!this.className.equals(other.className())) {
+        if(!this.className.equals(other.getClassName())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: class name");
             return false;
         }
@@ -429,53 +401,40 @@ public class ServiceDescription {
             return false;
         }
 
-        if(this.averageReviewRating != other.getAverageRating()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: average rating");
-            return false;
-        }
-
-        if(this.numReviews != other.getNumReviews()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: num reviews");
-            return false;
-        }
-
         if(!this.app.equals(other.app())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: app");
-            // FIXME Make the app compare itself
             return false;
         }
 
-        ArrayList<IODescription> otherInputs = other.inputs();
+        if(this.inputs.size() != other.getInputs().size()) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Inputs size");
+            return false;
+        }
+
         for(int i = 0 ; i < inputs.size(); i++) {
-            if(!inputs.get(i).equals(otherInputs.get(i))) {
+            if(!inputs.valueAt(i).equals(other.getInput(inputs.valueAt(i).getID()))) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: input " + i);
-                 // FIXME Make the ServiceIOs compare themselves
                 return false;
             }
         }
 
-        ArrayList<IODescription> otherOutputs = other.outputs();
+        if(this.outputs.size() != other.getOutputs().size()) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Outputs size");
+            return false;
+        }
+
         for(int i = 0; i < outputs.size(); i++) {
-            if(!outputs.get(i).equals(otherOutputs.get(i))) {
+            if(!outputs.valueAt(i).equals(other.getOutput(outputs.valueAt(i).getID()))) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: output " + i);
                 return false;
             }
         }
 
-        ArrayList<Review> otherReviews = other.getReviews();
-        for(int i = 0; i < reviews.size(); i++) {
-            if(!reviews.get(i).equals(otherReviews.get(i))) {
-                if (LOG) Log.d(TAG, "ServiceDescription->Equals: review " + i);
-                // FIXME Make Reviews compare themselves
-                return false;
-            }
-        }
-
+        // FIXME This needs to check if they are all in both of them
         ArrayList<Tag> otherTags = other.getTags();
         for(int i = 0; i < tags.size(); i++) {
             if(!tags.get(i).equals(otherTags.get(i))) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag " + i);
-                // FIXME Make Tags compare themselves
                 return false;
             }
         }
@@ -536,54 +495,22 @@ public class ServiceDescription {
         this.name = c.getString(c.getColumnIndex(prefix + NAME));
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
-        this.price = c.getFloat(c.getColumnIndex(prefix + PRICE));
-
         this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
         this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE)));
 
         this.app = new AppDescription();
     }
 
-    public static ServiceDescription clone(ServiceDescription sd) {
-
-        // Do the basics
-        ServiceDescription component = new ServiceDescription(sd.getPackageName(), sd.className(), sd.getName(),
-                sd.getDescription(), sd.getPrice(), null, null, sd.getServiceType(), sd.getProcessType());
-
-        ArrayList<IODescription> inputs = cloneIOs(sd.inputs());
-        ArrayList<IODescription> outputs = cloneIOs(sd.outputs());
-
-        component.setInputs(inputs, true);
-        component.setOutputs(outputs, true);
-
-        return component;
-    }
-
-    private static ArrayList<IODescription> cloneIOs(ArrayList<IODescription> oldList) {
-
-        ArrayList<IODescription> newList = new ArrayList<IODescription>();
-
-        for (IODescription old : oldList) {
-            IODescription io = new IODescription(old.id(), old.name(), old.friendlyName(), old.type(),
-                    old.description(), old.isMandatory(), old.getSampleValues());
-            io.setIndex(old.index());
-
-            newList.add(io);
-        }
-
-        return newList;
-    }
-
     public void addIO(IODescription io, boolean input, int position) {
 
         if (input) {
             this.inputs.put(position, io);
-            this.idSearchInputs.put(io.id(), io);
-            this.nameSearchInputs.put(io.name(), io);
+            this.idSearchInputs.put(io.getID(), io);
+            this.nameSearchInputs.put(io.getName(), io);
         } else {
             this.outputs.put(position, io);
-            this.idSearchOutputs.put(io.id(), io);
-            this.nameSearchOutputs.put(io.name(), io);
+            this.idSearchOutputs.put(io.getID(), io);
+            this.nameSearchOutputs.put(io.getName(), io);
         }
 
         io.setParent(this);
@@ -596,12 +523,10 @@ public class ServiceDescription {
 
         String description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
-        float price = c.getFloat(c.getColumnIndex(prefix + PRICE));
-
         int serviceType = c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE));
         int processType = c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE));
 
-        return new ServiceDescription(packageName, className, name, description, price, null, null,
+        return new ServiceDescription(packageName, className, name, description, null, null,
                 ServiceDescription.getServiceType(serviceType), ServiceDescription.getProcessType(processType));
     }
 
@@ -630,7 +555,7 @@ public class ServiceDescription {
                 String stringValue = obj.getString(SAMPLE_VALUE);
                 Object value = type.fromString(stringValue);
 
-                sampleValues.add(new IOValue(obj.getString(SAMPLE_NAME), value));
+                sampleValues.add(new IOValue(-1, obj.getString(SAMPLE_NAME), value));
             }
 
             list.add(new IODescription(-1, ioName, friendlyName, i, type, ioDescription, sd, mandatory, sampleValues));
@@ -646,9 +571,8 @@ public class ServiceDescription {
         String description = json.getString(DESCRIPTION);
         ProcessType processType = ServiceDescription.getProcessType(json.getInt(PROCESS_TYPE));
         ServiceType serviceType = ServiceType.LOCAL;
-        double price = json.getDouble(PRICE);
 
-        ServiceDescription sd = new ServiceDescription(packageName, className, name, description, price, null, null, serviceType, processType);
+        ServiceDescription sd = new ServiceDescription(packageName, className, name, description, null, null, serviceType, processType);
 
         ArrayList<IODescription> inputs = parseIOFromNewJSON(json.getJSONArray(INPUTS), true, sd);
         ArrayList<IODescription> outputs = parseIOFromNewJSON(json.getJSONArray(OUTPUTS), false, sd);
@@ -659,8 +583,8 @@ public class ServiceDescription {
         for (int i = 0; i < outputs.size(); i++)
             outputs.get(i).setIndex(i);
 
-        sd.setInputs(inputs, false);
-        sd.setOutputs(outputs, false);
+        sd.setInputs(inputs);
+        sd.setOutputs(outputs);
 
         JSONArray tags = json.getJSONArray(TAGS);
         for (int i = 0; i < tags.length(); i++) {

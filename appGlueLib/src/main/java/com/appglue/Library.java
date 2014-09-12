@@ -30,7 +30,6 @@ import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
 import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
@@ -42,8 +41,8 @@ public class Library
 	public static String makeJSON(int id, String packageName, String className, String name, String description, 
 			int processType, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags)
 	{
-		String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", \"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %d, \"%s\": %d, ", 
-				ID, id, PACKAGENAME, packageName, CLASSNAME, className, NAME, name, DESCRIPTION, description, PROCESS_TYPE, processType, PRICE, price);
+		String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", \"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %d, ",
+				ID, id, PACKAGENAME, packageName, CLASSNAME, className, NAME, name, DESCRIPTION, description, PROCESS_TYPE, processType);
 	
 		inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
 		outputList = outputList == null ? new ArrayList<IODescription>() : outputList;
@@ -73,7 +72,7 @@ public class Library
 			sampleBuilder.append("]");
 			
 			inputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}", 
-					INPUT_NAME, input.name(), FRIENDLY_NAME, input.friendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(),
+					INPUT_NAME, input.getName(), FRIENDLY_NAME, input.friendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(),
 					INPUT_DESCRIPTION, input.description(), MANDATORY, input.isMandatory(), SAMPLES, sampleBuilder.toString()));
 		
 			if(i < inputList.size() - 1)
@@ -107,7 +106,7 @@ public class Library
 			sampleBuilder.append("]");
 			
 			outputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}",
-					OUTPUT_NAME, output.name(), FRIENDLY_NAME, output.friendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.description(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
+					OUTPUT_NAME, output.getName(), FRIENDLY_NAME, output.friendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.description(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
 			
 			if(i < outputList.size() - 1)
 				outputBuilder.append(",");

@@ -9,7 +9,6 @@ public class NumberInt extends IOType
 		super();
 		this.name = "NumberInt";
 		this.className = NumberInt.class.getCanonicalName();
-		this.value = 0;
         this.sensitivity = Sensitivity.NORMAL;
 	}
 

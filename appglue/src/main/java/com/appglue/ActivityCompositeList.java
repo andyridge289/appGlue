@@ -97,7 +97,7 @@ public class ActivityCompositeList extends Activity {
             if (selected.size() > 1) {
                 menu.setGroupVisible(R.id.comp_context_rungroup, false);
                 menu.setGroupVisible(R.id.comp_context_singlegroup, false);
-            } else if (composites.get(selected.get(0)).getComponents().get(0).description().getProcessType() == ProcessType.TRIGGER) {
+            } else if (composites.get(selected.get(0)).getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
                 menu.setGroupVisible(R.id.comp_context_rungroup, false);
                 menu.setGroupVisible(R.id.comp_context_singlegroup, true);
             } else {
@@ -144,7 +144,7 @@ public class ActivityCompositeList extends Activity {
                     edit(composites.get((selected.get(0))));
                     break;
 
-//				case R.id.comp_context_editstory:
+//				case R.getID.comp_context_editstory:
 //					editStory(composites.get((selected.get(0))));
 //					break;
 
@@ -185,7 +185,7 @@ public class ActivityCompositeList extends Activity {
         loadGrid = (GridView) findViewById(R.id.loadList);
         loader = (ImageView) findViewById(R.id.loading_spinner);
 
-//		mainContainer = (LinearLayout) findViewById(R.id.comp_list_main);
+//		mainContainer = (LinearLayout) findViewById(R.getID.comp_list_main);
 
         //Intent intent = new Intent(ActivityCompositeList.this, AlarmService.class);
         //startService(intent);
@@ -205,7 +205,7 @@ public class ActivityCompositeList extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = null;
 
-//		if(item.getItemId() == R.id.comp_list_simple)
+//		if(item.getItemId() == R.getID.comp_list_simple)
 //		{
 //			intent = new Intent(ActivityCompositeList.this, ActivityComponentList.class);
 //			intent.putExtra(JUST_A_LIST, true);
@@ -216,7 +216,7 @@ public class ActivityCompositeList extends Activity {
         } else if (item.getItemId() == R.id.comp_list_log) {
             intent = new Intent(ActivityCompositeList.this, ActivityLog.class);
         }
-//		else if(item.getItemId() == R.id.composite_list_gplus_login)
+//		else if(item.getItemId() == R.getID.composite_list_gplus_login)
 //		{
 //			GooglePlus gPlus = GooglePlus.getInstance(this);
 //			String[] accounts = gPlus.getAccountNames(this);
@@ -232,11 +232,11 @@ public class ActivityCompositeList extends Activity {
 //
 //			return true;
 //		}
-//		else if(item.getItemId() == R.id.comp_list_running)
+//		else if(item.getItemId() == R.getID.comp_list_running)
 //		{
 //			intent = new Intent(ActivityCompositeList.this, ActivityRunning.class);
 //		}
-//		else if(item.getItemId() == R.id.comp_list_story)
+//		else if(item.getItemId() == R.getID.comp_list_story)
 //		{
 //			intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
 //		}
@@ -534,7 +534,7 @@ public class ActivityCompositeList extends Activity {
 //                Log.d(TAG, components.keyAt(i) + ": alive");
 //            }
 
-            AppDescription app = components.get(0).description().app();
+            AppDescription app = components.get(0).getDescription().app();
 
 
             if (app == null || app.iconLocation() == null) {
@@ -571,7 +571,7 @@ public class ActivityCompositeList extends Activity {
                         actionMode.setSubtitle(selected.size() + " selected."); //cs.name());
 
                         if (selected.size() == 1) {
-                            if (cs.getComponents().get(0).description().getProcessType() == ProcessType.TRIGGER) {
+                            if (cs.getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
                                 actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
                                 actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
                             } else {

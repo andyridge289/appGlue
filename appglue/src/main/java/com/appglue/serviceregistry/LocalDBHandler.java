@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Set;
 
-import static com.appglue.Constants.AVG_RATING;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.COMPOSITE_ID;
 import static com.appglue.Constants.DESCRIPTION;
@@ -58,12 +57,10 @@ import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.NUM_RATINGS;
 import static com.appglue.library.AppGlueConstants.OUTPUT_ID;
 import static com.appglue.Constants.OUTPUT_IO_ID;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.PRICE;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
@@ -297,13 +294,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             String name = cv.getAsString(NAME);
             String packageName = cv.getAsString(PACKAGENAME);
             String description = cv.getAsString(DESCRIPTION);
-            float rating = cv.getAsFloat(AVG_RATING);
-            int numRatings = cv.getAsInteger(NUM_RATINGS);
-            float price = cv.getAsFloat(PRICE);
             int serviceType = cv.getAsInteger(SERVICE_TYPE);
             int processType = cv.getAsInteger(PROCESS_TYPE);
-            q.append(String.format("'%s', '%s', '%s', '%s', %f, %d, %f, %d, %d",
-                    className, name, packageName, description, rating, numRatings, price, serviceType, processType));
+            q.append(String.format("'%s', '%s', '%s', '%s', %d, %d",
+                    className, name, packageName, description, serviceType, processType));
         } else if (table.equals(TBL_TAG)) {
             q.append(String.format("'', '%s'", cv.getAsString(NAME)));
         } else if (table.equals(TBL_COMPONENT)) {
@@ -453,30 +447,25 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * Adds a new atomic service for the given service description
      *
      * @param sd The object representation of the component
-     * @return The id of the inserted component
+     * @return The getID of the inserted component
      */
-    public long addServiceDescription(ServiceDescription sd) {
+    public ServiceDescription addServiceDescription(ServiceDescription sd) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(NAME, sd.getName());
-        values.put(CLASSNAME, sd.className());
+        values.put(CLASSNAME, sd.getClassName());
         values.put(PACKAGENAME, sd.getPackageName());
         values.put(DESCRIPTION, sd.getDescription());
 
         values.put(SERVICE_TYPE, sd.getServiceType().index);
         values.put(PROCESS_TYPE, sd.getProcessType().index);
 
-        values.put(AVG_RATING, sd.getAverageRating());
-        values.put(NUM_RATINGS, sd.getNumReviews());
-        values.put(PRICE, sd.getPrice());
-
-        long retval;
         int inputSuccess = 0;
         int outputSuccess = 0;
 
         try {
-            retval = insert(db, TBL_SD, null, values);
+            insert(db, TBL_SD, null, values);
 
             if(sd.app() != null) {
                 // Try to get the app out of the database
@@ -487,14 +476,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             if (sd.hasInputs()) {
-                if (addServiceIO(sd.inputs(), true, sd.className()))
+                if (addServiceIO(sd.getInputs(), true, sd.getClassName()))
                     inputSuccess = 1;
                 else
                     inputSuccess = -1;
             }
 
             if (sd.hasOutputs()) {
-                if (addServiceIO(sd.outputs(), false, sd.className()))
+                if (addServiceIO(sd.getOutputs(), false, sd.getClassName()))
                     outputSuccess = 1;
                 else
                     outputSuccess = -1;
@@ -505,16 +494,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
         } catch (SQLiteConstraintException e) {
             // This means that that key is already in the database
-            retval = 0;
+            return null;
         }
 
         if (inputSuccess == -1)
-            Log.e(TAG, "Failed to add inputs for " + sd.className());
+            Log.e(TAG, "Failed to add getInputs for " + sd.getClassName());
 
         if (outputSuccess == -1)
-            Log.e(TAG, "Failed to add outputs for " + sd.className());
+            Log.e(TAG, "Failed to add getOutputs for " + sd.getClassName());
 
-        return retval;
+        return sd;
     }
 
     // Add the sample values to the database
@@ -525,7 +514,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         for (IODescription io : ios) {
             ContentValues values = new ContentValues();
 
-            values.put(NAME, io.name());
+            values.put(NAME, io.getName());
             values.put(FRIENDLY_NAME, io.friendlyName());
             values.put(IO_INDEX, io.index());
             values.put(DESCRIPTION, io.description());
@@ -538,8 +527,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             IOType type = io.type();
             if (type.getID() == -1) // Then it hasn't been validated, see if it's in the database
             {
-                long inputId = this.getInputOutputIfExists(type.getName(), type.getClass().getCanonicalName()).getID();
-                values.put(IO_TYPE, inputId);
+                long ioId = this.getInputOutputIfExists(type.getName(), type.getClass().getCanonicalName()).getID();
+                values.put(IO_TYPE, ioId);
+                type.setID(ioId);
             } else {
                 values.put(IO_TYPE, type.getID());
             }
@@ -579,6 +569,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             cv.put(VALUE, stringValue);
 
             long sampleId = insert(db, TBL_IO_SAMPLES, null, cv);
+            sample.setID(sampleId);
+
             if (sampleId == -1)
                 win = false;
         }
@@ -614,7 +606,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         // Getting the value back
         Object value = type.fromString(stringValue);
-        return new IOValue(name, value);
+        return new IOValue(sampleValue, name, value);
     }
 
     public ArrayList<ServiceDescription> getComponentsForApp(String packageName) {
@@ -634,8 +626,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         do {
             ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-            sd.setInputs(getServiceIOs(sd, true), true);
-            sd.setOutputs(getServiceIOs(sd, false), true);
+            sd.setInputs(getServiceIOs(sd, true));
+            sd.setOutputs(getServiceIOs(sd, false));
             components.add(sd);
         }
         while (c.moveToNext());
@@ -650,11 +642,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String textInput = input ? "1" : "0";
         Cursor c = db.query(TBL_SERVICEIO, null,
-                CLASSNAME + " = ? AND " + I_OR_O + " = ?", new String[]{sd.className(), textInput},
+                CLASSNAME + " = ? AND " + I_OR_O + " = ?", new String[]{sd.getClassName(), textInput},
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, String.format("getServiceIO() %s %s: Cursor dead", sd.className(), "" + input));
+            Log.e(TAG, String.format("getServiceIO() %s %s: Cursor dead", sd.getClassName(), "" + input));
             return null;
         }
 
@@ -687,7 +679,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private void getSampleValues(IODescription io) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String q = String.format(Locale.ENGLISH, "SELECT * FROM %s WHERE %s = %d", TBL_IO_SAMPLES, SERVICE_IO, io.id());
+        String q = String.format(Locale.ENGLISH, "SELECT * FROM %s WHERE %s = %d", TBL_IO_SAMPLES, SERVICE_IO, io.getID());
 
         Cursor c = rawQuery(db, q, null);
 
@@ -857,7 +849,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         IOType type = IOType.Factory.getType(className);
         type.setID(id);
-        return type; //new IOType(id, name, className);
+        return type; //new IOType(getID, name, className);
     }
 
 
@@ -893,7 +885,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (components.size() == 0)
                 return -1;
 
-            if (components.get(0).description().getProcessType() == ProcessType.TRIGGER)
+            if (components.get(0).getDescription().getProcessType() == ProcessType.TRIGGER)
                 values.put(ACTIVE_OR_TIMER, 1);
             else
                 values.put(ACTIVE_OR_TIMER, 0);
@@ -903,12 +895,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             deleteAllComponents(cs.getId());
             for (int i = 0; i < components.size(); i++) {
-                long linkId = this.addCompositeHasAtomic(compositeId, components.get(i).description().className(), i);
+                long linkId = this.addCompositeHasAtomic(compositeId, components.get(i).getDescription().getClassName(), i);
 
                 if (linkId == -1)
-                    Log.e(TAG, "Failed to add " + components.get(i).description().className() + " to CS#" + cs.getId());
+                    Log.e(TAG, "Failed to add " + components.get(i).getDescription().getClassName() + " to CS#" + cs.getId());
                 else if (LOG)
-                    Log.d(TAG, "Added component: " + components.get(i).description().className() + " to CS#" + cs.getId());
+                    Log.d(TAG, "Added component: " + components.get(i).getDescription().getClassName() + " to CS#" + cs.getId());
             }
 
             // Now we need to connect the ServiceIOs
@@ -936,7 +928,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (components.size() == 0)
                 return -1;
 
-            if (components.get(0).description().getProcessType() == ProcessType.TRIGGER)
+            if (components.get(0).getDescription().getProcessType() == ProcessType.TRIGGER)
                 values.put(ACTIVE_OR_TIMER, 1);
             else
                 values.put(ACTIVE_OR_TIMER, 0);
@@ -951,12 +943,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             // Clear the atomic table for that component, then add all the components
             deleteAllComponents(cs.getId());
             for (int i = 0; i < components.size(); i++) {
-                long linkId = this.addCompositeHasAtomic(cs.getId(), components.get(i).description().className(), i);
+                long linkId = this.addCompositeHasAtomic(cs.getId(), components.get(i).getDescription().getClassName(), i);
 
                 if (linkId == -1)
-                    Log.e(TAG, "Failed to add " + components.get(i).description().className() + " to " + cs.getId());
+                    Log.e(TAG, "Failed to add " + components.get(i).getDescription().getClassName() + " to " + cs.getId());
                 else if (LOG)
-                    Log.d(TAG, "Added component: " + components.get(i).description().className() + " to " + cs.getId());
+                    Log.d(TAG, "Added component: " + components.get(i).getDescription().getClassName() + " to " + cs.getId());
             }
 
             // Clear the IO connections then add them all
@@ -988,13 +980,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         boolean allSuccess = true;
 
-        // Loop through the inputs to the second service in each pair, and then add a connection for the relevant output to the relevant input
+        // Loop through the getInputs to the second service in each pair, and then add a connection for the relevant output to the relevant input
         for (int i = 0; i < services.size(); i++) {
-            // Loop through the current inputs
+            // Loop through the current getInputs
             ComponentService currentComponent = services.valueAt(i);
-            ServiceDescription current = currentComponent.description();
+            ServiceDescription current = currentComponent.getDescription();
 
-            ArrayList<ServiceIO> currentInputs = currentComponent.inputs();
+            ArrayList<ServiceIO> currentInputs = currentComponent.getInputs();
             for (ServiceIO input : currentInputs) {
                 ServiceIO output = input.connection();
 
@@ -1011,52 +1003,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 long connectionId = insert(db, TBL_COMPOSITE_IOCONNECTION, null, values);
 
                 if (connectionId == -1) {
-                    Log.e(TAG, compositeId + ": Failed to set link between " + current.className() +
-                            " and " + output.component().description().className());
+                    Log.e(TAG, compositeId + ": Failed to set link between " + current.getClassName() +
+                            " and " + output.component().getDescription().getClassName());
                     allSuccess = false;
                 }
             }
         }
 
         return allSuccess;
-    }
-
-    /**
-     * Gets the atomic service with the given ID
-     *
-     * @param className The name of the class of the service to get
-     * @return The service with the given ID
-     */
-    public ServiceDescription getComponentForComposite(String className) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.query(TBL_SD, null,
-                CLASSNAME + " = ?", new String[]{className},
-                null, null, null, null);
-
-
-        if (c == null) {
-            return null;
-        }
-
-        if (c.getCount() == 0) {
-            return null;
-        }
-
-        c.moveToFirst();
-
-        ServiceDescription sd = ServiceDescription.createFromCursor(c, "");
-
-        ArrayList<IODescription> inputs = getServiceIOs(sd, true);
-        sd.setInputs(inputs, true);
-
-        ArrayList<IODescription> outputs = getServiceIOs(sd, false);
-        sd.setOutputs(outputs, true);
-
-        AppDescription app = getAppDescription(sd.getPackageName());
-        if (app != null)
-            sd.setApp(app);
-
-        return sd;
     }
 
     public void updateWiring(CompositeService cs) {
@@ -1129,7 +1083,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     /**
      * Returns whether it should be running, and then whether it is running
      *
-     * @param id The id of the composite to find out about the running status
+     * @param id The getID of the composite to find out about the running status
      * @return The running status of the composite
      */
     public Boolean compositeEnabled(long id) {
@@ -1155,7 +1109,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     /**
      * Sets whether the composite service should be running or not
      *
-     * @param id      The id of the composite
+     * @param id      The getID of the composite
      * @param running the new active status
      * @return The success of this?
      */
@@ -1167,7 +1121,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * So we don't have such code duplication with two methods doing essentially
      * the same thing.
      *
-     * @param id      The id of the composite
+     * @param id      The getID of the composite
      * @param running The running status of the composite
      * @param type    Custom type
      * @return The status
@@ -1290,9 +1244,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             Log.d(TAG, "Removed " + numRemoved + " from Filter for " + cs.getId() + "(" + cs.getName() + ")");
 
         for (int i = 0; i < components.size(); i++) {
-            // Do the filter conditions on the outputs first
+            // Do the filter conditions on the getOutputs first
             ComponentService c = components.valueAt(i);
-            ArrayList<ServiceIO> inputs = c.inputs();
+            ArrayList<ServiceIO> inputs = c.getInputs();
             for (ServiceIO o : inputs) {
                 if (o.isFiltered() != ServiceIO.UNFILTERED) {
 
@@ -1300,7 +1254,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
                     values.put(COMPOSITE_ID, cs.getId());
                     values.put(COMPONENT_ID, c.id());
-                    values.put(SERVICE_IO, o.description().id());
+                    values.put(SERVICE_IO, o.description().getID());
 
                     // Set the filter state
                     values.put(FILTER_STATE, o.isFiltered());
@@ -1317,8 +1271,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
 
-            // Do the filter conditions on the outputs first
-            ArrayList<ServiceIO> outputs = c.outputs();
+            // Do the filter conditions on the getOutputs first
+            ArrayList<ServiceIO> outputs = c.getOutputs();
             for (ServiceIO o : outputs) {
                 if (o.isFiltered() != ServiceIO.UNFILTERED) {
                     ContentValues values = new ContentValues();
@@ -1326,7 +1280,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                     // Set the filter state
                     values.put(FILTER_STATE, o.isFiltered());
                     values.put(COMPOSITE_ID, cs.getId());
-                    values.put(SERVICE_IO, o.description().id());
+                    values.put(SERVICE_IO, o.description().getID());
                     values.put(COMPONENT_ID, c.id());
 
                     values.put(MANUAL_VALUE, o.description().type().toString(o.getManualValue()));
@@ -1383,14 +1337,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (component == null)
                 continue; // I don't feel like this should happen but you never know...
 
-            IODescription iod = component.description().getIO(c.getLong(c.getColumnIndex(SERVICE_IO)));
+            IODescription iod = component.getDescription().getIO(c.getLong(c.getColumnIndex(SERVICE_IO)));
             if (iod == null)
                 continue; // Ditto
 
             ServiceIO serviceIO = new ServiceIO(id, component, iod);
 
             long sampleValue = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
-            if (sampleValue != -1) {
+            if (sampleValue != 0) {
                 IOValue ioValue = getIOValue(sampleValue, iod);
                 serviceIO.setChosenSampleValue(ioValue);
             }
@@ -1513,7 +1467,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(EXECUTION_INSTANCE, executionInstance);
 
         if(component != null)
-            values.put(CLASSNAME, component.className());
+            values.put(CLASSNAME, component.getClassName());
         else
             values.put(CLASSNAME, "");
 
@@ -1609,7 +1563,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             // And now get the stuff for the component log
-            // TODO Work out what to do with the component log id
+            // TODO Work out what to do with the component log getID
 //            long componentLogId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + ID));
             String className = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + CLASSNAME));
             String componentMsg = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + MESSAGE));
@@ -1726,7 +1680,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             ContentValues cv = new ContentValues();
             cv.put(TAG_ID, t.id());
-            cv.put(CLASSNAME, component.className());
+            cv.put(CLASSNAME, component.getClassName());
 
             long id = insert(db, TBL_SD_HAS_TAG, null, cv);
             // TODO Not sure we care about this ID, do we?
@@ -1790,7 +1744,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
 
     public ArrayList<ServiceDescription> getMatchingForIOs(ServiceDescription component, boolean inputs) {
-        ArrayList<IODescription> ios = inputs ? component.inputs() : component.outputs();
+        ArrayList<IODescription> ios = inputs ? component.getInputs() : component.getOutputs();
 
         HashMap<String, ServiceDescription> components = new HashMap<String, ServiceDescription>();
         HashMap<String, Long> types = new HashMap<String, Long>();
@@ -1810,8 +1764,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 id = this.getIOType(s).getID();
             }
 
-            // Get all the inputs that use that type - we only want the IDs at this stage
-            // We've got inputs from the component parameter, so we need to get the outputs of the other one. Or vice versa
+            // Get all the getInputs that use that type - we only want the IDs at this stage
+            // We've got getInputs from the component parameter, so we need to get the getOutputs of the other one. Or vice versa
             ArrayList<String> componentNames = this.getComponentIdsForType(id, !inputs);
             for (String name : componentNames) {
                 if (!components.containsKey(name)) {
@@ -2187,7 +2141,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     public ComponentService getComponent(long componentId) {
-        return new ComponentService(); // FIXME Do this
+        return null; // FIXME Do this
     }
 
     public ServiceDescription getServiceDescription(String className) {
@@ -2226,7 +2180,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (c.getCount() == 0) {
-            Log.e(TAG, "Cursor empty, this should be impossible, but apparently isn't: " + query);
             return null;
         }
 
@@ -2255,7 +2208,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 if (ioMap.get(ioId) != null) {
                     currentIO = ioMap.get(ioId);
                     currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.index());
-                } else if (currentIO == null || currentIO.id() != ioId) {
+                } else if (currentIO == null || currentIO.getID() != ioId) {
 
                     // If it doesn't exist, then use the old one
                     currentIO = new IODescription(ioId);
@@ -2267,9 +2220,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
                 long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLES + "_" + ID));
 
-                if (sampleId != -1) {
+                if (sampleId != 0) {
+
                     String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + NAME));
                     String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLES + "_" + VALUE));
+
+                    if(sampleName == null)
+                        Log.d(TAG, "Getting sample " + sampleId + ": " + sampleName + DatabaseUtils.dumpCurrentRowToString(c));
 
                     // When we make the sample it might need to be converted to be the right type of object?
                     Object value = currentIO.type().fromString(strValue);
@@ -2280,7 +2237,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (!currentComponent.hasTags()) {
                 Cursor c2 = rawQuery(db, String.format("SELECT * FROM %s WHERE %s = '%s'",
                         TBL_SD_HAS_TAG, CLASSNAME,
-                        currentComponent.className()), null);
+                        currentComponent.getClassName()), null);
 
                 if (c2 == null) {
                     Log.e(TAG, "Tag cursor dead for getting components w/ join");
@@ -2350,7 +2307,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         do {
             String className = c.getString(c.getColumnIndex(TBL_SD + "_" + CLASSNAME));
 
-            if (currentComponent == null || !currentComponent.className().equals(className)) {
+            if (currentComponent == null || !currentComponent.getClassName().equals(className)) {
 
                 if (componentMap.contains(className))
                     currentComponent = componentMap.get(className);
@@ -2374,7 +2331,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 if (ioMap.get(ioId) != null) {
                     currentIO = ioMap.get(ioId);
                     currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.index());
-                } else if (currentIO == null || currentIO.id() != ioId) {
+                } else if (currentIO == null || currentIO.getID() != ioId) {
 
                     // If it doesn't exist, then use the old one
                     currentIO = new IODescription(ioId);
@@ -2397,7 +2354,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (!currentComponent.hasTags()) {
                 Cursor c2 = rawQuery(db, String.format("SELECT * FROM %s WHERE %s = '%s'",
                         TBL_SD_HAS_TAG, CLASSNAME,
-                        currentComponent.className()), null);
+                        currentComponent.getClassName()), null);
 
                 if (c2 == null) {
                     Log.e(TAG, "Tag cursor dead for getting components w/ join");
@@ -2481,7 +2438,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public boolean isInstanceRunning(long compositeId, long executionInstance) {
         // FIXME Do this
-        // Look for a row with the instance and the composite id. If the timestamp is set then we're good. otherwise not.
+        // Look for a row with the instance and the composite getID. If the timestamp is set then we're good. otherwise not.
         return false;
     }
 

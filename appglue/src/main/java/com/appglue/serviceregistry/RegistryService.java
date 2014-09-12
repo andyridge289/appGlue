@@ -111,14 +111,11 @@ public class RegistryService extends Service
 			}
 
             for (ServiceDescription sd : services) {
-                long atomicId = registry.addServiceFromBroadcast(sd);
+                ServiceDescription retval = registry.addServiceFromBroadcast(sd);
 
-                // -1 = Fail
-                // 0 = Already there, do nothing
-                // Otherwise its just the ID
-                if (atomicId == -1) {
+                 if (retval == null) {
                     Toast.makeText(RegistryService.this, String.format("Failed to add device service: %s", sd.getName()), Toast.LENGTH_SHORT).show();
-                } else if (atomicId != 0) {
+                } else {
                     Toast.makeText(RegistryService.this, String.format("Added new device service: %s", sd.getName()), Toast.LENGTH_SHORT).show();
                 }
 

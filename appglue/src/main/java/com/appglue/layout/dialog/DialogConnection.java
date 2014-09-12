@@ -43,8 +43,8 @@ public class DialogConnection extends DialogCustom {
                 TextView connectionOut = (TextView) v.findViewById(R.id.connection_out);
                 ImageButton removeButton = (ImageButton) v.findViewById(R.id.connection_remove);
 
-                final IODescription out = parent.getFirst().description().outputs().get(p.x);
-                final IODescription in = parent.getSecond().description().inputs().get(p.y);
+                final IODescription out = parent.getFirst().getDescription().getOutputs().get(p.x);
+                final IODescription in = parent.getSecond().getDescription().getInputs().get(p.y);
 
                 connectionOut.setText(out.friendlyName());
                 connectionIn.setText(in.friendlyName());
@@ -54,7 +54,7 @@ public class DialogConnection extends DialogCustom {
                     public void onClick(View v) {
                         parent.removeConnection(p);
                         ps.remove(p);
-                        context.setStatus("Removed connection between " + out.name() + " and " + in.name());
+                        context.setStatus("Removed connection between " + out.getName() + " and " + in.getName());
 
                         // If there aren't any other connections for this output
                         if (parent.getConnectionsOut(p.x).size() == 0) {

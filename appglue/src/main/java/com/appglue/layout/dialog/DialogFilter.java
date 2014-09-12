@@ -12,7 +12,6 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IODescription;
 import com.appglue.description.IOValue;
 import com.appglue.R;
 import com.appglue.description.datatypes.IOType;
@@ -133,13 +132,13 @@ public class DialogFilter extends DialogCustom {
                     // This should work, it's the same as the other stuff. But it might not...
                     item.setManualValue(value);
                     item.setFilterState(ServiceIO.MANUAL_FILTER);
-                    DialogFilter.this.activity.setStatus("Set manual filter for " + description.name());
+                    DialogFilter.this.activity.setStatus("Set manual filter for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
                     IOValue value = (IOValue) filterValueSpinner.getSelectedItem();
                     item.setChosenSampleValue(value);
                     item.setFilterState(ServiceIO.SAMPLE_FILTER);
-                    DialogFilter.this.activity.setStatus("Set sample filter for " + description.name());
+                    DialogFilter.this.activity.setStatus("Set sample filter for " + description.getName());
                 }
 
                 // Now we just need to make sure that the condition is set
@@ -163,7 +162,7 @@ public class DialogFilter extends DialogCustom {
             @Override
             public void onClick(View v) {
                 item.setFilterState(ServiceIO.UNFILTERED);
-                DialogFilter.this.activity.setStatus("Cleared filter for " + description.name());
+                DialogFilter.this.activity.setStatus("Cleared filter for " + description.getName());
                 registry.updateCurrent();
 //				FIXME What about parent.redraw();
             }

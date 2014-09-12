@@ -142,11 +142,11 @@
   			</TabHost>
 	   		
 	   		<!-- <LinearLayout
-	   		    android:id="@+id/button_container"
+	   		    android:getID="@+getID/button_container"
 	   		    style="@style/FillWrap">
 	   		    
 	   		    <Button
-	   		        android:id="@+id/param_input_sample_button"
+	   		        android:getID="@+getID/param_input_sample_button"
 	   		        android:layout_width="0dip"
 	   		        android:layout_height="wrap_content"
 	   		        android:layout_weight="1"
@@ -155,7 +155,7 @@
 	   		        />
 	   		    
 	   		    <Button
-	   		        android:id="@+id/param_input_custom_button"
+	   		        android:getID="@+getID/param_input_custom_button"
 	   		        android:layout_width="0dip"
 	   		        android:layout_height="wrap_content"
 	   		        android:layout_weight="1"
@@ -164,7 +164,7 @@
 	   		        />
 	   		    
 	   		    <Button
-	   		        android:id="@+id/param_input_previous_button"
+	   		        android:getID="@+getID/param_input_previous_button"
 	   		        android:layout_width="0dip"
 	   		        android:layout_height="wrap_content"
 	   		        android:layout_weight="1"
@@ -175,7 +175,7 @@
    		    </LinearLayout>
    		    
 	   		<TextView
-	   		    android:id="@+id/param_input_title"
+	   		    android:getID="@+getID/param_input_title"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:textAllCaps="true"
@@ -184,7 +184,7 @@
 	   		    />
    		    
 	   		<Spinner
-	        	android:id="@+id/param_value_spinner"
+	        	android:getID="@+getID/param_value_spinner"
 	        	android:layout_width="fill_parent"
 	        	android:layout_height="40dip"
 	        	android:layout_marginLeft="5dip"
@@ -193,7 +193,7 @@
 	            />
 			
 			 <EditText
-	             android:id="@+id/param_value_text"
+	             android:getID="@+getID/param_value_text"
 	             android:layout_width="fill_parent"
 	             android:layout_height="40dip"
 	             android:layout_marginLeft="5dip"
@@ -203,7 +203,7 @@
 	             />
 			 
 			 <Spinner
-			     android:id="@+id/param_previous_spinner"
+			     android:getID="@+getID/param_previous_spinner"
 	        	android:layout_width="fill_parent"
 	        	android:layout_height="40dip"
 	        	android:layout_marginLeft="5dip"

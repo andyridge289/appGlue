@@ -9,10 +9,4 @@ public class URLObject extends Text
 		this.className = URLObject.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
 	}
-	
-	public URLObject(String value)
-	{
-		this();
-		this.value = value;
-	}
 }

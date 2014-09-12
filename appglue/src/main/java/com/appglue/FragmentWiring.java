@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
-import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.layout.WiringMap;
 import com.appglue.library.LocalStorage;
@@ -86,18 +85,18 @@ public class FragmentWiring extends FragmentVW {
 
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (first != null) {
-            firstName.setText(first.description().getName());
+            firstName.setText(first.getDescription().getName());
             firstName.setTextColor(Color.BLACK);
 
             try {
-                AppDescription firstApp = first.description().app();
+                AppDescription firstApp = first.getDescription().app();
                 Bitmap b;
 
                 if (firstApp == null) {
                     firstIcon.setBackgroundResource(R.drawable.icon);
 
                 } else {
-                    String iconLocation = first.description().app().iconLocation();
+                    String iconLocation = first.getDescription().app().iconLocation();
                     if (iconLocation.equals("")) {
                         firstIcon.setBackgroundResource(R.drawable.icon);
                     }
@@ -136,12 +135,12 @@ public class FragmentWiring extends FragmentVW {
 
         // Make the right icon be the left half, Make the left icon be the right half
         if (second != null) {
-            secondName.setText(second.description().getName());
+            secondName.setText(second.getDescription().getName());
             secondName.setTextColor(Color.BLACK);
             secondContainer.setBackgroundResource(R.drawable.wiring_component);
 
             try {
-                AppDescription secondApp = second.description().app();
+                AppDescription secondApp = second.getDescription().app();
                 Bitmap b;
 
                 if (secondApp == null) {

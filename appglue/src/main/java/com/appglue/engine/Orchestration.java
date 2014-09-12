@@ -24,7 +24,7 @@ public class Orchestration {
 
         // Save it to the list of components that are in this composite, we don't care if there are duplicates for this case.
         if (!this.contains(component)) {
-            components.put(component.className(), component);
+            components.put(component.getClassName(), component);
         }
 
         while (nodes.size() <= position) {
@@ -60,7 +60,7 @@ public class Orchestration {
     }
 
     public boolean contains(ServiceDescription component) {
-        return contains(component.className());
+        return contains(component.getClassName());
     }
 
     private class Node {

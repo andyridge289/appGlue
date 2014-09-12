@@ -71,11 +71,11 @@ public class FragmentStory extends Fragment implements OnClickListener
 
 //			if(position == -1)
 //			{
-//				cs.addServiceDescription(0, registry.getAtomic(className));
+//				cs.addServiceDescription(0, registry.getServiceDescription(className));
 //			}
 //			else
 //			{
-//				cs.addServiceDescription(position, registry.getAtomic(className));
+//				cs.addServiceDescription(position, registry.getServiceDescription(className));
 //			}
             // FIXME Change the above to work with ComponentService
 			

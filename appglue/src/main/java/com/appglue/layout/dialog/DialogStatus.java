@@ -32,13 +32,13 @@ class DialogStatus extends DialogCustom {
 //		final List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 //		final AppChooserAdapter adapter = new AppChooserAdapter(activity, packages, pm);
 //
-//		GridView g = (GridView) v.findViewById(R.id.app_grid);
+//		GridView g = (GridView) v.findViewById(R.getID.app_grid);
 //		g.setAdapter(adapter);
 //
 //		setView(v);
 //
-//		Button positiveButton = (Button) v.findViewById(R.id.dialog_app_positive);
-//		Button negativeButton = (Button) v.findViewById(R.id.dialog_app_negative);
+//		Button positiveButton = (Button) v.findViewById(R.getID.dialog_app_positive);
+//		Button negativeButton = (Button) v.findViewById(R.getID.dialog_app_negative);
 //
 //		positiveButton.setOnClickListener(new View.OnClickListener()
 //		{
@@ -96,7 +96,7 @@ class DialogStatus extends DialogCustom {
                 v = vi.inflate(R.layout.list_item_status, parent);
             }
 
-//            TextView tv = (TextView) v.findViewById(R.id.status_text);
+//            TextView tv = (TextView) v.findViewById(R.getID.status_text);
 
             return v;
         }

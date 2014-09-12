@@ -25,7 +25,6 @@ public class DateTime extends IOType
         super();
         this.name = "DateTime";
         this.className = DateTime.class.getCanonicalName();
-        this.value = null;
         this.sensitivity = Sensitivity.NORMAL;
     }
 

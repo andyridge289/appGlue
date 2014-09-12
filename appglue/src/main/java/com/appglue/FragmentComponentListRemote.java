@@ -36,7 +36,7 @@ public class FragmentComponentListRemote extends FragmentComponentList
 			{
 				Intent intent = new Intent(parent, ActivityComponent.class);
 				intent.putExtra(SERVICE_TYPE, ServiceType.REMOTE.index);
-				intent.putExtra(CLASSNAME, services.get(position).className());
+				intent.putExtra(CLASSNAME, services.get(position).getClassName());
 				intent.putExtra(JUST_A_LIST, parent.justAList());
 				parent.startActivityForResult(intent, 0);
 			}

@@ -107,7 +107,7 @@ public class IODescription
 
     public boolean isInput() { return this.isInput; }
 	
-	public long id()
+	public long getID()
 	{
 		return id;
 	}
@@ -136,7 +136,7 @@ public class IODescription
 		return parent;
 	}
 
-	public String name() {
+	public String getName() {
 		return name;
 	}
 
@@ -173,76 +173,72 @@ public class IODescription
 	public boolean equals(Object o)
 	{
         if(o == null)  {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: null");
+            if(LOG) Log.d(TAG, "IODescription->Equals: null");
             return false;
         }
 
         if(!(o instanceof IODescription)) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: not ServiceIO");
+            if(LOG) Log.d(TAG, "IODescription->Equals: not IODescription");
             return false;
         }
 
         IODescription other = (IODescription) o;
 
-        if(id != other.id()) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: id - [" + id + " :: " + other.id() + "]");
+        if(id != other.getID()) {
+            if(LOG) Log.d(TAG, "IODescription->Equals: id - [" + id + " :: " + other.getID() + "]");
             return false;
         }
 
         if(index != other.index()) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: index");
+            if(LOG) Log.d(TAG, "IODescription->Equals: index");
             return false;
         }
 
         if(isInput != other.isInput()) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: is input");
+            if(LOG) Log.d(TAG, "IODescription->Equals: is input");
             return false;
         }
 
-        if(!name.equals(other.name())) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: name");
+        if(!name.equals(other.getName())) {
+            if(LOG) Log.d(TAG, "IODescription->Equals: name");
             return false;
         }
 
         if(!friendlyName.equals(other.friendlyName())) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: friendly name");
+            if(LOG) Log.d(TAG, "IODescription->Equals: friendly name");
             return false;
         }
 
-        if(!type.equals(other.type())) { // FIXME Do equals for types
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: type");
+        if(!type.equals(other.type())) {
+            if(LOG) Log.d(TAG, "IODescription->Equals: type");
             return false;
         }
 
         if(!description.equals(other.description())) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: description");
+            if(LOG) Log.d(TAG, "IODescription->Equals: description");
             return false;
         }
 
-        if(!parent.className().equals(other.parent.className())) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: parent");
+        if(!parent.getClassName().equals(other.parent.getClassName())) {
+            if(LOG) Log.d(TAG, "IODescription->Equals: parent");
             return false;
         }
 
         if(mandatory != other.mandatory) {
-            if(LOG) Log.d(TAG, "ServiceIO->Equals: mandatory");
+            if(LOG) Log.d(TAG, "IODescription->Equals: mandatory");
             return false;
         }
 
+        // FIXME This needs to check if they are all in both of them
         for(int i = 0; i < sampleSearch.size(); i++) {
             long k = sampleSearch.keyAt(i);
-            if(!sampleSearch.get(k).equals(other.getSampleValue(k))) {
-                if(LOG) Log.d(TAG, "ServiceIO->Equals: sample value " + k + " (index " + i + ")");
+            IOValue v = sampleSearch.valueAt(i);
+
+            if(!v.equals(other.getSampleValue(v.getID()))) {
+                if(LOG) Log.d(TAG, "IODescription->Equals: sample value " + v.getID() + " (index " + i + ")");
                 return false;
             }
         }
-
-        // FIXME This is the static one, needs to have the dynamic one
-//        private ServiceIO connection;
-//        private int filterState = UNFILTERED;
-//        private Object manualValue; // This is used for outputs on filtering, or its hardcoded value if its an input
-//        private IOValue chosenSampleValue;
-//        private int condition;
 
         return true;
     }

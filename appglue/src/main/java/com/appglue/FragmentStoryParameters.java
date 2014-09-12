@@ -137,8 +137,8 @@ public class FragmentStoryParameters extends Fragment
         CompositeService cs = registry.getService();
 		ArrayList<ComponentService> components = cs.getComponentsAL();
 		position = position == -1 ? components.size() - 1 : position;
-        ServiceDescription component = components.get(position).description(); // FIXME SparseArray
-		previous = position > 0 ? components.get(position - 1).description() : null;
+        ServiceDescription component = components.get(position).getDescription(); // FIXME SparseArray
+		previous = position > 0 ? components.get(position - 1).getDescription() : null;
 		Log.w(TAG, "And now position " + position);
 		
 		nameText.setText(component.getName());
@@ -147,7 +147,7 @@ public class FragmentStoryParameters extends Fragment
 		{
 			// Show the list, hide the text, set the adapter
 			inputContainer.setVisibility(View.VISIBLE);
-			setupInputs(inputContainer, component.inputs());
+			setupInputs(inputContainer, component.getInputs());
 			noInputText.setVisibility(View.GONE);
 		}
 		else
@@ -161,7 +161,7 @@ public class FragmentStoryParameters extends Fragment
 		{
 			// Show the list, hide the text, set the adapter
 			outputContainer.setVisibility(View.VISIBLE);
-			setupOutputs(outputContainer, component.outputs());
+			setupOutputs(outputContainer, component.getOutputs());
 			noOutputText.setVisibility(View.GONE);
 		}
 		else
@@ -268,7 +268,7 @@ public class FragmentStoryParameters extends Fragment
 					
 					
 					// get previous output from the last component and then match them up
-					IODescription previousOut = previous.getOutput(value.id());
+					IODescription previousOut = previous.getOutput(value.getID());
 //					item.setConnection(previousOut);
 //					previousOut.setConnection(item); TODO ServiceIO not IODescription
 				}
@@ -360,7 +360,7 @@ public class FragmentStoryParameters extends Fragment
 		
 		if(previous != null)
 		{
-			ArrayList<IODescription> outputs = previous.outputs();
+			ArrayList<IODescription> outputs = previous.getOutputs();
 
             for (IODescription output : outputs) {
                 if (output.type().equals(current.type())) {
