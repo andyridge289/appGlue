@@ -7,16 +7,16 @@ import android.util.SparseArray;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.Interval;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.ProcessType;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
-import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService {
@@ -34,16 +34,21 @@ public class CompositeService {
     private SparseArray<ComponentService> components;
     private LongSparseArray<ComponentService> componentSearch;
 
+    public CompositeService() {
+        this.id = -1;
+        this.name = "";
+        this.description = "";
+        this.numeral = 0;
+        this.interval = Interval.SECONDS;
+        this.enabled = true;
+        this.components = new SparseArray<ComponentService>();
+        this.componentSearch = new LongSparseArray<ComponentService>();
+    }
+
     public CompositeService(boolean temp) {
+        this();
         if (temp)
             this.id = TEMP_ID;
-        else
-            this.id = -1;
-        this.name = ""; // We know that the name can never be blank so we're good
-        this.description = "";
-        this.components = new SparseArray<ComponentService>();
-        this.enabled = false;
-        this.componentSearch = new LongSparseArray<ComponentService>();
     }
 
     public CompositeService(String name, String description, ArrayList<ComponentService> services) {
@@ -54,11 +59,14 @@ public class CompositeService {
         this.components = new SparseArray<ComponentService>();
         for(int i = 0; i < services.size(); i++) {
             components.put(i, services.get(i));
+            services.get(i).setComposite(this);
         }
 
         for (ComponentService comps : services) {
             this.componentSearch.put(comps.id(), comps);
         }
+
+
     }
 
     public static CompositeService makePlaceholder() {

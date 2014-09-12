@@ -1,7 +1,6 @@
 package com.appglue.test;
 
 import android.test.AndroidTestCase;
-import android.util.Log;
 
 import com.appglue.IODescription;
 import com.appglue.description.AppDescription;
@@ -16,14 +15,13 @@ import com.appglue.services.NotificationService;
 import com.appglue.services.ServiceFactory;
 import com.appglue.services.TubeService;
 
-import static com.appglue.Constants.JSON_SERVICE;
-import static com.appglue.Constants.JSON_SERVICE_DATA;
-import static com.appglue.Constants.TAG;
-
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+
+import static com.appglue.Constants.JSON_SERVICE;
+import static com.appglue.Constants.JSON_SERVICE_DATA;
 
 public class DBTest extends AndroidTestCase {
 
@@ -61,8 +59,8 @@ public class DBTest extends AndroidTestCase {
         tubeService = registry.addServiceDescription(tubeService);
         notificationService = registry.addServiceDescription(notificationService);
 
-        ComponentService tubeComponent = new ComponentService(tubeService);
-        ComponentService notificationComponent = new ComponentService(notificationService);
+        ComponentService tubeComponent = new ComponentService(tubeService, 0);
+        ComponentService notificationComponent = new ComponentService(notificationService, 1);
 
         ArrayList<ComponentService> components = new ArrayList<ComponentService>();
         components.add(tubeComponent);

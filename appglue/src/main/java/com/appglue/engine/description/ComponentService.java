@@ -12,7 +12,7 @@ public class ComponentService
     private long id;
     private ServiceDescription description;
 
-    private long compositeId;
+    private CompositeService composite;
     private int position;
 
     private ArrayList<ServiceIO> inputs;
@@ -21,8 +21,27 @@ public class ComponentService
     private LongSparseArray<ServiceIO> inputSearch;
     private LongSparseArray<ServiceIO> outputSearch;
 
-    public ComponentService(ServiceDescription description) {
+    public ComponentService() {
+
+        this.inputs = new ArrayList<ServiceIO>();
+        this.outputs = new ArrayList<ServiceIO>();
+
+        this.id = -1;
+        this.description = null;
+        this.composite = null;
+        this.position = -1;
+        this.inputSearch = new LongSparseArray<ServiceIO>();
+        this.outputSearch = new LongSparseArray<ServiceIO>();
+    }
+
+    public ComponentService(ServiceDescription description, int position) {
+        this();
         this.description = description;
+        this.position = position;
+    }
+
+    public void setComposite(CompositeService composite) {
+        this.composite = composite;
     }
 
     public long id() {
