@@ -52,7 +52,7 @@ public class Library
 		for(int i = 0; i < inputList.size(); i++)
 		{
 			IODescription input = inputList.get(i);
-			IOType type = input.type();
+			IOType type = input.getType();
 			
 			StringBuilder sampleBuilder = new StringBuilder();
 			ArrayList<IOValue> values = input.getSampleValues();
@@ -72,7 +72,7 @@ public class Library
 			sampleBuilder.append("]");
 			
 			inputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}", 
-					INPUT_NAME, input.getName(), FRIENDLY_NAME, input.friendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(),
+					INPUT_NAME, input.getName(), FRIENDLY_NAME, input.getFriendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(),
 					INPUT_DESCRIPTION, input.description(), MANDATORY, input.isMandatory(), SAMPLES, sampleBuilder.toString()));
 		
 			if(i < inputList.size() - 1)
@@ -86,7 +86,7 @@ public class Library
 		for(int i = 0; i < outputList.size(); i++)
 		{
 			IODescription output = outputList.get(i);
-			IOType type = output.type();
+			IOType type = output.getType();
 			
 			StringBuilder sampleBuilder = new StringBuilder();
 			ArrayList<IOValue> values = output.getSampleValues();
@@ -106,7 +106,7 @@ public class Library
 			sampleBuilder.append("]");
 			
 			outputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}",
-					OUTPUT_NAME, output.getName(), FRIENDLY_NAME, output.friendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.description(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
+					OUTPUT_NAME, output.getName(), FRIENDLY_NAME, output.getFriendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.description(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
 			
 			if(i < outputList.size() - 1)
 				outputBuilder.append(",");

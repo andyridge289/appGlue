@@ -1,7 +1,12 @@
 package com.appglue.engine.description;
 
+import android.util.Log;
+
 import com.appglue.IODescription;
 import com.appglue.description.IOValue;
+
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
 
 public class ServiceIO
 {
@@ -10,9 +15,9 @@ public class ServiceIO
     public static final int SAMPLE_FILTER = 2;
 
     private long id;
-    private ComponentService parentComponent;
+    private ComponentService component;
 
-    private IODescription io;
+    private IODescription ioDescription;
 
     private ServiceIO connection;
 
@@ -23,36 +28,68 @@ public class ServiceIO
 
     private int condition;
 
-    public ServiceIO(ComponentService parentComponent, IODescription io) {
-        this.parentComponent = parentComponent;
-        this.io = io;
+    public ServiceIO(ComponentService component, IODescription ioDescription) {
+        this.component = component;
+        this.ioDescription = ioDescription;
+
+        if(ioDescription.isInput()) {
+            component.addInput(this, false);
+        } else {
+            component.addOutput(this, false);
+        }
     }
 
-    public ServiceIO(long id, ComponentService parentComponent, IODescription io) {
-        this(parentComponent, io);
+    public ServiceIO(long id, ComponentService component, IODescription ioDescription) {
         this.id = id;
+        this.component = component;
+
+        this.ioDescription = ioDescription;
+
+        if(ioDescription.isInput()) {
+            component.addInput(this, true);
+        } else {
+            component.addOutput(this, true);
+        }
+
     }
 
-    public long id() {
+    public long getID() {
         return id;
     }
 
-    public IODescription description() {
-        return io;
+    public void setID(long id) {
+
+        this.id = id;
+
+        // IF we are setting the ID we also need to update where it is in the component, if it was there at all
+        if(ioDescription.isInput()) {
+            component.removeInputSearch(id);
+            component.addInputSearch(this);
+        } else {
+            component.removeOutputSearch(id);
+            component.addOutputSearch(this);
+        }
     }
 
-    public ComponentService component() {
-        return parentComponent;
+    public IODescription getDescription() {
+        return ioDescription;
     }
 
-    public Object getValue()
-    {
-        if(this.isFiltered() == MANUAL_FILTER)
+    public ComponentService getComponent() {
+        return component;
+    }
+
+    public Object getValue() {
+        if(this.getFilterState() == MANUAL_FILTER)
             return this.getManualValue();
-        else if(this.isFiltered() == SAMPLE_FILTER)
+        else if(this.getFilterState() == SAMPLE_FILTER)
             return this.getChosenSampleValue();
         else
             return null;
+    }
+    public boolean hasValue()
+    {
+        return this.manualValue != null || this.chosenSampleValue != null;
     }
 
     public void setManualValue(Object value)
@@ -61,25 +98,21 @@ public class ServiceIO
         this.filterState = MANUAL_FILTER;
     }
 
-    public IOValue getChosenSampleValue()
-    {
+    public IOValue getChosenSampleValue() {
         if(chosenSampleValue == null)
             return new IOValue();
 
         return chosenSampleValue;
     }
-
-    public void setChosenSampleValue(IOValue value)
-    {
+    public void setChosenSampleValue(IOValue value) {
         this.chosenSampleValue = value;
         this.filterState = SAMPLE_FILTER;
     }
 
-    public int isFiltered()
+    public int getFilterState()
     {
         return filterState;
     }
-
     public void setFilterState(int filterState)
     {
         this.filterState = filterState;
@@ -103,18 +136,87 @@ public class ServiceIO
         this.condition = condition;
     }
 
-    public boolean hasValue()
-    {
-        return this.manualValue != null || this.chosenSampleValue != null;
-    }
-
-    public ServiceIO connection()
+    public ServiceIO getConnection()
     {
         return connection;
     }
+    public void setConnection(ServiceIO other) {
+        this.connection = other;
+    }
+    public boolean hasConnection() {
+        return this.connection != null;
+    }
 
-    public void setConnection(ServiceIO connection)
-    {
-        this.connection = connection;
+    public boolean equals(Object o) {
+
+        if (o == null) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: null");
+            return false;
+        }
+        if (!(o instanceof ServiceIO)) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: Not a ServiceIO");
+            return false;
+        }
+        ServiceIO other = (ServiceIO) o;
+
+        if (this.id != other.getID()) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: id");
+            return false;
+        }
+
+        if (this.component.getID() != other.getComponent().getID()) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: component");
+            return false;
+        }
+
+        if (this.ioDescription.getID() != other.getDescription().getID()) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: description");
+            return false;
+        }
+
+        if (this.filterState != other.getFilterState()) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: filter state");
+            return false;
+        }
+
+        if (this.condition != other.getCondition()) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: condition");
+            return false;
+        }
+
+        if(this.chosenSampleValue == null && other.getChosenSampleValue() != null) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: chosen sample null for this, not for other (" + ioDescription.getFriendlyName() + ")");
+            return false;
+        } else if (!this.chosenSampleValue.equals(other.getChosenSampleValue())) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: chosen sample value (" + ioDescription.getFriendlyName() + ")");
+            return false;
+        }
+
+        // FIXME Should the sample value just be checked against the ID?
+        if (this.connection != null || other.getConnection() != null) {
+            if ((this.connection == null && other.getConnection() != null) ||
+                (this.connection != null && other.getConnection() == null)) {
+                if (LOG) Log.d(TAG, "ServiceIO->Equals: connection null " + this.connection + " -- " + other.getConnection());
+                return false;
+            }
+
+            if (this.connection.getID() != other.getConnection().getID()) {
+                if (LOG) Log.d(TAG, "ServiceIO->Equals: connection");
+                return false;
+            }
+        }
+
+        if(this.manualValue == null && other.getManualValue() != null) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: manual value null for this, not for other");
+            return false;
+        }
+
+        boolean same = this.getDescription().getType().compare(this.manualValue, other.getManualValue());
+        if(!same) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: manual");
+            return false;
+        }
+
+        return true;
     }
 }

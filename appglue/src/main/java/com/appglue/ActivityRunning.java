@@ -71,7 +71,7 @@ public class ActivityRunning extends Activity
 			TextView name = (TextView) v.findViewById(R.id.running_name);
 			name.setText(service.getName());
 
-            boolean enabled = registry.enabled(service.getId());
+            boolean enabled = registry.enabled(service.getID());
 
 //			Pair<Boolean, Boolean> running = registry.running(service.getID());
 
@@ -80,7 +80,7 @@ public class ActivityRunning extends Activity
 			final Button pauseButton = (Button) v.findViewById(R.id.running_pause_button);
 			final Button stopButton = (Button) v.findViewById(R.id.running_stop_button);
 			
-			Pair<Long, Interval> timings = registry.getTimerDuration(service.getId());
+			Pair<Long, Interval> timings = registry.getTimerDuration(service.getID());
 			
 			TextView numeralText = (TextView) v.findViewById(R.id.numeral_interval);
 			numeralText.setText(String.format("Runs once every %d %s%s", timings.first, timings.second.name, (timings.first > 1) ? "s" : ""));
@@ -100,16 +100,16 @@ public class ActivityRunning extends Activity
 					@Override
 					public void onClick(View v)
 					{
-                        boolean enabled = registry.enabled(service.getId());
+                        boolean enabled = registry.enabled(service.getID());
 						
 						if(enabled)
 						{
-							registry.setEnabled(service.getId(), false);
+							registry.setEnabled(service.getID(), false);
 							stopButton.setText(getResources().getString(R.string.enable));
 						}
 						else
 						{
-							registry.setEnabled(service.getId(), true);
+							registry.setEnabled(service.getID(), true);
 							stopButton.setText(getResources().getString(R.string.disable));
 						}
 					}

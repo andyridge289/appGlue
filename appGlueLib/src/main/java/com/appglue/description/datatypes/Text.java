@@ -37,4 +37,8 @@ public class Text extends IOType
 	{
 		return value;
 	}
+
+    public boolean compare(Object a, Object b) {
+        return a.equals(b);
+    }
 }

@@ -34,13 +34,13 @@ public class DialogFilter extends DialogCustom {
         final View v = inflater.inflate(R.layout.dialog_filter, null);
 
         // 1 - Work out what we're filtering and set up the shit
-        setTitle("Filter: " + description.friendlyName());
+        setTitle("Filter: " + description.getFriendlyName());
 
         final EditText filterValueText = (EditText) v.findViewById(R.id.filter_value_text);
         final Spinner filterValueSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
         final Spinner filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
 
-        IOType type = description.type();
+        IOType type = description.getType();
         ArrayList<IOValue> values = description.getSampleValues();
         if (values == null)
             values = new ArrayList<IOValue>();
@@ -128,7 +128,7 @@ public class DialogFilter extends DialogCustom {
             public void onClick(View v) {
                 // Get the value they entered - not sure what happens
                 if (textRadio.isChecked()) {
-                    Object value = description.type().fromString(filterValueText.getText().toString());
+                    Object value = description.getType().fromString(filterValueText.getText().toString());
                     // This should work, it's the same as the other stuff. But it might not...
                     item.setManualValue(value);
                     item.setFilterState(ServiceIO.MANUAL_FILTER);

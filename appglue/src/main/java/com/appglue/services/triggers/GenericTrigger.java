@@ -50,7 +50,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
             return;
         }
 
-		ArrayList<CompositeService> services = registry.atomicAtPosition(className, 0);
+		ArrayList<CompositeService> services = registry.componentAtPosition(className, 0);
 		
 		if(services == null)
 			return;
@@ -70,7 +70,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
 
             Bundle b = new Bundle();
 
-            b.putLong(COMPOSITE_ID, service.getId());
+            b.putLong(COMPOSITE_ID, service.getID());
             b.putInt(INDEX, 1);
 
             b.putBoolean(IS_LIST, isList);

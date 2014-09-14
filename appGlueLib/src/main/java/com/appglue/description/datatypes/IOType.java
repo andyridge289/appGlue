@@ -126,6 +126,8 @@ public abstract class IOType
 	
 	public abstract String toString(Object value); // One for any OTHER iotype
 	public abstract Object fromString(String value);
+
+    public abstract boolean compare(Object a, Object b);
 	
 	public static class Factory
 	{

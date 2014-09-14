@@ -87,7 +87,6 @@ public class IOValue
             return false;
         }
 
-        // FIXME Not sure if we can check the object
         return true;
     }
 }

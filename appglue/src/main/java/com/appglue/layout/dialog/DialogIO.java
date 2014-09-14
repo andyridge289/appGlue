@@ -32,7 +32,7 @@ public class DialogIO extends DialogCustom {
         final EditText ioText = (EditText) v.findViewById(R.id.io_value_text);
         final Spinner ioSpinner = (Spinner) v.findViewById(R.id.io_value_spinner);
 
-        final IOType type = description.type();
+        final IOType type = description.getType();
         ArrayList<IOValue> values = description.getSampleValues();
         if (values == null)
             values = new ArrayList<IOValue>();
@@ -80,7 +80,7 @@ public class DialogIO extends DialogCustom {
                     // Then look up the text value
 
                     // This should work, but it might not...
-                    Object value = description.type().fromString(ioText.getText().toString());
+                    Object value = description.getType().fromString(ioText.getText().toString());
                     item.setManualValue(value);
                     DialogIO.this.activity.setStatus("Set manual value for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {

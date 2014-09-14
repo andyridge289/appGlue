@@ -307,7 +307,7 @@ public class ServiceDescription {
 
         if (this.hasInputs()) {
             b.putString(INPUT_NAME, this.inputs.get(0).getName());
-            b.putString(INPUT_TYPE, this.inputs.get(0).type().getName());
+            b.putString(INPUT_TYPE, this.inputs.get(0).getType().getName());
             b.putString(INPUT_DESCRIPTION, this.inputs.get(0).description());
         } else {
             b.putString(INPUT_NAME, "");
@@ -317,7 +317,7 @@ public class ServiceDescription {
 
         if (this.hasOutputs()) {
             b.putString(OUTPUT_NAME, this.outputs.get(0).getName());
-            b.putString(OUTPUT_TYPE, this.outputs.get(0).type().getName());
+            b.putString(OUTPUT_TYPE, this.outputs.get(0).getType().getName());
             b.putString(OUTPUT_DESCRIPTION, this.outputs.get(0).description());
         } else {
             b.putString(OUTPUT_NAME, "");
@@ -407,7 +407,7 @@ public class ServiceDescription {
         }
 
         if(this.inputs.size() != other.getInputs().size()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Inputs size");
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Inputs size -- " + inputs.size() + " - " + other.getInputs().size());
             return false;
         }
 
@@ -419,7 +419,7 @@ public class ServiceDescription {
         }
 
         if(this.outputs.size() != other.getOutputs().size()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Outputs size");
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Outputs size -- " + outputs.size() + " - " + other.getOutputs().size());
             return false;
         }
 
@@ -439,7 +439,6 @@ public class ServiceDescription {
             }
         }
 
-        Log.d(TAG, "Returning true");
         return true;
     }
 
@@ -558,7 +557,7 @@ public class ServiceDescription {
                 sampleValues.add(new IOValue(-1, obj.getString(SAMPLE_NAME), value));
             }
 
-            list.add(new IODescription(-1, ioName, friendlyName, i, type, ioDescription, sd, mandatory, sampleValues));
+            list.add(new IODescription(-1, ioName, friendlyName, i, type, ioDescription, sd, mandatory, sampleValues, input));
         }
 
         return list;

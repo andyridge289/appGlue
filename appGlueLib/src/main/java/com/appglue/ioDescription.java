@@ -43,10 +43,8 @@ public class IODescription
     private LongSparseArray<IOValue> sampleSearch;
     private ArrayList<IOValue> sampleValues;
 
-	
 	private boolean mandatory;
 
-	
 	public IODescription()
 	{
 		this.id = -1;
@@ -93,12 +91,14 @@ public class IODescription
         }
     }
 
-    public IODescription(long id, String name, String friendlyName, int index, IOType type, String description, ServiceDescription parent, boolean mandatory, ArrayList<IOValue> sampleValues)
-	{
+    public IODescription(long id, String name, String friendlyName, int index, IOType type,
+                         String description, ServiceDescription parent, boolean mandatory,
+                         ArrayList<IOValue> sampleValues, boolean isInput) {
         this(id, name, friendlyName, type, description, mandatory, sampleValues);
         this.index = index;
         this.parent = parent;
         this.id = id;
+        this.isInput = isInput;
 	}
 
     public void setInput(boolean isInput) {
@@ -116,7 +116,7 @@ public class IODescription
 		this.id = id;
 	}
 	
-	public int index()
+	public int getIndex()
 	{
 		return index;
 	}
@@ -144,8 +144,7 @@ public class IODescription
 		this.name = name;
 	}
 	
-	public String friendlyName()
-	{
+	public String getFriendlyName() {
 		return friendlyName;
 	}
 	
@@ -154,10 +153,9 @@ public class IODescription
 		this.friendlyName = friendlyName;
 	}
 
-	public IOType type() {
+	public IOType getType() {
 		return type;
 	}
-
 	public void setType(IOType type) {
 		this.type = type;
 	}
@@ -189,13 +187,13 @@ public class IODescription
             return false;
         }
 
-        if(index != other.index()) {
+        if(index != other.getIndex()) {
             if(LOG) Log.d(TAG, "IODescription->Equals: index");
             return false;
         }
 
         if(isInput != other.isInput()) {
-            if(LOG) Log.d(TAG, "IODescription->Equals: is input");
+            if(LOG) Log.d(TAG, "IODescription->Equals: is input [" + name + "] " + isInput + " - " + other.isInput());
             return false;
         }
 
@@ -204,12 +202,12 @@ public class IODescription
             return false;
         }
 
-        if(!friendlyName.equals(other.friendlyName())) {
+        if(!friendlyName.equals(other.getFriendlyName())) {
             if(LOG) Log.d(TAG, "IODescription->Equals: friendly name");
             return false;
         }
 
-        if(!type.equals(other.type())) {
+        if(!type.equals(other.getType())) {
             if(LOG) Log.d(TAG, "IODescription->Equals: type");
             return false;
         }

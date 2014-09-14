@@ -27,7 +27,7 @@ abstract class DialogCustom extends AlertDialog {
         super(context);
         this.activity = context;
         this.item = item;
-        this.description = item.description();
+        this.description = item.getDescription();
         this.registry = Registry.getInstance(context);
     }
 
@@ -64,12 +64,12 @@ abstract class DialogCustom extends AlertDialog {
         }
 
         // Make it load the saved filter value
-        if (item.isFiltered() == ServiceIO.MANUAL_FILTER) {
+        if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
 
-            String result = item.description().type().toString(item.getManualValue());
+            String result = item.getDescription().getType().toString(item.getManualValue());
             fvt.setText(result);
             rt.setChecked(true);
-        } else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
+        } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
             IOValue selected = item.getChosenSampleValue();
             for (int i = 0; i < fvs.getAdapter().getCount(); i++) {
                 IOValue ioValue = (IOValue) fvs.getItemAtPosition(i);
@@ -80,7 +80,7 @@ abstract class DialogCustom extends AlertDialog {
             }
         }
 
-        if (item.isFiltered() != ServiceIO.UNFILTERED && fcs != null) {
+        if (item.getFilterState() != ServiceIO.UNFILTERED && fcs != null) {
             FilterValue fv = IOFilter.filters.get(item.getCondition());
 
             for (int i = 0; i < fcs.getAdapter().getCount(); i++) {

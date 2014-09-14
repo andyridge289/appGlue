@@ -46,8 +46,8 @@ public class DialogConnection extends DialogCustom {
                 final IODescription out = parent.getFirst().getDescription().getOutputs().get(p.x);
                 final IODescription in = parent.getSecond().getDescription().getInputs().get(p.y);
 
-                connectionOut.setText(out.friendlyName());
-                connectionIn.setText(in.friendlyName());
+                connectionOut.setText(out.getFriendlyName());
+                connectionIn.setText(in.getFriendlyName());
 
                 removeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -88,7 +88,7 @@ public class DialogConnection extends DialogCustom {
         });
 
         setView(lv);
-        setTitle("Edit connections for " + description.friendlyName());
+        setTitle("Edit connections for " + description.getFriendlyName());
 
         show();
     }

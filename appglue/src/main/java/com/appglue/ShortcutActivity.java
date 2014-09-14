@@ -28,7 +28,7 @@ public class ShortcutActivity extends Activity
 			CompositeService cs = registry.getComposite(id);
 	        
 	        Intent intent = new Intent(ShortcutActivity.this, OrchestrationService.class);
-			intent.putExtra(COMPOSITE_ID, cs.getId());
+			intent.putExtra(COMPOSITE_ID, cs.getID());
 			intent.putExtra(DURATION, 0);
 			intent.putExtra(RUN_NOW, false);
 			

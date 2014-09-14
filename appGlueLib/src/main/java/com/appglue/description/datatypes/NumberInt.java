@@ -32,5 +32,9 @@ public class NumberInt extends IOType
 	{
 		return Integer.parseInt(value);
 	}
+
+    public boolean compare(Object a, Object b) {
+        return (a).equals(b);
+    }
 	
 }

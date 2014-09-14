@@ -190,7 +190,7 @@ public class ActivityComponent extends ActionBarActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(ActivityComponent.this, ActivityComposite.class);
-                        intent.putExtra(ID, examples.get(index).getId());
+                        intent.putExtra(ID, examples.get(index).getID());
                         startActivity(intent);
                     }
                 });
@@ -371,8 +371,8 @@ public class ActivityComponent extends ActionBarActivity {
             final IODescription io = items.get(position);
 
 
-            ((TextView) v.findViewById(R.id.io_name)).setText(io.friendlyName());
-            ((TextView) v.findViewById(R.id.io_type)).setText(io.type().getName());
+            ((TextView) v.findViewById(R.id.io_name)).setText(io.getFriendlyName());
+            ((TextView) v.findViewById(R.id.io_type)).setText(io.getType().getName());
 
             // It needs to say whether it's mandatory or not
             if (io.isMandatory() && inputs) {
@@ -384,7 +384,7 @@ public class ActivityComponent extends ActionBarActivity {
             v.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ActivityComponent.this, io.friendlyName() + ": " + io.description(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ActivityComponent.this, io.getFriendlyName() + ": " + io.description(), Toast.LENGTH_LONG).show();
                 }
             });
 

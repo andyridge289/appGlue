@@ -38,7 +38,7 @@ public class ActivityLog extends Activity
         if(composites.size() == 0)
             return;
 
-		ArrayList<LogItem> log = registry.getLog(composites.get(0).getId()); // TODO This needs to be clever
+		ArrayList<LogItem> log = registry.getLog(composites.get(0).getID()); // TODO This needs to be clever
 		
 		if(log == null || log.size() == 0)
 		{

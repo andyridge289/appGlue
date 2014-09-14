@@ -277,7 +277,7 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.createTemp();
-                                cs = registry.getComposite(cs.getId());
+                                cs = registry.getComposite(cs.getID());
                                 finishWiringSetup();
                             }
                         });
@@ -286,7 +286,7 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
             }
             else
             {
-                cs = registry.getComposite(cs.getId());
+                cs = registry.getComposite(cs.getID());
                 finishWiringSetup();
             }
         }
@@ -361,7 +361,7 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 
     private void saveDialog()
     {
-        if(cs.getId() == 1)
+        if(cs.getID() == 1)
         {
             // Then it's the temp, we should save it
             String name = csNameEdit.getText().toString();
@@ -380,7 +380,7 @@ public class ActivityWiring extends ActionBarActivity implements ViewPager.OnPag
 
             registry.saveTemp(name);
         }
-        else if(cs.getId() == -1)
+        else if(cs.getID() == -1)
         {
             // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
             if(LOG) Log.d(TAG, "the CS is -1, this might be bad.");

@@ -128,7 +128,7 @@ public class ActivityComposite extends Activity
 		// Do a look up in the DB to see if the composite is currently running (right now) or not
         CheckBox runningCheck = (CheckBox) findViewById(R.id.composite_running);
 
-        long instanceId = registry.isCompositeRunning(cs.getId());
+        long instanceId = registry.isCompositeRunning(cs.getID());
 		runningCheck.setChecked(instanceId != -1);
 
         CheckBox activeCheck = (CheckBox) findViewById(R.id.composite_active);
@@ -142,7 +142,7 @@ public class ActivityComposite extends Activity
 		}
 		
 		// It doesn't matter what it is, just set the check or not
-		activeCheck.setChecked(registry.enabled(cs.getId()));
+		activeCheck.setChecked(registry.enabled(cs.getID()));
 		
 		ListView componentList = (ListView) findViewById(R.id.composite_component_list);
 		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponentsAL()));

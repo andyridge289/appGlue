@@ -324,13 +324,13 @@ public class ActivityCompositeList extends Activity {
         ArrayList<Bundle> intentData = new ArrayList<Bundle>();
         Bundle b = new Bundle();
 
-        b.putLong(COMPOSITE_ID, cs.getId());
+        b.putLong(COMPOSITE_ID, cs.getID());
         b.putInt(INDEX, 0);
         b.putBoolean(IS_LIST, false);
         b.putInt(DURATION, 0);
         b.putBoolean(TEST, false);
 
-        if (LOG) Log.w(TAG, "Trying to run " + cs.getId() + " : " + cs.getName());
+        if (LOG) Log.w(TAG, "Trying to run " + cs.getID() + " : " + cs.getName());
 
         intentData.add(b);
         serviceIntent.putParcelableArrayListExtra(DATA, intentData);
@@ -391,7 +391,7 @@ public class ActivityCompositeList extends Activity {
 
     private void runOnTimer(CompositeService cs, long duration, boolean runNow) {
         Intent intent = new Intent(ActivityCompositeList.this, OrchestrationService.class);
-        intent.putExtra(COMPOSITE_ID, cs.getId());
+        intent.putExtra(COMPOSITE_ID, cs.getID());
         intent.putExtra(DURATION, duration);
         intent.putExtra(RUN_NOW, runNow);
         startService(intent);
@@ -399,21 +399,21 @@ public class ActivityCompositeList extends Activity {
 
     private void view(CompositeService cs) {
         Intent intent = new Intent(ActivityCompositeList.this, ActivityComposite.class);
-        intent.putExtra(COMPOSITE_ID, cs.getId());
+        intent.putExtra(COMPOSITE_ID, cs.getID());
         startActivity(intent);
     }
 
     private void edit(CompositeService cs) {
         Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
-        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getId());
-        intent.putExtra(COMPOSITE_ID, cs.getId());
+        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getID());
+        intent.putExtra(COMPOSITE_ID, cs.getID());
         startActivity(intent);
     }
 
     private void editStory(CompositeService cs) {
         Intent intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
-        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getId());
-        intent.putExtra(COMPOSITE_ID, cs.getId());
+        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getID());
+        intent.putExtra(COMPOSITE_ID, cs.getID());
         startActivity(intent);
     }
 
@@ -464,7 +464,7 @@ public class ActivityCompositeList extends Activity {
         shortcutIntent.setComponent(new ComponentName(ActivityCompositeList.this.getPackageName(), ShortcutActivity.class.getName()));
 
         Bundle b = new Bundle();
-        b.putLong(COMPOSITE_ID, cs.getId());
+        b.putLong(COMPOSITE_ID, cs.getID());
         shortcutIntent.putExtras(b);
 
         shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -491,7 +491,7 @@ public class ActivityCompositeList extends Activity {
             View v = convertView;
             final CompositeService cs = composites.get(position);
 
-            if (cs.getId() == CompositeService.NEW_COMPOSITE_PLACEHOLDER) {
+            if (cs.getID() == CompositeService.NEW_COMPOSITE_PLACEHOLDER) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.composite_list_item_new, null);
 

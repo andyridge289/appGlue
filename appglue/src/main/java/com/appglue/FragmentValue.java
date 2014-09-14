@@ -267,15 +267,15 @@ public class FragmentValue extends FragmentVW {
 
             final View v = convertView;
             final ServiceIO item = items.get(position);
-            final IODescription description = item.description();
+            final IODescription description = item.getDescription();
 
             TextView ioName = (TextView) v.findViewById(R.id.io_name);
-            ioName.setText(item.description().friendlyName());
+            ioName.setText(item.getDescription().getFriendlyName());
 
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
-            int visibility = item.description().isMandatory() ? View.VISIBLE : View.GONE;
+            int visibility = item.getDescription().isMandatory() ? View.VISIBLE : View.GONE;
             v.findViewById(R.id.mandatory_bar).setVisibility(visibility);
 
             ImageView setButton = (ImageView) v.findViewById(R.id.set_button);
@@ -283,7 +283,7 @@ public class FragmentValue extends FragmentVW {
             setButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (item.description().type().equals(IOType.Factory.getType(IOType.Factory.APP)))
+                    if (item.getDescription().getType().equals(IOType.Factory.getType(IOType.Factory.APP)))
                         showAppDialog(item);
                     else
                         showIODialog(item);
@@ -291,24 +291,24 @@ public class FragmentValue extends FragmentVW {
             });
 
             if (!item.hasValue()) {
-                ioType.setText(item.description().type().getName());
+                ioType.setText(item.getDescription().getType().getName());
                 setButton.setImageResource(R.drawable.ic_add);
                 ioValue.setText("");
             } else {
-                ioType.setText(item.description().type().getName() + ": ");
+                ioType.setText(item.getDescription().getType().getName() + ": ");
                 ioValue.setText(item.getManualValue().toString());
                 setButton.setImageResource(R.drawable.ic_add_on);
             }
 
             // If it's not unfiltered, then it's either manual or not
-            if (item.isFiltered() == ServiceIO.UNFILTERED) {
-                ioType.setText(item.description().type().getName());
+            if (item.getFilterState() == ServiceIO.UNFILTERED) {
+                ioType.setText(item.getDescription().getType().getName());
             } else {
                 // This is for a manual one
-                if (item.isFiltered() == ServiceIO.MANUAL_FILTER) {
-                    String value = item.description().type().toString(item.getManualValue());
+                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+                    String value = item.getDescription().getType().toString(item.getManualValue());
                     ioValue.setText(value);
-                } else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
+                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
                     // Need to look up what the value for this thing is, but return the friendly name not the other thing
                     ioValue.setText(item.getChosenSampleValue().name);
                 }
@@ -336,10 +336,10 @@ public class FragmentValue extends FragmentVW {
 
             final View v = convertView;
             final ServiceIO item = items.get(position);
-            final IODescription description = item.description();
+            final IODescription description = item.getDescription();
 
             TextView ioName = (TextView) v.findViewById(R.id.io_name);
-            ioName.setText(description.friendlyName());
+            ioName.setText(description.getFriendlyName());
 
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
@@ -354,27 +354,27 @@ public class FragmentValue extends FragmentVW {
             });
 
             if (!item.hasValue()) {
-                ioType.setText(item.description().type().getName());
+                ioType.setText(item.getDescription().getType().getName());
                 filterButton.setImageResource(R.drawable.filter_small);
                 ioValue.setText("");
             } else {
-                ioType.setText(item.description().type().getName() + ": ");
+                ioType.setText(item.getDescription().getType().getName() + ": ");
                 ioValue.setText(item.getManualValue().toString());
                 filterButton.setImageResource(R.drawable.filter_small_on);
             }
 
-            if (item.isFiltered() == ServiceIO.UNFILTERED) {
-                ioType.setText(item.description().type().getName());
+            if (item.getFilterState() == ServiceIO.UNFILTERED) {
+                ioType.setText(item.getDescription().getType().getName());
             } else {
                 IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
 
-                ioType.setText(item.description().type().getName() + ": " + fv.text + " ");
+                ioType.setText(item.getDescription().getType().getName() + ": " + fv.text + " ");
 
                 // This is for a manual one
-                if (item.isFiltered() == ServiceIO.MANUAL_FILTER) {
-                    String value = item.description().type().toString(item.getManualValue());
+                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+                    String value = item.getDescription().getType().toString(item.getManualValue());
                     ioValue.setText(value);
-                } else if (item.isFiltered() == ServiceIO.SAMPLE_FILTER) {
+                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
                     // Need to look up what the value for this thing is, but return the friendly name not the other thing
                     ioValue.setText(item.getChosenSampleValue().name);
                 }

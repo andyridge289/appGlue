@@ -31,4 +31,8 @@ public class ImageDrawableResource extends IOType {
     public Object fromString(String value) {
         return value;
     }
+
+    public boolean compare(Object a, Object b) {
+        return a.equals(b);
+    }
 }

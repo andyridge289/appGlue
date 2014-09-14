@@ -18,23 +18,22 @@ import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TEST;
 
 public class OrchestrationService extends Service
 {
 	private Registry registry;
-//	private ArrayList<DEADExecutionPackage> queue;
-	
+
 	public void onCreate()
 	{		
 		registry = Registry.getInstance(this);
-//		queue = new ArrayList<DEADExecutionPackage>();		
 	}
 
     @Override
 	public int onStartCommand(Intent intent, int startId, int something)
 	{
-		Log.w(TAG, Thread.currentThread().getName() + ": OrchestrationService.onStart() " + System.currentTimeMillis());
+		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationService.onStart() " + System.currentTimeMillis());
 		
 		if(intent == null)
 			return -1;
@@ -73,7 +72,7 @@ public class OrchestrationService extends Service
 		@Override
 		protected Boolean doInBackground(Bundle... params) 
 		{
-			Log.w(TAG, Thread.currentThread().getName() + ": Runner.run() " + System.currentTimeMillis());
+			if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": Runner.run() " + System.currentTimeMillis());
 
             for (Bundle thing : params) {
                 final long compositeId = thing.getLong(COMPOSITE_ID, -1);
@@ -90,7 +89,7 @@ public class OrchestrationService extends Service
                     return false;
                 }
 
-                boolean enabled = registry.enabled(cs.getId());
+                boolean enabled = registry.enabled(cs.getID());
 
                 if (!test) {
                     if ((!enabled) && duration != 0) // Then it shouldn't be running
@@ -103,8 +102,7 @@ public class OrchestrationService extends Service
                 OrchestrationServiceConnection connection = new OrchestrationServiceConnection(OrchestrationService.this, cs, test);
 
                 if (duration != 0) {
-                    Log.e(TAG, "Duration duration");
-                    // Z Need to make the executing work on a timer
+                    // TODO Need to make the executing work on a timer
 //					if(!test)
 //						{
 //							if(duration != 0)
@@ -130,12 +128,12 @@ public class OrchestrationService extends Service
 	
 		protected void onProgressUpdate(Integer... progress) 
 		{
-			// Work out what to put here
+			// TODO Work out what to put here
 		}
 
 		protected void onPostExecute(Boolean result) 
 		{
-			// Work out what to put here
+			// TODO Work out what to put here
 		}
 	}
 }

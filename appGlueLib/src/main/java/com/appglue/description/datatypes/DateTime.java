@@ -68,4 +68,8 @@ public class DateTime extends IOType
         // FIXME Parse the string back as a date time
         return null;
     }
+
+    public boolean compare(Object a, Object b) {
+        return false;
+    }
 }

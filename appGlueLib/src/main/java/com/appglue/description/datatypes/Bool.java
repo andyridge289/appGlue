@@ -33,4 +33,8 @@ public class Bool extends IOType
 	{
 		return Boolean.parseBoolean(value);
 	}
+
+    public boolean compare(Object a, Object b) {
+        return a.equals(b);
+    }
 }

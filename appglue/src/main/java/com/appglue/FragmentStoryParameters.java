@@ -194,10 +194,10 @@ public class FragmentStoryParameters extends Fragment
 		View v = vi.inflate(R.layout.list_item_storyparam_input, null);
 		
 		final IODescription item = inputs.get(index);
-		IOType type = item.type();
+		IOType type = item.getType();
 		
 		TextView nameText = (TextView) v.findViewById(R.id.param_input_name);
-		nameText.setText(item.friendlyName());
+		nameText.setText(item.getFriendlyName());
 		
 		TextView typeText = (TextView) v.findViewById(R.id.param_input_type);
 		typeText.setText(type.getName());
@@ -256,7 +256,7 @@ public class FragmentStoryParameters extends Fragment
 				{
 					// It's the custom one
 					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
-					Object value = item.type().fromString(sValue);
+					Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
 //					item.setFilterState(IODescription.MANUAL_FILTER); TODO ServiceIO not IODescription
 				}
@@ -264,7 +264,7 @@ public class FragmentStoryParameters extends Fragment
 				{
 					// It needs to be linked to a previous one.. This could be more complicated!
 					IODescription value = (IODescription) ((Spinner) container.findViewById(R.id.param_previous_spinner)).getSelectedItem();
-					Log.e(TAG, value.friendlyName());
+					Log.e(TAG, value.getFriendlyName());
 					
 					
 					// get previous output from the last component and then match them up
@@ -363,7 +363,7 @@ public class FragmentStoryParameters extends Fragment
 			ArrayList<IODescription> outputs = previous.getOutputs();
 
             for (IODescription output : outputs) {
-                if (output.type().equals(current.type())) {
+                if (output.getType().equals(current.getType())) {
                     matching.add(output);
                 }
             }
@@ -437,12 +437,12 @@ public class FragmentStoryParameters extends Fragment
 		
 
 		// Make it load the saved filter value
-//		if (item.isFiltered() == IODescription.MANUAL_FILTER)
+//		if (item.getFilterState() == IODescription.MANUAL_FILTER)
 //		{
 //			String result = item.type().toString(item.getManualValue());
 //			valueText.setText(result);
 //		}
-//		else if (item.isFiltered() == IODescription.SAMPLE_FILTER)
+//		else if (item.getFilterState() == IODescription.SAMPLE_FILTER)
 //		{
 //			IOValue selected = item.getChosenSampleValue();
 //			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
@@ -454,7 +454,7 @@ public class FragmentStoryParameters extends Fragment
 //			}
 //		}
 //
-//		if (item.isFiltered() != IODescription.UNFILTERED && conditionSpinner != null) {
+//		if (item.getFilterState() != IODescription.UNFILTERED && conditionSpinner != null) {
 //			FilterValue fv = IOFilter.filters.get(item.getCondition());
 //
 //			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
@@ -485,10 +485,10 @@ public class FragmentStoryParameters extends Fragment
 		final View v = vi.inflate(R.layout.list_item_storyparam_output, null);
 	
 		final IODescription item = outputs.get(index);
-		IOType type = item.type();
+		IOType type = item.getType();
 		
 		final TextView nameText = (TextView) v.findViewById(R.id.param_output_name);
-		nameText.setText(item.friendlyName());
+		nameText.setText(item.getFriendlyName());
 		
 		TextView typeText = (TextView) v.findViewById(R.id.param_output_type);
 		typeText.setText(type.getName());
@@ -548,7 +548,7 @@ public class FragmentStoryParameters extends Fragment
 				{
 					// It's the custom one
 					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
-					Object value = item.type().fromString(sValue);
+					Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
 //					item.setFilterState(IODescription.MANUAL_FILTER); TODO ServiceIO not IODescription
 				}			
@@ -690,13 +690,13 @@ public class FragmentStoryParameters extends Fragment
 		}
 
 		// Make it load the saved filter value
-//		if (item.isFiltered() == IODescription.MANUAL_FILTER)
+//		if (item.getFilterState() == IODescription.MANUAL_FILTER)
 //		{
 //
 //			String result = item.type().toString(item.getManualValue());
 //			valueText.setText(result);
 //		}
-//		else if (item.isFiltered() == IODescription.SAMPLE_FILTER) {
+//		else if (item.getFilterState() == IODescription.SAMPLE_FILTER) {
 //			IOValue selected = item.getChosenSampleValue();
 //			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
 //				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);
@@ -707,7 +707,7 @@ public class FragmentStoryParameters extends Fragment
 //			}
 //		}
 //
-//		if (item.isFiltered() != IODescription.UNFILTERED && conditionSpinner != null) {
+//		if (item.getFilterState() != IODescription.UNFILTERED && conditionSpinner != null) {
 //			FilterValue fv = IOFilter.filters.get(item.getCondition());
 //
 //			for (int i = 0; i < conditionSpinner.getAdapter().getCount(); i++) {
@@ -739,7 +739,7 @@ public class FragmentStoryParameters extends Fragment
 			IODescription other = getItem(position);
 			
 			TextView tv = (TextView) v.findViewById(android.R.id.text1);
-			tv.setText(other.friendlyName());
+			tv.setText(other.getFriendlyName());
 			
 			return v;
 		}
@@ -757,7 +757,7 @@ public class FragmentStoryParameters extends Fragment
 			IODescription other = getItem(position);
 			
 			TextView tv = (TextView) v.findViewById(android.R.id.text1);
-			tv.setText(other.friendlyName());
+			tv.setText(other.getFriendlyName());
 			
 			return v;
 		}

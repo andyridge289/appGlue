@@ -13,6 +13,7 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.LogItem;
+import com.appglue.test.EngineTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -100,9 +101,8 @@ public class Registry {
         dbHandler.updateComposite(cs);
     }
 
-
-    public ArrayList<CompositeService> atomicAtPosition(String className, int position) {
-        return dbHandler.atomicAtPosition(className, position);
+    public ArrayList<CompositeService> componentAtPosition(String className, int position) {
+        return dbHandler.componentAtPosition(className, position);
     }
 
     public ServiceDescription addServiceFromBroadcast(ServiceDescription sd) {
@@ -154,14 +154,15 @@ public class Registry {
         return components;
     }
 
-
+    public CompositeService addComposite(CompositeService cs) {
+        return dbHandler.addComposite(cs);
+    }
 
     public CompositeService getComposite(long compositeId) {
         if (compositeId == -1) {
             return null;
         } else {
-            service = dbHandler.getComposite(compositeId);
-            return service;
+            return dbHandler.getComposite(compositeId);
         }
     }
 
@@ -258,6 +259,7 @@ public class Registry {
     }
 
     public boolean compositeSuccess(long compositeId, long executionInstance) {
+        EngineTest.executeFinished = true;
         return dbHandler.stopComposite(compositeId, executionInstance, LogItem.SUCCESS);
     }
 
@@ -316,15 +318,15 @@ public class Registry {
         // When we stop at a filter, say what the data was at that point
 
         ServiceDescription sd = component.getDescription();
-        boolean logComponent = dbHandler.addToLog(cs.getId(), executionInstance, sd,
+        boolean logComponent = dbHandler.addToLog(cs.getID(), executionInstance, sd,
                 "Stopped execution at filter: expected [" + condition + " \"" + io.getManualValue() + "\"] and got \"" + value + "\"",
                 inputData, null, LogItem.FILTER);
-        boolean logComposite = dbHandler.stopComposite(cs.getId(), executionInstance, LogItem.FILTER);
+        boolean logComposite = dbHandler.stopComposite(cs.getID(), executionInstance, LogItem.FILTER);
 
         if(logComposite && logComponent) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register component filter stop: %d, %d, %s, getInputs set: %b", cs.getId(),
+            Log.e(TAG, String.format("Failed to register component filter stop: %d, %d, %s, getInputs set: %b", cs.getID(),
                     executionInstance, sd.getClassName(), inputData != null));
             return false;
         }

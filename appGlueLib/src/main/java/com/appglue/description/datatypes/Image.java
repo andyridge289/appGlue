@@ -76,4 +76,8 @@ public class Image extends IOType
 	}
 
     public String getLocation() { return location; }
+
+    public boolean compare(Object a, Object b) {
+        return a.equals(b);
+    }
 }

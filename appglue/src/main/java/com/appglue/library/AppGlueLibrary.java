@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.LOG;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -64,7 +65,7 @@ public class AppGlueLibrary {
         JSONObject json = new JSONObject();
         try {
             for (String key : keys) {
-                IOType type = input ? component.getInput(key).type() : component.getOutput(key).type();
+                IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
                 String stringThing = type.toString(type.getFromBundle(data, key, "ARGH FAIL"));
                 json.put(key, stringThing);
             }
@@ -93,6 +94,77 @@ public class AppGlueLibrary {
         return list;
     }
 
+    public static String bundleToString(Bundle bundle) {
+        String string = "Bundle {";
+        for (String key : bundle.keySet()) {
+            string += " " + key + " => " + bundle.get(key) + ";";
+        }
+        string += " } ";
+        return string;
+    }
+
+    public static boolean bundlesEqual(Bundle a, Bundle b) {
+
+        Set<String> aKeys = a.keySet();
+        Set<String> bKeys = b.keySet();
+
+        if (!aKeys.containsAll(bKeys) || !bKeys.containsAll(aKeys)) {
+            Log.d(TAG, "Bundle->equals: missing keys");
+            return false;
+        }
+
+        for (String key : aKeys) {
+
+            Object o = a.get(key);
+            Object p = b.get(key);
+
+            if(o instanceof Bundle) {
+                if(!bundlesEqual((Bundle) o, (Bundle) p)) {
+                    if(LOG) Log.d(TAG, "Bundle->equals: Bundles " + key + " not same");
+                    return false;
+                }
+            }
+
+            if(o instanceof ArrayList) {
+
+                ArrayList al = (ArrayList) o;
+                ArrayList bl = (ArrayList) p;
+
+                if(al.size() != bl.size()) {
+                    if(LOG) Log.d(TAG, "Bundle->equals: " + key + " not same size");
+                    return false;
+                }
+
+                for(int i = 0; i < al.size(); i++) {
+
+                    Object q = al.get(i);
+                    Object r = bl.get(i);
+
+                    if(q instanceof Bundle) {
+                        if(!bundlesEqual((Bundle) q, (Bundle) r)) {
+                            if(LOG) Log.d(TAG, "Bundle->equals: Bundles in ArrayList -- " + key + " not same");
+                            return false;
+                        }
+                    } else {
+                        if(!q.equals(r)) {
+                            if(LOG) Log.d(TAG, "Bundle->equals: Objects in ArrayList -- " + key + "[" + i + "] not same");
+                            return false;
+                        }
+                    }
+                }
+
+            }
+
+            if (!a.get(key).equals(b.get(key))) {
+                if(LOG) Log.d(TAG, "Bundle->equals: " + key + " not same");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     public static Bundle JSONToBundle(String stringJSON, ServiceDescription component, boolean input) {
 
         Bundle b = new Bundle();
@@ -102,7 +174,7 @@ public class AppGlueLibrary {
             Iterator<String> keys = json.keys();
             while(keys.hasNext()) {
                 String key = keys.next();
-                IOType type = input ? component.getInput(key).type() : component.getOutput(key).type();
+                IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
                 type.addToBundle(b, type.fromString(json.getString(key)), key);
             }
 

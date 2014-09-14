@@ -275,11 +275,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			ArrayList<ServiceIO> in = second.getInputs();
 			for(int i = 0; i < in.size(); i++)
 			{
-				ServiceIO connection = in.get(i).connection();
+				ServiceIO connection = in.get(i).getConnection();
 				if(connection != null)
 				{
 					// It's connected to something so work out what position the other thing is in the getOutputs
-					connections.add(new Point(connection.description().index(), i));
+					connections.add(new Point(connection.getDescription().getIndex(), i));
 				}
 			}
 		}
@@ -303,7 +303,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 		// Sort by IOType then add the different ones
 		String previous = "";
         for (IODescription io : ios) {
-            IOType type = io.type();
+            IOType type = io.getType();
 
             if (type.getClass().getCanonicalName().equals(previous) && !type.getClass().getCanonicalName().equals(Set.class.getCanonicalName()))
                 continue;
@@ -385,13 +385,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 	@Override
 	public int compare(IODescription a, IODescription b)
 	{
-        if (a.type() == null)
+        if (a.getType() == null)
             Log.e(TAG, "a Type null");
 
-        if (b.type() == null)
+        if (b.getType() == null)
             Log.e(TAG, "b type null");
 
-		return a.type().getClass().getCanonicalName().compareTo(b.type().getClass().getCanonicalName());
+		return a.getType().getClass().getCanonicalName().compareTo(b.getType().getClass().getCanonicalName());
 	}
 	
 	private ArrayList<PathColour> getPaths()
@@ -411,7 +411,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 continue;
             }
 
-            String className = first.getDescription().getOutputs().get(connection.x).type().getClassName();
+            String className = first.getDescription().getOutputs().get(connection.x).getType().getClassName();
             int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
 
             // This should be half the width of the ``tab'' you click on
@@ -480,7 +480,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			String className = type.getClass().getCanonicalName();
 			for(int i = 0; i < lv.getChildCount(); i++)
 			{
-				String itemClassName = ioList.get(i).type().getClass().getCanonicalName();
+				String itemClassName = ioList.get(i).getType().getClass().getCanonicalName();
 				
 				if(inputConnection(i) && inputs)
 					continue;
@@ -584,14 +584,14 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			
 			final View v = convertView;
 			final ServiceIO item = items.get(position);
-            final IODescription description = item.description();
+            final IODescription description = item.getDescription();
 			final View endpoint =  v.findViewById(R.id.endpoint);
 			final Drawable blob = v.findViewById(R.id.blob).getBackground();
 			final Drawable stub = v.findViewById(R.id.stub).getBackground();
 			
 			int col = Color.HSVToColor( FULL_ALPHA / BASE_ALPHA,
 					new float[]{ 
-						hueMap.get(description.type().getClass().getCanonicalName()),
+						hueMap.get(description.getType().getClass().getCanonicalName()),
 						1, 
 						1 
 					}
@@ -601,7 +601,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			stub.setColorFilter(col, PorterDuff.Mode.ADD);
 
 			TextView ioName = (TextView) v.findViewById(R.id.io_name);
-			ioName.setText(description.friendlyName());
+			ioName.setText(description.getFriendlyName());
 
 			TextView ioType = (TextView) v.findViewById(R.id.io_type);
 			TextView ioValue = (TextView) v.findViewById(R.id.io_value);
@@ -611,29 +611,29 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			
 			if(!item.hasValue())
 			{
-				ioType.setText(description.type().getName());
+				ioType.setText(description.getType().getName());
 				ioValue.setText("");
 			}
 			else
 			{
-				ioType.setText(description.type().getName() + ": ");
+				ioType.setText(description.getType().getName() + ": ");
 				ioValue.setText(item.getManualValue().toString());
 			}
 			
 			// If it's not unfiltered, then it's either manual or not
-			if(item.isFiltered() == ServiceIO.UNFILTERED)
+			if(item.getFilterState() == ServiceIO.UNFILTERED)
 			{
-				ioType.setText(description.type().getName());
+				ioType.setText(description.getType().getName());
 			}
 			else
 			{
 	    		// This is for a manual one
-	    		if(item.isFiltered() == ServiceIO.MANUAL_FILTER)
+	    		if(item.getFilterState() == ServiceIO.MANUAL_FILTER)
 	    		{
-	    			String value = description.type().toString(item.getManualValue());
+	    			String value = description.getType().toString(item.getManualValue());
 	    			ioValue.setText(value);
 	    		}
-	    		else if(item.isFiltered() == ServiceIO.SAMPLE_FILTER)
+	    		else if(item.getFilterState() == ServiceIO.SAMPLE_FILTER)
 	    		{
 	    			// Need to look up what the value for this thing is, but return the friendly name not the other thing
 	    			ioValue.setText(item.getChosenSampleValue().name);
@@ -658,11 +658,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 					else if(iSelected == null && oSelected == null)
 					{						
 						// If they click an output first then just work normally and connect it for them
-						setHighlight(description.type(), parent);
+						setHighlight(description.getType(), parent);
 						b.setBackgroundColor(
 							Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA, 
 							new float[] {
-								hueMap.get(description.type().getClass().getCanonicalName()),
+								hueMap.get(description.getType().getClass().getCanonicalName()),
 								1, 
 								1
 							}
@@ -672,7 +672,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						iIndex = position;
 						activity.setStatus("Selected " + description.getName());
 					}
-					else if(oSelected != null && oSelected.description().type().equals(description.type()) && iSelected == null)
+					else if(oSelected != null && oSelected.getDescription().getType().equals(description.getType()) && iSelected == null)
 					{	
 						if(LOG) Log.d(TAG, "Input " + position  + " We have a match");
 						
@@ -691,7 +691,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(description.type().getClass().getCanonicalName()),
+									hueMap.get(description.getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -702,7 +702,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						outputList.getChildAt(oIndex).findViewById(R.id.endpoint).setBackgroundColor(Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(oSelected.description().getClass().getCanonicalName()),
+									hueMap.get(oSelected.getDescription().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -729,11 +729,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						}
 						else
 						{
-							setHighlight(description.type(), parent);
+							setHighlight(description.getType(), parent);
 							b.setBackgroundColor(
 								Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(description.type().getClass().getCanonicalName()),
+									hueMap.get(description.getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -748,13 +748,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     }
 					else
 					{
-						setHighlight(description.type(), parent);
+						setHighlight(description.getType(), parent);
 						
 						b.setBackgroundColor(
 							Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(description.type().getClass().getCanonicalName()),
+									hueMap.get(description.getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -794,7 +794,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             ServiceIO out = first.getOutputs().get(outputIndex);
             ServiceIO in = second.getInputs().get(inputIndex);
 			
-			activity.setStatus("Connected " + out.description().friendlyName() + " to " + in.description().friendlyName());
+			activity.setStatus("Connected " + out.getDescription().getFriendlyName() + " to " + in.getDescription().getFriendlyName());
 			
 			// Kill the backgrounds
 			outElement.findViewById(R.id.endpoint).setBackgroundColor(Color.WHITE);
@@ -838,14 +838,14 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			
 			final View v = convertView;
 			final ServiceIO item = items.get(position);
-            final IODescription description = item.description();
+            final IODescription description = item.getDescription();
 			final LinearLayout endpoint =  (LinearLayout) v.findViewById(R.id.endpoint);
 			final Drawable blob = v.findViewById(R.id.blob).getBackground();
 			final Drawable stub = v.findViewById(R.id.stub).getBackground();
 			
 			int col = Color.HSVToColor( FULL_ALPHA / BASE_ALPHA,
 									new float[]{ 
-										hueMap.get(item.description().type().getClass().getCanonicalName()),
+										hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
 										1, 
 										1 
 									}
@@ -855,39 +855,39 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			stub.setColorFilter(col, PorterDuff.Mode.ADD);
 			
 			TextView ioName = (TextView) v.findViewById(R.id.io_name);
-			ioName.setText(item.description().friendlyName());
+			ioName.setText(item.getDescription().getFriendlyName());
 			
 			TextView ioType = (TextView) v.findViewById(R.id.io_type);
 			TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
             if (!item.hasValue()) {
-				ioType.setText(item.description().type().getName());
+				ioType.setText(item.getDescription().getType().getName());
 				ioValue.setText("");
 			}
 			else
 			{
-				ioType.setText(item.description().type().getName() + ": ");
+				ioType.setText(item.getDescription().getType().getName() + ": ");
 				ioValue.setText(item.getManualValue().toString());
 			}
 			
 			// If it's not unfiltered, then it's either manual or not
-			if(item.isFiltered() == ServiceIO.UNFILTERED)
+			if(item.getFilterState() == ServiceIO.UNFILTERED)
 			{
-				ioType.setText(item.description().type().getName());
+				ioType.setText(item.getDescription().getType().getName());
 			}
 			else
 			{
 				FilterValue fv = IOFilter.filters.get(item.getCondition());
 				
-				ioType.setText(item.description().type().getName() + ": " + fv.text + " ");
+				ioType.setText(item.getDescription().getType().getName() + ": " + fv.text + " ");
 	    		
 	    		// This is for a manual one
-	    		if(item.isFiltered() == ServiceIO.MANUAL_FILTER)
+	    		if(item.getFilterState() == ServiceIO.MANUAL_FILTER)
 	    		{
-	    			String value = item.description().type().toString(item.getManualValue());
+	    			String value = item.getDescription().getType().toString(item.getManualValue());
 	    			ioValue.setText(value);
 	    		}
-	    		else if(item.isFiltered() == ServiceIO.SAMPLE_FILTER)
+	    		else if(item.getFilterState() == ServiceIO.SAMPLE_FILTER)
 	    		{
 	    			// Need to look up what the value for this thing is, but return the friendly name not the other thing
 	    			ioValue.setText(item.getChosenSampleValue().name);
@@ -912,11 +912,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 					{
 						if(LOG) Log.d(TAG, "Output " + position + " (Both null)");
 						// If they click an output first then just work normally and connect it for them
-						setHighlight(item.description().type(), parent);
+						setHighlight(item.getDescription().getType(), parent);
 						b.setBackgroundColor(
 							Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA, 
 							new float[] {
-								hueMap.get(item.description().type().getClass().getCanonicalName()),
+								hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
 								1, 
 								1
 							}
@@ -924,9 +924,9 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						oSelected = item;
 						oIndex = position;
-						activity.setStatus("Selected " + item.description().getName());
+						activity.setStatus("Selected " + item.getDescription().getName());
 					}
-					else if(iSelected != null && iSelected.description().type().equals(item.description().type()) && oSelected == null)
+					else if(iSelected != null && iSelected.getDescription().getType().equals(item.getDescription().getType()) && oSelected == null)
 					{
 						if(LOG) Log.d(TAG, "Output " + position  + " We have a match");
 						
@@ -938,14 +938,14 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						oSelected = item;
 						oIndex = position;
-						activity.setStatus("Selected " + item.description().getName());
+						activity.setStatus("Selected " + item.getDescription().getName());
 						
 						// This one
 						b.setBackgroundColor(
 						Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(item.description().type().getClass().getCanonicalName()),
+									hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -956,7 +956,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						inputList.getChildAt(iIndex).findViewById(R.id.endpoint).setBackgroundColor(Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(oSelected.description().type().getClass().getCanonicalName()),
+									hueMap.get(oSelected.getDescription().getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -983,11 +983,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						}
 						else
 						{
-							setHighlight(item.description().type(), parent);
+							setHighlight(item.getDescription().getType(), parent);
 							b.setBackgroundColor(
 								Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(item.description().type().getClass().getCanonicalName()),
+									hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -995,7 +995,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 							
 							oSelected = item;
 							oIndex = position;
-							activity.setStatus("Selected " + item.description().getName());
+							activity.setStatus("Selected " + item.getDescription().getName());
 						}
 
                         redraw(true);
@@ -1003,13 +1003,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 					else
 					{
 						if(LOG) Log.d(TAG, "Output " + position + " (else....)");
-						setHighlight(item.description().type(), parent);
+						setHighlight(item.getDescription().getType(), parent);
 						
 						b.setBackgroundColor(
 							Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA, 
 								new float[] {
-									hueMap.get(item.description().type().getClass().getCanonicalName()),
+									hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
 									1, 
 									1
 								}
@@ -1018,7 +1018,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						
 						oSelected = item;
 						oIndex = position;
-						activity.setStatus("Selected " + item.description().getName());
+						activity.setStatus("Selected " + item.getDescription().getName());
 						iSelected = null;
 						iIndex = -1;
 					}		

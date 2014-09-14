@@ -1,6 +1,7 @@
 package com.appglue.engine.description;
 
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.util.SparseArray;
@@ -28,6 +29,7 @@ public class CompositeService {
     private Interval interval;
 
     private boolean enabled;
+    private boolean running;
 
     public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 
@@ -63,10 +65,8 @@ public class CompositeService {
         }
 
         for (ComponentService comps : services) {
-            this.componentSearch.put(comps.id(), comps);
+            this.componentSearch.put(comps.getID(), comps);
         }
-
-
     }
 
     public static CompositeService makePlaceholder() {
@@ -91,7 +91,7 @@ public class CompositeService {
 
         for(int i = 0; i < services.size(); i++) {
             ComponentService cs = services.valueAt(i);
-            componentSearch.put(cs.id(), cs);
+            componentSearch.put(cs.getID(), cs);
         }
     }
 
@@ -108,10 +108,9 @@ public class CompositeService {
 
         for(int i = 0; i < services.size(); i++) {
             ComponentService cs = services.valueAt(i);
-            componentSearch.put(cs.id(), cs);
+            componentSearch.put(cs.getID(), cs);
         }
     }
-
 
     public CompositeService(ArrayList<ComponentService> services) {
         this(false);
@@ -125,7 +124,7 @@ public class CompositeService {
         }
 
         for (ComponentService cs : services) {
-            this.componentSearch.put(cs.id(), cs);
+            this.componentSearch.put(cs.getID(), cs);
         }
 
         this.enabled = false;
@@ -154,6 +153,7 @@ public class CompositeService {
         if(components.get(position) == null) {
             // If there isn't a component at that position, then add one
             components.put(position, component);
+            componentSearch.put(component.getID(), component);
         } else {
             // If there is a component at that position, we need to move everything back
             ComponentService replacee = components.get(position);
@@ -178,11 +178,11 @@ public class CompositeService {
         this.description = description;
     }
 
-    public long getId() {
+    public long getID() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setID(long id) {
         this.id = id;
     }
 
@@ -233,13 +233,31 @@ public class CompositeService {
         return this.components.get(0).getDescription().getProcessType() == ProcessType.TRIGGER;
     }
 
+    public ServiceIO getInput(long id) {
+        for(int i = 0; i < components.size(); i++) {
+            ServiceIO in = components.valueAt(i).getInput(id);
+            if(in != null)
+                return in;
+        }
+
+        return null;
+    }
+
+    public ServiceIO getOutput(long id) {
+        for(int i = 0; i < components.size(); i++) {
+            ServiceIO in = components.valueAt(i).getOutput(id);
+            if(in != null)
+                return in;
+        }
+
+        return null;
+    }
+
     public void setInfo(String prefix, Cursor c) {
 
         this.id = c.getLong(c.getColumnIndex(prefix + ID));
         this.name = c.getString(c.getColumnIndex(prefix + NAME));
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
-
-        // FIXME WHAT ABOUT ACTIVE_OR_TIMER and IS_RUNNING?
 
         this.enabled = c.getInt(c.getColumnIndex(prefix + ENABLED)) == 1;
         this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
@@ -265,6 +283,61 @@ public class CompositeService {
     }
 
     public boolean equals(Object o) {
-        return false;
+
+        if(o == null) {
+            if(LOG) Log.d(TAG, "CompositeService->Equals: null");
+            return false;
+        }
+        if(!(o instanceof CompositeService)) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: Not a CompositeService");
+            return false;
+        }
+        CompositeService other = (CompositeService) o;
+
+        if(this.id != other.getID()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: id");
+            return false;
+        }
+
+        if(!this.name.equals(other.getName())) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: name " + name + " - " + other.getName());
+            return false;
+        }
+
+        if(!this.description.equals(other.getDescription())) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: description");
+            return false;
+        }
+
+        if(this.numeral != other.getNumeral()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: numeral");
+            return false;
+        }
+
+        if(this.interval != other.getInterval()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: interval");
+            return false;
+        }
+
+        if(this.enabled != other.isEnabled()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: enabled");
+            return false;
+        }
+
+        if(this.components.size() != other.getComponents().size()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: not same num components: " +
+                components.size() + " - " + other.getComponents().size());
+            return false;
+        }
+
+        for(int i = 0; i < components.size(); i++) {
+            ComponentService component = components.valueAt(i);
+            if(!component.equals(other.getComponent(component.getID()))) {
+                if (LOG) Log.d(TAG, "CompositeService->Equals: component " + component.getID() + ": " + i);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

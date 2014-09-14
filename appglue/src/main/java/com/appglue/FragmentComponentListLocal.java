@@ -145,7 +145,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                         ArrayList<IODescription> nextInputs = next.getInputs();
                                         HashMap<String, Long> types = new HashMap<String, Long>();
                                         for (IODescription nextInput : nextInputs) {
-                                            IOType type = nextInput.type();
+                                            IOType type = nextInput.getType();
                                             if (!types.containsKey(type.getClassName()))
                                                 types.put(type.getClassName(), type.getID());
                                         }
@@ -155,7 +155,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                             boolean match = false;
 
                                             for (IODescription output : outputs) {
-                                                if (types.containsKey(output.type().getClassName()))
+                                                if (types.containsKey(output.getType().getClassName()))
                                                     match = true;
                                             }
 
