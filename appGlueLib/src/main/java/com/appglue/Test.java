@@ -21,12 +21,6 @@ public class Test
 			return false;
 		}
 		
-//		if(!bundle.containsKey(ComposableService.PARAMS) && sending)
-//		{
-//			Log.e(TAG, "Bundle error: Doesn't have PARAMS (" + index + ", " + sending + ")");
-//			return false;
-//		}
-		
 		// The bundle should have three elements: INPUT, DESCRIPTION, PARAMS
 		if((index == 0 && sending) || (index == length - 1 && !sending))
 		{
@@ -54,11 +48,6 @@ public class Test
 			
 //			Bundle input = (Bundle) obj;
 			
-//			if(!input.containsKey(ComposableService.TEXT))
-//			{
-//				Log.e(TAG, "Bundle error: Single input doesn't have TEXT (" + index + ", " + sending + ")");
-//				return false;
-//			}
 		}
 		else if(className.equals(ArrayList.class))
 		{

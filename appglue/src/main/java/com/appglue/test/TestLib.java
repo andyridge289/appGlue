@@ -2,6 +2,7 @@ package com.appglue.test;
 
 import android.content.Context;
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.appglue.IODescription;
 import com.appglue.description.AppDescription;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.JSON_SERVICE;
 import static com.appglue.Constants.JSON_SERVICE_DATA;
 
@@ -72,7 +74,7 @@ public class TestLib {
         IOValue bakerlooSample = null;
         ArrayList<IOValue> samples = lineName.getSampleValues();
         for(IOValue sample : samples) {
-            if (sample.getID() == 3) {
+            if (sample.getName().equals(TubeService.BAKERLOO)) {
                 bakerlooSample = sample;
             }
         }
@@ -92,5 +94,37 @@ public class TestLib {
         CompositeService fred = new CompositeService("Fred", "This is called fred", components);
 
         return fred;
+    }
+
+    public static ComponentService createComponentForFilterSample(ServiceDescription sd, IODescription[] filterOns,
+                                                           String[] sampleValues, int[] filterConditions) {
+
+        ComponentService component = new ComponentService(sd, -1);
+
+        for(int i = 0; i < filterOns.length; i++) {
+
+            IODescription filterOn = filterOns[i];
+            String sampleValue = sampleValues[i];
+            int filterCondition = filterConditions[i];
+
+            IOValue chosenSample = null;
+            ArrayList<IOValue> samples = filterOn.getSampleValues();
+            for (IOValue sample : samples) {
+                if (sample.getName().equals(sampleValue)) {
+                    chosenSample = sample;
+                }
+            }
+            if (chosenSample == null) {
+                Log.d(TAG, "chosen sample not found");
+            }
+
+            ServiceIO filterOnIO = new ServiceIO(component, filterOn);
+
+            filterOnIO.setChosenSampleValue(chosenSample);
+            filterOnIO.setFilterState(ServiceIO.SAMPLE_FILTER);
+            filterOnIO.setCondition(filterCondition);
+        }
+
+        return component;
     }
 }

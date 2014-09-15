@@ -47,6 +47,8 @@ public class NotificationService extends ComposableService {
         n.notify(hashCode, notification);
     }
 
+    // FIXME Make the notification icon fit within the icon box.
+
     @Override
     public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {
         String title = (String) textType.getFromBundle(input, NOTIFICATION_TITLE, "");

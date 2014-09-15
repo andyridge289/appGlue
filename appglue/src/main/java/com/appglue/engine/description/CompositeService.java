@@ -217,6 +217,17 @@ public class CompositeService {
         return components;
     }
 
+    public ArrayList<ComponentService> getComponents(String className) {
+        ArrayList<ComponentService> matching = new ArrayList<ComponentService>();
+        for(int i = 0; i < components.size(); i++) {
+            ComponentService component = components.valueAt(i);
+            if(component.getDescription().getClassName().equals(className))
+                matching.add(component);
+        }
+
+        return matching;
+    }
+
     public void setComponents(SparseArray<ComponentService> components) {
         this.components = components;
     }

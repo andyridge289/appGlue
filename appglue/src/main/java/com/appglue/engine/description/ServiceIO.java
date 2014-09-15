@@ -92,16 +92,12 @@ public class ServiceIO
         return this.manualValue != null || this.chosenSampleValue != null;
     }
 
-    public void setManualValue(Object value)
-    {
+    public void setManualValue(Object value) {
         this.manualValue = value;
         this.filterState = MANUAL_FILTER;
     }
 
     public IOValue getChosenSampleValue() {
-        if(chosenSampleValue == null)
-            return new IOValue();
-
         return chosenSampleValue;
     }
     public void setChosenSampleValue(IOValue value) {
@@ -118,11 +114,7 @@ public class ServiceIO
         this.filterState = filterState;
     }
 
-    public Object getManualValue()
-    {
-        if(manualValue == null)
-            return "";
-
+    public Object getManualValue() {
         return manualValue;
     }
 
@@ -184,12 +176,17 @@ public class ServiceIO
             return false;
         }
 
-        if(this.chosenSampleValue == null && other.getChosenSampleValue() != null) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: chosen sample null for this, not for other (" + ioDescription.getFriendlyName() + ")");
-            return false;
-        } else if (!this.chosenSampleValue.equals(other.getChosenSampleValue())) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: chosen sample value (" + ioDescription.getFriendlyName() + ")");
-            return false;
+        if(this.chosenSampleValue != null || other.getChosenSampleValue() != null) {
+
+            if ((this.chosenSampleValue == null && other.getChosenSampleValue() != null) ||
+                    (this.chosenSampleValue != null && other.getChosenSampleValue() == null)) {
+                if (LOG)  Log.d(TAG, "ServiceIO->Equals: chosen sample null " + this.chosenSampleValue + " -- " + other.getChosenSampleValue());
+                return false;
+            } else if (!this.chosenSampleValue.equals(other.getChosenSampleValue())) {
+                if (LOG)
+                    Log.d(TAG, "ServiceIO->Equals: chosen sample value (" + ioDescription.getFriendlyName() + ")");
+                return false;
+            }
         }
 
         // FIXME Should the sample value just be checked against the ID?
@@ -206,15 +203,19 @@ public class ServiceIO
             }
         }
 
-        if(this.manualValue == null && other.getManualValue() != null) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: manual value null for this, not for other");
-            return false;
-        }
+        if(this.manualValue != null || other.getManualValue() != null) {
 
-        boolean same = this.getDescription().getType().compare(this.manualValue, other.getManualValue());
-        if(!same) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: manual");
-            return false;
+            if((this.manualValue == null && other.getManualValue() != null) ||
+                    (this.manualValue != null && other.getManualValue() == null)) {
+                if (LOG) Log.d(TAG, "ServiceIO->Equals: manual value null " + this.manualValue + " -- " + other.getManualValue());
+                return false;
+            }
+
+            boolean same = this.getDescription().getType().compare(this.manualValue, other.getManualValue());
+            if (!same) {
+                if (LOG) Log.d(TAG, "ServiceIO->Equals: manual");
+                return false;
+            }
         }
 
         return true;

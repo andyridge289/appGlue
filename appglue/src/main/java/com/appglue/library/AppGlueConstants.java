@@ -222,7 +222,7 @@ public class AppGlueConstants {
         { IO_DESCRIPTION_ID, "INTEGER", TBL_IO_DESCRIPTION, ID},
         { FILTER_STATE, "INTEGER" },
         { FILTER_CONDITION, "INTEGER"},
-        { MANUAL_VALUE, "TEXT"}, // The value could be anything, better just set it as text so we can do some clever stuff at some point
+        { MANUAL_VALUE, "TEXT DEFAULT NULL"}, // The value could be anything, better just set it as text so we can do some clever stuff at some point
         { SAMPLE_VALUE, "INTEGER DEFAULT '-1'", TBL_IO_SAMPLE, ID},
     };
 
@@ -250,16 +250,18 @@ public class AppGlueConstants {
     public static final String END_TIME = "end_time";
     public static final String LOG_TYPE = "log_type";
     public static final String MESSAGE = "message";
+    public static final String TERMINATED = "terminate";
 
     public static final String[][] COLS_COMPOSITE_EXECUTION_LOG = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {COMPOSITE_ID, "INTEGER"},
-                    {START_TIME, "INTEGER"},
-                    {END_TIME, "INTEGER"},
-                    {LOG_TYPE, "INTEGER"},
-                    {MESSAGE, "TEXT"}
-            };
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        { COMPOSITE_ID, "INTEGER"},
+        { START_TIME, "INTEGER"},
+        { END_TIME, "INTEGER"},
+        { LOG_TYPE, "INTEGER"},
+        {TERMINATED, "TINYINT DEFAULT 0" },
+        { MESSAGE, "TEXT"}
+    };
 
     public static final String TIME = "time";
 
@@ -268,17 +270,17 @@ public class AppGlueConstants {
     public static final String EXECUTION_INSTANCE = "execution_instance";
 
     public static final String[][] COLS_EXECUTION_LOG = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
-                    {EXECUTION_INSTANCE, "INTEGER"},
-                    {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
-                    {MESSAGE, "TEXT"},
-                    {INPUT_DATA, "BLOB"},
-                    {OUTPUT_DATA, "BLOB"},
-                    {LOG_TYPE, "INTEGER"},
-                    {TIME, "INTEGER"}
-            };
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
+        { EXECUTION_INSTANCE, "INTEGER", TBL_COMPOSITE_EXECUTION_LOG, ID},
+        { CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
+        { MESSAGE, "TEXT"},
+        { INPUT_DATA, "BLOB"},
+        { OUTPUT_DATA, "BLOB"},
+        { LOG_TYPE, "INTEGER"},
+        { TIME, "INTEGER"}
+    };
 
     public static final String IX_EXECUTION_LOG = "index_execution_log";
     public static final String[] INDEX_EXECUTION_LOG = new String[]{

@@ -126,6 +126,7 @@ import static com.appglue.library.AppGlueConstants.TBL_SD_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.TBL_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.TBL_TAG;
 import static com.appglue.library.AppGlueConstants.TEMP_ID;
+import static com.appglue.library.AppGlueConstants.TERMINATED;
 import static com.appglue.library.AppGlueConstants.TIME;
 
 public class LocalDBHandler extends SQLiteOpenHelper {
@@ -845,7 +846,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (c.getCount() == 0) {
-            Log.e(TAG, String.format("getIOType() %d: Cursor empty", ioId));
             return null;
         }
 
@@ -871,7 +871,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     public IOType getIOType(String inputClassName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        Cursor c = db.query(TBL_IOTYPE, new String[]{ID, NAME, CLASSNAME}, CLASSNAME + "=?", new String[]{"" + inputClassName}, null, null, null);
+        Cursor c = db.query(TBL_IOTYPE, new String[]{ID, NAME, CLASSNAME}, CLASSNAME + " = ?",
+                            new String[]{ "" + inputClassName }, null, null, null);
 
         if (c == null) {
             Log.e(TAG, String.format("getIOType() %s: Cursor dead", inputClassName));
@@ -879,7 +880,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (c.getCount() == 0) {
-            if (LOG) Log.w(TAG, String.format("getIOType() %s: Cursor empty", inputClassName));
             return null;
         }
 
@@ -1450,31 +1450,43 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public long startComposite(long compositeId) {
+    public long startComposite(CompositeService composite) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues cv = new ContentValues();
-        cv.put(COMPOSITE_ID, compositeId);
+        cv.put(COMPOSITE_ID, composite.getID());
         cv.put(START_TIME, System.currentTimeMillis());
+
         return db.insert(TBL_COMPOSITE_EXECUTION_LOG, null, cv);
     }
 
-    public boolean stopComposite(long id, long executionInstance, int logFlag) {
+    public boolean stopComposite(CompositeService composite, long executionInstance, int logFlag) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues cv = new ContentValues();
+
         cv.put(END_TIME, System.currentTimeMillis());
+        cv.put(MESSAGE, "Successfully executed.");
         cv.put(LOG_TYPE, logFlag);
-        int ret = db.update(TBL_COMPOSITE_EXECUTION_LOG, cv, ID + " = ? AND " + COMPOSITE_ID + " = ?", new String[]{"" + executionInstance, "" + id});
-        return ret == 1;
+
+        int ret = db.update(TBL_COMPOSITE_EXECUTION_LOG, cv, ID + " = ? AND " + COMPOSITE_ID + " = ?", new String[]{ "" + executionInstance, "" + composite.getID() });
+        if(ret == 1) {
+            if(LOG) Log.d(TAG, "Successfully stopped composite ID " + composite.getID() + " with execID " + executionInstance);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public boolean addToLog(long compositeId, long executionInstance, ServiceDescription component, String message, Bundle inputData, Bundle outputData, int status) {
+    public boolean addToLog(CompositeService composite, long executionInstance, ServiceDescription component, String message, Bundle inputData, Bundle outputData, int status) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
         Date date = new Date();
 
         ContentValues values = new ContentValues();
-        values.put(COMPOSITE_ID, compositeId);
+
+        values.put(COMPOSITE_ID, composite == null ? -1 : composite.getID());
         values.put(EXECUTION_INSTANCE, executionInstance);
 
         if(component != null)
@@ -1490,7 +1502,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         if(inputData != null) {
             ArrayList<Bundle> data = inputData.getParcelableArrayList(ComposableService.INPUT);
             for(Bundle b : data) {
-                String strung = AppGlueLibrary.bundleToJSON(b, component, true);
+//                String strung = AppGlueLibrary.bundleToJSON(b, component, true);
                 // FIXME Work out how the fuck we're going to do this with multiple bundles, and what to do with the output one
             }
         } else {
@@ -1533,9 +1545,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                         "WHERE %s.%s = %d " +
                         "ORDER BY %s.%s DESC",
                 compositeLogCols, logCols, TBL_COMPOSITE_EXECUTION_LOG,
-                TBL_EXECUTION_LOG, TBL_COMPOSITE_EXECUTION_LOG, EXECUTION_INSTANCE, TBL_EXECUTION_LOG, EXECUTION_INSTANCE,
+                TBL_EXECUTION_LOG, TBL_COMPOSITE_EXECUTION_LOG, ID, TBL_EXECUTION_LOG, EXECUTION_INSTANCE,
                 TBL_COMPOSITE_EXECUTION_LOG, COMPOSITE_ID, cs.getID(),
-                TBL_COMPOSITE_EXECUTION_LOG, EXECUTION_INSTANCE);
+                TBL_COMPOSITE_EXECUTION_LOG, ID);
 
         Cursor c = db.rawQuery(q, null);
 
@@ -1554,12 +1566,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         do {
             long id = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + ID));
-            if (current == null || current.getId() != id) {
+            if (current == null || current.getID() != id) {
 
-                long instanceId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + EXECUTION_INSTANCE));
-
-                long rowCompositeId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + COMPOSITE_ID));
-                if(rowCompositeId != cs.getID()) {
+                long logCompositeId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + COMPOSITE_ID));
+                if(logCompositeId != cs.getID()) {
                     Log.e(TAG, "log composite id isn't what we asked for, this is a problem..");
                     return logs;
                 }
@@ -1569,7 +1579,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 long endTime = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + END_TIME));
                 int status = c.getInt(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + LOG_TYPE));
 
-                current = new LogItem(id, instanceId, cs, startTime, endTime, message, status);
+                current = new LogItem(id, cs, startTime, endTime, message, status);
                 logs.add(current);
             }
 
@@ -2222,8 +2232,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             long sampleId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + SAMPLE_VALUE));
 
-            Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
-
             if(ioComponentId != componentId) {
                 Log.w(TAG, "Component IDs don't match for ServiceIOs: expected" + componentId + " and got " + ioComponentId);
                 continue;
@@ -2238,7 +2246,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             io.setCondition(filterCondition);
 
             if(manualValue != null) {
-                Log.d(TAG, "Manual value isn't null apparently: \"" + manualValue + "\"");
                 io.setManualValue(iod.getType().fromString(manualValue));
             }
 
@@ -2599,5 +2606,49 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // Look through all the rows for that compositeId, and see if there are any instances with the timestamp not set
         // Return the instance ID so that we can control it
         return -1L;
+    }
+
+    public boolean isTerminated(CompositeService composite, long executionInstance) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = String.format("SELECT %s FROM %s " +
+                "WHERE %s = %d " +
+                "AND %s = %d",
+                TERMINATED, TBL_COMPOSITE_EXECUTION_LOG,
+                COMPOSITE_ID, composite.getID(),
+                ID, executionInstance);
+
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: No composite to check termination");
+            return true;
+        }
+
+        if (c.getCount() == 0) {
+            Log.w(TAG, "Empty cursor: Caching all the tags");
+            // TODO We need to do something graceful here
+            return true;
+        }
+
+        c.moveToFirst();
+        boolean terminate = c.getInt(c.getColumnIndex(TERMINATED)) == 1;
+
+        c.close();
+        return terminate;
+    }
+
+    public boolean terminate(CompositeService composite, long executionInstance) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(TERMINATED, 1);
+        cv.put(END_TIME, System.currentTimeMillis());
+
+        int num = db.update(TBL_COMPOSITE_EXECUTION_LOG, cv,
+                COMPOSITE_ID + " = ? AND " + ID + " = ?",
+                new String[]{"" + composite.getID(), "" + executionInstance});
+        return num == 1;
     }
 }

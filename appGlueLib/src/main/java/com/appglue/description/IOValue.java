@@ -24,7 +24,7 @@ public class IOValue
         this.value = null;
     }
 
-    public IOValue(String name, Object value)
+    public  IOValue(String name, Object value)
     {
         this.id = -1;
         this.name = name;

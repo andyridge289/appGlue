@@ -235,26 +235,25 @@ public class ServiceFactory {
         IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
 
         ArrayList<IOValue> sampleLines = new ArrayList<IOValue>();
-        sampleLines.add(new IOValue("Bakerloo", "Bakerloo"));
-        sampleLines.add(new IOValue("Central", "Central"));
-        sampleLines.add(new IOValue("Circle", "Circle"));
-        sampleLines.add(new IOValue("District", "District"));
-        sampleLines.add(new IOValue("Docklands", "Docklands"));
-        sampleLines.add(new IOValue("Hammersmith & City", "Hammersmith & City"));
-        sampleLines.add(new IOValue("Jubilee", "Jubilee"));
-        sampleLines.add(new IOValue("Metropolitan", "Metropolitan"));
-        sampleLines.add(new IOValue("Northern", "Northern"));
-        sampleLines.add(new IOValue("Overground", "Overground"));
-        sampleLines.add(new IOValue("Picadilly", "Picadilly"));
-        sampleLines.add(new IOValue("Victoria", "Victoria"));
-        sampleLines.add(new IOValue("Waterloo & City", "Waterloo & City"));
+        sampleLines.add(new IOValue(TubeService.BAKERLOO, "Bakerloo"));
+        sampleLines.add(new IOValue(TubeService.CENTRAL, "Central"));
+        sampleLines.add(new IOValue(TubeService.CIRCLE, "Circle"));
+        sampleLines.add(new IOValue(TubeService.DISTRICT, "District"));
+        sampleLines.add(new IOValue(TubeService.DLR, "Docklands"));
+        sampleLines.add(new IOValue(TubeService.HAMMERSMITH_CITY, "Hammersmith & City"));
+        sampleLines.add(new IOValue(TubeService.JUBILEE, "Jubilee"));
+        sampleLines.add(new IOValue(TubeService.METROPOLITAN, "Metropolitan"));
+        sampleLines.add(new IOValue(TubeService.NORTHERN, "Northern"));
+        sampleLines.add(new IOValue(TubeService.OVERGROUND, "Overground"));
+        sampleLines.add(new IOValue(TubeService.PICCADILLY, "Piccadilly"));
+        sampleLines.add(new IOValue(TubeService.VICTORIA, "Victoria"));
+        sampleLines.add(new IOValue(TubeService.WATERLOO_CITY, "Waterloo & City"));
 
         ArrayList<IOValue> sampleStatuses = new ArrayList<IOValue>();
-        sampleStatuses.add(new IOValue("Minor delays", "minor delays"));
-        sampleStatuses.add(new IOValue("Major delays", "major delays"));
-        sampleStatuses.add(new IOValue("Good Service", "good service"));
-        sampleStatuses.add(new IOValue("Severe delays", "severe delays"));
-        sampleStatuses.add(new IOValue("Part Closure", "part closure"));
+        sampleStatuses.add(new IOValue(TubeService.MINOR_DELAYS, "minor delays"));
+        sampleStatuses.add(new IOValue(TubeService.GOOD_SERVICE, "good service"));
+        sampleStatuses.add(new IOValue(TubeService.SEVERE_DELAYS, "severe delays"));
+        sampleStatuses.add(new IOValue(TubeService.PART_CLOSURE, "part closure"));
 
         outputs.add(new IODescription(-1, TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
         outputs.add(new IODescription(-1, TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));

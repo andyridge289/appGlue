@@ -57,7 +57,7 @@ public class ActivityComposite extends Activity
 		if(compositeId == -1){ finish(); return; }
 		
 		cs = registry.getComposite(compositeId);
-        ArrayList<LogItem> logs = registry.getLog(compositeId);
+        ArrayList<LogItem> logs = registry.getExecutionLog(cs);
         Log.d(TAG, "Lots of logs: " + logs.size());
 
 		edit = false;

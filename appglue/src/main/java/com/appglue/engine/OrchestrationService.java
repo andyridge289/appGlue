@@ -114,11 +114,11 @@ public class OrchestrationService extends Service
                     return false;
                 }
 
+                if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": Connection start " + startIndex);
+
                 if (startIndex == -1 || startIndex == 0) {
-                    Log.e(TAG, "Connection start");
                     connection.start();
                 } else {
-                    Log.e(TAG, "Starting at a position??? " + startIndex);
                     connection.startAtPosition(startIndex, isList, data);
                 }
             }

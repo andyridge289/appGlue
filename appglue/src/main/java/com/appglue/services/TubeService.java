@@ -42,6 +42,20 @@ public class TubeService extends ComposableService {
     public static final String LINE_URL = "line_url";
     public static final String LINE_ICON = "line_icon";
 
+    public static final String BAKERLOO = "Bakerloo";
+    public static final String CENTRAL = "Central";
+    public static final String CIRCLE = "Circle";
+    public static final String DISTRICT = "District";
+    public static final String DLR = "DLR";
+    public static final String HAMMERSMITH_CITY = "H'smith & City";
+    public static final String JUBILEE = "Jubilee";
+    public static final String METROPOLITAN = "Metropolitan";
+    public static final String NORTHERN = "Northern";
+    public static final String OVERGROUND = "Overground";
+    public static final String PICCADILLY = "Piccadilly";
+    public static final String VICTORIA = "Victoria";
+    public static final String WATERLOO_CITY = "Waterloo & City";
+
     private String getFromURL(String url, ArrayList<Bundle> parameters) throws IOException {
         if (parameters == null) {
             return Network.httpGet(url);
@@ -125,7 +139,7 @@ public class TubeService extends ComposableService {
             if (deadLines.size() == 0) {
                 Bundle lineBundle = new Bundle();
                 text.addToBundle(lineBundle, "Bakerloo", LINE_NAME);
-                text.addToBundle(lineBundle, "Minor delays", LINE_STATUS);
+                text.addToBundle(lineBundle, MINOR_DELAYS, LINE_STATUS);
                 urlType.addToBundle(lineBundle, "http://www.google.co.uk", LINE_URL);
                 imageDrawable.addToBundle(lineBundle, R.drawable.circle, LINE_ICON);
                 deadLines.add(lineBundle);

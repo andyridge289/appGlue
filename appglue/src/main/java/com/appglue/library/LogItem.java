@@ -19,7 +19,6 @@ public class LogItem
     public static final int GENERIC_TRIGGER_FAIL = 0x7; // This is very much a special case
 
     private long id;
-	private long executionInstanceId;
 	private CompositeService cs;
 	private long startTime;
     private long endTime;
@@ -27,10 +26,9 @@ public class LogItem
 	private int status;
     private ArrayList<ComponentLogItem> componentLogs;
 	
-	public LogItem(long id, long instanceId, CompositeService cs, long startTime, long endTime, String message, int status) {
+	public LogItem(long id, CompositeService cs, long startTime, long endTime, String message, int status) {
 
         this.id = id;
-        this.executionInstanceId = instanceId;
         this.cs = cs;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -40,13 +38,9 @@ public class LogItem
         componentLogs = new ArrayList<ComponentLogItem>();
 	}
 
-    public long getLogId() {
+    public long getID() {
         return id;
     }
-	public long getId() 
-	{
-		return executionInstanceId;
-	}
 	public String getMessage()
 	{
 		return message;

@@ -129,10 +129,7 @@ public abstract class ComposableService extends Service
                 {
                 	// Call the thing, return whatever it gives back
                 	// There's no input, so we don't need to get that
-                	
-                	// Get the parameters
-//                	Bundle paramBundle = messageData.getBundle(PARAMS);
-                	ArrayList<Bundle> params = new ArrayList<Bundle>(); //paramBundle.getParcelableArrayList(PARAMS);
+                	ArrayList<Bundle> params = new ArrayList<Bundle>();
                 	o = performService(null, params);
                 	break;
                 }
@@ -147,8 +144,7 @@ public abstract class ComposableService extends Service
                 	
                 	// It should only be the first one that is set if only one thing has been sent
                 	// Get the parameters
-//                	Bundle paramBundle = messageData.getBundle(PARAMS);
-                	ArrayList<Bundle> params = new ArrayList<Bundle>(); //paramBundle.getParcelableArrayList(PARAMS);
+                	ArrayList<Bundle> params = new ArrayList<Bundle>();
                 	
                 	
                 	o = performService(input, params);
