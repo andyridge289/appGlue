@@ -3,36 +3,33 @@
     style="@style/Fill"
     android:padding="2dip"
     android:layout_margin="2dip"
-    android:background="@drawable/composite_add_new_border">
-    
-   	<RelativeLayout
-   	    style="@style/FillWrap"
-   	    android:gravity="center"
-   	    android:layout_gravity="center"
-   	    android:id="@+id/icon_container" 
-   	    
-   	    >
-   	    
-   	     <ImageView
-   	     	android:layout_alignParentTop="true"
-   	        android:contentDescription="@string/create_composite"
-   	        android:id="@+id/service_icon"
-			android:layout_width="64dip"
-	    	android:layout_height="64dip"
-			android:src="@drawable/ic_new"
-			android:gravity="center"
-	        />
-  	</RelativeLayout>
-    
- 	<TextView
-   		style="@style/FillWrap"
+    android:background="@drawable/composite_new"
+    android:clickable="true"
+    android:focusable="true"
+    >
+
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:contentDescription="@string/create_composite"
+        android:id="@+id/service_icon"
+        android:layout_width="64dip"
+        android:layout_height="64dip"
+        android:background="@drawable/ic_new"
+        android:layout_centerHorizontal="true"
+        android:clickable="false"
+        android:focusable="false"
+        />
+
+    <TextView
+        style="@style/FillWrap"
         android:gravity="center"
-   	    android:text="@string/create_new"
-	    android:layout_alignParentLeft="true"
-        android:textSize="16sp" 
+        android:text="@string/create_new"
+        android:textSize="16sp"
         android:textColor="@color/android_darkpurple"
-	    android:layout_alignParentBottom="true"
-        android:layout_below="@id/icon_container"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/service_icon"
+        android:clickable="false"
+        android:focusable="false"
         />
 		 
 </RelativeLayout>

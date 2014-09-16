@@ -19,6 +19,14 @@
     <!--<color name="hex111">#111</color>-->
     <!--<color name="hex000">#000</color>-->
 
+    <color name="colorPrimaryDark">#ff522385</color>
+    <color name="colorPrimary">#ff862ecc</color>
+
+    <color name="colorPrimary_trans_light">#22862ecc</color>
+    <color name="colorPrimary_trans_mid">#88862ecc</color>
+
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="windowBackground">#FFFFFF</color>
 
     <color name="bg">#fff3f3f3</color>
 
@@ -43,8 +51,8 @@
     <color name="black">#000</color>
 
     <!-- Android colours -->
+
     <color name="android_blue">#33B5E5</color>
-    <color name="android_purple">#AA66CC</color>
     <color name="android_green">#99CC00</color>
     <color name="android_yellow">#FFBB33</color>
     <color name="android_red">#FF4444</color>

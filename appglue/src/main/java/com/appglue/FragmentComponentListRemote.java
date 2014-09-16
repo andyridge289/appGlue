@@ -17,11 +17,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.appglue.Constants.ServiceType;
 
 public class FragmentComponentListRemote extends FragmentComponentList
-{	
+{
+
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle)
 	{
 		View v = super.onCreateView(inflater, container, icicle);
 		((TextView) v.findViewById(R.id.simple_list_none)).setText("No remote components");
+
 		return v;
 	}
 	
@@ -34,11 +37,11 @@ public class FragmentComponentListRemote extends FragmentComponentList
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View v, int position, long id)
 			{
-				Intent intent = new Intent(parent, ActivityComponent.class);
+				Intent intent = new Intent(getActivity(), ActivityComponent.class);
 				intent.putExtra(SERVICE_TYPE, ServiceType.REMOTE.index);
 				intent.putExtra(CLASSNAME, services.get(position).getClassName());
-				intent.putExtra(JUST_A_LIST, parent.justAList());
-				parent.startActivityForResult(intent, 0);
+				intent.putExtra(JUST_A_LIST, justList);
+				getActivity().startActivityForResult(intent, 0);
 			}
 		});
 	}

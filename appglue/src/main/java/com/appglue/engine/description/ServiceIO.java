@@ -189,7 +189,6 @@ public class ServiceIO
             }
         }
 
-        // FIXME Should the sample value just be checked against the ID?
         if (this.connection != null || other.getConnection() != null) {
             if ((this.connection == null && other.getConnection() != null) ||
                 (this.connection != null && other.getConnection() == null)) {

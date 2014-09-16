@@ -37,24 +37,6 @@ public class Orchestration {
         n.addComponent(component);
     }
 
-    public void addConnection(int startIndex, int endIndex,
-                              ServiceDescription start, ServiceDescription end,
-                              IODescription out, IODescription in) {
-        Edge e = new Edge(startIndex, endIndex, start, end, out, in);
-
-        this.edges.get(startIndex).add(e);
-    }
-
-    public void addFilter(int index, ServiceDescription component, IODescription io) {
-        Edge e = new Edge(index, component, io, new IOFilter());
-        // FIXME This needs to actually do something with the filter information
-    }
-
-    public void addValue(int index, ServiceDescription component, IODescription io) {
-        Edge e = new Edge(index, component, io, new IOValue());
-        // FIXME This actually needs to do something with the values from the thing
-    }
-
     public boolean contains(String className) {
         return components.get(className) != null;
     }

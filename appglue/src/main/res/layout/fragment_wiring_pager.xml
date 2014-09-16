@@ -1,0 +1,81 @@
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+     <LinearLayout
+        android:id="@+id/status_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        >
+
+         <FrameLayout
+            android:id="@+id/cs_name_container"
+            android:layout_width="0dip"
+            android:layout_weight="4"
+            android:layout_height="wrap_content"
+            >
+            
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" 
+                android:textSize="24sp"
+                android:id="@+id/cs_name"
+                android:textColor="@color/dim_text"
+                android:background="@drawable/unfocused_edittext"
+                />
+            
+            <EditText
+                android:id="@+id/cs_name_edit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:inputType="text"
+                android:visibility="gone"
+                android:hint="@string/hint_wiring_csname"
+                />
+            
+        </FrameLayout>
+        
+        <Button
+            android:id="@+id/cs_name_edit_button"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+		   	android:layout_height="wrap_content"
+		   	android:text="@string/set"
+		   	android:visibility="invisible"
+            />
+           
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="0dip"
+			android:layout_weight="3"
+            android:layout_height="wrap_content"
+            />
+
+         <TextView
+             android:id="@+id/page_index"
+             android:layout_width="0dip"
+             android:layout_weight="1"
+             android:layout_height="wrap_content"
+             />
+
+
+     </LinearLayout>
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/wiring_pager"
+   	android:layout_width="match_parent"
+   	android:layout_height="match_parent" 
+   	android:layout_below="@id/status_bar"/>
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/value_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/status_bar" />
+
+
+</RelativeLayout>

@@ -2,20 +2,18 @@
 <resources>
 
     <string name="application_name">appGlue</string>
-
     <string name="enable">Enable</string>
     <string name="disable">Disable</string>
-
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="stop">Stop</string>
-
     <string name="title_running">Running Services</string>
 
     <!-- Strings for the load page -->
-    <!--<string name="comp_list_simple">Components</string>-->
+    <!-- <string name="comp_list_simple">Components</string> -->
     <string name="comp_list_new">New</string>
-    <!--<string name="comp_list_running">Running</string>-->
+    <!-- <string name="comp_list_running">Running</string> -->
+
 
     <!-- Strings for the composition page -->
     <string name="comp_title">Compose a service</string>
@@ -38,7 +36,6 @@
     <string name="simple_title_description">Description</string>
     <string name="simple_title_inputs">Inputs and Outputs</string>
     <string name="simple_title_app">App</string>
-
     <string name="wiring_done">Done</string>
 
     <!-- Strings for the parameters page -->
@@ -63,7 +60,6 @@
     <string name="cd_running_list_icon">The icon of the running service</string>
     <string name="cd_simple_list_item_icon">The icon of the component</string>
     <string name="cd_simple_icon">The icon of the component</string>
-
     <string name="service_name">Service Name</string>
     <string name="dev_name">Dev Name</string>
     <string name="app_name">App Name</string>
@@ -77,7 +73,7 @@
     <string name="component_icon_contdesc">The icon of the component</string>
     <string name="components">Components</string>
     <string name="choose_a_filter_value">Choose a filter value</string>
-    <!--<string name="change_mode">Change Mode</string>-->
+    <!-- <string name="change_mode">Change Mode</string> -->
 
     <string name="dialog_app_cancel">Cancel</string>
     <string name="dialog_app_positive">Select</string>
@@ -88,11 +84,10 @@
     <string name="dialog_io_neutral">Clear</string>
     <string name="dialog_io_negative">Cancel</string>
     <string name="hint_wiring_csname">Enter a name for your Composite</string>
-    <!--<string name="wiring_menu_overview">See overview</string>-->
-    <!--<string name="wiring_menu_next">Next</string>-->
-    <!--<string name="wiring_menu_previous">Previous</string>-->
+    <!-- <string name="wiring_menu_overview">See overview</string> -->
+    <!-- <string name="wiring_menu_next">Next</string> -->
+    <!-- <string name="wiring_menu_previous">Previous</string> -->
     <string name="param_cancel">I changed my mind..</string>
-
     <string name="prefs_notifications">prefs_notifications</string>
     <string name="no_examples">No examples available</string>
     <string name="edit">Edit</string>
@@ -104,7 +99,7 @@
     <string name="create_shortcut">Create Shortcut</string>
     <string name="view">View</string>
     <string name="delete">Delete</string>
-    <!--<string name="edit_story">Edit (Story)</string>-->
+    <!-- <string name="edit_story">Edit (Story)</string> -->
     <string name="enter_value">Enter a value</string>
     <string name="share">Share</string>
     <string name="move_left">Move left</string>
@@ -117,9 +112,9 @@
     <string name="name">Name</string>
     <string name="description">Description</string>
     <string name="view_composite">View Composite</string>
-    <!--<string name="google_plus_login">Log in with g+</string>-->
+    <!-- <string name="google_plus_login">Log in with g+</string> -->
     <string name="view_log">View log</string>
-    <!--<string name="new_story">Add new Story</string>-->
+    <!-- <string name="new_story">Add new Story</string> -->
     <string name="settings">Settings</string>
     <string name="when_run">When do you want your gluedApp to run?</string>
     <string name="component_name">Component Name</string>
@@ -165,4 +160,17 @@
     <string name="value_current_icon">Something</string>
     <string name="pre_icon">Icon of first component</string>
     <string name="post_icon">Icon of next component</string>
+    <string name="title_activity_activity_app_glue">ActivityAppGlue</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="page_home">My Glue</string>
+    <string name="page_components">Components List</string>
+    <string name="page_log">Log</string>
+    <string name="page_gplus">G+ login</string>
+    <string name="page_settings">Settings</string>
+    <string name="page_privacy">Privacy Policy</string>
+
 </resources>

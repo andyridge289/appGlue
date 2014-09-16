@@ -430,10 +430,23 @@ public class ServiceDescription {
             }
         }
 
-        // FIXME This needs to check if they are all in both of them
         ArrayList<Tag> otherTags = other.getTags();
-        for(int i = 0; i < tags.size(); i++) {
-            if(!tags.get(i).equals(otherTags.get(i))) {
+        if(tags.size() != otherTags.size()) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag sizes don't match");
+            return false;
+        }
+
+        for (int i = 0; i < tags.size(); i++) {
+
+            boolean found = false;
+            for (int j = 0; j < otherTags.size(); j++) {
+                if (!tags.get(i).equals(otherTags.get(j))) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag " + i);
                 return false;
             }
@@ -449,7 +462,6 @@ public class ServiceDescription {
      */
 
 
-    // FIXME Check the IDs of the IOs that are being added, and if they are -1 at any time other than the pre-DB create, refuse!
     public static ArrayList<ServiceDescription> parseServices(String jsonString, Context context, AppDescription appDescription) throws JSONException {
         ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
 

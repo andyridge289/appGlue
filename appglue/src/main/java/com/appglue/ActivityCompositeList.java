@@ -384,7 +384,6 @@ public class ActivityCompositeList extends Activity {
         builder.setPositiveButton("Okay", okayClick);
         builder.setNegativeButton("Cancel", null);
 
-
         AlertDialog dialog = builder.create();
         dialog.show();
     }

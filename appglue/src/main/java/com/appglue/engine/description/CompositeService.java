@@ -6,6 +6,8 @@ import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.appglue.description.ServiceDescription;
+
 import java.util.ArrayList;
 
 import static com.appglue.Constants.DESCRIPTION;
@@ -36,6 +38,8 @@ public class CompositeService {
     private SparseArray<ComponentService> components;
     private LongSparseArray<ComponentService> componentSearch;
 
+    private Object lock = new Object();
+
     public CompositeService() {
         this.id = -1;
         this.name = "";
@@ -57,15 +61,17 @@ public class CompositeService {
         this(false);
         this.name = name;
         this.description = description;
-
         this.components = new SparseArray<ComponentService>();
-        for(int i = 0; i < services.size(); i++) {
-            components.put(i, services.get(i));
-            services.get(i).setComposite(this);
-        }
 
-        for (ComponentService comps : services) {
-            this.componentSearch.put(comps.getID(), comps);
+        if(services != null) {
+            for (int i = 0; i < services.size(); i++) {
+                components.put(i, services.get(i));
+                services.get(i).setComposite(this);
+            }
+
+            for (ComponentService comps : services) {
+                this.componentSearch.put(comps.getID(), comps);
+            }
         }
     }
 
@@ -89,9 +95,11 @@ public class CompositeService {
         this.description = description;
         this.enabled = enabled;
 
-        for(int i = 0; i < services.size(); i++) {
-            ComponentService cs = services.valueAt(i);
-            componentSearch.put(cs.getID(), cs);
+        if(services != null) {
+            for (int i = 0; i < services.size(); i++) {
+                ComponentService cs = services.valueAt(i);
+                componentSearch.put(cs.getID(), cs);
+            }
         }
     }
 
@@ -106,9 +114,11 @@ public class CompositeService {
 
         this.enabled = false;
 
-        for(int i = 0; i < services.size(); i++) {
-            ComponentService cs = services.valueAt(i);
-            componentSearch.put(cs.getID(), cs);
+        if(services != null) {
+            for (int i = 0; i < services.size(); i++) {
+                ComponentService cs = services.valueAt(i);
+                componentSearch.put(cs.getID(), cs);
+            }
         }
     }
 
@@ -118,13 +128,15 @@ public class CompositeService {
         this.id = -1;
         this.name = "Random Service";
 
-        this.components = new SparseArray<ComponentService>();
-        for(int i = 0; i < services.size(); i++) {
-            components.put(i, services.get(i));
-        }
+        if(services != null) {
+            this.components = new SparseArray<ComponentService>();
+            for (int i = 0; i < services.size(); i++) {
+                components.put(i, services.get(i));
+            }
 
-        for (ComponentService cs : services) {
-            this.componentSearch.put(cs.getID(), cs);
+            for (ComponentService cs : services) {
+                this.componentSearch.put(cs.getID(), cs);
+            }
         }
 
         this.enabled = false;
@@ -148,17 +160,44 @@ public class CompositeService {
         if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getDescription().getClassName(), name, components.size() - 1));
     }
 
-    public void addComponent(int position, ComponentService component) {
+    public void addComponent(ServiceDescription sd, int position) {
+        ComponentService component = new ComponentService(sd, position);
+        synchronized (lock) {
+            components.put(position, component);
+        }
+    }
+
+    // FIXME Put this in the wiring update stuff
+    public void recreateSearch() {
+
+        synchronized (lock) { // Lock it because we're clearing the thing, make sure nothing is looking in it at the
+            componentSearch.clear();
+            for (int i = 0; i < components.size(); i++) {
+                ComponentService component = components.valueAt(i);
+                if(component.getID() != -1)
+                    componentSearch.put(component.getID(), component);
+            }
+
+        }
+
+
+    }
+
+
+    public void addComponent(ComponentService component, int position) {
 
         if(components.get(position) == null) {
             // If there isn't a component at that position, then add one
-            components.put(position, component);
-            componentSearch.put(component.getID(), component);
+            synchronized(lock) {
+                components.put(position, component);
+                if (component.getID() != -1)
+                    componentSearch.put(component.getID(), component);
+            }
         } else {
             // If there is a component at that position, we need to move everything back
             ComponentService replacee = components.get(position);
             components.put(position, component);
-            addComponent(position + 1, replacee);
+            addComponent(replacee, position + 1);
         }
     }
 

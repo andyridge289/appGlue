@@ -6,6 +6,7 @@ import android.util.SparseArray;
 
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.description.ComponentService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -180,7 +181,6 @@ public class AppGlueLibrary {
 
         } catch(JSONException e) {
             Log.e(TAG, "JSON string to bundle Fail FUCKSTICKS");
-            // TODO Put something in the log maybe?
         }
 
         return b;

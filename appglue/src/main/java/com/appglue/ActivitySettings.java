@@ -8,7 +8,7 @@ public class ActivitySettings extends PreferenceActivity
     public void onCreate(Bundle icicle)
     {
         super.onCreate(icicle);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new FragmentSettings()).commit();
+//        getFragmentManager().beginTransaction().replace(android.R.id.content, new FragmentSettings()).commit();
     }
 
 //    @Override

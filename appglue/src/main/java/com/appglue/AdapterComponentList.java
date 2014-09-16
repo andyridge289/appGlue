@@ -1,6 +1,7 @@
 package com.appglue;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -23,8 +24,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     ArrayList<ServiceDescription> originalItems;
     private ArrayList<ServiceDescription> items;
 
-    private ActivityComponentList parent;
-
+    private Activity parent;
     private LocalStorage localStorage;
 
     private final Object lock = new Object();
@@ -34,7 +34,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
 
         localStorage = LocalStorage.getInstance();
 
-        this.parent = (ActivityComponentList) context;
+        this.parent = (Activity) context;
 
         this.items = items;
         cloneItems();

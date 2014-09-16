@@ -1,6 +1,6 @@
 package com.appglue;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -117,7 +117,7 @@ public class FragmentWiring extends FragmentVW {
             });
         } else {
             firstName.setText("Add");
-            firstName.setTextColor(getResources().getColor(R.color.android_purple));
+            firstName.setTextColor(getResources().getColor(R.color.colorPrimary));
             firstIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
             firstContainer.setBackgroundResource(R.drawable.wiring_add);
 
@@ -166,7 +166,7 @@ public class FragmentWiring extends FragmentVW {
             });
         } else {
             secondName.setText("Add");
-            secondName.setTextColor(getResources().getColor(R.color.android_purple));
+            secondName.setTextColor(getResources().getColor(R.color.colorPrimary));
             secondContainer.setBackgroundResource(R.drawable.wiring_add);
             secondIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
 

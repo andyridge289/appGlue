@@ -147,7 +147,7 @@ public class DialogFilter extends DialogCustom {
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
                 registry.updateCurrent();
-//	    		FIXME What bout parent.redraw();
+                DialogFilter.this.activity.redraw();
                 dismiss();
             }
         });
@@ -164,7 +164,7 @@ public class DialogFilter extends DialogCustom {
                 item.setFilterState(ServiceIO.UNFILTERED);
                 DialogFilter.this.activity.setStatus("Cleared filter for " + description.getName());
                 registry.updateCurrent();
-//				FIXME What about parent.redraw();
+                DialogFilter.this.activity.redraw();
             }
         });
     }

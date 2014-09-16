@@ -11,7 +11,7 @@
 		    >
 		    
 		    <stroke
-		        android:color="@color/android_purple"
+		        android:color="@color/colorPrimary_trans_mid"
 		        android:width="5dip"
 		        android:dashWidth="10dip"
 		        android:dashGap="5dip"

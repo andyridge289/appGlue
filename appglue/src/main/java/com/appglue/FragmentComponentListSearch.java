@@ -52,27 +52,16 @@ public class FragmentComponentListSearch extends FragmentComponentList {
 
         ((TextView) v.findViewById(R.id.simple_list_none)).setText("No components on this device! (You shouldn't be seeing this.... What have you done!?)");
 
-        registry = Registry.getInstance(parent);
+        registry = Registry.getInstance(getActivity());
 
         ComponentLoaderTask bl = new ComponentLoaderTask();
         bl.execute();
 
-        serviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
-                Intent intent = new Intent(parent, ActivityComponent.class);
-                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-                intent.putExtra(CLASSNAME, services.get(position).getClassName());
-                intent.putExtra(JUST_A_LIST, parent.justAList());
-                parent.startActivityForResult(intent, SERVICE_REQUEST);
-                return true;
-            }
-        });
-
         serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                parent.chosenItem(services.get(position).getClassName());
+                if(!homeParent)
+                    ((ActivityComponentList) getActivity()).chosenItem(services.get(position).getClassName());
             }
         });
 
@@ -121,13 +110,25 @@ public class FragmentComponentListSearch extends FragmentComponentList {
 
     public void onActivityCreated(Bundle icicle) {
         super.onActivityCreated(icicle);
+
+        serviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
+                Intent intent = new Intent(getActivity(), ActivityComponent.class);
+                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
+                intent.putExtra(CLASSNAME, services.get(position).getClassName());
+                intent.putExtra(JUST_A_LIST, justList);
+                getActivity().startActivityForResult(intent, SERVICE_REQUEST);
+                return true;
+            }
+        });
     }
 
     private class ComponentLoaderTask extends AsyncTask<Void, Void, ArrayList<ServiceDescription>> {
 
         @Override
         protected ArrayList<ServiceDescription> doInBackground(Void... params) {
-            return registry.getComponents();
+            return registry.getAllServiceDescriptions();
         }
 
         @Override
@@ -139,7 +140,7 @@ public class FragmentComponentListSearch extends FragmentComponentList {
 
             if (services.size() > 0) {
                 serviceListView.setVisibility(View.VISIBLE);
-                AdapterComponentList adapter = new AdapterComponentListSearch(parent, services,
+                AdapterComponentList adapter = new AdapterComponentListSearch(getActivity(), services,
                         FragmentComponentListSearch.this);
                 serviceListView.setAdapter(adapter);
             } else

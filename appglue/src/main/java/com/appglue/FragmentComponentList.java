@@ -1,5 +1,6 @@
 package com.appglue;
 
+import android.app.Activity;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
+import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
 import java.util.ArrayList;
 
@@ -20,16 +24,24 @@ public class FragmentComponentList extends Fragment
 	protected ListView serviceListView;
 	protected TextView noneFound;
 	protected ImageView loader;
-	
-	protected ActivityComponentList parent;
-	
+
+    protected boolean homeParent;
+    protected boolean justList;
+
 	protected Registry registry;
 	
 	protected String name;
 	
 	protected ArrayList<ServiceDescription> services;
 	protected ArrayList<ServiceDescription> renderServices;
-	
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        homeParent = getActivity() instanceof ActivityAppGlue;
+    }
+
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle)
 	{
@@ -38,6 +50,11 @@ public class FragmentComponentList extends Fragment
 		serviceListView = (ListView) v.findViewById(R.id.simple_list);
 		serviceListView.setDivider(null); 
 		serviceListView.setDividerHeight(0);
+
+        if(homeParent) {
+            Bundle args = getArguments();
+            justList = args.getBoolean(JUST_A_LIST, false);
+        }
 		
 		loader = (ImageView) v.findViewById(R.id.loading_spinner);
 		noneFound = (TextView) v.findViewById(R.id.simple_list_none);
@@ -52,10 +69,12 @@ public class FragmentComponentList extends Fragment
 	public void onActivityCreated(Bundle icicle)
 	{	
 		super.onActivityCreated(icicle);
-		
-		this.parent = (ActivityComponentList) getActivity();
-		
 		renderServices = new ArrayList<ServiceDescription>();
+
+        if(!homeParent) {
+            Bundle arguments = getArguments();
+            justList = arguments.getBoolean(JUST_A_LIST, false);
+        }
 	}
 	
 	public void setName(String name)

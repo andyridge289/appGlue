@@ -219,6 +219,7 @@ public class AppGlueConstants {
     public static final String[][] COLS_SERVICEIO = new String[][] {
         { ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
         { COMPONENT_ID, "INTEGER", TBL_COMPONENT, ID},
+        { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID}, // Keep track of this to make life easier later
         { IO_DESCRIPTION_ID, "INTEGER", TBL_IO_DESCRIPTION, ID},
         { FILTER_STATE, "INTEGER" },
         { FILTER_CONDITION, "INTEGER"},
@@ -228,7 +229,7 @@ public class AppGlueConstants {
 
     public static final String IX_SERVICEIO = "index_filter";
     public static final String[] INDEX_FILTER = new String[]{
-        COMPONENT_ID, IO_DESCRIPTION_ID, SAMPLE_VALUE
+        COMPONENT_ID, COMPOSITE_ID, IO_DESCRIPTION_ID, SAMPLE_VALUE
     };
 
     public static final String SOURCE_IO = "source_io";
@@ -259,7 +260,7 @@ public class AppGlueConstants {
         { START_TIME, "INTEGER"},
         { END_TIME, "INTEGER"},
         { LOG_TYPE, "INTEGER"},
-        {TERMINATED, "TINYINT DEFAULT 0" },
+        { TERMINATED, "TINYINT DEFAULT 0" },
         { MESSAGE, "TEXT"}
     };
 
@@ -274,7 +275,7 @@ public class AppGlueConstants {
         { ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
         { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
         { EXECUTION_INSTANCE, "INTEGER", TBL_COMPOSITE_EXECUTION_LOG, ID},
-        { CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
+        { COMPONENT_ID, "INTEGER", TBL_COMPONENT, ID },
         { MESSAGE, "TEXT"},
         { INPUT_DATA, "BLOB"},
         { OUTPUT_DATA, "BLOB"},
@@ -284,7 +285,7 @@ public class AppGlueConstants {
 
     public static final String IX_EXECUTION_LOG = "index_execution_log";
     public static final String[] INDEX_EXECUTION_LOG = new String[]{
-            COMPOSITE_ID, CLASSNAME, EXECUTION_INSTANCE
+            COMPOSITE_ID, COMPONENT_ID, EXECUTION_INSTANCE
     };
 
     public static final String HAS_INPUTS = "has_inputs";

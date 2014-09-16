@@ -64,8 +64,6 @@ public class ActivityComponentList extends ActionBarActivity {
         position = intent.getIntExtra(POSITION, -1);
         Registry registry = Registry.getInstance(this);
 
-        Log.d(TAG, "ACL.java: got " + position);
-
         boolean showMatching = false;
 
         if (registry.getService() != null) {
@@ -139,6 +137,11 @@ public class ActivityComponentList extends ActionBarActivity {
 
             actionBar.setHomeButtonEnabled(true);
         }
+    }
+
+    public void onBackPressed() {
+        // Put something in bundle that says they pressed back instead of choosing a component.
+        super.onBackPressed();
     }
 
     @Override

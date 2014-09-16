@@ -31,8 +31,10 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.library.err.OrchestrationException;
 import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 
 import java.lang.reflect.InvocationTargetException;
@@ -105,7 +107,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         	}
         }
         catch (RemoteException e) {
-            registry.messageFail(cs, executionInstance, cs.getComponents().get(index).getDescription(), sent[index]);
+            registry.messageFail(cs, executionInstance, cs.getComponents().get(index), sent[index]);
         }
 	}
 
@@ -162,58 +164,62 @@ public class OrchestrationServiceConnection implements ServiceConnection
 	 * 
 	 * @param service The service to be bound
 	 */
-	private void doBindService(ComponentService service)
-    {
-		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doBindService(" + service.getDescription().getName() + ") " + System.currentTimeMillis());
+	private void doBindService(ComponentService service) {
+
+		if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doBindService(" + service.getDescription().getName() + ") " + System.currentTimeMillis());
 		Bundle messageData = message.getData();
         Library.printBundle(messageData);
 		
-		if(registry.isTerminated(cs, executionInstance))
-    	{
-            // TODO Indicate that we've stopped prematurely
-            Log.e(TAG, "Terminated");
+		if (registry.isTerminated(cs, executionInstance)) {
 			return;
     	}
 		
-		if(this.index != 0)
-		{
+		if (this.index != 0) {
 			// Make the composition execution thing take into account the filter values
 			ArrayList<Bundle> outputs = messageData.getParcelableArrayList(ComposableService.INPUT);
 
             if(outputs == null) {
-                Log.e(TAG, "Message data is null...?");
+                registry.terminate(cs, executionInstance, LogItem.ORCH_FAIL, "The message has been killed");
+                return;
             } else if(outputs.size() > 0) {
+
 				// Then we need to check for filtering
-				Bundle filterValues = this.filter(outputs, cs.getComponents().get(index - 1));
+                Bundle filterValues = null;
+                try {
+                    filterValues = this.filter(outputs, cs.getComponents().get(index - 1));
+                } catch (OrchestrationException e) {
+                    registry.terminate(cs, executionInstance, LogItem.ORCH_FAIL, "Filter failed: " + e.getMessage());
+                    return;
+                }
+
+                ArrayList<Bundle> retained = filterValues.getParcelableArrayList(FILTER_RETAINED);
 				
-				ArrayList<Bundle> retained = filterValues.getParcelableArrayList(FILTER_RETAINED);
-				
-				if(retained.size() > 0)
-				{
+				if(retained.size() > 0) {
 					messageData.remove(ComposableService.INPUT);
 					messageData.putParcelableArrayList(ComposableService.INPUT, retained);
-				}
-				else
-				{
+				} else {
 					ArrayList<Bundle> removed = filterValues.getParcelableArrayList(FILTER_REMOVED);
                     for (Bundle b : removed) {
-                        ComponentService currentComponent = cs.getComponents().get(index - 1); // Need to get the last index because we've moved on
-                        long outputId = b.getLong(FILTER_OUTPUTID);
-                        ServiceIO io = currentComponent.getOutput(outputId);
 
-                        // TODO Re-implement the adding of the filters to the log
-                        registry.filter(cs, executionInstance, currentComponent, io, b.getString(FILTER_CONDITION), messageData, b.getString(FILTER_VALUE));
+                        ComponentService currentComponent = cs.getComponents().get(index - 1); // Need to get the last index because we've moved on
+                        registry.filter(cs, executionInstance, currentComponent, b);
                     }
 					return;
 				}
 			}
 
-			messageData = this.mapOutputs(messageData, service);
-		}
-		else
-		{
-			messageData = this.mapOutputs(null, service);
-		}
+            try {
+                messageData = this.mapOutputs(messageData, service);
+            } catch (OrchestrationException e) {
+                return;
+            }
+        } else {
+            try {
+                messageData = this.mapOutputs(null, service);
+            } catch (OrchestrationException e) {
+                return;
+            }
+        }
 
 		Bundle bDescription = service.getDescription().toBundle();
 		messageData.putBundle(ComposableService.DESCRIPTION, bDescription);
@@ -221,25 +227,23 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		
 		// Do one last check before we send
 		if(registry.isTerminated(cs, executionInstance)) {
-            // TODO Indicate that we've stopped prematurely
 			return;
     	}
 
     	Intent intent = new Intent();
     	intent.setClassName(description.getPackageName(), description.getClassName());
 
-        if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": Sending data -- " + Library.printBundle(messageData) + "  " + System.currentTimeMillis());
+        if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": Sending data -- " + Library.printBundle(messageData) + "  " + System.currentTimeMillis());
         message.setData(messageData);
 
-    	if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": Binding service -- " + description.getPackageName() + " ; " + description.getClassName() + "  " + System.currentTimeMillis());
+    	if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": Binding service -- " + description.getPackageName() + " ; " + description.getClassName() + "  " + System.currentTimeMillis());
         context.bindService(intent, this, Context.BIND_AUTO_CREATE);
 
-        if(LOG) Log.d(TAG, Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
+        if (LOG) Log.d(TAG, Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
         isBound = true;
     }
 	
-	private Bundle filter(ArrayList<Bundle> messageData, ComponentService service)
-	{
+	private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {
         ArrayList<Bundle> filtered = new ArrayList<Bundle>();
 		ArrayList<Bundle> retained = new ArrayList<Bundle>();
 
@@ -270,8 +274,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 else if (output.getFilterState() == ServiceIO.SAMPLE_FILTER)
                     value = output.getChosenSampleValue().value;
 
-                if (value == null) // Something has gone very very wrong
-                {
+                if (value == null) {  // Something has gone very very wrong
                     Log.e(TAG, "Filter value is dead, you've done something rather stupid");
                     continue;
                 }
@@ -284,38 +287,28 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 try {
                     // This returns whether it PASSES the test, so we need to filter it if it doesn't
                     Boolean result = (Boolean) fv.method.invoke(null, first, value);
-
                     if (result) {
 
                         // Put the name of the condition that failed, and the value that should have been set
-//                        data.putLong(FILTER_OUTPUTID, output.getID());
-//                        data.putString(FILTER_VALUE, first.toString());
-//                        data.putString(FILTER_CONDITION, fv.text);
-//                        filtered.add(data);
                         matchCount++;
-//                        Log.d(TAG, "Found match " + first.toString() + " " + fv.text + " " + value.toString());
                         break;
                     }
                 } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "Wrong arguments.");
-                    e.printStackTrace();
+                    throw new OrchestrationException("Wrong arguments passed to filter method: " +
+                            fv.method.getName() + first + ", " + value);
                 } catch (IllegalAccessException e) {
-                    Log.e(TAG, "It's private, you did it wrong");
-                    e.printStackTrace();
+                    throw new OrchestrationException("Can't access filter condition method: " +
+                            fv.method.getName());
                 } catch (InvocationTargetException e) {
-                    Log.e(TAG, "Invocation Target Exception!?!?!?!?!?!");
-                    e.printStackTrace();
+                    throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
                 }
             }
 
             // If we get to here we've checked all of the values for the different IOs for that message, so it can be retained
-            if (matchCount == outputs.size())
+            if (matchCount == outputs.size()) {
                 retained.add(data);
-        }
-
-        for(Bundle bb : messageData) {
-            if(!retained.contains(bb)) {
-                filtered.add(bb);
+            } else {
+                filtered.add(data);
             }
         }
 		
@@ -324,12 +317,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
 		return b;
 	}
 
-    // FIXME This stuff might be replaceable with my new way of doing it so we don't have to rely on class checking
-    // FIXME Need to store the information about the type of the thing in the bundle too. Then we can invoke the right method.
-
-
     @SuppressWarnings("unchecked")
-	private Bundle mapOutputs(Bundle bundle, ComponentService service)
+	private Bundle mapOutputs(Bundle bundle, ComponentService service) throws OrchestrationException
 	{
         // Get the description of the component to be mapped to
         ServiceDescription sd = service.getDescription();
@@ -350,8 +339,9 @@ public class OrchestrationServiceConnection implements ServiceConnection
             } else if(o.getClass().equals(ArrayList.class)) {
                 outputList = (ArrayList<Bundle>) o;
             } else {
-                Log.e(TAG, "It's neither a bundle nor a list of bundles, something has gone very very wrong");
-                // FIXME Write an error to the log
+                String message = "Map outputs: Data is not Bundle or AL<Bundle>: " + o.getClass().getCanonicalName();
+                registry.orchestratorFail(cs, executionInstance, sd, message);
+                throw new OrchestrationException(message);
             }
 
             for (Bundle outputBundle : outputList) {
@@ -481,7 +471,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         		if(!osc.test && m.what != ComposableService.MSG_FAIL)
         			osc.registry.compositeSuccess(osc.cs, executionInstance);
         		else if(!osc.test)
-        			osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index).getDescription(), m.getData(), "Failed on the last one, that's not so good");
+        			osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
 
         		return null;
         	}
@@ -542,7 +532,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
                     Bundle b = m.getData();
                     ArrayList<Bundle> dummyList = b.getParcelableArrayList(ComposableService.INPUT);
                     Bundle errorBundle = dummyList.get(0);
-                    Registry.getInstance(context).componentCompositeFail(osc.cs, executionInstance, osc.cs.getComponents().get(osc.index).getDescription(), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
+                    Registry.getInstance(context).componentCompositeFail(osc.cs, executionInstance, osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
 
                     SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 

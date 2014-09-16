@@ -92,7 +92,7 @@ public class DialogIO extends DialogCustom {
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
                 registry.updateCurrent();
-                // FIXME What about a parent.redraw();
+                DialogIO.this.activity.redraw();
                 dismiss();
             }
         });
@@ -103,7 +103,7 @@ public class DialogIO extends DialogCustom {
                 item.setFilterState(ServiceIO.UNFILTERED);
                 DialogIO.this.activity.setStatus("Removed for " + description.getName());
                 registry.updateCurrent();
-                // FIXME What about a parent.redraw();
+                DialogIO.this.activity.redraw();
                 cancel();
             }
         });

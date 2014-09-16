@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class DialogStatus extends DialogCustom {
-    // FIXME Doing the dialog for the statuses
+    // TODO Doing the dialog for the statuses
 
     public DialogStatus(final ActivityWiring activity, final ServiceIO item) {
         super(activity, item);

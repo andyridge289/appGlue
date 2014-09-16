@@ -50,12 +50,13 @@ public class FragmentComponentListLocal extends FragmentComponentList {
 
         ((TextView) v.findViewById(R.id.simple_list_none)).setText("No components on this device! (You shouldn't be seeing this.... What have you done!?)");
 
-        registry = Registry.getInstance(parent);
+        registry = Registry.getInstance(getActivity());
 
         Bundle args = getArguments();
         triggers = args.getBoolean(TRIGGERS_ONLY, false);
         hasInputs = args.getBoolean(HAS_INPUTS, false);
         hasOutputs = args.getBoolean(HAS_OUTPUTS, false);
+        justList = args.getBoolean(JUST_A_LIST, false);
         matching = args.getBoolean(MATCHING, false);
         position = args.getInt(POSITION, -1);
 
@@ -65,11 +66,15 @@ public class FragmentComponentListLocal extends FragmentComponentList {
         serviceListView.setOnItemLongClickListener(new OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
-                Intent intent = new Intent(parent, ActivityComponent.class);
+                Intent intent = new Intent(getActivity(), ActivityComponent.class);
                 intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
                 intent.putExtra(CLASSNAME, services.get(position).getClassName());
-                intent.putExtra(JUST_A_LIST, parent.justAList());
-                parent.startActivityForResult(intent, SERVICE_REQUEST);
+                intent.putExtra(JUST_A_LIST, justList);
+
+                if(!homeParent) {
+                    getActivity().startActivityForResult(intent, SERVICE_REQUEST);
+                }
+
                 return true;
             }
         });
@@ -77,7 +82,8 @@ public class FragmentComponentListLocal extends FragmentComponentList {
         serviceListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                parent.chosenItem(services.get(position).getClassName());
+                if(!homeParent)
+                    ((ActivityComponentList) getActivity()).chosenItem(services.get(position).getClassName());
             }
         });
 
@@ -113,7 +119,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
 
                         if (prior == null && next == null) {
                             // Both null, get everything
-                            services = registry.getComponents();
+                            services = registry.getAllServiceDescriptions();
                         } else if (prior != null && next == null) {
                             // Prior is alive, next isn't, just use priors getOutputs
 
@@ -121,7 +127,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                             if (prior.hasOutputs())
                                 services = registry.getMatchingForOutputs(prior);
                             else
-                                services = registry.getComponents();
+                                services = registry.getAllServiceDescriptions();
                         } else {
                             if (prior == null && next != null) {
                                 // Prior is dead, next is alive, just use next's getInputs
@@ -130,7 +136,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                 if (next.hasInputs())
                                     services = registry.getMatchingForInputs(next);
                                 else
-                                    services = registry.getComponents();
+                                    services = registry.getAllServiceDescriptions();
                             } else {
                                 // Both are alive, so get them based on the getOutputs and then filter on the getInputs
                                 if (prior.hasOutputs()) {
@@ -168,7 +174,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                                 } else if (next.hasInputs()) {
                                     services = registry.getMatchingForInputs(next);
                                 } else
-                                    services = registry.getComponents();
+                                    services = registry.getAllServiceDescriptions();
 
 
                             }
@@ -183,7 +189,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                 services = registry.getInputOnlyComponents();
             } else {
                 // Everything
-                services = registry.getComponents();
+                services = registry.getAllServiceDescriptions();
             }
 
             return services;
@@ -198,7 +204,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
 
             if (services.size() > 0) {
                 serviceListView.setVisibility(View.VISIBLE);
-                AdapterComponentList adapter = new AdapterComponentList(parent, services);
+                AdapterComponentList adapter = new AdapterComponentList(getActivity(), services);
                 serviceListView.setAdapter(adapter);
             } else
                 noneFound.setVisibility(View.VISIBLE);

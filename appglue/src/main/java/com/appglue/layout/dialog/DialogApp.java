@@ -66,7 +66,7 @@ public class DialogApp extends DialogCustom {
                 DialogApp.this.activity.setStatus("Chosen app: " + selected.packageName);
 
                 registry.updateCurrent();
-                // FIXME Might need to do a parent.redraw();
+                activity.redraw();
                 dismiss();
             }
         });

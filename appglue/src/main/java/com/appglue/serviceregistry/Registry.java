@@ -11,7 +11,7 @@ import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.description.ServiceIO;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
 import com.appglue.test.EngineTest;
 
@@ -77,8 +77,8 @@ public class Registry {
         return cs.getComponents().size() > 0;
     }
 
-    public void saveTemp(String name) {
-        dbHandler.saveTemp(name);
+    public void saveTempAsComposite(String name) {
+        dbHandler.saveTempAsComposite(name);
     }
 
     public CompositeService getService() {
@@ -195,6 +195,10 @@ public class Registry {
         return success;
     }
 
+    public ArrayList<ComponentService> getComponents(String className, int position) {
+        return dbHandler.getComponents(className, position);
+    }
+
 //	public boolean compositeExistsWithName(String name)
 //	{
 //		return dbHandler.compositeExistsWithName(name);
@@ -232,99 +236,8 @@ public class Registry {
         return dbHandler.getComponentsForApp(packageName);
     }
 
-    public ArrayList<ServiceDescription> getComponents() {
-        return dbHandler.getServiceDescriptions(null);
-    }
-
     public ArrayList<ServiceDescription> getTriggers() {
         return dbHandler.getServiceDescriptions(ProcessType.TRIGGER);
-    }
-
-    /**
-     * Start the composite and give back the execution getID of the instance of the running composite.
-     *
-     * @param composite The composite to start
-     * @return The execution ID of the running instance of the composite
-     */
-    public long startComposite(CompositeService composite) {
-        long execID = dbHandler.startComposite(composite);
-        if(LOG) Log.d(TAG, "Started composite ID " + composite.getID() + "(" + composite.getName() + ") with execID " + execID);
-        return execID;
-    }
-
-    public boolean compositeSuccess(CompositeService composite, long executionInstance) {
-        boolean ret = dbHandler.stopComposite(composite, executionInstance, LogItem.SUCCESS);
-        EngineTest.executeFinished = true;
-        return ret;
-    }
-
-    public boolean componentSuccess(CompositeService composite, long executionInstance, ServiceDescription component, String message, Bundle outputData) {
-        // If a component works, then say what output it gave back to the orchestrator
-        return dbHandler.addToLog(composite, executionInstance, component, message, null, outputData, LogItem.SUCCESS);
-    }
-
-    public void genericTriggerFail(ServiceDescription component, Bundle inputData, String error) {
-        dbHandler.addToLog(null, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL);
-    }
-
-    /**
-     * Record that a component has failed to execute properly, and stop the associated composite
-     *
-     * @param composite The composite containing the component that failed
-     * @param executionInstance The instance of the running composite that caused the problem
-     * @param component The class of the component that failed
-     * @param inputData The input that was passed to the component when it failed
-     * @param message The message that the component gave when it failed
-     * @return An indicator of the success or failure of the logging
-     */
-    public boolean componentCompositeFail(CompositeService composite, long executionInstance, ServiceDescription component, Bundle inputData, String message) {
-        // If a component fails, we should tell the user what the input to the component was when it failed
-        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.COMPONENT_FAIL);
-        boolean logComposite = dbHandler.stopComposite(composite, executionInstance, LogItem.COMPONENT_FAIL);
-
-        EngineTest.executeFinished = true;
-
-        if(logComponent && logComposite) {
-            return true;
-        } else {
-            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
-                    executionInstance, component.getClassName(), inputData != null));
-            return false;
-        }
-    }
-
-    public boolean messageFail(CompositeService composite, long executionInstance, ServiceDescription component, Bundle inputData) {
-        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, "Failed to send message with data ", inputData, null, LogItem.MESSAGE_FAIL);
-        boolean logComposite = dbHandler.stopComposite(composite, executionInstance, LogItem.COMPONENT_FAIL);
-
-        if(logComponent && logComposite) {
-            return true;
-        } else {
-            Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, getInputs set: %b", composite.getID(),
-                    executionInstance, component.getClassName(), inputData != null));
-            return false;
-        }
-    }
-
-    public boolean filter(CompositeService cs, long executionInstance, ComponentService component, ServiceIO io, String condition, Bundle inputData, Object value) {
-        // When we stop at a filter, say what the data was at that point
-
-
-        ServiceDescription sd = component.getDescription();
-        String ioValue = (io == null) ? "" : io.getValue().toString();
-        boolean logComponent = dbHandler.addToLog(cs, executionInstance, sd,
-                "Stopped execution at filter: expected [" + condition + " \"" + ioValue + "\"] and got \"" + value + "\"",
-                inputData, null, LogItem.FILTER);
-        boolean logComposite = dbHandler.stopComposite(cs, executionInstance, LogItem.FILTER);
-        EngineTest.executeFinished = true;
-
-        if(logComposite && logComponent) {
-            return true;
-        } else {
-            Log.e(TAG, String.format("Failed to register component filter stop: %d, %d, %s, getInputs set: %b", cs.getID(),
-                    executionInstance, sd.getClassName(), inputData != null));
-            return false;
-        }
     }
 
     public long isCompositeRunning(long compositeId) {
@@ -349,10 +262,9 @@ public class Registry {
         return dbHandler.isTerminated(composite, executionInstance);
     }
 
-    public boolean terminate(CompositeService composite, long executionInstance) {
-        boolean success = dbHandler.terminate(composite, executionInstance);
-        if(LOG) Log.d(TAG, "Terminated composite ID " + composite.getID() + "(" +
-                            composite.getName() + ") execID: " + executionInstance);
+    public boolean terminate(CompositeService composite, long executionInstance, int status,
+                             String message) {
+        boolean success = dbHandler.terminate(composite, executionInstance, status, message);
         return success;
     }
 
@@ -372,11 +284,97 @@ public class Registry {
         }
     }
 
-    public ServiceDescription getComponent(String className) {
-        return dbHandler.getServiceDescription(className);
-    }
-
     public ArrayList<LogItem> getExecutionLog(CompositeService composite) {
         return dbHandler.getLog(composite);
+    }
+
+    /**
+     * Start the composite and give back the execution getID of the instance of the running composite.
+     *
+     * @param composite The composite to start
+     * @return The execution ID of the running instance of the composite
+     */
+    public long startComposite(CompositeService composite) {
+        long execID = dbHandler.startComposite(composite);
+        if(LOG) Log.d(TAG, "Started composite ID " + composite.getID() + "(" + composite.getName() + ") with execID " + execID);
+        return execID;
+    }
+
+    public boolean compositeSuccess(CompositeService composite, long executionInstance) {
+        boolean ret = dbHandler.terminate(composite, executionInstance, LogItem.SUCCESS, "Successfully executed");
+        EngineTest.executeFinished = true;
+        return ret;
+    }
+
+    public boolean componentSuccess(CompositeService composite, long executionInstance, ComponentService component, String message, Bundle outputData) {
+        // If a component works, then say what output it gave back to the orchestrator
+        return dbHandler.addToLog(composite, executionInstance, component, message, null, outputData, LogItem.SUCCESS);
+    }
+
+    public void genericTriggerFail(ComponentService component, Bundle inputData, String error) {
+        dbHandler.addToLog(null, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL);
+    }
+
+    /**
+     * Record that a component has failed to execute properly, and stop the associated composite
+     *
+     * @param composite The composite containing the component that failed
+     * @param executionInstance The instance of the running composite that caused the problem
+     * @param component The class of the component that failed
+     * @param inputData The input that was passed to the component when it failed
+     * @param message The message that the component gave when it failed
+     * @return An indicator of the success or failure of the logging
+     */
+    public boolean componentCompositeFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData, String message) {
+        // If a component fails, we should tell the user what the input to the component was when it failed
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.COMPONENT_FAIL);
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
+
+        EngineTest.executeFinished = true;
+
+        if(logComponent && logComposite) {
+            return true;
+        } else {
+            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
+                    executionInstance, component.getDescription().getClassName(), inputData != null));
+            return false;
+        }
+    }
+
+    public boolean messageFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData) {
+        String message = "Failed to send message.";
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.MESSAGE_FAIL);
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
+
+        if(logComponent && logComposite) {
+            return true;
+        } else {
+            Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, getInputs set: %b", composite.getID(),
+                    executionInstance, component.getDescription().getClassName(), inputData != null));
+            return false;
+        }
+    }
+
+    public boolean filter(CompositeService cs, long executionInstance, ComponentService component,
+                         Bundle inputData) {
+
+        // When we stop at a filter, say what the data was at that point
+        ServiceDescription sd = component.getDescription();
+        String message = "Stopped execution at filter: expected and got \"" + AppGlueLibrary.bundleToString(inputData) + "\"";
+
+        boolean logComponent = dbHandler.addToLog(cs, executionInstance, component, message, inputData, null, LogItem.FILTER);
+        boolean logComposite = dbHandler.terminate(cs, executionInstance, LogItem.FILTER, message);
+
+        EngineTest.executeFinished = true;
+        return logComposite && logComponent;
+    }
+
+    public boolean orchestratorFail(CompositeService composite, long executionInstance, ServiceDescription sd, String message) {
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.ORCH_FAIL, message);
+        return logComposite;
+    }
+
+    public ArrayList<ServiceDescription> getAllServiceDescriptions() {
+        return dbHandler.getServiceDescriptions(null);
     }
 }
