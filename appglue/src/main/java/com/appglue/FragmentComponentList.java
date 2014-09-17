@@ -17,6 +17,8 @@ import com.appglue.serviceregistry.Registry;
 
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
+import static com.appglue.Constants.POSITION;
+
 import java.util.ArrayList;
 
 public class FragmentComponentList extends Fragment
@@ -41,7 +43,6 @@ public class FragmentComponentList extends Fragment
         homeParent = getActivity() instanceof ActivityAppGlue;
     }
 
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle)
 	{
@@ -51,11 +52,9 @@ public class FragmentComponentList extends Fragment
 		serviceListView.setDivider(null); 
 		serviceListView.setDividerHeight(0);
 
-        if(homeParent) {
-            Bundle args = getArguments();
-            justList = args.getBoolean(JUST_A_LIST, false);
-        }
-		
+        Bundle args = getArguments();
+        justList = args.getBoolean(JUST_A_LIST, false);
+
 		loader = (ImageView) v.findViewById(R.id.loading_spinner);
 		noneFound = (TextView) v.findViewById(R.id.simple_list_none);
 		
@@ -70,11 +69,6 @@ public class FragmentComponentList extends Fragment
 	{	
 		super.onActivityCreated(icicle);
 		renderServices = new ArrayList<ServiceDescription>();
-
-        if(!homeParent) {
-            Bundle arguments = getArguments();
-            justList = arguments.getBoolean(JUST_A_LIST, false);
-        }
 	}
 	
 	public void setName(String name)

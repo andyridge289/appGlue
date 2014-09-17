@@ -59,9 +59,9 @@ public class FragmentComponentListSearch extends FragmentComponentList {
 
         serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
+            public void onItemClick(AdapterView<?> adapterView, View v, int index, long id) {
                 if(!homeParent)
-                    ((ActivityComponentList) getActivity()).chosenItem(services.get(position).getClassName());
+                    ((ActivityWiring) getActivity()).chooseItem(services.get(index).getClassName());
             }
         });
 

@@ -12,7 +12,7 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;

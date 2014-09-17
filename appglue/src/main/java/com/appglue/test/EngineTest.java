@@ -24,7 +24,7 @@ import com.appglue.services.TubeService;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;

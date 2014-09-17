@@ -1,23 +1,13 @@
 package com.appglue.test;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
+import android.test.suitebuilder.annotation.MediumTest;
 
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
-import java.util.ArrayList;
-
-import static com.appglue.Constants.COMPOSITE_ID;
-import static com.appglue.Constants.DATA;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.TEST;
 
 public class DBTest extends AndroidTestCase {
 
@@ -42,6 +32,22 @@ public class DBTest extends AndroidTestCase {
 
         CompositeService fred2 = registry.getComposite(fred.getID());
         assertEquals(fred, fred2);
+    }
+
+    @MediumTest
+    public void testTemp() throws Exception {
+
+        // Create the temp
+
+        // See if it's there
+
+        // Add some stuff to it, see what happens
+
+        // Reset it, see what happens
+
+        // Save it to another composite, see what happens
+
+        assertEquals(1, 2);
     }
 
 

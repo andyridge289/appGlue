@@ -9,7 +9,7 @@ import android.view.View.OnClickListener;
 
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.TAG;
 
 public class ActivityStory extends Activity implements OnClickListener

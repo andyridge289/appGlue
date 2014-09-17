@@ -65,7 +65,8 @@ public class FragmentComponentListPager extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.PAGE_COMPONENTS);
+        if(activity instanceof ActivityAppGlue)
+            ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.PAGE_COMPONENTS);
     }
 
     @Override
@@ -112,11 +113,11 @@ public class FragmentComponentListPager extends Fragment {
 //            fragments.add(matching);
 //        }
 
-        Bundle args = new Bundle();
-        args.putBoolean(HAS_INPUTS, true);
-        args.putBoolean(HAS_OUTPUTS, true);
+        Bundle allArgs = new Bundle();
+        allArgs.putBoolean(HAS_INPUTS, true);
+        allArgs.putBoolean(HAS_OUTPUTS, true);
         FragmentComponentListLocal all = new FragmentComponentListLocal();
-        all.setArguments(args);
+        all.setArguments(allArgs);
         all.setName("ALL COMPONENTS");
         fragments.add(all);
 

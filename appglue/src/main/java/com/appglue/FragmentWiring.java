@@ -50,7 +50,7 @@ public class FragmentWiring extends FragmentVW {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        position = getArguments().getInt(INDEX);
+//        position = getArguments().getInt(INDEX);
     }
 
     public int getPosition() {
@@ -61,126 +61,126 @@ public class FragmentWiring extends FragmentVW {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_wiring, container, false);
 
-        hueMap = new HashMap<String, Integer>();
-
-        wiringMap = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
-
-        TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
-        TextView secondName = (TextView) rootView.findViewById(R.id.second_name);
-
-        ImageView firstIcon = (ImageView) rootView.findViewById(R.id.first_icon);
-        ImageView secondIcon = (ImageView) rootView.findViewById(R.id.second_icon);
-
-        RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
-        RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
-
-        ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
-
-        first = position > 0 ? components.get(position - 1) : null;
-        second = position < components.size() ? components.get(position) : null;
-
-        wiringMap.set(first, second);
-
-        LocalStorage localStorage = LocalStorage.getInstance();
-
-        // Set the icon of either to be the big purple plus if there's not a component in that position
-        if (first != null) {
-            firstName.setText(first.getDescription().getName());
-            firstName.setTextColor(Color.BLACK);
-
-            try {
-                AppDescription firstApp = first.getDescription().app();
-                Bitmap b;
-
-                if (firstApp == null) {
-                    firstIcon.setBackgroundResource(R.drawable.icon);
-
-                } else {
-                    String iconLocation = first.getDescription().app().iconLocation();
-                    if (iconLocation.equals("")) {
-                        firstIcon.setBackgroundResource(R.drawable.icon);
-                    }
-                    b = localStorage.readIcon(iconLocation);
-                    firstIcon.setImageBitmap(b);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            firstContainer.setBackgroundResource(R.drawable.wiring_component);
-            firstContainer.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    // Clicking on the first container should let you move/rename it
-                    return false;
-                }
-            });
-        } else {
-            firstName.setText("Add");
-            firstName.setTextColor(getResources().getColor(R.color.colorPrimary));
-            firstIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
-            firstContainer.setBackgroundResource(R.drawable.wiring_add);
-
-            // Make it add at this position when we click it
-            firstContainer.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), ActivityComponentList.class);
-                    i.putExtra(POSITION, position);
-                    i.putExtra(FIRST, true);
-                    getActivity().startActivityForResult(i, SERVICE_REQUEST);
-                }
-            });
-        }
-
-        // Make the right icon be the left half, Make the left icon be the right half
-        if (second != null) {
-            secondName.setText(second.getDescription().getName());
-            secondName.setTextColor(Color.BLACK);
-            secondContainer.setBackgroundResource(R.drawable.wiring_component);
-
-            try {
-                AppDescription secondApp = second.getDescription().app();
-                Bitmap b;
-
-                if (secondApp == null) {
-                    firstIcon.setBackgroundResource(R.drawable.icon);
-                } else {
-                    String iconLocation = secondApp.iconLocation();
-                    if (iconLocation.equals("")) {
-                      firstIcon.setBackgroundResource(R.drawable.icon);
-                    }
-                    b = localStorage.readIcon(iconLocation);
-                    secondIcon.setImageBitmap(b);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            secondContainer.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    // Clicking on the second container should let you move/rename it
-                    return false;
-                }
-            });
-        } else {
-            secondName.setText("Add");
-            secondName.setTextColor(getResources().getColor(R.color.colorPrimary));
-            secondContainer.setBackgroundResource(R.drawable.wiring_add);
-            secondIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
-
-            // Make it add at this position when we click it
-            secondContainer.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(getActivity(), ActivityComponentList.class);
-                    i.putExtra(POSITION, position);
-                    i.putExtra(FIRST, false);
-                    getActivity().startActivityForResult(i, SERVICE_REQUEST);
-                }
-            });
-        }
+//        hueMap = new HashMap<String, Integer>();
+//
+//        wiringMap = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
+//
+//        TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
+//        TextView secondName = (TextView) rootView.findViewById(R.id.second_name);
+//
+//        ImageView firstIcon = (ImageView) rootView.findViewById(R.id.first_icon);
+//        ImageView secondIcon = (ImageView) rootView.findViewById(R.id.second_icon);
+//
+//        RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
+//        RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
+//
+//        ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
+//
+//        first = position > 0 ? components.get(position - 1) : null;
+//        second = position < components.size() ? components.get(position) : null;
+//
+//        wiringMap.set(first, second);
+//
+//        LocalStorage localStorage = LocalStorage.getInstance();
+//
+//        // Set the icon of either to be the big purple plus if there's not a component in that position
+//        if (first != null) {
+//            firstName.setText(first.getDescription().getName());
+//            firstName.setTextColor(Color.BLACK);
+//
+//            try {
+//                AppDescription firstApp = first.getDescription().app();
+//                Bitmap b;
+//
+//                if (firstApp == null) {
+//                    firstIcon.setBackgroundResource(R.drawable.icon);
+//
+//                } else {
+//                    String iconLocation = first.getDescription().app().iconLocation();
+//                    if (iconLocation.equals("")) {
+//                        firstIcon.setBackgroundResource(R.drawable.icon);
+//                    }
+//                    b = localStorage.readIcon(iconLocation);
+//                    firstIcon.setImageBitmap(b);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            firstContainer.setBackgroundResource(R.drawable.wiring_component);
+//            firstContainer.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    // Clicking on the first container should let you move/rename it
+//                    return false;
+//                }
+//            });
+//        } else {
+//            firstName.setText("Add");
+//            firstName.setTextColor(getResources().getColor(R.color.colorPrimary));
+//            firstIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
+//            firstContainer.setBackgroundResource(R.drawable.wiring_add);
+//
+//            // Make it add at this position when we click it
+//            firstContainer.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent i = new Intent(getActivity(), ActivityComponentList.class);
+//                    i.putExtra(POSITION, position);
+//                    i.putExtra(FIRST, true);
+//                    getActivity().startActivityForResult(i, SERVICE_REQUEST);
+//                }
+//            });
+//        }
+//
+//        // Make the right icon be the left half, Make the left icon be the right half
+//        if (second != null) {
+//            secondName.setText(second.getDescription().getName());
+//            secondName.setTextColor(Color.BLACK);
+//            secondContainer.setBackgroundResource(R.drawable.wiring_component);
+//
+//            try {
+//                AppDescription secondApp = second.getDescription().app();
+//                Bitmap b;
+//
+//                if (secondApp == null) {
+//                    firstIcon.setBackgroundResource(R.drawable.icon);
+//                } else {
+//                    String iconLocation = secondApp.iconLocation();
+//                    if (iconLocation.equals("")) {
+//                      firstIcon.setBackgroundResource(R.drawable.icon);
+//                    }
+//                    b = localStorage.readIcon(iconLocation);
+//                    secondIcon.setImageBitmap(b);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            secondContainer.setOnLongClickListener(new OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    // Clicking on the second container should let you move/rename it
+//                    return false;
+//                }
+//            });
+//        } else {
+//            secondName.setText("Add");
+//            secondName.setTextColor(getResources().getColor(R.color.colorPrimary));
+//            secondContainer.setBackgroundResource(R.drawable.wiring_add);
+//            secondIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
+//
+//            // Make it add at this position when we click it
+//            secondContainer.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent i = new Intent(getActivity(), ActivityComponentList.class);
+//                    i.putExtra(POSITION, position);
+//                    i.putExtra(FIRST, false);
+//                    getActivity().startActivityForResult(i, SERVICE_REQUEST);
+//                }
+//            });
+//        }
 
         return rootView;
     }
@@ -202,12 +202,12 @@ public class FragmentWiring extends FragmentVW {
     }
 
     public void redraw() {
-        if (wiringMap == null) {
-            Log.w(TAG, "Map is null for " + position);
-            return;
-        }
+//        if (wiringMap == null) {
+//            Log.w(TAG, "Map is null for " + position);
+//            return;
+//        }
 
-        wiringMap.redraw(true);
+//        wiringMap.redraw(true);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

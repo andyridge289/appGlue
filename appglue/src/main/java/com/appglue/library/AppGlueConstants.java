@@ -3,7 +3,6 @@ package com.appglue.library;
 import com.appglue.library.IOFilter.FilterValue;
 
 import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.FRIENDLY_NAME;
@@ -192,6 +191,8 @@ public class AppGlueConstants {
                     {NUMERAL, "INTEGER"},
                     {INTERVAL, "INTEGER"}
             };
+
+    public static final String COMPOSITE_ID = "composite_id";
 
     public static final String[][] COLS_COMPONENT = new String[][]
             {

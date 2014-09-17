@@ -149,14 +149,7 @@ public class Constants
 			this.name = name;
 		}
 	}
-	
-	public static final String CLASSES = "classes";
-	
-	// The list of services that have parameters
-	public static final String PARAM_SERVICES = "param_services";
-	
-	// The list of parameters that a service has
-	public static final String SERVICE_PARAMS = "service_params";
+
 	
 	public static final String TEST = "test";
 	public static final String DURATION = "duration";
@@ -186,13 +179,6 @@ public class Constants
 	public static final String SAMPLES = "samples";
 	public static final String SAMPLE_NAME = "sample_name";
 	public static final String SAMPLE_VALUE = "sample_value";
-	
-	public static final String PRIOR = "prior";
-	public static final String CURRENT = "current";
-	public static final String NEXT = "next";
-	
-	// The escape sequence
-	public static final String DELIMITER = "!!@!!@!!@!!@";
 
     // These sort out the service descriptions too
     public static final String ID = "id";
@@ -217,17 +203,8 @@ public class Constants
 	public static final String INSTALLED = "installed";
 	
 	// Database - Composite_has_atomic
-	public static final String COMPOSITE_ID = "composite_id";
 	public static final String POSITION = "position";
-	
-	// Database - Parameter
-	public static final String PARAM_TYPE = "param_type";
-	public static final String PARAM_REQUIREDNESS = "param_priority";
-	public static final String POSS_USER = "poss_user";
-	public static final String POSS_SYSTEM = "poss_system";
-	
-	// Database - atomic_has_parameter
-	public static final String PARAMETER_ID = "param_id";
+
 
 	public static final String OUTPUT_IO_ID = "output_io_id";
 	public static final String INPUT_IO_ID = "input_io_id";

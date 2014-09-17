@@ -199,6 +199,10 @@ public class Registry {
         return dbHandler.getComponents(className, position);
     }
 
+    public long addComponent(ComponentService component) {
+        return dbHandler.addComponent(component);
+    }
+
 //	public boolean compositeExistsWithName(String name)
 //	{
 //		return dbHandler.compositeExistsWithName(name);

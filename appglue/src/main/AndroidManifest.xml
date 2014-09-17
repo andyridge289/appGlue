@@ -52,34 +52,33 @@
             <!--</intent-filter>-->
         </activity>
 
-        <activity
-            android:name="com.appglue.ActivityComponentList"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <!--<activity-->
+            <!--android:name="com.appglue.ActivityComponentList"-->
+            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
         <activity
             android:name="com.appglue.ActivityStory"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity
-            android:name="com.appglue.ActivityStoryParameters"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity
-            android:name="com.appglue.ActivityStoryComponents"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <!--<activity-->
+            <!--android:name="com.appglue.ActivityStoryParameters"-->
+            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
+        <!--<activity-->
+            <!--android:name="com.appglue.ActivityStoryComponents"-->
+            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
         <activity
             android:name="com.appglue.ActivityComponent"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name="com.appglue.ActivityApp"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity
-            android:name="com.appglue.ActivityLog"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <!--<activity-->
+            <!--android:name="com.appglue.ActivityLog"-->
+            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
         <activity
             android:name="com.appglue.ActivityComposite"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name="com.appglue.ActivityWiring"
             android:label="@string/application_name"
-            android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
             android:name="com.appglue.ActivityRunning"

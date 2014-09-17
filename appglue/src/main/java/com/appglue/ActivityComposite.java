@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class ActivityComposite extends Activity
 {

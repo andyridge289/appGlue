@@ -52,10 +52,14 @@ public class ComponentService {
         this.position = position;
     }
 
-    public ComponentService(long id, ServiceDescription sd, CompositeService cs, int position) {
+    public ComponentService(CompositeService composite, ServiceDescription sd, int position) {
         this(sd, position);
+        this.composite = composite;
+    }
+
+    public ComponentService(long id, ServiceDescription sd, CompositeService cs, int position) {
+        this(cs, sd, position);
         this.id = id;
-        this.composite = cs;
     }
 
     public CompositeService getComposite() {

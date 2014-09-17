@@ -8,7 +8,7 @@ import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.RUN_NOW;
 

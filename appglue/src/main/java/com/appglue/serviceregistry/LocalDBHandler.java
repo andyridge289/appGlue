@@ -42,7 +42,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.FRIENDLY_NAME;
@@ -353,6 +353,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * Delete all of the stuff in the other tables that references the TEMP.
      */
     public void resetTemp() {
+        // FIXME This doesn't appear to be working
+
         SQLiteDatabase db = this.getWritableDatabase();
         String[] sqls = new String[]{
             String.format("DELETE FROM `%s` WHERE %s = %d", TBL_COMPONENT, COMPOSITE_ID, TEMP_ID),
@@ -810,7 +812,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         deleteAllComponents(cs);
         for (int i = 0; i < components.size(); i++) {
-            long linkId = this.addComponent(cs, components.get(i));
+            long linkId = this.addComponent(components.get(i));
             components.get(i).setID(linkId);
         }
 
@@ -1093,11 +1095,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return num;
     }
 
-    public long addComponent(CompositeService cs, ComponentService component) {
+    public long addComponent(ComponentService component) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COMPOSITE_ID, cs.getID());
+        values.put(COMPOSITE_ID, component.getComposite().getID());
         values.put(CLASSNAME, component.getDescription().getClassName());
         values.put(POSITION, component.getPosition());
 

@@ -1,20 +1,7 @@
 <FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
-    <android.support.v4.app.Fragment
-        android:name="com.appglue.FragmentWiring"
-        android:id="@+id/wiring_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-    <android.support.v4.app.Fragment
-        android:name="com.appglue.FragmentComponentList"
-        android:id="@+id/component_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
 
 </FrameLayout>
