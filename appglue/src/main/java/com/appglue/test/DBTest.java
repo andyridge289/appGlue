@@ -8,6 +8,8 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
+import static com.appglue.library.AppGlueConstants.TEMP_ID;
+
 
 public class DBTest extends AndroidTestCase {
 
@@ -38,8 +40,21 @@ public class DBTest extends AndroidTestCase {
     public void testTemp() throws Exception {
 
         // Create the temp
+        Registry registry = Registry.getInstance(getContext());
+        CompositeService temp = registry.createTemp();
 
         // See if it's there
+        CompositeService testTemp = new CompositeService();
+        testTemp.setID(TEMP_ID);
+        testTemp.setName("temp");
+        testTemp.setDescription("This is ALWAYS the temporary composite");
+
+        assertEquals(temp, testTemp);
+
+//        cv.put(ACTIVE_OR_TIMER, 1);
+//        cv.put(ENABLED, 1);
+//        cv.put(NUMERAL, -1);
+//        cv.put(INTERVAL, 0);
 
         // Add some stuff to it, see what happens
 
