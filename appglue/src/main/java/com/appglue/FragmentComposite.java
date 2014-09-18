@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,8 @@ import com.appglue.serviceregistry.Registry;
 import java.util.ArrayList;
 
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+
+import static com.appglue.Constants.TAG;
 
 public class FragmentComposite extends Fragment {
 
@@ -47,7 +50,6 @@ public class FragmentComposite extends Fragment {
     }
 
     public static Fragment create() {
-
         return new FragmentComposite();
     }
 
@@ -65,6 +67,11 @@ public class FragmentComposite extends Fragment {
 
         if(getArguments() != null) {
             composite = registry.getComposite(getArguments().getLong(COMPOSITE_ID));
+        }
+
+        if(icicle != null) {
+            long compositeId = icicle.getLong(COMPOSITE_ID);
+            this.composite = registry.getComposite(compositeId);
         }
     }
 
@@ -103,6 +110,12 @@ public class FragmentComposite extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onViewStateRestored(Bundle in) {
+        super.onViewStateRestored(in);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
     }
@@ -140,6 +153,10 @@ public class FragmentComposite extends Fragment {
     }
 
     private void updatePage() {
+
+        if(composite == null) {
+            return;
+        }
 
         if(composite.getComponents().size() > 0) {
             AppDescription app = composite.getComponents().get(0).getDescription().getApp();

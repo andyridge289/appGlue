@@ -169,8 +169,6 @@ public class FragmentCompositeList extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.Page.HOME);
-
         registry = Registry.getInstance(activity);
         localStorage = LocalStorage.getInstance();
     }
@@ -225,8 +223,10 @@ public class FragmentCompositeList extends Fragment {
 //    }
     }
 
-    public void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
+    public void onSaveInstanceState(Bundle icicle) {
+        super.onSaveInstanceState(icicle);
+
+
     }
 
     @Override

@@ -65,9 +65,6 @@ public class FragmentComponentListPager extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        if(activity instanceof ActivityAppGlue)
-            ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.Page.COMPONENTS);
     }
 
     @Override

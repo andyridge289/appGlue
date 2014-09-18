@@ -25,10 +25,13 @@ public class AppGlueConstants {
     public static final String CREATE_NEW = "create_new";
     public static final String MATCHING = "matching";
     public static final String TEST = "test";
+    public static final String MODE = "mode";
 
     // Database information
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "appGlue";
+
+
 
     // 'static' database tables
     public static final String TBL_APP = "app";

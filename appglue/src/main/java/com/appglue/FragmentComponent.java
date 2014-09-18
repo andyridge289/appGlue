@@ -246,8 +246,6 @@ public class FragmentComponent extends Fragment {
 //            findViewById(R.id.scroll_eg_container).setVisibility(View.GONE);
 //            findViewById(R.id.eg_none).setVisibility(View.VISIBLE);
 //        }
-
-        ((ActivityAppGlue) getActivity()).onSectionAttached(ActivityAppGlue.Page.COMPONENTS);
     }
 
     public String getName() {

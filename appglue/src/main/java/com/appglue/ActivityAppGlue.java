@@ -37,6 +37,14 @@ public class ActivityAppGlue extends ActionBarActivity
         }
     }
 
+    private static final String PAGE = "page";
+    private static final String VIEW = "view";
+    private static final String COMPOSITE_MODE = "composite_mode";
+    private static final String COMPONENT_MODE = "component_mode";
+
+    // FIXME Onbackpressed changing to list needs to change mode of corresponding fragment
+    // FIXME Component list needs to work with adding components to create page
+
     private int view;
     public static final int VIEW_GRID = 0;
     public static final int VIEW_LIST = 1;
@@ -68,6 +76,51 @@ public class ActivityAppGlue extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        if(savedInstanceState == null) {
+
+            // Generate default values for all of the things
+            this.currentPage = Page.HOME.index;
+            this.view = VIEW_GRID; // TODO Store this as a preference
+            if (homeFragment != null) {
+                homeFragment.setMode(FragmentComposites.MODE_LIST);
+            }
+
+            if (componentFragment != null) {
+                componentFragment.setMode(FragmentComponents.MODE_LIST);
+            }
+
+        } else {
+            // Restore the values of the things that we have
+
+            this.currentPage = savedInstanceState.getInt(PAGE, Page.HOME.index);
+            this.view = savedInstanceState.getInt(VIEW, VIEW_GRID);
+
+            int compositeMode = savedInstanceState.getInt(COMPOSITE_MODE, -1);
+            int componentMode = savedInstanceState.getInt(COMPONENT_MODE, -1);
+
+            if(homeFragment != null) {
+                homeFragment.setMode(compositeMode);
+            }
+
+            if(componentFragment != null) {
+                componentFragment.setMode(componentMode);
+            }
+        }
+
+    }
+
+    protected void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+
+        out.putInt(PAGE, this.currentPage);
+        out.putInt(VIEW, this.view);
+        out.putInt(COMPOSITE_MODE, homeFragment == null ? -1 : homeFragment.getMode());
+        out.putInt(COMPONENT_MODE, componentFragment == null ? -1 : componentFragment.getMode());
+
+        // This mode
+        // This view
+        // Components mode
     }
 
     @Override

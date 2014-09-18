@@ -138,11 +138,17 @@ public class FragmentComponentListSearch extends FragmentComponentList {
 
             loader.setVisibility(View.GONE);
 
+            // FIXME getActivity() is dying when the rotation changes
+
             if (services.size() > 0) {
-                serviceListView.setVisibility(View.VISIBLE);
-                AdapterComponentList adapter = new AdapterComponentListSearch(getActivity(), services,
-                        (FragmentComponentListPager) getParentFragment());
-                serviceListView.setAdapter(adapter);
+                if(getActivity() != null) {
+                    serviceListView.setVisibility(View.VISIBLE);
+                    AdapterComponentList adapter = new AdapterComponentListSearch(getParentFragment().getActivity(), services,
+                            (FragmentComponentListPager) getParentFragment());
+                    serviceListView.setAdapter(adapter);
+                } else {
+                    // TODO Do it later?
+                }
             } else
                 noneFound.setVisibility(View.VISIBLE);
 

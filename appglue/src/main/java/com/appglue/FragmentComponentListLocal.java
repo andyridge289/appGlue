@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,14 +112,16 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                     // Get the current list, find the components before and/or after where we're trying to add
                     // FIXME Below needs to work with SparseArray
 
-                    ArrayList<ComponentService> currentComponents = registry.getService().getComponentsAL();
-                    Log.w(TAG, "position is " + position + " and size is" + currentComponents.size());
+                    SparseArray<ComponentService> components = registry.getService().getComponents();
+//                    ArrayList<ComponentService> currentComponents = registry.getService().getComponentsAL();
+
+                    Log.w(TAG, "position is " + position + " and size is" + components.size());
 
                     if (position == -1) {
                         services = registry.getOutputOnlyComponents();
                     } else {
-                        ServiceDescription prior = position == 0 ? null : currentComponents.get(position - 1).getDescription();
-                        ServiceDescription next = position < currentComponents.size() - 1 ? currentComponents.get(position + 1).getDescription() : null;
+                        ServiceDescription prior = position == 0 ? null : components.get(position - 1).getDescription();
+                        ServiceDescription next = position < components.size() - 1 ? components.get(position + 1).getDescription() : null;
 
                         if (prior == null && next == null) {
                             // Both null, get everything
@@ -206,9 +209,11 @@ public class FragmentComponentListLocal extends FragmentComponentList {
             loader.setVisibility(View.GONE);
 
             if (services.size() > 0) {
-                serviceListView.setVisibility(View.VISIBLE);
-                AdapterComponentList adapter = new AdapterComponentList(getActivity(), services, (FragmentComponentListPager) getParentFragment());
-                serviceListView.setAdapter(adapter);
+                if (getActivity() != null) {
+                    serviceListView.setVisibility(View.VISIBLE);
+                    AdapterComponentList adapter = new AdapterComponentList(getActivity(), services, (FragmentComponentListPager) getParentFragment());
+                    serviceListView.setAdapter(adapter);
+                }
             } else
                 noneFound.setVisibility(View.VISIBLE);
 

@@ -69,6 +69,7 @@ public class FragmentComponents extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        redraw();
     }
 
     public void onSaveInstanceState(Bundle out) {
@@ -101,7 +102,10 @@ public class FragmentComponents extends Fragment {
     }
 
     public void setMode(int mode) {
+        this.mode = mode;
+    }
 
+    private void redraw() {
         Fragment active;
 
         switch(mode) {
@@ -126,8 +130,6 @@ public class FragmentComponents extends Fragment {
         FragmentManager fm = getChildFragmentManager();
         fm.beginTransaction().replace(R.id.container, active)
                              .setCustomAnimations(R.anim.fade_out, R.anim.fade_in).commit();
-
-        this.mode = mode;
     }
 
     public int getMode() {
@@ -143,6 +145,7 @@ public class FragmentComponents extends Fragment {
         }
 
         setMode(MODE_COMPONENT);
+        redraw();
     }
 
     public String getName() {
