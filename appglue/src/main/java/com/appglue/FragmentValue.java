@@ -21,9 +21,6 @@ import com.appglue.description.datatypes.IOType;
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.ServiceIO;
-import com.appglue.layout.dialog.DialogApp;
-import com.appglue.layout.dialog.DialogFilter;
-import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.IOFilter;
 import com.appglue.library.LocalStorage;
 
@@ -96,13 +93,13 @@ public class FragmentValue extends FragmentVW {
             preName.setTextColor(Color.BLACK);
 
             try {
-                AppDescription firstApp = pre.getDescription().app();
+                AppDescription firstApp = pre.getDescription().getApp();
                 Bitmap b;
 
                 if (firstApp == null) {
                     preIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = pre.getDescription().app().iconLocation();
+                    String iconLocation = pre.getDescription().getApp().iconLocation();
                     if (iconLocation.equals("")) {
                         preIcon.setBackgroundResource(R.drawable.icon);
                     }
@@ -147,13 +144,13 @@ public class FragmentValue extends FragmentVW {
             postContainer.setBackgroundResource(R.drawable.wiring_input);
 
             try {
-                AppDescription firstApp = post.getDescription().app();
+                AppDescription firstApp = post.getDescription().getApp();
                 Bitmap b;
 
                 if (firstApp == null) {
                     postIcon.setBackgroundResource(R.drawable.icon);
                 } else {
-                    String iconLocation = post.getDescription().app().iconLocation();
+                    String iconLocation = post.getDescription().getApp().iconLocation();
                     if (iconLocation.equals("")) {
                         postIcon.setBackgroundResource(R.drawable.icon);
                     }

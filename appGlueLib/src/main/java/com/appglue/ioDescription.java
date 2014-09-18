@@ -227,9 +227,12 @@ public class IODescription
             return false;
         }
 
-        // FIXME This needs to check if they are all in both of them
+        if (this.sampleValues.size() != other.getSampleValues().size()) {
+            if(LOG) Log.d(TAG, "IODescription->Equals: sample size");
+            return false;
+        }
+
         for(int i = 0; i < sampleSearch.size(); i++) {
-            long k = sampleSearch.keyAt(i);
             IOValue v = sampleSearch.valueAt(i);
 
             if(!v.equals(other.getSampleValue(v.getID()))) {

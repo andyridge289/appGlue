@@ -27,14 +27,17 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     private Activity parent;
     private LocalStorage localStorage;
 
+    private FragmentComponentListPager parentFragment;
+
     private final Object lock = new Object();
 
-    public AdapterComponentList(Context context, ArrayList<ServiceDescription> items) {
+    public AdapterComponentList(Context context, ArrayList<ServiceDescription> items, FragmentComponentListPager parentFragment) {
         super(context, R.layout.component_list_item, items);
 
         localStorage = LocalStorage.getInstance();
 
         this.parent = (Activity) context;
+        this.parentFragment = parentFragment;
 
         this.items = items;
         cloneItems();
@@ -86,10 +89,10 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         if (sd.getServiceType() == ServiceType.IN_APP)
             icon.setImageResource(R.drawable.icon);
         else if (sd.getServiceType() == ServiceType.LOCAL) {
-            if (sd.app() == null)
+            if (sd.getApp() == null)
                 icon.setImageResource(R.drawable.ic_lock_silent_mode_vibrate);
             else {
-                Drawable d = new BitmapDrawable(parent.getResources(), localStorage.readIcon(sd.app().iconLocation()));
+                Drawable d = new BitmapDrawable(parent.getResources(), localStorage.readIcon(sd.getApp().iconLocation()));
                 icon.setImageDrawable(d);
             }
         } else
@@ -125,6 +128,21 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         } else {
             v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.outputs);
         }
+
+        final ServiceDescription sd2 = sd;
+
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(parentFragment.isJustList()) {
+                    // Tell the parent fragment to show the component page
+                    parentFragment.showServiceDescription(sd2.getClassName());
+                } else {
+                    // FIXME Choose the component to go in the composite
+                }
+
+            }
+        });
 
         return v;
     }

@@ -81,10 +81,10 @@ public class ActivityApp extends Activity {
             if (sd.getServiceType() == ServiceType.IN_APP)
                 icon.setImageResource(R.drawable.icon);
             else if (sd.getServiceType() == ServiceType.LOCAL) {
-                if (sd.app() == null)
+                if (sd.getApp() == null)
                     icon.setImageResource(R.drawable.ic_lock_silent_mode_vibrate);
                 else {
-                    Drawable d = new BitmapDrawable(getResources(), localStorage.readIcon(sd.app().iconLocation()));
+                    Drawable d = new BitmapDrawable(getResources(), localStorage.readIcon(sd.getApp().iconLocation()));
                     icon.setImageDrawable(d);
                 }
             } else

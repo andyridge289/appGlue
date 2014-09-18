@@ -9,12 +9,6 @@ import com.appglue.description.ServiceDescription;
 import static com.appglue.Constants.INDEX;
 
 public abstract class FragmentVW extends Fragment {
-    // TODO See how much of the other fragment stuff can be moved into here
-    private int position;
-
-    private ServiceDescription pre;
-    private ServiceDescription component;
-    private ServiceDescription post;
 
     public static Fragment create(int position, boolean wiring) {
         FragmentVW fragment = wiring ? new FragmentWiring() : new FragmentValue();

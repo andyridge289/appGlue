@@ -403,11 +403,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         try {
             db.insertOrThrow(TBL_SD, null, values);
 
-            if(sd.app() != null) {
+            if(sd.getApp() != null) {
                 // Try to get the app out of the database
-                AppDescription app = getAppDescription(sd.app().getPackageName());
+                AppDescription app = getAppDescription(sd.getApp().getPackageName());
                 if(app == null) {
-                    addAppDescription(sd.app());
+                    addAppDescription(sd.getApp());
                 }
             }
 
@@ -1457,6 +1457,80 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return id != -1;
     }
 
+    public ArrayList<LogItem> getLog() {
+
+        ArrayList<LogItem> logs = new ArrayList<LogItem>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String compositeLogCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_EXECUTION_LOG, COLS_COMPOSITE_EXECUTION_LOG);
+        String logCols = AppGlueLibrary.buildGetAllString(TBL_EXECUTION_LOG, COLS_EXECUTION_LOG);
+
+        String q = String.format("SELECT %s, %s FROM %s " +
+                        "LEFT JOIN %s ON %s.%s = %s.%s " +
+                        "ORDER BY %s.%s DESC",
+                compositeLogCols, logCols, TBL_COMPOSITE_EXECUTION_LOG,
+                TBL_EXECUTION_LOG, TBL_COMPOSITE_EXECUTION_LOG, ID, TBL_EXECUTION_LOG, EXECUTION_INSTANCE,
+                TBL_COMPOSITE_EXECUTION_LOG, ID);
+
+        Cursor c = db.rawQuery(q, null);
+
+        if(c == null){
+            Log.e(TAG, "Cursor null for " + q);
+            return logs;
+        }
+
+        if(c.getCount() == 0) {
+            return logs;
+        }
+
+        LogItem current = null;
+        c.moveToFirst();
+
+        do {
+            long id = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + ID));
+            if (current == null || current.getID() != id) {
+
+                String message = c.getString(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + MESSAGE));
+                long startTime = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + START_TIME));
+                long endTime = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + END_TIME));
+                int status = c.getInt(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + LOG_TYPE));
+
+                long compositeId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + COMPOSITE_ID));
+                CompositeService cs = getComposite(compositeId);
+
+                current = new LogItem(id, cs, startTime, endTime, message, status);
+                logs.add(current);
+            }
+
+            long componentLogId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + ID));
+            long componentId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + COMPONENT_ID));
+            ComponentService component = current.getComposite().getComponent(componentId);
+
+            String componentMsg = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + MESSAGE));
+            String inputString = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + INPUT_DATA));
+            String outputString = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + OUTPUT_DATA));
+
+            Bundle inputBundle = null;
+            if(!inputString.equals("")) {
+                inputBundle = AppGlueLibrary.JSONToBundle(inputString, component.getDescription(), true);
+            }
+
+            Bundle outputBundle = null;
+            if(!outputString.equals("")) {
+                outputBundle = AppGlueLibrary.JSONToBundle(outputString, component.getDescription(), false);
+            }
+
+            int componentStatus = c.getInt(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + LOG_TYPE));
+            long time = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + TIME));
+            ComponentLogItem cli = new ComponentLogItem(componentLogId, component, componentMsg, inputBundle, outputBundle, componentStatus, time);
+            current.addComponentLog(cli);
+
+        } while(c.moveToNext());
+        c.close();
+
+        return logs;
+    }
+
     public ArrayList<LogItem> getLog(CompositeService cs) {
 
         ArrayList<LogItem> logs = new ArrayList<LogItem>();
@@ -1482,7 +1556,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if(c.getCount() == 0) {
-            Log.d(TAG, "Cursor empty for " + q);
             return logs;
         }
 

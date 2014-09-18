@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -86,126 +85,6 @@ public class ActivityComponent extends ActionBarActivity {
         if (service == null)
             finish();
 
-        TextView name = (TextView) findViewById(R.id.component_name);
-
-        if (name == null || service == null || service.getName() == null) {
-            finish();
-            return;
-        }
-
-        name.setText(service.getName());
-
-        TextView description = (TextView) findViewById(R.id.description_text);
-        description.setText(service.getDescription());
-
-        TextView developerName = (TextView) findViewById(R.id.component_dev);
-        developerName.setText(service.app().getDeveloper());
-
-        TextView appName = (TextView) findViewById(R.id.component_app_name);
-        ImageView appIcon = (ImageView) findViewById(R.id.component_app_icon);
-
-        if (service.getServiceType() != ServiceType.REMOTE) {
-
-            if (service.app() == null)
-                appName.setText("");
-            else
-                appName.setText(service.app().getName());
-
-
-            if (service.app() != null)
-                appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(service.app().iconLocation()));
-
-        } else {
-            appName.setVisibility(View.GONE);
-            appIcon.setVisibility(View.GONE);
-            findViewById(R.id.simple_title_App).setVisibility(View.GONE);
-        }
-
-
-        ListView inputList = (ListView) findViewById(R.id.input_list);
-        ArrayList<IODescription> inputs = service.getInputs();
-
-        if (inputs == null || inputs.size() == 0) {
-            inputList.setVisibility(View.GONE);
-            findViewById(R.id.no_inputs).setVisibility(View.VISIBLE);
-        } else {
-            inputList.setAdapter(new IOAdapter(this, R.layout.list_item_wiring_in, inputs, true));
-            findViewById(R.id.no_inputs).setVisibility(View.GONE);
-        }
-
-
-        ListView outputList = (ListView) findViewById(R.id.output_list);
-        ArrayList<IODescription> outputs = service.getOutputs();
-
-        if (outputs == null || outputs.size() == 0) {
-            outputList.setVisibility(View.GONE);
-            findViewById(R.id.no_outputs).setVisibility(View.VISIBLE);
-        } else {
-            outputList.setAdapter(new IOAdapter(this, R.layout.list_item_wiring_out, outputs, false));
-            findViewById(R.id.no_outputs).setVisibility(View.GONE);
-        }
-
-
-        TextView launchApp = (TextView) findViewById(R.id.component_launch_app);
-        launchApp.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    PackageManager pm = ActivityComponent.this.getPackageManager();
-
-                    if (pm != null) {
-                        Intent i = pm.getLaunchIntentForPackage(service.app().getPackageName());
-                        ActivityComponent.this.startActivity(i);
-                    } else {
-                        // Do something?
-                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + service.app().getPackageName());
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Trying to launch app? " + e.getMessage());
-                }
-            }
-        });
-
-        TextView viewApp = (TextView) findViewById(R.id.component_view_app);
-        viewApp.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ActivityComponent.this, ActivityApp.class);
-                intent.putExtra(PACKAGENAME, service.app().getPackageName());
-                startActivity(intent);
-            }
-        });
-
-        final ArrayList<CompositeService> examples = registry.getExamples(service.getClassName());
-        LayoutInflater inflater = this.getLayoutInflater();
-
-        LinearLayout exampleContainer = (LinearLayout) findViewById(R.id.component_eg_container);
-        for (int i = 0; i < examples.size(); i++) {
-            View v = inflater.inflate(R.layout.example_composite, exampleContainer);
-            final int index = i;
-
-            if (v != null) {
-                ((TextView) v.findViewById(R.id.example_name)).setText("Example " + (i + 1));
-                v.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(ActivityComponent.this, ActivityComposite.class);
-                        intent.putExtra(ID, examples.get(index).getID());
-                        startActivity(intent);
-                    }
-                });
-                exampleContainer.addView(v);
-
-                if (i < examples.size() - 1) {
-                    inflater.inflate(R.layout.spacer_horiz, exampleContainer);
-                }
-            }
-        }
-
-        if (examples.size() == 0) {
-            findViewById(R.id.scroll_eg_container).setVisibility(View.GONE);
-            findViewById(R.id.eg_none).setVisibility(View.VISIBLE);
-        }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -230,7 +109,7 @@ public class ActivityComponent extends ActionBarActivity {
     }
 
     @Override
-    public void onRestoreInstanceState(@NonNull Bundle icicle) {
+    public void onRestoreInstanceState(Bundle icicle) {
         super.onRestoreInstanceState(icicle);
 
         if (!icicle.containsKey(CLASSNAME))
@@ -341,56 +220,4 @@ public class ActivityComponent extends ActionBarActivity {
         }
         finish();
     }
-
-    private class IOAdapter extends ArrayAdapter<IODescription> {
-        private ArrayList<IODescription> items;
-        private boolean inputs;
-
-        public IOAdapter(Context context, int textViewResourceId, ArrayList<IODescription> items, boolean inputs) {
-            super(context, textViewResourceId, items);
-
-            this.items = items;
-            this.inputs = inputs;
-        }
-
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View v = convertView;
-
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                if (inputs)
-                    v = vi.inflate(R.layout.list_item_wiring_in, null);
-                else
-                    v = vi.inflate(R.layout.list_item_wiring_out, null);
-            }
-
-            if (v == null)
-                return null;
-
-            final IODescription io = items.get(position);
-
-
-            ((TextView) v.findViewById(R.id.io_name)).setText(io.getFriendlyName());
-            ((TextView) v.findViewById(R.id.io_type)).setText(io.getType().getName());
-
-            // It needs to say whether it's mandatory or not
-            if (io.isMandatory() && inputs) {
-                v.findViewById(R.id.mandatory_text).setVisibility(View.VISIBLE);
-            } else if (inputs) {
-                v.findViewById(R.id.mandatory_text).setVisibility(View.GONE);
-            }
-
-            v.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(ActivityComponent.this, io.getFriendlyName() + ": " + io.description(), Toast.LENGTH_LONG).show();
-                }
-            });
-
-            return v;
-        }
-    }
-
-
 }

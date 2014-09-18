@@ -93,7 +93,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 //			{
 //				cs.addServiceDescription(position, registry.getServiceDescription(className));
 //			}
-            // FIXME Fix the above
+            // Fix the above
 			
 			Intent i = new Intent(getActivity(), ActivityStoryParameters.class);
 			i.putExtra(CLASSNAME, className);
@@ -167,7 +167,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 				}
 			}
 			
-			// TODO Setting getInputs needs to set text to EditFilter (I don't remember what this means)
+			// Setting getInputs needs to set text to EditFilter (I don't remember what this means)
 			
 			// Show placeholders if they aren't set
 			if(outputs == null || outputs.size() == 0)

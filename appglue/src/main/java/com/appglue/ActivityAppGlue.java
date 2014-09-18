@@ -8,21 +8,41 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
-
 public class ActivityAppGlue extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
-    public static final int PAGE_HOME = 0;
-    public static final int PAGE_COMPONENTS = 1;
-    public static final int PAGE_LOG = 2;
-    public static final int PAGE_GPLUS = 3;
-    public static final int PAGE_SETTINGS = 4;
-    public static final int PAGE_PRIVACY = 5;
+    public enum Page {
+        HOME(0, "My Glued Apps"),
+        COMPONENTS(1, "Component List"),
+        SCHEDULE(2, "Schedule"),
+        LOG(3, "Log"),
+        GPLUS(4, "Google+ Login"),
+        SETTINGS(5, "Settings"),
+        PRIVACY(6, "Privacy");
+
+        public int index;
+        public String name;
+
+        Page(int index, String name)
+        {
+            this.index = index;
+            this.name = name;
+        }
+    }
+
+    private int view;
+    public static final int VIEW_GRID = 0;
+    public static final int VIEW_LIST = 1;
+
+    private FragmentComposites homeFragment;
+    private FragmentComponents componentFragment;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -57,51 +77,46 @@ public class ActivityAppGlue extends ActionBarActivity
 
         Fragment f = null;
 
-        // FIXME The menus need to be re-drawn depending on what's showing
-
-        switch(position) {
-            case PAGE_HOME:
-                f = FragmentCompositeList.create();
-                break;
-
-            case PAGE_COMPONENTS:
-                f = FragmentComponentListPager.create(true);
-                break;
-
-            case PAGE_LOG:
-                f = FragmentLog.create();
-                break;
-
-            case PAGE_SETTINGS:
-                f = FragmentSettings.create();
-                break;
-
-            case PAGE_PRIVACY:
-                f = FragmentPrivacy.create();
-                break;
-
-            case PAGE_GPLUS:
-                googlePlusLogin();
-                return;
+        if (position == Page.HOME.index) {
+            homeFragment = (FragmentComposites) FragmentComposites.create();
+            f = homeFragment;
+        } else if (position == Page.COMPONENTS.index) {
+            componentFragment = (FragmentComponents) FragmentComponents.create(true);
+            f = componentFragment;
+        } else if (position == Page.SCHEDULE.index) {
+            f = FragmentSchedule.create();
+        } else if (position == Page.LOG.index) {
+            f = FragmentLog.create();
+        } else if (position == Page.SETTINGS.index) {
+            f = FragmentSettings.create();
+        } else if (position == Page.PRIVACY.index) {
+            f = FragmentPrivacy.create();
+        } else if (position == Page.GPLUS.index) {
+            googlePlusLogin();
         }
 
         currentPage = position;
 
-        fragmentManager.beginTransaction()
-            .replace(R.id.container, f)
-            .commit();
+        fragmentManager.beginTransaction().replace(R.id.container, f).commit();
     }
 
     @Override
     public void onBackPressed() {
-        if (currentPage != PAGE_HOME) {
+        if (currentPage == Page.HOME.index) {
+            if (homeFragment.getMode() == FragmentComposites.MODE_COMPOSITE) {
+                homeFragment.setMode(FragmentComposites.MODE_LIST);
+                return;
+            }
+        } else {
+            if (currentPage == Page.COMPONENTS.index) {
+                componentFragment.setMode(FragmentComponents.MODE_LIST);
+                return;
+            }
+
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
                     .replace(R.id.container, FragmentCompositeList.create())
                     .commit();
-
-            // Show the home page if we aren't on it already
-            return;
         }
 
         super.onBackPressed();
@@ -111,31 +126,15 @@ public class ActivityAppGlue extends ActionBarActivity
         Toast.makeText(this, "Google+ log in", Toast.LENGTH_SHORT).show();
     }
 
-    public void onSectionAttached(int number) {
-        switch (number) {
-            case PAGE_HOME:
-                mTitle = getString(R.string.page_home);
-                break;
-            case PAGE_COMPONENTS:
-                mTitle = getString(R.string.page_components);
-                break;
-            case PAGE_LOG:
-                mTitle = getString(R.string.page_log);
-                break;
-            case PAGE_GPLUS:
-                mTitle = getString(R.string.page_gplus);
-                break;
-            case PAGE_SETTINGS:
-                mTitle = getString(R.string.page_settings);
-                break;
-            case PAGE_PRIVACY:
-                mTitle = getString(R.string.page_privacy);
-                break;
-            default:
-                mTitle = getString(R.string.application_name);
-                break;
-        }
+    public void onSectionAttached(Page page) {
 
+        if (page == Page.HOME) {
+            mTitle = homeFragment.getName();
+        } else if (page == Page.COMPONENTS) {
+            mTitle = componentFragment.getName();
+        } else {
+            mTitle = page.name;
+        }
         restoreActionBar();
     }
 
@@ -147,33 +146,51 @@ public class ActivityAppGlue extends ActionBarActivity
         }
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        if (!mNavigationDrawerFragment.isDrawerOpen()) {
-//            // Only show items in the action bar relevant to this screen
-//            // if the drawer is not showing. Otherwise, let the drawer
-//            // decide what to show in the action bar.
-//            getMenuInflater().inflate(R.menu.activity_app_glue, menu);
-//            restoreActionBar();
-//            return true;
-//        }
-//        return super.onCreateOptionsMenu(menu);
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_app_glue, menu);
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+        if (currentPage == Page.HOME.index) {
+            if (view == VIEW_LIST) {
+                menu.setGroupVisible(R.id.group_grid, false);
+                menu.setGroupVisible(R.id.group_list, true);
+            } else {
+                menu.setGroupVisible(R.id.group_grid, true);
+                menu.setGroupVisible(R.id.group_list, false);
+            }
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+        @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+            switch(item.getItemId()) {
+                case R.id.change_view_grid:
+                    setViewMode(VIEW_GRID);
+                    break;
+
+                case R.id.change_view_list:
+                    setViewMode(VIEW_LIST);
+                    break;
+            }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public int getViewMode() {
+        return view;
+    }
+    public void setViewMode(int view) {
+        this.view = view;
+
+        if (homeFragment != null) {
+            homeFragment.setViewMode();
+        }
+
+        invalidateOptionsMenu();
+    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -211,7 +228,7 @@ public class ActivityAppGlue extends ActionBarActivity
         public void onAttach(Activity activity) {
             super.onAttach(activity);
             ((ActivityAppGlue) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+                    Page.values()[getArguments().getInt(ARG_SECTION_NUMBER)]);
         }
     }
 

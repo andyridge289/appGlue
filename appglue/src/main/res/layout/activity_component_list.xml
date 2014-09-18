@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" 
     >
-    
+
     <LinearLayout
         android:id="@+id/dummy_layout"
     	android:focusable="true" 

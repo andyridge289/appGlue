@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,10 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.FIRST;
-import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
 public class FragmentWiring extends FragmentVW {
     private int position;
@@ -89,14 +84,14 @@ public class FragmentWiring extends FragmentVW {
             firstName.setTextColor(Color.BLACK);
 
             try {
-                AppDescription firstApp = first.getDescription().app();
+                AppDescription firstApp = first.getDescription().getApp();
                 Bitmap b;
 
                 if (firstApp == null) {
                     firstIcon.setBackgroundResource(R.drawable.icon);
 
                 } else {
-                    String iconLocation = first.getDescription().app().iconLocation();
+                    String iconLocation = first.getDescription().getApp().iconLocation();
                     if (iconLocation.equals("")) {
                         firstIcon.setBackgroundResource(R.drawable.icon);
                     }
@@ -137,7 +132,7 @@ public class FragmentWiring extends FragmentVW {
             secondContainer.setBackgroundResource(R.drawable.wiring_component);
 
             try {
-                AppDescription secondApp = second.getDescription().app();
+                AppDescription secondApp = second.getDescription().getApp();
                 Bitmap b;
 
                 if (secondApp == null) {

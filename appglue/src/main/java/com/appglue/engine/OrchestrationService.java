@@ -19,7 +19,7 @@ import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TEST;
+import static com.appglue.library.AppGlueConstants.TEST;
 
 public class OrchestrationService extends Service
 {

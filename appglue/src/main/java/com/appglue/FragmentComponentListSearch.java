@@ -111,17 +111,17 @@ public class FragmentComponentListSearch extends FragmentComponentList {
     public void onActivityCreated(Bundle icicle) {
         super.onActivityCreated(icicle);
 
-        serviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
-                Intent intent = new Intent(getActivity(), ActivityComponent.class);
-                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-                intent.putExtra(CLASSNAME, services.get(position).getClassName());
-                intent.putExtra(JUST_A_LIST, justList);
-                getActivity().startActivityForResult(intent, SERVICE_REQUEST);
-                return true;
-            }
-        });
+//        serviceListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
+//                Intent intent = new Intent(getActivity(), ActivityComponent.class);
+//                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
+//                intent.putExtra(CLASSNAME, services.get(position).getClassName());
+//                intent.putExtra(JUST_A_LIST, justList);
+//                getActivity().startActivityForResult(intent, SERVICE_REQUEST);
+//                return true;
+//            }
+//        });
     }
 
     private class ComponentLoaderTask extends AsyncTask<Void, Void, ArrayList<ServiceDescription>> {
@@ -141,7 +141,7 @@ public class FragmentComponentListSearch extends FragmentComponentList {
             if (services.size() > 0) {
                 serviceListView.setVisibility(View.VISIBLE);
                 AdapterComponentList adapter = new AdapterComponentListSearch(getActivity(), services,
-                        FragmentComponentListSearch.this);
+                        (FragmentComponentListPager) getParentFragment());
                 serviceListView.setAdapter(adapter);
             } else
                 noneFound.setVisibility(View.VISIBLE);

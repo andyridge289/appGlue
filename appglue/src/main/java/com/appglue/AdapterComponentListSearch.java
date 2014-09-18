@@ -18,8 +18,8 @@ class AdapterComponentListSearch extends AdapterComponentList {
     private final Object lock = new Object();
 
     public AdapterComponentListSearch(Context context, ArrayList<ServiceDescription> items,
-                                      FragmentComponentListSearch searchFragment) {
-        super(context, items);
+                                      FragmentComponentListPager parentFragment) {
+        super(context, items, parentFragment);
 //        FragmentComponentListSearch searchFragment1 = searchFragment;
     }
 

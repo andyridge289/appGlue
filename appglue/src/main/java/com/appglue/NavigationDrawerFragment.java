@@ -88,18 +88,18 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+
+        ActivityAppGlue.Page[] aPages = ActivityAppGlue.Page.values();
+        String[] pages = new String[aPages.length];
+        for (int i = 0; i < aPages.length; i++) {
+            pages[i] = aPages[i].name;
+        }
+
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                new String[] {
-                        getString(R.string.page_home),
-                        getString(R.string.page_components),
-                        getString(R.string.page_log),
-                        getString(R.string.page_gplus),
-                        getString(R.string.page_settings),
-                        getString(R.string.page_privacy)
-                }));
+                pages));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }

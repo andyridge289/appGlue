@@ -279,6 +279,10 @@ public class Registry {
         }
     }
 
+    public ArrayList<LogItem> getExecutionLog() {
+        return dbHandler.getLog();
+    }
+
     public ArrayList<LogItem> getExecutionLog(CompositeService composite) {
         return dbHandler.getLog(composite);
     }

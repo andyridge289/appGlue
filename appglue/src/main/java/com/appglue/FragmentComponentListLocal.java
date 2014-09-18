@@ -63,28 +63,32 @@ public class FragmentComponentListLocal extends FragmentComponentList {
         ComponentLoaderTask bl = new ComponentLoaderTask();
         bl.execute();
 
-        serviceListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
-                Intent intent = new Intent(getActivity(), ActivityComponent.class);
-                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
-                intent.putExtra(CLASSNAME, services.get(position).getClassName());
-                intent.putExtra(JUST_A_LIST, justList);
+//        serviceListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View v, int position, long id) {
+//                Intent intent = new Intent(getActivity(), ActivityComponent.class);
+//                intent.putExtra(SERVICE_TYPE, ServiceType.DEVICE.index);
+//                intent.putExtra(CLASSNAME, services.get(position).getClassName());
+//                intent.putExtra(JUST_A_LIST, justList);
+//
+//                if(!homeParent) {
+//                    getActivity().startActivityForResult(intent, SERVICE_REQUEST);
+//                }
 
-                if(!homeParent) {
-                    getActivity().startActivityForResult(intent, SERVICE_REQUEST);
-                }
+//                return true;
+//            }
+//        });
 
-                return true;
-            }
-        });
-
-        serviceListView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                ((ActivityWiring) getActivity()).chooseItem(services.get(position).getClassName());
-            }
-        });
+//        serviceListView.setOnItemClickListener(new OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
+//            if (!justList) {
+//                ((ActivityWiring) getActivity()).chooseItem(services.get(position).getClassName());
+//            } else {
+//                getParentFragment().showComponent(services.get(position))
+//            }
+//            }
+//        });
 
         return v;
     }
@@ -203,7 +207,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
 
             if (services.size() > 0) {
                 serviceListView.setVisibility(View.VISIBLE);
-                AdapterComponentList adapter = new AdapterComponentList(getActivity(), services);
+                AdapterComponentList adapter = new AdapterComponentList(getActivity(), services, (FragmentComponentListPager) getParentFragment());
                 serviceListView.setAdapter(adapter);
             } else
                 noneFound.setVisibility(View.VISIBLE);

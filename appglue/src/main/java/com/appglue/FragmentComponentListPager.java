@@ -22,6 +22,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.appglue.Constants.ServiceType;
+import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
@@ -66,7 +67,7 @@ public class FragmentComponentListPager extends Fragment {
         super.onAttach(activity);
 
         if(activity instanceof ActivityAppGlue)
-            ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.PAGE_COMPONENTS);
+            ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.Page.COMPONENTS);
     }
 
     @Override
@@ -207,6 +208,10 @@ public class FragmentComponentListPager extends Fragment {
 //
 //        viewPager.setCurrentItem(1);
 
+    public void showServiceDescription(String className) {
+        ((FragmentComponents) getParentFragment()).showServiceDescription(className);
+    }
+
     public Fragment getCurrentFragment() {
         return adapter.getItem(viewPager.getCurrentItem());
     }
@@ -230,6 +235,9 @@ public class FragmentComponentListPager extends Fragment {
 
         @Override
         public int getCount() {
+            if(fragments == null)
+                return 0;
+
             return fragments.size();
         }
 

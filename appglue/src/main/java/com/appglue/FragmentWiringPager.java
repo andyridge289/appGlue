@@ -48,8 +48,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private TextView pageIndexText;
     private TextView status;
 
-    // FIXME Make all of the other fragments singletons too
-
     private Registry registry;
 
     private int position;
@@ -163,7 +161,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // FIXME Click on the status message to view more status messages
+
             }
         });
 

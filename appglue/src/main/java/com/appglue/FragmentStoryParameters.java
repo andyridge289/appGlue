@@ -137,7 +137,7 @@ public class FragmentStoryParameters extends Fragment
         CompositeService cs = registry.getService();
 		ArrayList<ComponentService> components = cs.getComponentsAL();
 		position = position == -1 ? components.size() - 1 : position;
-        ServiceDescription component = components.get(position).getDescription(); // FIXME SparseArray
+        ServiceDescription component = components.get(position).getDescription(); // SparseArray
 		previous = position > 0 ? components.get(position - 1).getDescription() : null;
 		Log.w(TAG, "And now position " + position);
 		
@@ -250,7 +250,7 @@ public class FragmentStoryParameters extends Fragment
 					// It's the sample one
 					IOValue value = (IOValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
 //					item.setChosenSampleValue(value);
-//					item.setFilterState(IODescription.SAMPLE_FILTER); TODO ServiceIO not IODescription
+//					item.setFilterState(IODescription.SAMPLE_FILTER); ServiceIO not IODescription
 				}
 				else if(tabs.getCurrentTab() == 1)
 				{
@@ -258,7 +258,7 @@ public class FragmentStoryParameters extends Fragment
 					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
 					Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
-//					item.setFilterState(IODescription.MANUAL_FILTER); TODO ServiceIO not IODescription
+//					item.setFilterState(IODescription.MANUAL_FILTER); ServiceIO not IODescription
 				}
 				else if(tabs.getCurrentTab() == 2)
 				{
@@ -270,7 +270,7 @@ public class FragmentStoryParameters extends Fragment
 					// get previous output from the last component and then match them up
 					IODescription previousOut = previous.getOutput(value.getID());
 //					item.setConnection(previousOut);
-//					previousOut.setConnection(item); TODO ServiceIO not IODescription
+//					previousOut.setConnection(item); ServiceIO not IODescription
 				}
 				
 				doneContainer.setVisibility(View.GONE);
@@ -466,8 +466,8 @@ public class FragmentStoryParameters extends Fragment
 //			}
 //		}
 
-        // TODO ServiceIO not IODescription
-		// And now look up if anything had a type in the other service TODO ?????	
+        // ServiceIO not IODescription
+		// And now look up if anything had a type in the other service ?????
 	}
 	
 	private void setupOutputs(LinearLayout outputContainer, ArrayList<IODescription> outputs)
@@ -542,7 +542,7 @@ public class FragmentStoryParameters extends Fragment
 					// It's the sample one
 					IOValue value = (IOValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
 //					item.setChosenSampleValue(value);
-//					item.setFilterState(IODescription.SAMPLE_FILTER); TODO ServiceIO not IODescription
+//					item.setFilterState(IODescription.SAMPLE_FILTER); ServiceIO not IODescription
 				}
 				else if(tabs.getCurrentTab() == 1)
 				{
@@ -550,7 +550,7 @@ public class FragmentStoryParameters extends Fragment
 					String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
 					Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
-//					item.setFilterState(IODescription.MANUAL_FILTER); TODO ServiceIO not IODescription
+//					item.setFilterState(IODescription.MANUAL_FILTER); ServiceIO not IODescription
 				}			
 				
 				doneContainer.setVisibility(View.GONE);
@@ -658,7 +658,7 @@ public class FragmentStoryParameters extends Fragment
 			conditionSpinner.setAdapter(new WiringFilterAdapter(getActivity(),
                     conditions));
 
-		// FIXME This also needs to take into account what type the thing is
+		// This also needs to take into account what type the thing is
 		
 		if (type != -1)
 		{
@@ -717,7 +717,7 @@ public class FragmentStoryParameters extends Fragment
 //					break;
 //				}
 //			}
-//		} TODO ServiceIO not IODescription
+//		} ServiceIO not IODescription
 	}
 	
 	private class MatchingAdapter extends ArrayAdapter<IODescription>

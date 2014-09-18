@@ -30,7 +30,7 @@ import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.DATA;
-import static com.appglue.Constants.TEST;
+import static com.appglue.library.AppGlueConstants.TEST;
 
 public class EngineTest extends ServiceTestCase<OrchestrationService> {
 

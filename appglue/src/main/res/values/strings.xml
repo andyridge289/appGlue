@@ -172,5 +172,8 @@
     <string name="page_gplus">G+ login</string>
     <string name="page_settings">Settings</string>
     <string name="page_privacy">Privacy Policy</string>
+    <string name="change_view_grid">View as Grid</string>
+    <string name="change_view_list">View as List</string>
+    <string name="composite_icon">Icon representing the composite</string>
 
 </resources>

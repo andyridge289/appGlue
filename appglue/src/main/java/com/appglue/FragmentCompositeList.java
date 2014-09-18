@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,12 +12,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ActionMode;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,16 +24,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appglue.Constants.Interval;
-import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.ComponentService;
@@ -50,23 +43,24 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.DATA;
-import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.RUN_NOW;
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.TEST;
+import static com.appglue.Constants.DURATION;
+
+import com.appglue.Constants.ProcessType;
+
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
-import static com.appglue.library.AppGlueConstants.EDIT_PARAMS;
-import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
-import static com.appglue.library.AppGlueConstants.PRE_EXEC_PARAMS;
+import static com.appglue.library.AppGlueConstants.TEST;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class FragmentCompositeList extends Fragment {
 
-    private GridView loadGrid;
+    private GridView compositeGrid;
+    private ListView compositeList;
+
     private ImageView loader;
 
     private Registry registry;
@@ -74,112 +68,108 @@ public class FragmentCompositeList extends Fragment {
 
     private ArrayList<CompositeService> composites;
 
-    private CompositeGridAdapter adapter;
+    private CompositeGridAdapter gridAdapter;
+    private CompositeListAdapter listAdapter;
 
-//    private int tempCount = 0;
-//
-//    private ArrayList<Integer> selected = new ArrayList<Integer>();
-//
-//    // TODO Let them choose custom icons
-//
-//    private ActionMode actionMode;
-//    private ActionMode.Callback actionCallback = new ActionMode.Callback() {
-//        @Override
-//        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//            MenuInflater inflater = mode.getMenuInflater();
-//            inflater.inflate(R.menu.composite_list_context_menu, menu);
-//
-//            mode.setTitle("Choose action:");
-//
-//            if (selected.size() > 1)
-//                mode.setSubtitle(selected.size() + " selected.");
-//            else
-//                mode.setSubtitle(composites.get(selected.get(0)).getName() + " selected.");
-//
-//            if (selected.size() > 1) {
-//                menu.setGroupVisible(R.id.comp_context_rungroup, false);
-//                menu.setGroupVisible(R.id.comp_context_singlegroup, false);
-//            } else if (composites.get(selected.get(0)).getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
-//                menu.setGroupVisible(R.id.comp_context_rungroup, false);
-//                menu.setGroupVisible(R.id.comp_context_singlegroup, true);
-//            } else {
-//                menu.setGroupVisible(R.id.comp_context_rungroup, true);
-//                menu.setGroupVisible(R.id.comp_context_singlegroup, true);
-//            }
-//
-//            return true;
-//        }
-//
-//        @Override
-//        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//            // Don't really know why I'm returning false, but this is what the example does...
-//            return false;
-//        }
-//
-//        @Override
-//        public void onDestroyActionMode(ActionMode mode) {
-//            // Just clear all of them, bugger it
-//            for (int i = 0; i < loadGrid.getChildCount(); i++) {
-//                loadGrid.getChildAt(i).setBackgroundResource(0);
-//            }
-//
-//            actionMode = null;
-//            selected.clear();
-//        }
-//
-//        @Override
-//        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.comp_context_run:
-//                    run(composites.get(selected.get(0)));
-//                    break;
-//
-//                case R.id.comp_context_timer:
-//                    createTimerDialog(composites.get((selected.get(0))));
-//                    break;
-//
-//				case R.id.comp_context_view:
-//					view(composites.get((selected.get(0))));
-//					break;
-//
-//                case R.id.comp_context_edit:
-//                    edit(composites.get((selected.get(0))));
-//                    break;
-//
-////				case R.getID.comp_context_editstory:
-////					editStory(composites.get((selected.get(0))));
-////					break;
-//
-//                case R.id.comp_context_shortcut:
-//                    createShortcut(composites.get((selected.get(0))));
-//                    break;
-//
-//                case R.id.comp_context_delete:
-//                    ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
-//                    for (Integer aSelected : selected) {
-//                        killList.add(composites.get(aSelected));
-//                    }
-//                    delete(killList);
-//                    break;
-//            }
-//
-//            mode.finish();
-//
-//            return false;
-//        }
-//    };
+    private ArrayList<Integer> selected = new ArrayList<Integer>();
+
+    private ActionMode actionMode;
+    private ActionMode.Callback actionCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.composite_list_context_menu, menu);
+            mode.setTitle("Choose action:");
+
+            if (selected.size() > 1)
+                mode.setSubtitle(selected.size() + " selected.");
+            else
+                mode.setSubtitle(composites.get(selected.get(0)).getName() + " selected.");
+
+            if (selected.size() > 1) {
+                menu.setGroupVisible(R.id.comp_context_rungroup, false);
+                menu.setGroupVisible(R.id.comp_context_singlegroup, false);
+            } else if (composites.get(selected.get(0)).getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
+                menu.setGroupVisible(R.id.comp_context_rungroup, false);
+                menu.setGroupVisible(R.id.comp_context_singlegroup, true);
+            } else {
+                menu.setGroupVisible(R.id.comp_context_rungroup, true);
+                menu.setGroupVisible(R.id.comp_context_singlegroup, true);
+            }
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            // Don't really know why I'm returning false, but this is what the example does...
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            // Just clear all of them - except the temp where we need to add a new one
+            for (int i = 0; i < compositeGrid.getChildCount() - 1; i++) {
+                compositeGrid.getChildAt(i).setBackgroundResource(0);
+            }
+
+            for (int i = 0; i < compositeList.getChildCount(); i++) {
+                compositeList.getChildAt(i).setBackgroundResource(0);
+            }
+
+            actionMode = null;
+            selected.clear();
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.comp_context_run:
+                    run(composites.get(selected.get(0)));
+                    break;
+
+                case R.id.comp_context_timer:
+                    schedule(composites.get((selected.get(0))));
+                    break;
+
+				case R.id.comp_context_view:
+					view(composites.get((selected.get(0))));
+					break;
+
+                case R.id.comp_context_edit:
+                    edit(composites.get((selected.get(0))));
+                    break;
+
+                case R.id.comp_context_shortcut:
+                    createShortcut(composites.get((selected.get(0))));
+                    break;
+
+                case R.id.comp_context_delete:
+                    ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
+                    for (Integer aSelected : selected) {
+                        killList.add(composites.get(aSelected));
+                    }
+                    delete(killList);
+                    break;
+            }
+
+            mode.finish();
+
+            return false;
+        }
+    };
 
 
     public static Fragment create() {
-        FragmentCompositeList f = new FragmentCompositeList();
-        return f;
+        return new FragmentCompositeList();
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.PAGE_HOME);
+        ((ActivityAppGlue) activity).onSectionAttached(ActivityAppGlue.Page.HOME);
 
         registry = Registry.getInstance(activity);
         localStorage = LocalStorage.getInstance();
@@ -193,7 +183,9 @@ public class FragmentCompositeList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View root = inflater.inflate(R.layout.activity_composite_list, container, false);
 
-        loadGrid = (GridView) root.findViewById(R.id.loadList);
+        compositeGrid = (GridView) root.findViewById(R.id.load_grid);
+        compositeList = (ListView) root.findViewById(R.id.load_list);
+
         loader = (ImageView) root.findViewById(R.id.loading_spinner);
 
         return root;
@@ -262,138 +254,91 @@ public class FragmentCompositeList extends Fragment {
         super.onDetach();
     }
 
+    public void setViewMode() {
+        if (getViewMode() == ActivityAppGlue.VIEW_GRID) {
+            compositeGrid.setVisibility(View.VISIBLE);
+            compositeList.setVisibility(View.GONE);
+        } else {
+            compositeGrid.setVisibility(View.GONE);
+            compositeList.setVisibility(View.VISIBLE);
+        }
+    }
 
-//    // Make it give you a notification of what apps have changed since the last time it was loaded.
-//    // Make it execute on long press
-//    // Make it log in with Google+
-//    // Why is the icon the old icon the default?
-//    // http://developers.google.com/drive/android-quickstart
-//    // If others broadcast, this should bind
-//
-//
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.composite_list_menu, menu);
-//
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        Intent intent = null;
-//
-////		if(item.getItemId() == R.getID.comp_list_simple)
-////		{
-////
-////		}
-////		else
-//        if (item.getItemId() == R.id.comp_list_new) {
-//            intent = new Intent(FragmentCompositeList.this, ActivityWiring.class);
-//        } else if (item.getItemId() == R.id.comp_list_log) {
-//            intent = new Intent(FragmentCompositeList.this, ActivityLog.class);
-//        }
-////		else if(item.getItemId() == R.getID.composite_list_gplus_login)
-////		{
-////			GooglePlus gPlus = GooglePlus.getInstance(this);
-////			String[] accounts = gPlus.getAccountNames(this);
-////
-////			if(accounts.length == 1)
-////			{
-////				gPlus.signIn(accounts[0]);
-////			}
-////			else
-////			{
-////				// Make them choose which account if there is more than one account
-////			}
-////
-////			return true;
-////		}
-////		else if(item.getItemId() == R.getID.comp_list_running)
-////		{
-////			intent = new Intent(ActivityCompositeList.this, ActivityRunning.class);
-////		}
-////		else if(item.getItemId() == R.getID.comp_list_story)
-////		{
-////			intent = new Intent(ActivityCompositeList.this, ActivityStory.class);
-////		}
-//        else if (item.getItemId() == R.id.comp_list_settings) {
-//            intent = new Intent(FragmentCompositeList.this, ActivitySettings.class);
-//        }
-//
-//        startActivity(intent);
-//        return true;
-//    }
-//
+    private int getViewMode() {
+        return ((ActivityAppGlue) getActivity()).getViewMode();
+    }
 
-//
-//    public void onBackPressed() {
-//        if (actionMode != null) {
-//            actionMode.finish();
-//            Log.d(TAG, "Back pressed during action mode");
-//        }
-//
-//        super.onBackPressed();
-//    }
-//
+    private void delete(final ArrayList<CompositeService> csList) {
+        final CompositeService cs = csList.get(0);
 
-//
-//
-//
-//    protected void onSaveInstanceState(@NonNull Bundle icicle) {
-//        icicle.describeContents();
-//        // Not sure we need to save anything here
-//    }
-//
-//    protected void onRestoreInstanceState(@NonNull Bundle icicle) {
-//        icicle.describeContents();
-//        // So we probably don't need to restore anything back
-//    }
-//
-//    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-//        if (requestCode == PRE_EXEC_PARAMS && resultCode == Activity.RESULT_OK) {
-//            long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
-//
-//            Intent serviceIntent = new Intent(FragmentCompositeList.this, OrchestrationService.class);
-//            serviceIntent.putExtra(COMPOSITE_ID, compositeId);
-//            serviceIntent.putExtra(DURATION, intent.getIntExtra(DURATION, 0));
-//            startService(serviceIntent);
-//        } else if (requestCode == EDIT_PARAMS && resultCode == Activity.RESULT_OK) {
-//            // Not sure we actually need to do anything do we?
-//            if (LOG) Log.d(TAG, "Edit params OKAY result!");
-//        } else if (requestCode == PLAY_SERVICES) {
-//            if (resultCode == Activity.RESULT_OK) {
-//                Log.d(TAG, "Play services return okay!! ");
-//            } else if (resultCode == Activity.RESULT_CANCELED) {
-//                Toast.makeText(this, "You need to install Google Play service to use all the features of appGlue", Toast.LENGTH_LONG).show();
-//            } else {
-//                Log.e(TAG, "Play Services Return derp  " + resultCode);
-//            }
-//        } else {
-//            Log.w(TAG, "Play services FAIL");
-//            // It didn't go okay?
-//        }
-//    }
-//
-//    private void run(CompositeService cs) {
-//        Intent serviceIntent = new Intent(this, OrchestrationService.class);
-//        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
-//        Bundle b = new Bundle();
-//
-//        b.putLong(COMPOSITE_ID, cs.getID());
-//        b.putInt(INDEX, 0);
-//        b.putBoolean(IS_LIST, false);
-//        b.putInt(DURATION, 0);
-//        b.putBoolean(TEST, false);
-//
-//        if (LOG) Log.w(TAG, "Trying to run " + cs.getID() + " : " + cs.getName());
-//
-//        intentData.add(b);
-//        serviceIntent.putParcelableArrayListExtra(DATA, intentData);
-//        startService(serviceIntent);
-//    }
-//
-//    private void createTimerDialog(final CompositeService cs) {
+        new AlertDialog.Builder(getActivity())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Delete")
+                .setMessage(String.format("Are you sure you want to delete %s?", csList.size() == 1 ? cs.getName() : csList.size() + " services"))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        boolean fail = false;
+                        for (CompositeService aCsList : csList) {
+                            if (!registry.deleteComposite(aCsList)) {
+                                fail = true;
+                            }
+                        }
+
+                        if (fail)
+                            Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getActivity(), String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
+
+                        // This only works when you click on something else?
+                        composites = registry.getComposites(false);
+                        composites.add(CompositeService.makePlaceholder());
+
+                        if (gridAdapter != null) {
+                            // This might need to be sorted?
+                            gridAdapter = new CompositeGridAdapter(getActivity(), R.layout.grid_item_app_selector, composites);
+                            compositeGrid.setAdapter(gridAdapter);
+                        } else {
+                            gridAdapter = new CompositeGridAdapter(getActivity(), R.layout.grid_item_app_selector, composites);
+                            compositeGrid.setAdapter(gridAdapter);
+                        }
+
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    // TODO - last
+    // Let them choose custom icons
+    // Make it give you a notification of what apps have changed since the last time it was loaded.
+    // Make it execute on long press
+    // Make it log in with Google+
+    // Why is the icon the old icon the default?
+    // http://developers.google.com/drive/android-quickstart
+    // If others broadcast, this should bind
+
+
+    private void run(CompositeService cs) {
+        Intent serviceIntent = new Intent(getActivity(), OrchestrationService.class);
+        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
+        Bundle b = new Bundle();
+
+        b.putLong(COMPOSITE_ID, cs.getID());
+        b.putInt(INDEX, 0);
+        b.putBoolean(IS_LIST, false);
+        b.putInt(DURATION, 0);
+        b.putBoolean(TEST, false);
+
+        if (LOG) Log.w(TAG, "Trying to run " + cs.getID() + " : " + cs.getName());
+
+        intentData.add(b);
+        serviceIntent.putParcelableArrayListExtra(DATA, intentData);
+        getActivity().startService(serviceIntent);
+    }
+
+    private void schedule(final CompositeService cs) {
 //        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
 //        builder.setTitle("Set timer duration");
 //
@@ -442,100 +387,43 @@ public class FragmentCompositeList extends Fragment {
 //
 //        AlertDialog dialog = builder.create();
 //        dialog.show();
-//    }
-//
-//    private void runOnTimer(CompositeService cs, long duration, boolean runNow) {
-//        Intent intent = new Intent(FragmentCompositeList.this, OrchestrationService.class);
-//        intent.putExtra(COMPOSITE_ID, cs.getID());
-//        intent.putExtra(DURATION, duration);
-//        intent.putExtra(RUN_NOW, runNow);
-//        startService(intent);
-//    }
-//
-//    private void view(CompositeService cs) {
-//        Intent intent = new Intent(FragmentCompositeList.this, ActivityComposite.class);
-//        intent.putExtra(COMPOSITE_ID, cs.getID());
-//        startActivity(intent);
-//    }
-//
-//    private void edit(CompositeService cs) {
-//        Intent intent = new Intent(FragmentCompositeList.this, ActivityWiring.class);
-//        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getID());
-//        intent.putExtra(COMPOSITE_ID, cs.getID());
-//        startActivity(intent);
-//    }
-//
-//    private void editStory(CompositeService cs) {
-//        Intent intent = new Intent(FragmentCompositeList.this, ActivityStory.class);
-//        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getID());
-//        intent.putExtra(COMPOSITE_ID, cs.getID());
-//        startActivity(intent);
-//    }
-//
-//    private void delete(final ArrayList<CompositeService> csList) {
-//        final CompositeService cs = csList.get(0);
-//
-//        new AlertDialog.Builder(FragmentCompositeList.this)
-//                .setIcon(android.R.drawable.ic_dialog_alert)
-//                .setTitle("Delete")
-//                .setMessage(String.format("Are you sure you want to delete %s?", csList.size() == 1 ? cs.getName() : csList.size() + " services"))
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        boolean fail = false;
-//                        for (CompositeService aCsList : csList) {
-//                            if (!registry.deleteComposite(aCsList)) {
-//                                fail = true;
-//                            }
-//                        }
-//
-//                        if (fail)
-//                            Toast.makeText(FragmentCompositeList.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
-//                        else
-//                            Toast.makeText(FragmentCompositeList.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
-//
-//                        // This only works when you click on something else?
-//                        composites = registry.getComposites(false);
-//                        composites.add(CompositeService.makePlaceholder());
-//
-//                        if (adapter != null) {
-//                            // This might need to be sorted?
-//                            adapter = new CompositeGridAdapter(FragmentCompositeList.this, R.layout.list_item_app_selector, composites);
-//                            loadGrid.setAdapter(adapter);
-//                        } else {
-//                            adapter = new CompositeGridAdapter(FragmentCompositeList.this, R.layout.list_item_app_selector, composites);
-//                            loadGrid.setAdapter(adapter);
-//                        }
-//
-//                    }
-//
-//                })
-//                .setNegativeButton("No", null)
-//                .show();
-//    }
-//
-//    private void createShortcut(CompositeService cs) {
-//        Intent shortcutIntent = new Intent();
-//        shortcutIntent.setComponent(new ComponentName(FragmentCompositeList.this.getPackageName(), ShortcutActivity.class.getName()));
-//
-//        Bundle b = new Bundle();
-//        b.putLong(COMPOSITE_ID, cs.getID());
-//        shortcutIntent.putExtras(b);
-//
-//        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//        final Intent putShortCutIntent = new Intent();
-//        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,
-//                shortcutIntent);
-//
-//        // Sets the custom shortcut's title
-//        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, cs.getName());
-//        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(FragmentCompositeList.this, R.drawable.icon));
-//        putShortCutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-//        sendBroadcast(putShortCutIntent);
-//    }
-//
+    }
+
+    private void view(CompositeService cs) {
+        Intent intent = new Intent(getActivity(), ActivityComposite.class);
+        intent.putExtra(COMPOSITE_ID, cs.getID());
+        startActivity(intent);
+    }
+
+    private void edit(CompositeService cs) {
+        Intent intent = new Intent(getActivity(), ActivityWiring.class);
+        if (LOG) Log.d(TAG, "Putting id for edit " + cs.getID());
+        intent.putExtra(COMPOSITE_ID, cs.getID());
+        startActivity(intent);
+    }
+
+    private void createShortcut(CompositeService cs) {
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setComponent(new ComponentName(getActivity().getPackageName(), ShortcutActivity.class.getName()));
+
+        Bundle b = new Bundle();
+        b.putLong(COMPOSITE_ID, cs.getID());
+        shortcutIntent.putExtras(b);
+
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        final Intent putShortCutIntent = new Intent();
+        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,
+                shortcutIntent);
+
+        // Sets the custom shortcut's title
+        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, cs.getName());
+        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getActivity(), R.drawable.icon));
+        putShortCutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        getActivity().sendBroadcast(putShortCutIntent);
+    }
+
     private class CompositeGridAdapter extends ArrayAdapter<CompositeService> {
         public CompositeGridAdapter(Context context, int textViewResourceId, ArrayList<CompositeService> items) {
             super(context, textViewResourceId, items);
@@ -544,6 +432,131 @@ public class FragmentCompositeList extends Fragment {
         @SuppressLint("InflateParams")
         public View getView(final int position, View convertView, final ViewGroup parent) {
             View v = convertView;
+
+
+            if (v == null) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.grid_item_app_selector, null);
+            }
+
+            final CompositeService cs = composites.get(position);
+
+            if (cs.getID() == CompositeService.NEW_COMPOSITE_PLACEHOLDER) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.composite_grid_item_new, null);
+
+                if (v != null) {
+                    v.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), ActivityWiring.class);
+                            intent.putExtra(CREATE_NEW, true);
+                            startActivity(intent);
+                        }
+                    });
+                }
+
+                return v;
+            }
+
+            if (v == null)
+                return null;
+
+            TextView nameText = (TextView) v.findViewById(R.id.load_list_name);
+            if (nameText == null) // This way it doesn't die, but this way of fixing it doesn't seem to be a problem...
+                return v;
+
+            if (cs.getName().equals(""))
+                nameText.setText("Temp ");// + tempCount++);
+            else
+                nameText.setText(cs.getName());
+
+            ImageView icon = (ImageView) v.findViewById(R.id.service_icon);
+            SparseArray<ComponentService> components = cs.getComponents();
+
+            AppDescription app = components.get(0).getDescription().getApp();
+
+
+            if (app == null || app.iconLocation() == null) {
+                icon.setBackgroundResource(R.drawable.icon);
+            } else {
+                String iconLocation = app.iconLocation();
+                Bitmap b = localStorage.readIcon(iconLocation);
+                icon.setImageBitmap(b);
+            }
+
+            v.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (actionMode == null) {
+                        if (getParentFragment() != null) {
+                            ((FragmentComposites) getParentFragment()).viewComposite(cs.getID());
+                        } else {
+                            // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
+                            Log.e(TAG, "Parent fragment is null");
+                        }
+                    } else {
+                        // Add and remove things from the action mode
+                        if (selected.contains(position)) {
+                            selected.remove(selected.indexOf(position));
+                            v.setBackgroundResource(0);
+                        } else {
+                            selected.add(position);
+                            v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
+                        }
+
+                        if(selected.size() == 0) {
+                            actionMode.finish();
+                            actionMode = null;
+                        } else {
+                            if(selected.size() > 1)
+                                actionMode.setSubtitle(selected.size() + " selected.");
+                            else
+                                actionMode.setSubtitle(composites.get(selected.get(0)).getName() + " selected.");
+                        }
+                    }
+                }
+            });
+
+            v.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    if(actionMode == null) {
+                        if (!selected.contains(position)) {
+                            selected.add(position);
+                            v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
+                        }
+
+                        actionMode = getActivity().startActionMode(actionCallback);
+                    } else {
+
+                    }
+
+                    return true;
+                }
+            });
+
+            return v;
+        }
+    }
+
+    private class CompositeListAdapter extends ArrayAdapter<CompositeService> {
+
+        public CompositeListAdapter(Context context, int textViewResourceId, ArrayList<CompositeService> items) {
+            super(context, textViewResourceId, items);
+        }
+
+        @SuppressLint("InflateParams")
+        public View getView(final int position, View convertView, final ViewGroup parent) {
+            View v = convertView;
+
+            if (v == null) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.list_item_app_selector, null);
+            }
+
             final CompositeService cs = composites.get(position);
 
             if (cs.getID() == CompositeService.NEW_COMPOSITE_PLACEHOLDER) {
@@ -564,90 +577,39 @@ public class FragmentCompositeList extends Fragment {
                 return v;
             }
 
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.list_item_app_selector, null);
-            }
-
             if (v == null)
                 return null;
 
-            TextView nameText = (TextView) v.findViewById(R.id.load_list_name);
+            TextView nameText = (TextView) v.findViewById(R.id.composite_name);
             if (nameText == null) // This way it doesn't die, but this way of fixing it doesn't seem to be a problem...
                 return v;
 
             if (cs.getName().equals(""))
-                nameText.setText("Temp ");// + tempCount++);
+                nameText.setText("Temp ");
             else
                 nameText.setText(cs.getName());
 
-            ImageView icon = (ImageView) v.findViewById(R.id.service_icon);
+            ImageView icon = (ImageView) v.findViewById(R.id.composite_icon);
             SparseArray<ComponentService> components = cs.getComponents();
 
-//            Log.d(TAG, cs.name() + ": " + components.size());
-//            for (int i = 0; i < components.size(); i++) {
-//                Log.d(TAG, components.keyAt(i) + ": alive");
-//            }
-
-            AppDescription app = components.get(0).getDescription().app();
-
-
+            AppDescription app = components.get(0).getDescription().getApp();
             if (app == null || app.iconLocation() == null) {
-                // FIXME Work out how to do the below
-//                icon.setBackground(getResources().getDrawable(R.drawable.icon));
+                icon.setBackgroundResource(R.drawable.icon);
             } else {
                 String iconLocation = app.iconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);
                 icon.setImageBitmap(b);
             }
 
-//            v.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    if (selected.contains(position)) {
-//                        // Remove it
-//                        selected.remove(selected.indexOf(position));
-//                        v.setBackgroundResource(0);
-//
-//                        // And set the background of the removed one to be blank
-//                    }
-//
-//                    selected.add(position);
-////					oldSelectedIndex = selectedIndex;
-////					selectedIndex = position;
-//
-////					if(oldSelectedIndex != -1)
-////						parent.getChildAt(oldSelectedIndex).setBackgroundResource(0);
-//
-//                    // Set the background colour of this one.
-//                    v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
-//
-//                    if (actionMode != null) {
-//                        actionMode.setSubtitle(selected.size() + " selected."); //cs.name());
-//
-//                        if (selected.size() == 1) {
-//                            if (cs.getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
-//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
-//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
-//                            } else {
-//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, true);
-//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
-//                            }
-//                        } else if (selected.size() > 1) {
-//                            // Hide the edit ones
-//                            actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
-//                            actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, false);
-//                        } else {
-//                            // Dno, it's probably zero now
-//                            if (LOG) Log.d(TAG, "There's nothing left in the action mode");
-//                        }
-//
-//                        // The menu needs to have different things depending on how many are selected
-//                    } else {
-//                        actionMode = FragmentCompositeList.this.startActionMode(actionCallback);
-//                    }
-//                }
-//            });
+            TextView componentList = (TextView) v.findViewById(R.id.composite_components);
+            String componentText = "";
+            for(int i = 0; i < cs.getComponents().size(); i++) {
+                if(i > 0)
+                    componentText += " > ";
+                componentText += cs.getComponents().valueAt(i).getDescription().getName();
+            }
+            componentList.setText(componentText);
+
             return v;
         }
     }
@@ -687,15 +649,19 @@ public class FragmentCompositeList extends Fragment {
             return composites;
         }
 
-        protected void onPostExecute(ArrayList<CompositeService> compositeList) {
-            // Maybe set a flag or something?
-            composites = compositeList;
+        protected void onPostExecute(ArrayList<CompositeService> composites) {
 
-            CompositeGridAdapter adapter = new CompositeGridAdapter(getActivity(), R.layout.composition_list_item, composites);
-            loadGrid.setAdapter(adapter);
+            // Maybe set a flag or something?
+            FragmentCompositeList.this.composites = composites;
+
+            gridAdapter = new CompositeGridAdapter(getActivity(), R.layout.grid_item_app_selector, composites);
+            compositeGrid.setAdapter(gridAdapter);
+
+            listAdapter = new CompositeListAdapter(getActivity(), R.layout.list_item_app_selector, composites);
+            compositeList.setAdapter(listAdapter);
 
             loader.setVisibility(View.GONE);
-            loadGrid.setVisibility(View.VISIBLE);
+            compositeGrid.setVisibility(View.VISIBLE);
         }
     }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Fill"
+    android:padding="2dip"
+    android:layout_margin="2dip"
+    android:background="@drawable/textview_button">
+    
+   	<RelativeLayout
+   	    style="@style/FillWrap"
+   	    android:gravity="center"
+   	    android:layout_gravity="center"
+   	    android:id="@+id/icon_container" >
+   	    
+   	     <ImageView
+   	         android:layout_alignParentTop="true"
+   	        android:id="@+id/service_icon"
+			android:layout_width="64dip"
+	    	android:layout_height="64dip"
+			android:contentDescription="@string/cd_composite_list_more"
+			android:gravity="center"
+	        />
+  	</RelativeLayout>
+    
+ 	<TextView
+    	android:id="@+id/load_list_name"
+   		style="@style/FillWrap"
+        android:gravity="center"
+   	    android:text="@string/name"
+	    android:layout_alignParentLeft="true"
+        android:textSize="16sp" 
+	    android:layout_alignParentBottom="true"
+        android:layout_below="@id/icon_container"
+        />
+		 
+</RelativeLayout>

@@ -268,7 +268,7 @@ public class ServiceDescription {
         }
     }
 
-    public AppDescription app() {
+    public AppDescription getApp() {
         return this.app;
     }
 
@@ -401,7 +401,7 @@ public class ServiceDescription {
             return false;
         }
 
-        if(!this.app.equals(other.app())) {
+        if(!this.app.equals(other.getApp())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: app");
             return false;
         }

@@ -90,7 +90,6 @@ public class Constants
 		}
 	}
 
-	public static final String TEST = "test";
 	public static final String DURATION = "duration";
 	public static final String RESULT = "result";
 	public static final String RUN_NOW = "run_now";

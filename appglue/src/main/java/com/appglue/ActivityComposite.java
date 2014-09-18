@@ -2,19 +2,13 @@ package com.appglue;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,8 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.Constants.ProcessType;
-import com.appglue.description.ServiceDescription;
-import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.library.LogItem;
@@ -32,7 +24,6 @@ import com.appglue.serviceregistry.Registry;
 import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class ActivityComposite extends Activity
@@ -112,7 +103,7 @@ public class ActivityComposite extends Activity
 		
 		try 
 		{
-			String iconLocation = cs.getComponents().get(0).getDescription().app().iconLocation();
+			String iconLocation = cs.getComponents().get(0).getDescription().getApp().iconLocation();
 			Bitmap b = ls.readIcon(iconLocation);
 			
 			if(b != null)
@@ -145,7 +136,7 @@ public class ActivityComposite extends Activity
 		activeCheck.setChecked(registry.enabled(cs.getID()));
 		
 		ListView componentList = (ListView) findViewById(R.id.composite_component_list);
-		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponentsAL()));
+//		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponentsAL()));
 			
 		if(edit)
 		{
@@ -192,75 +183,5 @@ public class ActivityComposite extends Activity
 		}
 		
 		return false;
-	}
-	
-	private class CompositeComponentAdapter extends ArrayAdapter<ComponentService>
-	{
-		private ArrayList<ComponentService> items;
-		
-		public CompositeComponentAdapter(Context context, ArrayList<ComponentService> items)
-		{
-            super(context, R.layout.li_component_in_composite, items);
-			this.items = items;
-		}
-		
-		public View getView(int position, View convertView, ViewGroup parent)
-		{
-			View v = convertView;
-			LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			
-			if(v == null)
-			{
-				v = vi.inflate(R.layout.li_component_in_composite, null);
-			}
-
-            if(v == null)
-                return null;
-
-			final ServiceDescription item = items.get(position).getDescription();
-			
-			ImageView icon = (ImageView) v.findViewById(R.id.component_icon);
-			TextView name = (TextView) v.findViewById(R.id.component_name);
-			
-			try 
-			{
-				String iconLocation = cs.getComponents().get(0).getDescription().app().iconLocation();
-				Bitmap b = localStorage.readIcon(iconLocation);
-				
-				if(b != null)
-					icon.setImageBitmap(b);
-			}
-			catch (Exception e) 
-			{
-				icon.setImageResource(R.drawable.icon);
-			}
-			
-			name.setText(item.getName());
-			
-			if(item.hasInputs())
-				v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);
-			else
-				v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.composite_input);
-			
-			if(item.hasOutputs())
-				v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.has_io);
-			else
-				v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.composite_output);
-			
-			v.setOnClickListener(new OnClickListener()
-			{
-				@Override
-				public void onClick(View v) 
-				{
-					Intent intent = new Intent(ActivityComposite.this, ActivityComponent.class);
-					intent.putExtra(CLASSNAME, item.getClassName());
-					startActivity(intent);
-				}
-				
-			});
-			
-			return v;
-		}
-		
 	}
 }

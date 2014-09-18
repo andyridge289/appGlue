@@ -56,7 +56,7 @@ import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.RUN_NOW;
 import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.TEST;
+import static com.appglue.library.AppGlueConstants.TEST;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_PARAMS;
 import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
@@ -156,7 +156,7 @@ public class ActivityCompositeList extends Activity {
                     for (Integer aSelected : selected) {
                         killList.add(composites.get(aSelected));
                     }
-                    delete(killList);
+//                    delete(killList);
                     break;
             }
 
@@ -181,7 +181,7 @@ public class ActivityCompositeList extends Activity {
 
         registry = Registry.getInstance(this);
         localStorage = LocalStorage.getInstance();
-        loadGrid = (GridView) findViewById(R.id.loadList);
+        loadGrid = (GridView) findViewById(R.id.load_grid);
         loader = (ImageView) findViewById(R.id.loading_spinner);
 
 //		mainContainer = (LinearLayout) findViewById(R.getID.comp_list_main);
@@ -415,47 +415,7 @@ public class ActivityCompositeList extends Activity {
         startActivity(intent);
     }
 
-    private void delete(final ArrayList<CompositeService> csList) {
-        final CompositeService cs = csList.get(0);
 
-        new AlertDialog.Builder(ActivityCompositeList.this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Delete")
-                .setMessage(String.format("Are you sure you want to delete %s?", csList.size() == 1 ? cs.getName() : csList.size() + " services"))
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        boolean fail = false;
-                        for (CompositeService aCsList : csList) {
-                            if (!registry.deleteComposite(aCsList)) {
-                                fail = true;
-                            }
-                        }
-
-                        if (fail)
-                            Toast.makeText(ActivityCompositeList.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(ActivityCompositeList.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
-
-                        // This only works when you click on something else?
-                        composites = registry.getComposites(false);
-                        composites.add(CompositeService.makePlaceholder());
-
-                        if (adapter != null) {
-                            // This might need to be sorted?
-                            adapter = new CompositeGridAdapter(ActivityCompositeList.this, R.layout.list_item_app_selector, composites);
-                            loadGrid.setAdapter(adapter);
-                        } else {
-                            adapter = new CompositeGridAdapter(ActivityCompositeList.this, R.layout.list_item_app_selector, composites);
-                            loadGrid.setAdapter(adapter);
-                        }
-
-                    }
-
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
 
     private void createShortcut(CompositeService cs) {
         Intent shortcutIntent = new Intent();
@@ -509,7 +469,7 @@ public class ActivityCompositeList extends Activity {
 
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.list_item_app_selector, null);
+                v = vi.inflate(R.layout.grid_item_app_selector, null);
             }
 
             if (v == null)
@@ -532,7 +492,7 @@ public class ActivityCompositeList extends Activity {
 //                Log.d(TAG, components.keyAt(i) + ": alive");
 //            }
 
-            AppDescription app = components.get(0).getDescription().app();
+            AppDescription app = components.get(0).getDescription().getApp();
 
 
             if (app == null || app.iconLocation() == null) {
@@ -547,15 +507,16 @@ public class ActivityCompositeList extends Activity {
             v.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (selected.contains(position)) {
-                        // Remove it
-                        selected.remove(selected.indexOf(position));
-                        v.setBackgroundResource(0);
 
-                        // And set the background of the removed one to be blank
-                    }
+//                    if (selected.contains(position)) {
+//                        // Remove it
+//                        selected.remove(selected.indexOf(position));
+//                        v.setBackgroundResource(0);
+//
+//                        // And set the background of the removed one to be blank
+//                    }
 
-                    selected.add(position);
+//                    selected.add(position);
 //					oldSelectedIndex = selectedIndex;
 //					selectedIndex = position;
 
@@ -563,32 +524,32 @@ public class ActivityCompositeList extends Activity {
 //						parent.getChildAt(oldSelectedIndex).setBackgroundResource(0);
 
                     // Set the background colour of this one.
-                    v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
+//                    v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
 
-                    if (actionMode != null) {
-                        actionMode.setSubtitle(selected.size() + " selected."); //cs.name());
-
-                        if (selected.size() == 1) {
-                            if (cs.getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
-                                actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
-                                actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
-                            } else {
-                                actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, true);
-                                actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
-                            }
-                        } else if (selected.size() > 1) {
-                            // Hide the edit ones
-                            actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
-                            actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, false);
-                        } else {
-                            // Dno, it's probably zero now
-                            if (LOG) Log.d(TAG, "There's nothing left in the action mode");
-                        }
-
-                        // The menu needs to have different things depending on how many are selected
-                    } else {
-                        actionMode = ActivityCompositeList.this.startActionMode(actionCallback);
-                    }
+//                    if (actionMode != null) {
+//                        actionMode.setSubtitle(selected.size() + " selected."); //cs.name());
+//
+//                        if (selected.size() == 1) {
+//                            if (cs.getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
+//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
+//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
+//                            } else {
+//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, true);
+//                                actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, true);
+//                            }
+//                        } else if (selected.size() > 1) {
+//                            // Hide the edit ones
+//                            actionMode.getMenu().setGroupVisible(R.id.comp_context_rungroup, false);
+//                            actionMode.getMenu().setGroupVisible(R.id.comp_context_singlegroup, false);
+//                        } else {
+//                            // Dno, it's probably zero now
+//                            if (LOG) Log.d(TAG, "There's nothing left in the action mode");
+//                        }
+//
+//                        // The menu needs to have different things depending on how many are selected
+//                    } else {
+//                        actionMode = ActivityCompositeList.this.startActionMode(actionCallback);
+//                    }
                 }
             });
             return v;

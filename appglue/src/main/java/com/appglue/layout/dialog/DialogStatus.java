@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.engine.description.ServiceIO;
 
@@ -87,7 +86,7 @@ class DialogStatus extends DialogCustom {
     private class StatusAdapter extends ArrayAdapter<String> {
 
         public StatusAdapter(Context context, List<String> values) {
-            super(context, R.layout.list_item_app_selector, values);
+            super(context, R.layout.grid_item_app_selector, values);
         }
 
         public View getView(final int position, View v, ViewGroup parent) {

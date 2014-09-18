@@ -77,7 +77,7 @@ public class FragmentStory extends Fragment implements OnClickListener
 //			{
 //				cs.addServiceDescription(position, registry.getServiceDescription(className));
 //			}
-            // FIXME Change the above to work with ComponentService
+            // Change the above to work with ComponentService
 			
 			Intent i = new Intent(getActivity(), ActivityStoryParameters.class);
 			i.putExtra(CLASSNAME, className);

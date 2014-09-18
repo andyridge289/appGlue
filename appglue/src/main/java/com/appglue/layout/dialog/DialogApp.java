@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appglue.ActivityWiring;
-import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.engine.description.ServiceIO;
 
@@ -87,7 +86,7 @@ public class DialogApp extends DialogCustom {
         private int selectedIndex;
 
         public AppChooserAdapter(Context context, List<ApplicationInfo> values, PackageManager pm) {
-            super(context, R.layout.list_item_app_selector, values);
+            super(context, R.layout.grid_item_app_selector, values);
 
             this.pm = pm;
             this.values = values;
@@ -97,7 +96,7 @@ public class DialogApp extends DialogCustom {
         public View getView(final int position, View v, ViewGroup parent) {
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.list_item_app_selector, parent);
+                v = vi.inflate(R.layout.grid_item_app_selector, parent);
             }
 
             if (position != selectedIndex) {

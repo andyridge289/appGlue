@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/single_service_bg"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+        
+        <ImageView
+            android:id="@+id/composite_icon"
+            android:contentDescription="@string/component_icon_contdesc"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_margin="4dip"
+            android:src="@drawable/icon"
+            android:paddingBottom="5dip"
+            />
+
+        <TextView
+            android:id="@+id/composite_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/service_name"
+            android:paddingTop="10dip"
+            android:textSize="20sp"
+            android:textStyle="bold" >
+        </TextView>
+ 
+        
+    </LinearLayout>
+
+	<TextView
+		style="@style/Simple.Title"
+       	android:text="@string/simple_title_description" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/composite_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip"
+        android:text="@string/simple_service_description_text"
+        />
+    
+    <TextView
+        style="@style/Simple.Title"
+        android:text="@string/status"
+        />
+    
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        
+        <CheckBox 
+	        android:id="@+id/composite_active"
+	        android:text="@string/active"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />
+	    
+	    <CheckBox
+	        android:id="@+id/composite_running"
+	        android:text="@string/running"
+	        android:layout_width="0dip"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        />
+        
+    </LinearLayout>
+    
+    <TextView
+        style="@style/Simple.Title"
+        android:text="@string/components"
+        android:layout_marginBottom="5dip"
+        />
+
+	<ListView
+	    android:id="@+id/composite_component_list"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    />
+
+</LinearLayout>
