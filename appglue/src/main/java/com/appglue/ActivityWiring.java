@@ -4,15 +4,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -34,6 +32,8 @@ public class ActivityWiring extends ActionBarActivity {
     private FragmentComponentListPager componentListFragment;
 
     private CharSequence mTitle;
+
+    private Menu menu;
 
     private int position = 0;
 
@@ -59,21 +59,18 @@ public class ActivityWiring extends ActionBarActivity {
     public void setMode(int mode) {
         this.mode = mode;
 
-        if(wiringFragment == null) {
-            wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(cs.getID());
-            componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
-        }
-
         Fragment attach = null;
 
         switch(mode) {
             case MODE_CREATE:
                 mTitle = "Create glued app";
+                wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(cs.getID());
                 attach = wiringFragment;
                 break;
 
             case MODE_CHOOSE:
                 mTitle = "Choose a component";
+                componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
                 attach = componentListFragment;
                 break;
         }
@@ -82,9 +79,10 @@ public class ActivityWiring extends ActionBarActivity {
         fm.beginTransaction().replace(R.id.container, attach).commit();
 
         setActionBar();
+        invalidateOptionsMenu();
     }
 
-    private void setActionBar() {
+    public void setActionBar() {
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
 		actionBar.setTitle(mTitle);
@@ -93,6 +91,7 @@ public class ActivityWiring extends ActionBarActivity {
     public void onBackPressed() {
         // TODO If we're on the list page go back to the wire-er
         // TODO If we're on the wiring page go back to the home page
+        super.onBackPressed();
     }
 
 	public void onPause()
@@ -109,12 +108,14 @@ public class ActivityWiring extends ActionBarActivity {
 
         registry = Registry.getInstance(this);
 
+        AlertDialog.Builder keepTemp = null;
+
         if(cs == null && compositeId == -1) {
             // They are DEFINITELY creating a new one
             if(registry.tempExists())
             {
                 // There is stuff in the temp -- they might want to save it
-                AlertDialog.Builder keepTemp = new AlertDialog.Builder(this);
+                keepTemp = new AlertDialog.Builder(this);
                 keepTemp.setMessage("You have a saved draft, do you want to carry on with it, or start again?");
                 keepTemp.setCancelable(true);
                 keepTemp.setPositiveButton("Keep draft",
@@ -128,17 +129,15 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setNegativeButton("Start new",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                cs = registry.createTemp();
+                                cs = registry.resetTemp();
                                 setMode(MODE_CHOOSE);
                             }
                         });
-
-                keepTemp.create().show();
             }
             else
             {
                 // There isn't stuff in the temp, just use that
-                cs = registry.createTemp();
+                cs = registry.resetTemp();
                 setMode(MODE_CHOOSE);
             }
         } else { // They might not be creating a new one
@@ -148,7 +147,7 @@ public class ActivityWiring extends ActionBarActivity {
             }
 
             if(registry.tempExists()) {
-                AlertDialog.Builder keepTemp = new AlertDialog.Builder(this);
+                keepTemp = new AlertDialog.Builder(this);
                 keepTemp.setMessage("You have a saved draft, do you want to keep it?");
                 keepTemp.setCancelable(true);
                 keepTemp.setPositiveButton("Save draft",
@@ -161,18 +160,19 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setNegativeButton("Discard draft",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                registry.createTemp();
+                                registry.resetTemp();
                                 cs = registry.getComposite(cs.getID());
                                 setMode(MODE_CREATE);
                             }
                         });
-
-                keepTemp.create().show();
             } else {
                 cs = registry.getComposite(cs.getID());
                 setMode(MODE_CREATE);
             }
         }
+
+        if(keepTemp != null)
+            keepTemp.create().show();
 	}
 
 	public ArrayList<ComponentService> getComponents() {
@@ -195,36 +195,50 @@ public class ActivityWiring extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-//		MenuInflater inflater = getMenuInflater();
-//	    inflater.inflate(R.menu.wiring, menu);
-//
-//        modeMenuItem = menu.findItem(R.id.wiring_value_switch);
-//        setMode(mode);
+        this.menu = menu;
+
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.wiring, menu);
+
+        if(mode == MODE_CREATE) {
+
+            if(wiringFragment != null && wiringFragment.getWiringMode() == FragmentWiringPager.MODE_WIRING) {
+                menu.setGroupVisible(R.id.menu_group_create_wiring, true);
+                menu.setGroupVisible(R.id.menu_group_create_value, false);
+            } else {
+                menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+                menu.setGroupVisible(R.id.menu_group_create_value, true);
+            }
+        } else {
+            menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+            menu.setGroupVisible(R.id.menu_group_create_value, false);
+            menu.setGroupVisible(R.id.menu_group_choose, true);
+        }
+
         return true;
     }
 
-	public boolean onOptionsItemSelected(MenuItem item)
-	{
-//		if(item.getItemId() == android.R.id.home)
-//		{
-//			finish();
-//		}
-//		else if(item.getItemId() == R.id.wiring_done)
-//		{
-//			saveDialog();
-//		} else if (item.getItemId() == R.id.wiring_value_switch) {
-//            if (mode == MODE_WIRING)
-//                setMode(MODE_VALUE);
-//            else
-//                setMode(MODE_WIRING);
-//        }
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId() == android.R.id.home) {
+			finish();
+		} else if(item.getItemId() == R.id.wiring_done) {
+			wiringFragment.saveDialog();
+		} else if (item.getItemId() == R.id.wiring_value_switch) {
+            wiringFragment.setWiringMode(FragmentWiringPager.MODE_VALUE);
+            invalidateOptionsMenu();
+        } else if (item.getItemId() == R.id.wiring_wiring_switch) {
+            wiringFragment.setWiringMode(FragmentWiringPager.MODE_WIRING);
+            invalidateOptionsMenu();
+        }
+
         return true;
 	}
 
-    // FIXME Get composites get app might not be working -- that would explain why it doesn't load the icon first time round
+    public void chooseComponentFromList(int position) {
+        this.position = position;
+        setMode(MODE_CHOOSE);
+    }
 
-
-    // FIXME 19 components. 19!!!!!!11111111!!!!!
     public void chooseItem(String className) {
         ServiceDescription sd = registry.getServiceDescription(className);
         ComponentService component = new ComponentService(cs, sd, position);
@@ -241,4 +255,7 @@ public class ActivityWiring extends ActionBarActivity {
         setMode(MODE_CREATE);
     }
 
+    public CompositeService getComposite() {
+        return cs;
+    }
 }

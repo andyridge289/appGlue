@@ -2,7 +2,7 @@ package com.appglue;
 
 public class Constants 
 {
-    public static final boolean LOG = true;
+    public static final boolean LOG = false;
 
     // Broadcast receive-y thing
 	public static final String ACTION_COMPOSABLE = "com.appglue.IM_A_COMPOSABLE_SERVICE";
@@ -17,26 +17,7 @@ public class Constants
 	public static final String KEY_COMPOSITE = "key_composite";
 	public static final String KEY_SERVICE_LIST = "key_service_list";
 	
-//	public static final int STORY_MODE = 109;
-	
 	public static final int FULL_ALPHA = 360;
-	
-	public static enum Param
-	{
-		NUMBER(0, "Number"),
-		STRING(1, "String"),
-		ONE_SET(2, "One set"),
-		MANY_SET(3, "Many set");
-		
-		public int index;
-		public String name;
-		
-		Param(int index, String name)
-		{
-			this.index = index;
-			this.name = name;
-		}
-	}
 	
 	public static enum Requiredness
 	{
@@ -91,10 +72,11 @@ public class Constants
 	
 	public static enum Interval
 	{
-		SECONDS(0, 1, "Second"),
-		MINUTES(1, 60, "Minute"),
-		HOURS(2, 3600, "Hour"),
-		DAYS(3, 86400, "Day");
+        NONE(0, 0, "None"),
+		SECONDS(1, 1, "Second"),
+		MINUTES(2, 60, "Minute"),
+		HOURS(3, 3600, "Hour"),
+		DAYS(4, 86400, "Day");
 		
 		public int index;
 		public int value;
@@ -107,59 +89,12 @@ public class Constants
 			this.name = name;
 		}
 	}
-	
-	public static enum Composition
-	{
-		// Problems
-		EMPTY(0 , "Empty", "The composition is empty", Level.ERROR), // The composition is empty
-		NO_MATCH(1, "Input/Output mis-match", "The output of one service doesn't match the input of the next", Level.ERROR), // The output of a service doesn't match the input of the next
-		
-		// Warnings
-		FIRST_INPUT(2, "First service has an input", "The first service in the composition has an input", Level.WARNING),	// The first service has an input
-		LAST_OUTPUT(3, "Last service has an output", "The last service in the composition has an output", Level.WARNING),		// The last service has an output 
-		NO_INPUT_NOT_FIRST(4, "Middle service doesn't have input", "A service in middle of the composition doesn't have an input", Level.WARNING),
-		NO_OUTPUT_NOT_LAST(5, "Middle service doesn't have output", "A service in the middle of the composition doesn't have an output", Level.WARNING);
-		
-		public int index;
-		public String name;
-		public String description;
-		public Level level;
-		
-		Composition(int index, String name, String description, Level level)
-		{
-			this.index = index;
-			this.name = name;
-			this.description = description;
-			this.level = level;
-		}
-	}
-	
-	public static enum Level
-	{
-		ERROR(0, "Error"),
-		WARNING(1, "Name"),
-		OKAY(2, "Okay");
-		
-		public int index;
-		public String name;
-		
-		Level(int index, String name)
-		{
-			this.index = index;
-			this.name = name;
-		}
-	}
 
-	
 	public static final String TEST = "test";
 	public static final String DURATION = "duration";
-	public static final String DEFAULT_NAME = "Test Service";
 	public static final String RESULT = "result";
-	public static final String LAST_CLASSNAME = "last_classname";
 	public static final String RUN_NOW = "run_now";
-    public static final String ACTIVE_OR_TIMER = "active_or_timer";
-    public static final String RUNNING_NOW = "running_now";
-	
+
 	public static final String INDEX = "index";
 	public static final String IS_LIST = "is_list";
 	public static final String DATA = "data";

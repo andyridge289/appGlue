@@ -115,7 +115,6 @@ public class AppDescription {
 
         if(!iconLocation.equals(other.iconLocation()))  {
             if(LOG) Log.d(TAG, "AppDescription->Equals: icon location");
-            Log.d(TAG, "[" + iconLocation + "] :: [" + other.iconLocation() + "]");
             return false;
         }
 

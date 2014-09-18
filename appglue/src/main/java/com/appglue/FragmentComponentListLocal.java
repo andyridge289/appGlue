@@ -82,8 +82,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
         serviceListView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int position, long id) {
-                if(!homeParent)
-                    ((ActivityComponentList) getActivity()).chosenItem(services.get(position).getClassName());
+                ((ActivityWiring) getActivity()).chooseItem(services.get(position).getClassName());
             }
         });
 

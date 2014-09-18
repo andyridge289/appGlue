@@ -32,6 +32,8 @@ public class FragmentSettings extends Fragment implements SharedPreferences.OnSh
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         Map<String, ?> prefs = sharedPreferences.getAll();
 
+        // FIXME This needs to show a clear database button
+
         // Sorts out the showing notifications preference.
 //        boolean notifications = prefs.getBoolean(getResources().getString(R.string.prefs_notifications), false);
 //        CheckBoxPreference n = (CheckBoxPreference) findPreference(getResources().getString(R.string.prefs_notifications));

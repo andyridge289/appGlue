@@ -22,7 +22,6 @@ import java.util.HashMap;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class Registry {
     public static Registry registry = null;
@@ -60,25 +59,24 @@ public class Registry {
         this.service = this.getComposite(id);
     }
 
-    public CompositeService createTemp() {
-        dbHandler.resetTemp();
-
-        service = new CompositeService(true);
-        return service;
+    public CompositeService resetTemp() {
+        return dbHandler.resetTemp();
     }
 
     public CompositeService getTemp() {
-        service = getComposite(TEMP_ID);
+        service = getComposite(CompositeService.TEMP_ID);
         return service;
     }
 
     public boolean tempExists() {
-        CompositeService cs = dbHandler.getComposite(TEMP_ID);
+        CompositeService cs = dbHandler.getComposite(CompositeService.TEMP_ID);
         return cs.getComponents().size() > 0;
     }
 
-    public void saveTempAsComposite(String name) {
-        dbHandler.saveTempAsComposite(name);
+    public CompositeService saveTempAsComposite(String name) {
+        CompositeService composite = dbHandler.saveTempAsComposite(name, getTemp());
+        dbHandler.resetTemp();
+        return composite;
     }
 
     public CompositeService getService() {
@@ -174,15 +172,8 @@ public class Registry {
         return dbHandler.deleteComposite(cs);
     }
 
-    public long updateCurrent() {
-
-        if (service == null) {
-            Log.e(TAG, "Update current: service is null. This is dire");
-            return -1;
-        }
-
-        Log.d(TAG, "Updating current: " + service.getName());
-        return dbHandler.updateComposite(service);
+    public CompositeService updateComposite(CompositeService composite) {
+        return dbHandler.updateComposite(composite);
     }
 
     public boolean reset() {
@@ -317,6 +308,7 @@ public class Registry {
 
     public void genericTriggerFail(ComponentService component, Bundle inputData, String error) {
         dbHandler.addToLog(null, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL);
+        EngineTest.executeFinished = true;
     }
 
     /**
@@ -350,6 +342,8 @@ public class Registry {
         boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.MESSAGE_FAIL);
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
 
+        EngineTest.executeFinished = true;
+
         if(logComponent && logComposite) {
             return true;
         } else {
@@ -375,6 +369,7 @@ public class Registry {
 
     public boolean orchestratorFail(CompositeService composite, long executionInstance, ServiceDescription sd, String message) {
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.ORCH_FAIL, message);
+        EngineTest.executeFinished = true;
         return logComposite;
     }
 

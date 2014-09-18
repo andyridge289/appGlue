@@ -75,7 +75,7 @@ public class DialogConnection extends DialogCustom {
 
                         // Delete the row of the thing
                         notifyDataSetChanged();
-                        registry.updateCurrent();
+                        registry.updateComposite(activity.getComposite());
 
                         // Redraw so that the connection disappears
                         parent.redraw(true);

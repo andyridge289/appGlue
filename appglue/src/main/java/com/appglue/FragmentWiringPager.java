@@ -1,7 +1,6 @@
 package com.appglue;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,7 +39,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private WiringPagerAdapter valuePagerAdapter;
 
     private int mode;
-    private static final int MODE_WIRING = 0;
+    public static final int MODE_WIRING = 0;
     public static final int MODE_VALUE = 1;
 
     private TextView csNameText;
@@ -57,9 +56,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     public static Fragment create(long compositeId) {
 
-        if(instance == null) {
-            instance = new FragmentWiringPager();
-        }
+        FragmentWiringPager instance = new FragmentWiringPager();
 
         Bundle args = new Bundle();
         args.putLong(COMPOSITE_ID, compositeId);
@@ -124,7 +121,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         finishWiringSetup();
-        setMode(MODE_WIRING);
+        setWiringMode(MODE_WIRING);
 
     }
 
@@ -146,9 +143,9 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     public void onDestroyView() {
         super.onDestroyView();
 
-        Bundle args = new Bundle();
-        args.putLong(COMPOSITE_ID, cs.getID());
-        this.setArguments(args);
+//        Bundle args = new Bundle();
+//        args.putLong(COMPOSITE_ID, cs.getID());
+//        this.setArguments(args);
     }
 
     @Override
@@ -199,7 +196,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 			{
 				String name = csNameEdit.getText().toString();
 				cs.setName(name);
-				registry.updateCurrent();
+				registry.updateComposite(cs);
 				csNameText.setText(name);
 
 				csNameText.setVisibility(View.VISIBLE);
@@ -226,11 +223,11 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 	}
 
-    int getMode() {
+    int getWiringMode() {
         return mode;
     }
 
-    private void setMode(int mode) {
+    public void setWiringMode(int mode) {
         this.mode = mode;
 
         ViewPager show;
@@ -275,42 +272,43 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 		}
     }
 
-//    private void saveDialog()
-//    {
-//        if(cs.getID() == 1)
-//        {
-//            // Then it's the temp, we should save it
-//            String name = csNameEdit.getText().toString();
-//
-//            SparseArray<ComponentService> comps = cs.getComponents();
-//
-////            if(name.equals("Temp name"))
-////            {
-////                String tempName = "";
-////                for(ServiceDescription sd : comps)
-////                    tempName += sd.name() + "  ";
-////
-////                name = tempName;
-////            }
-////            FIXME Make the name setting work
-//
-//            registry.saveTempAsComposite(name);
-//        }
-//        else if(cs.getID() == -1)
-//        {
-//            // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
-//            if(LOG) Log.d(TAG, "the CS is -1, this might be bad.");
-//        }
-//        else
-//        {
-//            // We're just updating one that already exists
-//            boolean success = registry.updateWiring(cs);
-//            if(success)
-//                Log.d(TAG, "Updated " + cs.getName());
-//        }
-//
-//        getActivity().finish();
-//    }
+    public void saveDialog()
+    {
+        if(cs.getID() == 1)
+        {
+            // Then it's the temp, we should save it
+            String name = csNameEdit.getText().toString();
+
+            SparseArray<ComponentService> comps = cs.getComponents();
+
+            if(name.equals("Temp name"))
+            {
+                String tempName = "";
+                for(int i = 0; i < comps.size(); i++) {
+                    if(i > 0) tempName += " ->  ";
+                    tempName += comps.valueAt(i).getDescription().getName();
+                }
+
+                name = tempName;
+            }
+
+            registry.saveTempAsComposite(name);
+        }
+        else if(cs.getID() == -1)
+        {
+            // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
+            if(LOG) Log.d(TAG, "the CS is -1, this might be bad.");
+        }
+        else
+        {
+            // We're just updating one that already exists
+            boolean success = registry.updateWiring(cs);
+            if(success)
+                Log.d(TAG, "Updated " + cs.getName());
+        }
+
+        getActivity().finish();
+    }
 
     private void setPageIndex(int index) {
         if (mode == MODE_WIRING) {

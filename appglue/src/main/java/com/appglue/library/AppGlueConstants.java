@@ -47,8 +47,6 @@ public class AppGlueConstants {
     public static final String TBL_COMPOSITE_EXECUTION_LOG = "compositeexecutionlog";
     public static final String TBL_EXECUTION_LOG = "executionlog";
 
-    public static final int TEMP_ID = 1;
-
     public static final String JUST_A_LIST = "atomic_list";
 
     public static final String TRIGGERS_ONLY = "triggers_only";
@@ -182,15 +180,15 @@ public class AppGlueConstants {
 
     // 'dynamic' database tables
     public static final String[][] COLS_COMPOSITE = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {NAME, "TEXT"},
-                    {DESCRIPTION, "TEXT"},
-                    {ACTIVE_OR_TIMER, "TINYINT"},
-                    {ENABLED, "TINYINT"},
-                    {NUMERAL, "INTEGER"},
-                    {INTERVAL, "INTEGER"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {NAME, "TEXT"},
+        {DESCRIPTION, "TEXT"},
+        {ACTIVE_OR_TIMER, "TINYINT"},
+        {ENABLED, "TINYINT"},
+        {NUMERAL, "INTEGER"},
+        {INTERVAL, "INTEGER"}
+    };
 
     public static final String COMPOSITE_ID = "composite_id";
 

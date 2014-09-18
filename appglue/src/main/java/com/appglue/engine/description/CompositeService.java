@@ -20,7 +20,6 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
-import static com.appglue.library.AppGlueConstants.TEMP_ID;
 
 public class CompositeService {
     private long id;
@@ -35,6 +34,10 @@ public class CompositeService {
 
     public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 
+    public static final int TEMP_ID = 1;
+    public static final String TEMP_NAME = "temp";
+    public static final String TEMP_DESCRIPTION = "This is the temporary composite";
+
     private SparseArray<ComponentService> components;
     private LongSparseArray<ComponentService> componentSearch;
 
@@ -45,7 +48,7 @@ public class CompositeService {
         this.name = "";
         this.description = "";
         this.numeral = 0;
-        this.interval = Interval.SECONDS;
+        this.interval = Interval.NONE;
         this.enabled = true;
         this.components = new SparseArray<ComponentService>();
         this.componentSearch = new LongSparseArray<ComponentService>();
@@ -53,8 +56,11 @@ public class CompositeService {
 
     public CompositeService(boolean temp) {
         this();
-        if (temp)
+        if (temp) {
             this.id = TEMP_ID;
+            this.name = TEMP_NAME;
+            this.description = TEMP_DESCRIPTION;
+        }
     }
 
     public CompositeService(String name, String description, ArrayList<ComponentService> services) {
@@ -313,19 +319,7 @@ public class CompositeService {
         this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
 
         int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));
-        Interval interval;
-
-        if (intervalValue == Interval.SECONDS.index) {
-            interval = Interval.SECONDS;
-        } else if (intervalValue == Interval.MINUTES.index) {
-            interval = Interval.MINUTES;
-        } else if (intervalValue == Interval.HOURS.index) {
-            interval = Interval.HOURS;
-        } else {
-            interval = Interval.DAYS;
-        }
-
-        this.interval = interval;
+        this.interval = Interval.values()[intervalValue];
     }
 
     public int size() {
@@ -355,17 +349,19 @@ public class CompositeService {
         }
 
         if(!this.description.equals(other.getDescription())) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: description");
+            if (LOG) Log.d(TAG, "CompositeService->Equals: description: " + description + " - " +
+                                other.getDescription());
             return false;
         }
 
         if(this.numeral != other.getNumeral()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: numeral");
+            if (LOG) Log.d(TAG, "CompositeService->Equals: numeral: " + this.numeral + " - " + other.getNumeral());
             return false;
         }
 
-        if(this.interval != other.getInterval()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: interval");
+        if(this.interval.index != other.getInterval().index) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: interval: " + this.interval.index + " - " +
+                                other.getInterval().index);
             return false;
         }
 

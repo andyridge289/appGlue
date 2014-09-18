@@ -337,7 +337,7 @@ public class FragmentStoryParameters extends Fragment
 		}
 	    else
 	    {
-            Log.d(TAG, "We've hit the else FragmentStoryParameters::setInput");
+            Log.d(TAG, "We've hit the else FragmentStoryParameters->setInput");
 	    	// Don't know what happens here
 	    }
 		
@@ -619,7 +619,7 @@ public class FragmentStoryParameters extends Fragment
 	    else
 	    {
 	    	// Don't know what happens here
-            Log.d(TAG, "We've hit the else, we probably shouldn't've (FragmentStoryParameters::setOutput");
+            Log.d(TAG, "We've hit the else, we probably shouldn't've (FragmentStoryParameters->setOutput");
 	    }
 
 		return v;

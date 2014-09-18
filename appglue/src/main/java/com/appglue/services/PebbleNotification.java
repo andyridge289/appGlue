@@ -38,7 +38,7 @@ public class PebbleNotification extends ComposableService
 		i.putExtra("messageType", "PEBBLE_ALERT");
 		i.putExtra("sender", "Composer");
 		i.putExtra("notificationData", notificationData);
-		Log.e(TAG, String.format("Broadcasting to pebble: %s :: %s", title, message));
+		Log.e(TAG, String.format("Broadcasting to pebble: %s - %s", title, message));
 		sendBroadcast(i);
 
 		return null;

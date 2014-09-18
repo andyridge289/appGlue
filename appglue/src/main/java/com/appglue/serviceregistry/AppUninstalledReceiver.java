@@ -17,7 +17,7 @@ public class AppUninstalledReceiver extends BroadcastReceiver
 		if(!action.equals("android.intent.action.PACKAGE_REMOVED"))
 			return;
 
-        Log.d(TAG, "Something has been removed");
+//        Log.d(TAG, "Something has been removed");
 
 		/*Bundle b = intent.getExtras();
 		int uid = b.getInt(Intent.EXTRA_UID);

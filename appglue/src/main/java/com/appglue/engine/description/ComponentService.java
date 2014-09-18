@@ -49,6 +49,15 @@ public class ComponentService {
     public ComponentService(ServiceDescription description, int position) {
         this();
         this.description = description;
+
+        for(int i = 0; i < description.getInputs().size(); i++) {
+            new ServiceIO(this, description.getInputs().get(i));
+        }
+
+        for (int i = 0; i < description.getOutputs().size(); i++) {
+            new ServiceIO(this, description.getOutputs().get(i));
+        }
+
         this.position = position;
     }
 

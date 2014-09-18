@@ -146,7 +146,7 @@ public class DialogFilter extends DialogCustom {
                 item.setCondition(condition.index);
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                registry.updateCurrent();
+                registry.updateComposite(DialogFilter.this.activity.getComposite());
                 DialogFilter.this.activity.redraw();
                 dismiss();
             }
@@ -163,7 +163,7 @@ public class DialogFilter extends DialogCustom {
             public void onClick(View v) {
                 item.setFilterState(ServiceIO.UNFILTERED);
                 DialogFilter.this.activity.setStatus("Cleared filter for " + description.getName());
-                registry.updateCurrent();
+                registry.updateComposite(DialogFilter.this.activity.getComposite());
                 DialogFilter.this.activity.redraw();
             }
         });

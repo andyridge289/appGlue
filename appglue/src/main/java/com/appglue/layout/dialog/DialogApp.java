@@ -65,7 +65,7 @@ public class DialogApp extends DialogCustom {
                 item.setFilterState(ServiceIO.MANUAL_FILTER);
                 DialogApp.this.activity.setStatus("Chosen app: " + selected.packageName);
 
-                registry.updateCurrent();
+                registry.updateComposite(activity.getComposite());
                 activity.redraw();
                 dismiss();
             }

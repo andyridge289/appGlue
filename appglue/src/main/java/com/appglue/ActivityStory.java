@@ -28,7 +28,7 @@ public class ActivityStory extends Activity implements OnClickListener
 
 		if(compositeId == -1)
 		{
-			registry.createTemp();
+			registry.resetTemp();
 		}
 		else
 		{

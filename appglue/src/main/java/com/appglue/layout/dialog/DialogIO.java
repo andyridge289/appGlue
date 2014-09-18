@@ -91,7 +91,7 @@ public class DialogIO extends DialogCustom {
                 }
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                registry.updateCurrent();
+                registry.updateComposite(activity.getComposite());
                 DialogIO.this.activity.redraw();
                 dismiss();
             }
@@ -102,7 +102,7 @@ public class DialogIO extends DialogCustom {
             public void onClick(View v) {
                 item.setFilterState(ServiceIO.UNFILTERED);
                 DialogIO.this.activity.setStatus("Removed for " + description.getName());
-                registry.updateCurrent();
+                registry.updateComposite(activity.getComposite());
                 DialogIO.this.activity.redraw();
                 cancel();
             }
