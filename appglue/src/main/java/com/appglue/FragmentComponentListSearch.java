@@ -1,7 +1,6 @@
 package com.appglue;
 
 
-import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,13 +21,8 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.ServiceType;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
-import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
 
 public class FragmentComponentListSearch extends FragmentComponentList {
@@ -60,7 +54,7 @@ public class FragmentComponentListSearch extends FragmentComponentList {
         serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View v, int index, long id) {
-                if(!homeParent)
+                if (!homeParent)
                     ((ActivityWiring) getActivity()).chooseItem(services.get(index).getClassName());
             }
         });
@@ -138,16 +132,12 @@ public class FragmentComponentListSearch extends FragmentComponentList {
 
             loader.setVisibility(View.GONE);
 
-            // FIXME getActivity() is dying when the rotation changes
-
             if (services.size() > 0) {
-                if(getActivity() != null) {
+                if (getActivity() != null) {
                     serviceListView.setVisibility(View.VISIBLE);
                     AdapterComponentList adapter = new AdapterComponentListSearch(getParentFragment().getActivity(), services,
                             (FragmentComponentListPager) getParentFragment());
                     serviceListView.setAdapter(adapter);
-                } else {
-                    // TODO Do it later?
                 }
             } else
                 noneFound.setVisibility(View.VISIBLE);

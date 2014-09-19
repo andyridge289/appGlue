@@ -1,30 +1,28 @@
 package com.appglue;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.library.LogItem;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-public class FragmentSchedule extends Fragment
-{
+public class FragmentSchedule extends Fragment {
     private Registry registry;
+
+    private ListView scheduleList;
+    private TextView noSchedule;
 
     public static Fragment create() {
         return new FragmentSchedule();
     }
-
-    // TODO Create a schedule page
 
     @Override
     public void onAttach(Activity activity) {
@@ -40,7 +38,20 @@ public class FragmentSchedule extends Fragment
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
-        View root = inflater.inflate(R.layout.activity_log, container, false);
+        View root = inflater.inflate(R.layout.fragment_schedule, container, false);
+
+        scheduleList = (ListView) root.findViewById(R.id.schedule_list);
+        noSchedule = (TextView) root.findViewById(R.id.no_schedule);
+
+        ArrayList<CompositeService> composites = registry.getScheduledComposites();
+
+        if (composites.size() == 0) {
+            noSchedule.setVisibility(View.VISIBLE);
+            scheduleList.setVisibility(View.GONE);
+        } else {
+            noSchedule.setVisibility(View.GONE);
+            scheduleList.setVisibility(View.VISIBLE);
+        }
 
         return root;
     }

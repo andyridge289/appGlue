@@ -4,19 +4,19 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.appglue.description.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.description.ComponentService;
+import com.appglue.description.datatypes.IOType;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
-
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
+
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
 
 public class AppGlueLibrary {
     public static String createTableString(String tableName, String[][] cols) {
@@ -70,7 +70,7 @@ public class AppGlueLibrary {
                 String stringThing = type.toString(type.getFromBundle(data, key, "ARGH FAIL"));
                 json.put(key, stringThing);
             }
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "bundle to JSON string Fail");
             // TODO Put something in the log maybe?
         }
@@ -88,7 +88,7 @@ public class AppGlueLibrary {
 
         ArrayList<ServiceDescription> list = new ArrayList<ServiceDescription>();
 
-        for(int i = 0; i < sparse.size(); i++) {
+        for (int i = 0; i < sparse.size(); i++) {
             list.add(sparse.get(i));
         }
 
@@ -119,36 +119,38 @@ public class AppGlueLibrary {
             Object o = a.get(key);
             Object p = b.get(key);
 
-            if(o instanceof Bundle) {
-                if(!bundlesEqual((Bundle) o, (Bundle) p)) {
-                    if(LOG) Log.d(TAG, "Bundle->equals: Bundles " + key + " not same");
+            if (o instanceof Bundle) {
+                if (!bundlesEqual((Bundle) o, (Bundle) p)) {
+                    if (LOG) Log.d(TAG, "Bundle->equals: Bundles " + key + " not same");
                     return false;
                 }
             }
 
-            if(o instanceof ArrayList) {
+            if (o instanceof ArrayList) {
 
                 ArrayList al = (ArrayList) o;
                 ArrayList bl = (ArrayList) p;
 
-                if(al.size() != bl.size()) {
-                    if(LOG) Log.d(TAG, "Bundle->equals: " + key + " not same size");
+                if (al.size() != bl.size()) {
+                    if (LOG) Log.d(TAG, "Bundle->equals: " + key + " not same size");
                     return false;
                 }
 
-                for(int i = 0; i < al.size(); i++) {
+                for (int i = 0; i < al.size(); i++) {
 
                     Object q = al.get(i);
                     Object r = bl.get(i);
 
-                    if(q instanceof Bundle) {
-                        if(!bundlesEqual((Bundle) q, (Bundle) r)) {
-                            if(LOG) Log.d(TAG, "Bundle->equals: Bundles in ArrayList -- " + key + " not same");
+                    if (q instanceof Bundle) {
+                        if (!bundlesEqual((Bundle) q, (Bundle) r)) {
+                            if (LOG)
+                                Log.d(TAG, "Bundle->equals: Bundles in ArrayList -- " + key + " not same");
                             return false;
                         }
                     } else {
-                        if(!q.equals(r)) {
-                            if(LOG) Log.d(TAG, "Bundle->equals: Objects in ArrayList -- " + key + "[" + i + "] not same");
+                        if (!q.equals(r)) {
+                            if (LOG)
+                                Log.d(TAG, "Bundle->equals: Objects in ArrayList -- " + key + "[" + i + "] not same");
                             return false;
                         }
                     }
@@ -157,7 +159,7 @@ public class AppGlueLibrary {
             }
 
             if (!a.get(key).equals(b.get(key))) {
-                if(LOG) Log.d(TAG, "Bundle->equals: " + key + " not same");
+                if (LOG) Log.d(TAG, "Bundle->equals: " + key + " not same");
                 return false;
             }
         }
@@ -173,16 +175,25 @@ public class AppGlueLibrary {
         try {
             JSONObject json = new JSONObject(stringJSON);
             Iterator<String> keys = json.keys();
-            while(keys.hasNext()) {
+            while (keys.hasNext()) {
                 String key = keys.next();
                 IOType type = input ? component.getInput(key).getType() : component.getOutput(key).getType();
                 type.addToBundle(b, type.fromString(json.getString(key)), key);
             }
 
-        } catch(JSONException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "JSON string to bundle Fail FUCKSTICKS");
         }
 
         return b;
+    }
+
+    private static String[] randomNames = new String[]{
+            "Benjamin", "Kira", "Worf", "Jadzia", "Julian", "Miles", "Jake", "Quark", "Odo", "Jean-Luc", "William", "Deanna", "Beverley", "Data", "Geordi", "Katherine", "Chakotay", "Tuvok", "B;Elanna", "Tom", "Harry", "Doctor", "Neelix", "Kes", "Seven", "Jack", "Daniel", "Samantha", "Teal'c", "George", "John", "Elizabeth", "Richard", "Rodney", "Mal", "Zoe", "Hoban", "Inara", "Jayne", "Kaylee", "Simon", "River", "Derrial", "Serena", "Blair", "Dan", "Nate", "Jenny", "Chuck", "Vanessa", "Ivy", "Lily", "Rufus"
+    };
+
+    public static String generateRandomName() {
+        Random random = new Random(randomNames.length);
+        return randomNames[random.nextInt()];
     }
 }

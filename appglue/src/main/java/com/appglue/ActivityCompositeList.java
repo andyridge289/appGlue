@@ -36,9 +36,9 @@ import android.widget.Toast;
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
+import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.OrchestrationService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
@@ -48,7 +48,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
@@ -56,11 +55,12 @@ import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.RUN_NOW;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.TEST;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_PARAMS;
 import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
 import static com.appglue.library.AppGlueConstants.PRE_EXEC_PARAMS;
+import static com.appglue.library.AppGlueConstants.TEST;
 
 public class ActivityCompositeList extends Activity {
     private GridView loadGrid;
@@ -76,8 +76,6 @@ public class ActivityCompositeList extends Activity {
     private int tempCount = 0;
 
     private ArrayList<Integer> selected = new ArrayList<Integer>();
-
-    // TODO Let them choose custom icons
 
     private ActionMode actionMode;
     private ActionMode.Callback actionCallback = new ActionMode.Callback() {
@@ -135,9 +133,9 @@ public class ActivityCompositeList extends Activity {
                     createTimerDialog(composites.get((selected.get(0))));
                     break;
 
-				case R.id.comp_context_view:
-					view(composites.get((selected.get(0))));
-					break;
+                case R.id.comp_context_view:
+                    view(composites.get((selected.get(0))));
+                    break;
 
                 case R.id.comp_context_edit:
                     edit(composites.get((selected.get(0))));
@@ -416,7 +414,6 @@ public class ActivityCompositeList extends Activity {
     }
 
 
-
     private void createShortcut(CompositeService cs) {
         Intent shortcutIntent = new Intent();
         shortcutIntent.setComponent(new ComponentName(ActivityCompositeList.this.getPackageName(), ShortcutActivity.class.getName()));
@@ -496,8 +493,7 @@ public class ActivityCompositeList extends Activity {
 
 
             if (app == null || app.iconLocation() == null) {
-                // FIXME Work out how to do the below
-//                icon.setBackground(getResources().getDrawable(R.drawable.icon));
+                icon.setBackgroundResource(R.drawable.icon);
             } else {
                 String iconLocation = app.iconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);

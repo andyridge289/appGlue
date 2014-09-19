@@ -20,11 +20,10 @@ import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.DepthPageTransformer;
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
-
-import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class FragmentWiringPager extends Fragment implements ViewPager.OnPageChangeListener {
 
@@ -43,8 +42,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     public static final int MODE_VALUE = 1;
 
     private TextView csNameText;
-	private EditText csNameEdit;
-	private Button csNameSet;
+    private EditText csNameEdit;
+    private Button csNameSet;
     private TextView pageIndexText;
     private TextView status;
 
@@ -107,10 +106,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     public void onResume() {
         super.onResume();
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             position = getArguments().getInt(POSITION, -1);
             long compositeId = getArguments().getLong(COMPOSITE_ID);
-            if(compositeId != -1) {
+            if (compositeId != -1) {
                 cs = registry.getComposite(compositeId);
             }
         } else {
@@ -156,8 +155,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         super.onDetach();
     }
 
-    private void finishWiringSetup()
-    {
+    private void finishWiringSetup() {
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,43 +163,36 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
         });
 
-		if(cs.getName().equals(""))
-		{
-			csNameText.setText("Temp name");
-			csNameEdit.setText("Temp name");
-		}
-		else
-		{
-			csNameText.setText(cs.getName());
-			csNameEdit.setText(cs.getName());
-		}
+        if (cs.getName().equals("")) {
+            csNameText.setText("Temp name");
+            csNameEdit.setText("Temp name");
+        } else {
+            csNameText.setText(cs.getName());
+            csNameEdit.setText(cs.getName());
+        }
 
-		csNameText.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				csNameText.setVisibility(View.GONE);
-				csNameEdit.setVisibility(View.VISIBLE);
-				csNameSet.setVisibility(View.VISIBLE);
-			}
-		});
+        csNameText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                csNameText.setVisibility(View.GONE);
+                csNameEdit.setVisibility(View.VISIBLE);
+                csNameSet.setVisibility(View.VISIBLE);
+            }
+        });
 
-		csNameSet.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
-			{
-				String name = csNameEdit.getText().toString();
-				cs.setName(name);
-				registry.updateComposite(cs);
-				csNameText.setText(name);
+        csNameSet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = csNameEdit.getText().toString();
+                cs.setName(name);
+                registry.updateComposite(cs);
+                csNameText.setText(name);
 
-				csNameText.setVisibility(View.VISIBLE);
-				csNameEdit.setVisibility(View.GONE);
-				csNameSet.setVisibility(View.INVISIBLE);
-			}
-		});
+                csNameText.setVisibility(View.VISIBLE);
+                csNameEdit.setVisibility(View.GONE);
+                csNameSet.setVisibility(View.INVISIBLE);
+            }
+        });
 
         wiringPagerAdapter = new WiringPagerAdapter(getFragmentManager(), true);
         valuePagerAdapter = new WiringPagerAdapter(getFragmentManager(), false);
@@ -219,7 +210,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             wiringPager.setCurrentItem(position);
             valuePager.setCurrentItem(position);
         }
-	}
+    }
 
     int getWiringMode() {
         return mode;
@@ -231,7 +222,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         ViewPager show;
         ViewPager hide;
 
-        switch(mode) {
+        switch (mode) {
             case MODE_WIRING:
                 show = wiringPager;
                 hide = valuePager;
@@ -259,31 +250,29 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     }
 
 
-    public void redraw()
-    {
+    public void redraw() {
         WiringPagerAdapter adapter = mode == MODE_WIRING ? wiringPagerAdapter : valuePagerAdapter;
 
-		// Tell all the fragments to redraw...
-        for (int i = 0; i < adapter.getCount(); i++) {
-            FragmentVW f = (FragmentVW) adapter.getItem(i);
-            f.redraw();
-		}
+        // Tell all the fragments to redraw...
+        if (adapter != null) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                FragmentVW f = (FragmentVW) adapter.getItem(i);
+                f.redraw();
+            }
+        }
     }
 
-    public void saveDialog()
-    {
-        if(cs.getID() == 1)
-        {
+    public void saveDialog() {
+        if (cs.getID() == 1) {
             // Then it's the temp, we should save it
             String name = csNameEdit.getText().toString();
 
             SparseArray<ComponentService> comps = cs.getComponents();
 
-            if(name.equals("Temp name"))
-            {
+            if (name.equals("Temp name")) {
                 String tempName = "";
-                for(int i = 0; i < comps.size(); i++) {
-                    if(i > 0) tempName += " ->  ";
+                for (int i = 0; i < comps.size(); i++) {
+                    if (i > 0) tempName += " ->  ";
                     tempName += comps.valueAt(i).getDescription().getName();
                 }
 
@@ -291,17 +280,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
 
             registry.saveTempAsComposite(name);
-        }
-        else if(cs.getID() == -1)
-        {
+        } else if (cs.getID() == -1) {
             // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
-            if(LOG) Log.d(TAG, "the CS is -1, this might be bad.");
-        }
-        else
-        {
+            if (LOG) Log.d(TAG, "the CS is -1, this might be bad.");
+        } else {
             // We're just updating one that already exists
             boolean success = registry.updateWiring(cs);
-            if(success)
+            if (success)
                 Log.d(TAG, "Updated " + cs.getName());
         }
 
@@ -345,13 +330,12 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         @Override
-        public Fragment getItem(int position)
-        {
+        public Fragment getItem(int position) {
             if (fragments.length <= position) {
                 fragments = new Fragment[cs.getComponents().size() + 1];
             }
 
-			if(fragments[position] == null)
+            if (fragments[position] == null)
                 fragments[position] = FragmentVW.create(position, wiring);
 
             return fragments[position];

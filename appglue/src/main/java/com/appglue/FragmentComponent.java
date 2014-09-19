@@ -2,11 +2,8 @@ package com.appglue;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +17,9 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.TAG;
-
 import java.util.ArrayList;
+
+import static com.appglue.Constants.CLASSNAME;
 
 public class FragmentComponent extends Fragment {
 
@@ -168,7 +164,6 @@ public class FragmentComponent extends Fragment {
             appIcon.setVisibility(View.GONE);
         }
 
-        // TODO Set the title to say how many inputs/outputs there are
         ArrayList<IODescription> inputs = sd.getInputs();
         if (inputs == null || inputs.size() == 0) {
             inputList.setVisibility(View.GONE);
@@ -206,15 +201,14 @@ public class FragmentComponent extends Fragment {
             }
         });
 
-        viewAppButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               // TODO The app page too!?!?!?!
+        viewAppButton.setVisibility(View.GONE);//.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
 //                Intent intent = new Intent(getActivity(), ActivityApp.class);
 //                intent.putExtra(PACKAGENAME, service.app().getPackageName());
 //                startActivity(intent);
-            }
-        });
+//            }
+//        });
 
 //        final ArrayList<CompositeService> examples = registry.getExamples(service.getClassName());
 //        LayoutInflater inflater = this.getLayoutInflater();

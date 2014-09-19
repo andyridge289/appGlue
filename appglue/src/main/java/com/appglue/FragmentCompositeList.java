@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.ComponentService;
@@ -43,18 +44,15 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.DATA;
+import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.DURATION;
-
-import com.appglue.Constants.ProcessType;
-
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.TEST;
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class FragmentCompositeList extends Fragment {
 
@@ -133,9 +131,9 @@ public class FragmentCompositeList extends Fragment {
                     schedule(composites.get((selected.get(0))));
                     break;
 
-				case R.id.comp_context_view:
-					view(composites.get((selected.get(0))));
-					break;
+                case R.id.comp_context_view:
+                    view(composites.get((selected.get(0))));
+                    break;
 
                 case R.id.comp_context_edit:
                     edit(composites.get((selected.get(0))));
@@ -309,16 +307,6 @@ public class FragmentCompositeList extends Fragment {
                 .setNegativeButton("No", null)
                 .show();
     }
-
-    // TODO - last
-    // Let them choose custom icons
-    // Make it give you a notification of what apps have changed since the last time it was loaded.
-    // Make it execute on long press
-    // Make it log in with Google+
-    // Why is the icon the old icon the default?
-    // http://developers.google.com/drive/android-quickstart
-    // If others broadcast, this should bind
-
 
     private void run(CompositeService cs) {
         Intent serviceIntent = new Intent(getActivity(), OrchestrationService.class);
@@ -506,11 +494,11 @@ public class FragmentCompositeList extends Fragment {
                             v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
                         }
 
-                        if(selected.size() == 0) {
+                        if (selected.size() == 0) {
                             actionMode.finish();
                             actionMode = null;
                         } else {
-                            if(selected.size() > 1)
+                            if (selected.size() > 1)
                                 actionMode.setSubtitle(selected.size() + " selected.");
                             else
                                 actionMode.setSubtitle(composites.get(selected.get(0)).getName() + " selected.");
@@ -523,7 +511,7 @@ public class FragmentCompositeList extends Fragment {
                 @Override
                 public boolean onLongClick(View v) {
 
-                    if(actionMode == null) {
+                    if (actionMode == null) {
                         if (!selected.contains(position)) {
                             selected.add(position);
                             v.setBackgroundColor(getResources().getColor(R.color.android_blue_very));
@@ -603,8 +591,8 @@ public class FragmentCompositeList extends Fragment {
 
             TextView componentList = (TextView) v.findViewById(R.id.composite_components);
             String componentText = "";
-            for(int i = 0; i < cs.getComponents().size(); i++) {
-                if(i > 0)
+            for (int i = 0; i < cs.getComponents().size(); i++) {
+                if (i > 0)
                     componentText += " > ";
                 componentText += cs.getComponents().valueAt(i).getDescription().getName();
             }

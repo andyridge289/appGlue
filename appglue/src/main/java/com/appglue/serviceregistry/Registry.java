@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.appglue.Constants.Interval;
 import com.appglue.Constants.ServiceType;
@@ -38,10 +39,14 @@ public class Registry {
     // This is whatever the current service being edited (or the last one to be edited).
     private CompositeService service;
 
+    private Context context;
+
     private Registry(Context context) {
         dbHandler = new LocalDBHandler(context, this);
 
         remoteCache = new HashMap<String, ServiceDescription>();
+
+        this.context = context;
     }
 
     public static Registry getInstance(Context context) {
@@ -74,8 +79,19 @@ public class Registry {
     }
 
     public CompositeService saveTempAsComposite(String name) {
+
+        if (name.equals("temp")) {
+            do {
+                name = AppGlueLibrary.generateRandomName();
+            } while (dbHandler.compositeExistsWithName(name));
+        }
+
         CompositeService composite = dbHandler.saveTempAsComposite(name, getTemp());
+        Toast.makeText(context, "Saved composite called \"" + name + "\"", Toast.LENGTH_LONG).show();
         dbHandler.resetTemp();
+
+
+        // TODO Put a toast message up saying what the compostie has been saved as. Maybe highlight it for a few seconds on the composite list
         return composite;
     }
 
@@ -113,7 +129,7 @@ public class Registry {
     public ServiceDescription addServiceDescription(ServiceDescription sd) {
 
         ServiceDescription alreadyThere = dbHandler.getServiceDescription(sd.getClassName());
-        if(alreadyThere != null) {
+        if (alreadyThere != null) {
             return alreadyThere;
         }
 
@@ -295,7 +311,8 @@ public class Registry {
      */
     public long startComposite(CompositeService composite) {
         long execID = dbHandler.startComposite(composite);
-        if(LOG) Log.d(TAG, "Started composite ID " + composite.getID() + "(" + composite.getName() + ") with execID " + execID);
+        if (LOG)
+            Log.d(TAG, "Started composite ID " + composite.getID() + "(" + composite.getName() + ") with execID " + execID);
         return execID;
     }
 
@@ -318,11 +335,11 @@ public class Registry {
     /**
      * Record that a component has failed to execute properly, and stop the associated composite
      *
-     * @param composite The composite containing the component that failed
+     * @param composite         The composite containing the component that failed
      * @param executionInstance The instance of the running composite that caused the problem
-     * @param component The class of the component that failed
-     * @param inputData The input that was passed to the component when it failed
-     * @param message The message that the component gave when it failed
+     * @param component         The class of the component that failed
+     * @param inputData         The input that was passed to the component when it failed
+     * @param message           The message that the component gave when it failed
      * @return An indicator of the success or failure of the logging
      */
     public boolean componentCompositeFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData, String message) {
@@ -332,7 +349,7 @@ public class Registry {
 
         EngineTest.executeFinished = true;
 
-        if(logComponent && logComposite) {
+        if (logComponent && logComposite) {
             return true;
         } else {
             Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
@@ -348,7 +365,7 @@ public class Registry {
 
         EngineTest.executeFinished = true;
 
-        if(logComponent && logComposite) {
+        if (logComponent && logComposite) {
             return true;
         } else {
             Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, getInputs set: %b", composite.getID(),
@@ -358,7 +375,7 @@ public class Registry {
     }
 
     public boolean filter(CompositeService cs, long executionInstance, ComponentService component,
-                         Bundle inputData) {
+                          Bundle inputData) {
 
         // When we stop at a filter, say what the data was at that point
         ServiceDescription sd = component.getDescription();
@@ -379,5 +396,10 @@ public class Registry {
 
     public ArrayList<ServiceDescription> getAllServiceDescriptions() {
         return dbHandler.getServiceDescriptions(null);
+    }
+
+    public ArrayList<CompositeService> getScheduledComposites() {
+        // TODO Need to work out how to do this in the database
+        return new ArrayList<CompositeService>();
     }
 }

@@ -38,9 +38,9 @@ public class ActivityLog extends Activity
         if(composites.size() == 0)
             return;
 
-		ArrayList<LogItem> log = registry.getExecutionLog(composites.get(0)); // TODO This needs to be clever
-		
-		if(log == null || log.size() == 0)
+        ArrayList<LogItem> log = registry.getExecutionLog(composites.get(0));
+
+        if(log == null || log.size() == 0)
 		{
 			logList.setVisibility(View.GONE);
 			noLog.setVisibility(View.VISIBLE);

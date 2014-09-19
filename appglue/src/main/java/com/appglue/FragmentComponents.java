@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
-
-import static com.appglue.Constants.TAG;
 
 public class FragmentComponents extends Fragment {
 
@@ -44,7 +41,7 @@ public class FragmentComponents extends Fragment {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             justList = getArguments().getBoolean(JUST_A_LIST);
         }
     }
@@ -105,14 +102,14 @@ public class FragmentComponents extends Fragment {
         this.mode = mode;
     }
 
-    private void redraw() {
+    void redraw() {
         Fragment active;
 
-        switch(mode) {
+        switch (mode) {
             case MODE_COMPONENT:
                 componentFragment = (FragmentComponent) FragmentComponent.create();
                 active = componentFragment;
-                if(!className.equals("")) {
+                if (!className.equals("")) {
                     Bundle args = new Bundle();
                     args.putString(CLASSNAME, className);
                     componentFragment.setArguments(args);
@@ -129,7 +126,7 @@ public class FragmentComponents extends Fragment {
 
         FragmentManager fm = getChildFragmentManager();
         fm.beginTransaction().replace(R.id.container, active)
-                             .setCustomAnimations(R.anim.fade_out, R.anim.fade_in).commit();
+                .setCustomAnimations(R.anim.fade_out, R.anim.fade_in).commit();
     }
 
     public int getMode() {
@@ -137,7 +134,7 @@ public class FragmentComponents extends Fragment {
     }
 
     public void showServiceDescription(String className) {
-        if(componentFragment != null) {
+        if (componentFragment != null) {
             componentFragment.setData(className);
             this.className = "";
         } else {
@@ -149,7 +146,7 @@ public class FragmentComponents extends Fragment {
     }
 
     public String getName() {
-        if(mode == FragmentComponents.MODE_COMPONENT) {
+        if (mode == FragmentComponents.MODE_COMPONENT) {
             // Ask the component fragment what the name of the component is
             return componentFragment.getName();
         } else {

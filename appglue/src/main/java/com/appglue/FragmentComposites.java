@@ -4,19 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.appglue.serviceregistry.Registry;
-
+import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.MODE;
-import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
-
-import static com.appglue.Constants.TAG;
 
 public class FragmentComposites extends Fragment {
 
@@ -43,7 +38,7 @@ public class FragmentComposites extends Fragment {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             int mode = getArguments().getInt(MODE);
             Log.d(TAG, "Got mode (args): " + (mode == MODE_COMPOSITE ? "COMPOSITE" : "LIST"));
             setMode(mode);
@@ -59,39 +54,48 @@ public class FragmentComposites extends Fragment {
     public void onActivityCreated(Bundle icicle) {
         super.onActivityCreated(icicle);
     }
+
     @Override
     public void onStart() {
         super.onStart();
     }
+
     @Override
     public void onResume() {
         redraw();
         super.onResume();
     }
+
     @Override
     public void onViewStateRestored(Bundle in) {
         super.onViewStateRestored(in);
     }
+
     @Override
     public void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
     }
+
     @Override
     public void onPause() {
         super.onPause();
     }
+
     @Override
     public void onStop() {
         super.onStop();
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -105,10 +109,10 @@ public class FragmentComposites extends Fragment {
         this.mode = mode;
     }
 
-    private void redraw() {
-        if(mode == MODE_LIST) {
+    void redraw() {
+        if (mode == MODE_LIST) {
             Log.d(TAG, "Set mode LIST");
-        } else if(mode == MODE_COMPOSITE) {
+        } else if (mode == MODE_COMPOSITE) {
             Log.d(TAG, "Set mode COMPOSITE");
         }
 
@@ -116,18 +120,18 @@ public class FragmentComposites extends Fragment {
         int slideOut;
         int slideIn;
 
-        if(listFragment == null) {
+        if (listFragment == null) {
             listFragment = (FragmentCompositeList) FragmentCompositeList.create();
             compositeFragment = (FragmentComposite) FragmentComposite.create();
         }
 
-        switch(mode) {
+        switch (mode) {
 
             case MODE_COMPOSITE:
                 active = compositeFragment;
                 slideOut = R.anim.slide_out_left;
                 slideIn = R.anim.slide_in_right;
-                if(compositeId != -1) {
+                if (compositeId != -1) {
                     Bundle args = new Bundle();
                     args.putLong(COMPOSITE_ID, compositeId);
                     compositeFragment.setArguments(args);
@@ -151,7 +155,7 @@ public class FragmentComposites extends Fragment {
     }
 
     public void setViewMode() {
-        if(listFragment != null) {
+        if (listFragment != null) {
             listFragment.setViewMode();
         }
     }
@@ -166,7 +170,7 @@ public class FragmentComposites extends Fragment {
     }
 
     public void viewComposite(long id) {
-        if(compositeFragment != null) {
+        if (compositeFragment != null) {
             compositeFragment.setData(id);
             compositeId = -1;
         } else {

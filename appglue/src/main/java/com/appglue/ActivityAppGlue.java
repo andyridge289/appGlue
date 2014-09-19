@@ -1,10 +1,10 @@
 package com.appglue;
 
 import android.app.Activity;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.widget.Toast;
 
 public class ActivityAppGlue extends ActionBarActivity
@@ -42,8 +41,6 @@ public class ActivityAppGlue extends ActionBarActivity
     private static final String COMPOSITE_MODE = "composite_mode";
     private static final String COMPONENT_MODE = "component_mode";
 
-    // FIXME Onbackpressed changing to list needs to change mode of corresponding fragment
-    // FIXME Component list needs to work with adding components to create page
 
     private int view;
     public static final int VIEW_GRID = 0;
@@ -158,11 +155,13 @@ public class ActivityAppGlue extends ActionBarActivity
         if (currentPage == Page.HOME.index) {
             if (homeFragment.getMode() == FragmentComposites.MODE_COMPOSITE) {
                 homeFragment.setMode(FragmentComposites.MODE_LIST);
+                homeFragment.redraw();
                 return;
             }
         } else {
             if (currentPage == Page.COMPONENTS.index) {
                 componentFragment.setMode(FragmentComponents.MODE_LIST);
+                componentFragment.redraw();
                 return;
             }
 

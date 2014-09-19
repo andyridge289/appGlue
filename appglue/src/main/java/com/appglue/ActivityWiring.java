@@ -13,17 +13,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
-
-import java.util.ArrayList;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class ActivityWiring extends ActionBarActivity {
 	private CompositeService cs;
@@ -34,6 +34,8 @@ public class ActivityWiring extends ActionBarActivity {
     private CharSequence mTitle;
 
     private Menu menu;
+
+    private boolean makingNew = false;
 
     private int position = 0;
 
@@ -63,6 +65,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         switch(mode) {
             case MODE_CREATE:
+                makingNew = false;
                 mTitle = "Create glued app";
                 wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(cs.getID());
                 attach = wiringFragment;
@@ -89,8 +92,12 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void onBackPressed() {
-        // TODO If we're on the list page go back to the wire-er
-        // TODO If we're on the wiring page go back to the home page
+        if (mode == MODE_CHOOSE && !makingNew) {
+            setMode(MODE_CREATE);
+            redraw();
+            return;
+        }
+
         super.onBackPressed();
     }
 
@@ -131,6 +138,8 @@ public class ActivityWiring extends ActionBarActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 cs = registry.resetTemp();
                                 setMode(MODE_CHOOSE);
+                                makingNew = true;
+
                             }
                         });
             }
@@ -139,6 +148,7 @@ public class ActivityWiring extends ActionBarActivity {
                 // There isn't stuff in the temp, just use that
                 cs = registry.resetTemp();
                 setMode(MODE_CHOOSE);
+                makingNew = true;
             }
         } else { // They might not be creating a new one
             if(cs == null) {
@@ -155,6 +165,7 @@ public class ActivityWiring extends ActionBarActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.saveTempAsComposite("Saved draft");
                                 setMode(MODE_CREATE);
+                                makingNew = true;
                             }
                         });
                 keepTemp.setNegativeButton("Discard draft",
@@ -163,6 +174,7 @@ public class ActivityWiring extends ActionBarActivity {
                                 registry.resetTemp();
                                 cs = registry.getComposite(cs.getID());
                                 setMode(MODE_CREATE);
+                                makingNew = true;
                             }
                         });
             } else {
@@ -248,7 +260,7 @@ public class ActivityWiring extends ActionBarActivity {
             component.setID(id);
             cs.addComponent(component, position);
         } else {
-            // TODO Report an error to the user
+            Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Failed to add component");
         }
 

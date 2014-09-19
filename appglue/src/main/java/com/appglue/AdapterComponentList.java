@@ -134,11 +134,14 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(parentFragment.isJustList()) {
+                if (parentFragment.isJustList()) {
                     // Tell the parent fragment to show the component page
                     parentFragment.showServiceDescription(sd2.getClassName());
                 } else {
-                    // FIXME Choose the component to go in the composite
+                    // Choose the component to go in the composite
+                    if (parentFragment.getActivity() != null) {
+                        ((ActivityWiring) parentFragment.getActivity()).chooseItem(sd2.getClassName());
+                    }
                 }
 
             }

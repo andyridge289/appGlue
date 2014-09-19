@@ -6,12 +6,12 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.appglue.IODescription;
-import com.appglue.description.IOValue;
 import com.appglue.Library;
 import com.appglue.R;
-import com.appglue.description.datatypes.IOType;
 import com.appglue.description.AppDescription;
+import com.appglue.description.IOValue;
 import com.appglue.description.ServiceDescription;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.triggers.BluetoothTrigger;
@@ -31,6 +31,7 @@ import java.util.Locale;
 
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
+import static com.appglue.Constants.ICON;
 import static com.appglue.Constants.JSON_APP;
 import static com.appglue.Constants.JSON_SERVICE;
 import static com.appglue.Constants.JSON_SERVICE_DATA;
@@ -39,7 +40,6 @@ import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.ICON;
 
 public class ServiceFactory {
 
@@ -677,6 +677,8 @@ public class ServiceFactory {
     // File added/removed
     // 	Space used
     // Media uploaded
+
+    // http://developers.google.com/drive/android-quickstart
 
 
 //	android.hardware.action.NEW_VIDEO
