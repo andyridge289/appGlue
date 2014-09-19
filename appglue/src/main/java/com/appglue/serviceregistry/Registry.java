@@ -224,14 +224,6 @@ public class Registry {
         return dbHandler.compositeEnabled(id);
     }
 
-    public ArrayList<CompositeService> getIntendedRunningServices() {
-        return dbHandler.getIntendedRunningComposites();
-    }
-
-    public Pair<Long, Interval> getTimerDuration(long compositeId) {
-        return dbHandler.getTimerDuration(compositeId);
-    }
-
     public ArrayList<CompositeService> getExamples(String componentName) {
         return dbHandler.getExamples(componentName);
     }
@@ -262,10 +254,6 @@ public class Registry {
 
     }
 
-    public boolean setEnabled(long id, boolean enabled) {
-        return dbHandler.setCompositeActive(id, enabled ? 1 : 0);
-    }
-
     public boolean isTerminated(CompositeService composite, long executionInstance) {
         return dbHandler.isTerminated(composite, executionInstance);
     }
@@ -282,14 +270,6 @@ public class Registry {
 
     public ArrayList<ServiceDescription> getMatchingForInputs(ServiceDescription next) {
         return dbHandler.getMatchingForIOs(next, true);
-    }
-
-    public void dumpSQLLog() {
-        try {
-            dbHandler.dumpSQLLog();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public ArrayList<LogItem> getExecutionLog() {

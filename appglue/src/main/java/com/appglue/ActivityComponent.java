@@ -80,8 +80,6 @@ public class ActivityComponent extends ActionBarActivity {
         else
             service = null;
 
-        registry.dumpSQLLog();
-
         if (service == null)
             finish();
 

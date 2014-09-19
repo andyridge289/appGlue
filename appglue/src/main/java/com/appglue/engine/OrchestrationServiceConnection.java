@@ -31,6 +31,7 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.err.OrchestrationException;
 import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
@@ -254,14 +255,16 @@ public class OrchestrationServiceConnection implements ServiceConnection
         for (Bundle data : messageData) {
 
             int matchCount = 0;
-            int unfilteredCount = 0;
+            int skipCount = 0;
+
+            Log.d(TAG, "Checking: " + AppGlueLibrary.bundleToString(data));
 
             for (int i = 0; i < outputs.size(); i++) {
 
                 ServiceIO output = outputs.get(i);
 
                 if (output.getFilterState() == ServiceIO.UNFILTERED) {
-                    unfilteredCount++;
+                    skipCount++;
                     continue;
                 }
 
@@ -289,12 +292,11 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
                 try {
                     // This returns whether it PASSES the test, so we need to filter it if it doesn't
+                    Log.d(TAG, "Checking " + first + " " + fv.method.getName() + " " + value);
                     Boolean result = (Boolean) fv.method.invoke(null, first, value);
                     if (result) {
-
                         // Put the name of the condition that failed, and the value that should have been set
                         matchCount++;
-                        break;
                     }
                 } catch (IllegalArgumentException e) {
                     throw new OrchestrationException("Wrong arguments passed to filter method: " +
@@ -308,13 +310,15 @@ public class OrchestrationServiceConnection implements ServiceConnection
             }
 
             // If we get to here we've checked all of the values for the different IOs for that message, so it can be retained
-            if (matchCount == outputs.size() - unfilteredCount) {
+            if (matchCount + skipCount == outputs.size()) {
                 retained.add(data);
             } else {
                 filtered.add(data);
             }
+
+            Log.d(TAG, "" + matchCount + " + " + skipCount + " = " + outputs.size());
         }
-		
+
 		b.putParcelableArrayList(FILTER_REMOVED, filtered);
 		b.putParcelableArrayList(FILTER_RETAINED, retained);
 		return b;

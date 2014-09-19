@@ -159,12 +159,15 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         ComponentService notPartClosed = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
                                                 new String[]{ TubeService.PART_CLOSURE }, new int[]{ strNEquals });
 
+        ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new int[]{});
+
         ArrayList<ComponentService> testComponents = new ArrayList<ComponentService>();
         testComponents.add(isBakerlooComponent);
         testComponents.add(isntBakerlooComponent);
         testComponents.add(minorDelaysComponent);
         testComponents.add(bakerlooMinorDelays);
         testComponents.add(notPartClosed);
+        testComponents.add(none);
 
         String[] keptNames = new String[]{ TubeService.BAKERLOO };
         String[] removedNames = new String[]{ TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
@@ -178,6 +181,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         String[] npcKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN };
         String[] npcRemoved = new String[] { TubeService.PICCADILLY };
 
+        String[] noneKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
+        String[] noneRemoved = new String[]{ };
 
         ArrayList<String[]> testKept = new ArrayList<String[]>();
         testKept.add(keptNames);
@@ -185,6 +190,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         testKept.add(mdKept);
         testKept.add(bmdKept);
         testKept.add(npcKept);
+        testKept.add(noneKept);
 
         ArrayList<String[]> testRemoved = new ArrayList<String[]>();
         testRemoved.add(removedNames);
@@ -192,8 +198,10 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         testRemoved.add(mdRemoved);
         testRemoved.add(bmdRemoved);
         testRemoved.add(npcRemoved);
+        testRemoved.add(noneRemoved);
 
         ArrayList<String> filterParameters = new ArrayList<String>();
+        filterParameters.add(TubeService.LINE_NAME);
         filterParameters.add(TubeService.LINE_NAME);
         filterParameters.add(TubeService.LINE_NAME);
         filterParameters.add(TubeService.LINE_NAME);
@@ -205,16 +213,16 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             Bundle filterResults = (Bundle) filterMethod.invoke(osc, tubeData, testComponents.get(i));
             ArrayList<Bundle> kept = filterResults.getParcelableArrayList(OrchestrationServiceConnection.FILTER_RETAINED);
             ArrayList<Bundle> removed = filterResults.getParcelableArrayList(OrchestrationServiceConnection.FILTER_REMOVED);
-//
-//            String originalText = "";
-//            for (Bundle b : tubeData) {
-//                originalText += b.getString(filterParameters.get(i)) + " ";
-//            }
-//            Log.d(TAG, originalText);
+
+            String originalText = "";
+            for (Bundle b : tubeData) {
+                originalText += b.getString(filterParameters.get(i)) + " ";
+            }
+            Log.d(TAG, originalText);
 
             if (!keptCheck(testKept.get(i), kept, filterParameters.get(i))) {
                 Log.d(TAG, "Kept fail " + i);
-                String keptText = "";
+                String keptText = "Kept: ";
                 for (Bundle b : kept) {
                     keptText += b.getString(filterParameters.get(i)) + " ";
                 }
@@ -224,7 +232,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
             if (!keptCheck(testRemoved.get(i), removed, filterParameters.get(i))) {
                 Log.d(TAG, "Removed fail" + i);
-                String removedText = "";
+                String removedText = "Removed: ";
                 for (Bundle b : removed) {
                     removedText += b.getString(filterParameters.get(i)) + " ";
                 }
@@ -261,57 +269,57 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         return foundAll;
     }
 
-    @LargeTest
-    public void testExecution() throws Exception {
-
-        // Run it and assert that a new entry has been added to the Log to account for it running properly
-        Registry registry = Registry.getInstance(getContext());
-        CompositeService notFred = TestLib.createAComposite(registry, getContext());
-        notFred.setName("Not fred");
-        registry.addComposite(notFred);
-
-        Intent serviceIntent = new Intent(getContext(), OrchestrationService.class);
-        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
-        Bundle b = new Bundle();
-
-        b.putLong(COMPOSITE_ID, notFred.getID());
-        b.putInt(INDEX, 0);
-        b.putBoolean(IS_LIST, false);
-        b.putInt(DURATION, 0);
-        b.putBoolean(TEST, false);
-
-        intentData.add(b);
-        serviceIntent.putParcelableArrayListExtra(DATA, intentData);
-        startService(serviceIntent);
-
-        int count = 0;
-        while(!executeFinished) {
-            if(count > 5) {
-                assertEquals(1, 2);
-                return;
-            }
-
-            Thread.sleep(1000);
-            count++;
-        }
-
-        boolean allWin = true;
-
-        // When it gets here, do the database lookup to see if the composite was successfully executed in the last 5ish seconds
-        ArrayList<LogItem> logs = registry.getExecutionLog(notFred);
-        for(LogItem log : logs) {
-            if(log.getComposite().getID() == notFred.getID()) {
-                long endTimeMillis = log.getEndTime();
-                long current = System.currentTimeMillis();
-
-                long diff = current - endTimeMillis;
-                if(diff > 5000) {
-                    allWin = false;
-                }
-            }
-        }
-
-        if(!allWin)
-            assertEquals(1, 2);
-    }
+//    @LargeTest
+//    public void testExecution() throws Exception {
+//
+//        // Run it and assert that a new entry has been added to the Log to account for it running properly
+//        Registry registry = Registry.getInstance(getContext());
+//        CompositeService notFred = TestLib.createAComposite(registry, getContext());
+//        notFred.setName("Not fred");
+//        registry.addComposite(notFred);
+//
+//        Intent serviceIntent = new Intent(getContext(), OrchestrationService.class);
+//        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
+//        Bundle b = new Bundle();
+//
+//        b.putLong(COMPOSITE_ID, notFred.getID());
+//        b.putInt(INDEX, 0);
+//        b.putBoolean(IS_LIST, false);
+//        b.putInt(DURATION, 0);
+//        b.putBoolean(TEST, false);
+//
+//        intentData.add(b);
+//        serviceIntent.putParcelableArrayListExtra(DATA, intentData);
+//        startService(serviceIntent);
+//
+//        int count = 0;
+//        while(!executeFinished) {
+//            if(count > 5) {
+//                assertEquals(1, 2);
+//                return;
+//            }
+//
+//            Thread.sleep(1000);
+//            count++;
+//        }
+//
+//        boolean allWin = true;
+//
+//        // When it gets here, do the database lookup to see if the composite was successfully executed in the last 5ish seconds
+//        ArrayList<LogItem> logs = registry.getExecutionLog(notFred);
+//        for(LogItem log : logs) {
+//            if(log.getComposite().getID() == notFred.getID()) {
+//                long endTimeMillis = log.getEndTime();
+//                long current = System.currentTimeMillis();
+//
+//                long diff = current - endTimeMillis;
+//                if(diff > 5000) {
+//                    allWin = false;
+//                }
+//            }
+//        }
+//
+//        if(!allWin)
+//            assertEquals(1, 2);
+//    }
 }

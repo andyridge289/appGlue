@@ -93,12 +93,6 @@ public class AppGlueConstants {
 
     public static String[] FILTER_BOOL = new String[]{"true", "false"};
 
-    // Database - Composite
-    public static final String ENABLED = "enabled";
-    public static final String ACTIVE_OR_TIMER = "should";
-    public static final String NUMERAL = "numeral";
-    public static final String INTERVAL = "interval";
-
     // 'static' database tables
     public static final String[][] COLS_APP = new String[][]
             {
@@ -182,16 +176,26 @@ public class AppGlueConstants {
             CLASSNAME, TAG_ID
     };
 
+    // Database - Composite
+    public static final String ENABLED = "enabled";
+    public static final String SCHEDULED = "scheduled";
+    public static final String NUMERAL = "numeral";
+    public static final String INTERVAL = "interval";
+    public static final String HOURS = "hours";
+    public static final String MINUTES = "minutes";
+
     // 'dynamic' database tables
     public static final String[][] COLS_COMPOSITE = new String[][]
     {
-        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-        {NAME, "TEXT"},
-        {DESCRIPTION, "TEXT"},
-        {ACTIVE_OR_TIMER, "TINYINT"},
-        {ENABLED, "TINYINT"},
-        {NUMERAL, "INTEGER"},
-        {INTERVAL, "INTEGER"}
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { NAME, "TEXT" },
+        { DESCRIPTION, "TEXT" },
+        { SCHEDULED, "TINYINT" },
+        { ENABLED, "TINYINT" },
+        { NUMERAL, "INTEGER" },
+        { INTERVAL, "INTEGER" },
+        { HOURS, "INTEGER" },
+        { MINUTES, "INTEGER" }
     };
 
     public static final String COMPOSITE_ID = "composite_id";

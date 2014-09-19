@@ -60,17 +60,6 @@ public class TestLib {
         IODescription lineName = tubeComponent.getDescription().getOutput(TubeService.LINE_NAME);
         IODescription lineIcon = tubeComponent.getDescription().getOutput(TubeService.LINE_ICON);
 
-        IODescription notificationTitle = notificationComponent.getDescription().getInput(NotificationService.NOTIFICATION_TITLE);
-        IODescription notificationText = notificationComponent.getDescription().getInput(NotificationService.NOTIFICATION_TEXT);
-        IODescription notificationIcon = notificationComponent.getDescription().getInput(NotificationService.NOTIFICATION_IMAGE);
-
-        ServiceIO lineIO = new ServiceIO(tubeComponent, lineName);
-        ServiceIO lineIconIO = new ServiceIO(tubeComponent, lineIcon);
-
-        ServiceIO titleIO = new ServiceIO(notificationComponent, notificationTitle);
-        ServiceIO textIO = new ServiceIO(notificationComponent, notificationText);
-        ServiceIO imageIO = new ServiceIO(notificationComponent, notificationIcon);
-
         IOValue bakerlooSample = null;
         ArrayList<IOValue> samples = lineName.getSampleValues();
         for(IOValue sample : samples) {
@@ -79,16 +68,22 @@ public class TestLib {
             }
         }
 
+        ServiceIO lineIO = tubeComponent.getOutput(TubeService.LINE_NAME);
         lineIO.setChosenSampleValue(bakerlooSample);
         lineIO.setFilterState(ServiceIO.SAMPLE_FILTER);
         lineIO.setCondition(IOFilter.STR_EQUALS.index);
 
+        ServiceIO titleIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TITLE);
         lineIO.setConnection(titleIO);
         titleIO.setConnection(lineIO);
+
+        ServiceIO lineIconIO = tubeComponent.getOutput(TubeService.LINE_ICON);
+        ServiceIO imageIO = notificationComponent.getInput(NotificationService.NOTIFICATION_IMAGE);
 
         lineIconIO.setConnection(imageIO);
         imageIO.setConnection(lineIconIO);
 
+        ServiceIO textIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
         textIO.setManualValue(lineIO.getDescription().getType().fromString("Test message"));
 
         CompositeService fred = new CompositeService("Fred", "This is called fred", components);
@@ -118,7 +113,7 @@ public class TestLib {
                 Log.d(TAG, "chosen sample not found");
             }
 
-            ServiceIO filterOnIO = new ServiceIO(component, filterOn);
+            ServiceIO filterOnIO = component.getIO(filterOn.getName());
 
             filterOnIO.setChosenSampleValue(chosenSample);
             filterOnIO.setFilterState(ServiceIO.SAMPLE_FILTER);

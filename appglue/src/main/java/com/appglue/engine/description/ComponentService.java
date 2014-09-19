@@ -7,7 +7,9 @@ import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
 import com.appglue.Constants;
+import com.appglue.TST;
 import com.appglue.description.ServiceDescription;
+import com.appglue.services.TubeService;
 
 import java.util.ArrayList;
 
@@ -33,6 +35,9 @@ public class ComponentService {
     private LongSparseArray<ServiceIO> inputSearch;
     private LongSparseArray<ServiceIO> outputSearch;
 
+    private TST<ServiceIO> inputNameSearch;
+    private TST<ServiceIO> outputNameSearch;
+
     public ComponentService() {
 
         this.inputs = new ArrayList<ServiceIO>();
@@ -42,8 +47,12 @@ public class ComponentService {
         this.description = null;
         this.composite = null;
         this.position = -1;
+
         this.inputSearch = new LongSparseArray<ServiceIO>();
         this.outputSearch = new LongSparseArray<ServiceIO>();
+
+        this.inputNameSearch = new TST<ServiceIO>();
+        this.outputNameSearch = new TST<ServiceIO>();
     }
 
     public ComponentService(ServiceDescription description, int position) {
@@ -51,11 +60,13 @@ public class ComponentService {
         this.description = description;
 
         for(int i = 0; i < description.getInputs().size(); i++) {
-            new ServiceIO(this, description.getInputs().get(i));
+            ServiceIO in = new ServiceIO(this, description.getInputs().get(i));
+            this.addInput(in, false);
         }
 
         for (int i = 0; i < description.getOutputs().size(); i++) {
-            new ServiceIO(this, description.getOutputs().get(i));
+            ServiceIO out = new ServiceIO(this, description.getOutputs().get(i));
+            this.addOutput(out, false);
         }
 
         this.position = position;
@@ -100,17 +111,21 @@ public class ComponentService {
     public ServiceIO getInput(long id) {
         return inputSearch.get(id);
     }
+    public ServiceIO getInput(String name) {
+        return inputNameSearch.get(name);
+    }
     public void addInput(ServiceIO input, boolean search) {
         this.inputs.add(input);
-
+        this.inputNameSearch.put(input.getDescription().getName(), input);
         if(search)
             addInputSearch(input);
     }
     public void addInputSearch(ServiceIO input) {
         this.inputSearch.put(input.getID(), input);
+
     }
     public void removeInputSearch(long id) {
-        if(this.inputSearch.get(id) != null) {
+        if (this.inputSearch.get(id) != null) {
             this.inputSearch.delete(id);
         }
     }
@@ -121,9 +136,12 @@ public class ComponentService {
     public ServiceIO getOutput(long id) {
         return outputSearch.get(id);
     }
+    public ServiceIO getOutput(String name) {
+        return outputNameSearch.get(name);
+    }
     public void addOutput(ServiceIO output, boolean search) {
         this.outputs.add(output);
-
+        this.outputNameSearch.put(output.getDescription().getName(), output);
         if(search)
             addOutputSearch(output);
     }
@@ -143,6 +161,14 @@ public class ComponentService {
             io = getOutput(id);
         }
 
+        return io;
+    }
+
+    public ServiceIO getIO(String name) {
+        ServiceIO io = getInput(name);
+        if (io == null) {
+            io = getOutput(name);
+        }
         return io;
     }
 

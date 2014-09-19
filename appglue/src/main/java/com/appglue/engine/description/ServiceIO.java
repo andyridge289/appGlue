@@ -32,26 +32,12 @@ public class ServiceIO
     public ServiceIO(ComponentService component, IODescription ioDescription) {
         this.component = component;
         this.ioDescription = ioDescription;
-
-        if(ioDescription.isInput()) {
-            component.addInput(this, false);
-        } else {
-            component.addOutput(this, false);
-        }
     }
 
     public ServiceIO(long id, ComponentService component, IODescription ioDescription) {
         this.id = id;
         this.component = component;
-
         this.ioDescription = ioDescription;
-
-        if(ioDescription.isInput()) {
-            component.addInput(this, true);
-        } else {
-            component.addOutput(this, true);
-        }
-
     }
 
     public long getID() {

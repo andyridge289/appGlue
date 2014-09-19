@@ -20,23 +20,44 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
+import static com.appglue.library.AppGlueConstants.SCHEDULED;
+import static com.appglue.library.AppGlueConstants.MINUTES;
+import static com.appglue.library.AppGlueConstants.HOURS;
 
 public class CompositeService {
     private long id;
     private String name;
     private String description;
 
+    private Schedule scheduleMode;
+
     private long numeral;
     private Interval interval;
 
+    private int hours;
+    private int minutes;
+
     private boolean enabled;
-    private boolean running;
 
     public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
 
     public static final int TEMP_ID = 1;
     public static final String TEMP_NAME = "temp";
     public static final String TEMP_DESCRIPTION = "This is the temporary composite";
+
+    public enum Schedule {
+        NONE(0, "None"),
+        INTERVAL(1, "Interval"),
+        TIME(2, "Time");
+
+        int index;
+        String name;
+
+        Schedule(int index, String name) {
+            this.index = index;
+            this.name = name;
+        }
+    }
 
     private SparseArray<ComponentService> components;
     private LongSparseArray<ComponentService> componentSearch;
@@ -50,6 +71,9 @@ public class CompositeService {
         this.numeral = 0;
         this.interval = Interval.NONE;
         this.enabled = true;
+        this.scheduleMode = Schedule.NONE;
+        this.hours = -1;
+        this.minutes = -1;
         this.components = new SparseArray<ComponentService>();
         this.componentSearch = new LongSparseArray<ComponentService>();
     }
@@ -100,25 +124,6 @@ public class CompositeService {
         this.components = services;
         this.description = description;
         this.enabled = enabled;
-
-        if(services != null) {
-            for (int i = 0; i < services.size(); i++) {
-                ComponentService cs = services.valueAt(i);
-                componentSearch.put(cs.getID(), cs);
-            }
-        }
-    }
-
-    public CompositeService(long id, String name, SparseArray<ComponentService> services, long numeral, Interval interval) {
-        this(false);
-        this.id = id;
-        this.name = name;
-        this.components = services;
-
-        this.numeral = numeral;
-        this.interval = interval;
-
-        this.enabled = false;
 
         if(services != null) {
             for (int i = 0; i < services.size(); i++) {
@@ -320,6 +325,12 @@ public class CompositeService {
 
         int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));
         this.interval = Interval.values()[intervalValue];
+
+        int scheduleValue = c.getInt(c.getColumnIndex(prefix + SCHEDULED));
+        this.scheduleMode = Schedule.values()[scheduleValue];
+
+        this.hours = c.getInt(c.getColumnIndex(prefix + HOURS));
+        this.minutes = c.getInt(c.getColumnIndex(prefix + MINUTES));
     }
 
     public int size() {
@@ -370,6 +381,22 @@ public class CompositeService {
             return false;
         }
 
+        // FIXME Put schedule into equals and then re-run all of our tests
+        if (this.hours != other.getHours()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: hours " + hours + " - " + other.getHours());
+            return false;
+        }
+
+        if(this.minutes != other.getMinutes()) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: minutes " + minutes + " - " + other.getMinutes());
+            return false;
+        }
+
+        if(!this.scheduleMode.equals(other.getScheduleMode())) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: schedule " + scheduleMode.name + " - " + other.getScheduleMode().name);
+            return false;
+        }
+
         if(this.components.size() != other.getComponents().size()) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: not same num components: " +
                 components.size() + " - " + other.getComponents().size());
@@ -385,5 +412,21 @@ public class CompositeService {
         }
 
         return true;
+    }
+
+    public Schedule getScheduleMode() {
+        return scheduleMode;
+    }
+
+    public int getScheduleIndex() {
+        return scheduleMode.index;
+    }
+
+    public int getHours() {
+        return hours;
+    }
+
+    public int getMinutes() {
+        return minutes;
     }
 }
