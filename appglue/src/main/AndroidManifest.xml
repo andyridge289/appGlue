@@ -81,13 +81,13 @@
             android:label="@string/application_name"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
         <activity
-            android:name="com.appglue.ActivityRunning"
-            android:label="@string/application_name"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity
             android:name="com.appglue.ActivitySettings"
             android:label="appGlue"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <acitvity android:name="com.appglue.ActivityComponentList" />
+        <acitvity android:name="com.appglue.ActivityLog" />
+        <acitvity android:name="com.appglue.ActivityStoryComponents" />
+        <acitvity android:name="com.appglue.ActivityStoryParameters" />
         <activity android:name="com.appglue.ShortcutActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />

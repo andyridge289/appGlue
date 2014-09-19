@@ -1,5 +1,6 @@
 package com.appglue.layout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -562,7 +563,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			super(parent, R.layout.list_item_wiring_in, items);
 			this.items = items;
 		}
-		
+
+        @SuppressLint("InflateParams")
 		public View getView(final int position, View convertView, final ViewGroup parent)
 		{
 			if(convertView == null)
@@ -818,7 +820,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			super(parent, R.layout.list_item_wiring_out, items);
 			this.items = items;
 		}
-		
+
+        @SuppressLint("InflateParams")
 		public View getView(final int position, View convertView, final ViewGroup parent)
 		{
 			if(convertView == null)

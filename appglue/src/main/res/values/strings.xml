@@ -175,5 +175,9 @@
     <string name="change_view_grid">View as Grid</string>
     <string name="change_view_list">View as List</string>
     <string name="composite_icon">Icon representing the composite</string>
+    <string name="witing_auto">Auto-connect</string>
+    <string name="wiring_value_switch">Set Values</string>
+    <string name="wiring_wiring_switch">Do Wiring</string>
+    <string name="composite_components">Components</string>
 
 </resources>

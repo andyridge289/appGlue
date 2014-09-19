@@ -86,7 +86,7 @@ public class ActivityComponent extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setIcon(R.drawable.ic_menu_back);
+//            actionBar.setIcon(R.drawable.ic_menu_back);
             actionBar.setHomeButtonEnabled(true);
 
             if (this.atomicList)
@@ -135,22 +135,22 @@ public class ActivityComponent extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.simple_service_menu, menu);
-
-        MenuItem useItem = menu.findItem(R.id.simple_use_button);
-        MenuItem getItem = menu.findItem(R.id.simple_get_button);
-
-        if (useItem == null || getItem == null)
-            return false;
-
-        if (atomicList)
-            useItem.setVisible(false);
-
-        if (this.type == ServiceType.REMOTE.index) {
-            useItem.setVisible(false);
-        } else {
-            getItem.setVisible(false);
-        }
+//        inflater.inflate(R.menu.simple_service_menu, menu);
+//
+//        MenuItem useItem = menu.findItem(R.id.simple_use_button);
+//        MenuItem getItem = menu.findItem(R.id.simple_get_button);
+//
+//        if (useItem == null || getItem == null)
+//            return false;
+//
+//        if (atomicList)
+//            useItem.setVisible(false);
+//
+//        if (this.type == ServiceType.REMOTE.index) {
+//            useItem.setVisible(false);
+//        } else {
+//            getItem.setVisible(false);
+//        }
 
         return true;
     }
@@ -172,34 +172,34 @@ public class ActivityComponent extends ActionBarActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.simple_get_button) {
-            String marketUri = "market://details?id=" + service.getPackageName();
-            if (LOG) Log.d(TAG, "Market URI " + marketUri);
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(marketUri));
-            startActivityForResult(intent, MARKET_LOOKUP);
-            return true;
-        } else {
-            if (!atomicList) {
-                int result = NOT_SET;
-                if (item.getItemId() == R.id.simple_use_button) {
-                    result = SUCCESS;
-                } else if (item.getItemId() != android.R.id.home) {
-                    result = NOT_SET;
-                }
-
-                Intent i = new Intent();
-                i.putExtra(RESULT, result);
-                i.putExtra(CLASSNAME, service.getClassName());
-                i.putExtra(SERVICE_TYPE, type);
-
-                if (getParent() == null) {
-                    setResult(Activity.RESULT_OK, i);
-                } else {
-                    getParent().setResult(Activity.RESULT_OK, i);
-                }
-            }
-            finish();
-        }
+//        if (item.getItemId() == R.id.simple_get_button) {
+//            String marketUri = "market://details?id=" + service.getPackageName();
+//            if (LOG) Log.d(TAG, "Market URI " + marketUri);
+//            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(marketUri));
+//            startActivityForResult(intent, MARKET_LOOKUP);
+//            return true;
+//        } else {
+//            if (!atomicList) {
+//                int result = NOT_SET;
+//                if (item.getItemId() == R.id.simple_use_button) {
+//                    result = SUCCESS;
+//                } else if (item.getItemId() != android.R.id.home) {
+//                    result = NOT_SET;
+//                }
+//
+//                Intent i = new Intent();
+//                i.putExtra(RESULT, result);
+//                i.putExtra(CLASSNAME, service.getClassName());
+//                i.putExtra(SERVICE_TYPE, type);
+//
+//                if (getParent() == null) {
+//                    setResult(Activity.RESULT_OK, i);
+//                } else {
+//                    getParent().setResult(Activity.RESULT_OK, i);
+//                }
+//            }
+//            finish();
+//        }
 
         return false;
     }

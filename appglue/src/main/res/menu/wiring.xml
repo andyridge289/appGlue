@@ -6,7 +6,7 @@
         >
         <item
             android:id="@+id/wiring_auto"
-            android:title="Auto-connect"
+            android:title="@string/witing_auto"
             app:showAsAction="never"
             />
         <item
@@ -16,7 +16,7 @@
             />
         <item
             android:id="@+id/wiring_value_switch"
-            android:title="Set Values"
+            android:title="@string/wiring_value_switch"
             app:showAsAction="ifRoom"
             />
     </group>
@@ -25,7 +25,7 @@
         >
         <item
             android:id="@+id/wiring_wiring_switch"
-            android:title="Do Wiring"
+            android:title="@string/wiring_wiring_switch"
             app:showAsAction="always"
             />
     </group>

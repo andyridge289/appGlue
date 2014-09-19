@@ -334,6 +334,7 @@ public class ActivityCompositeList extends Activity {
         startService(serviceIntent);
     }
 
+    @SuppressLint("InflateParams")
     private void createTimerDialog(final CompositeService cs) {
         AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
         builder.setTitle("Set timer duration");
@@ -591,8 +592,8 @@ public class ActivityCompositeList extends Activity {
             // Maybe set a flag or something?
             composites = compositeList;
 
-            CompositeGridAdapter adapter = new CompositeGridAdapter(ActivityCompositeList.this, R.layout.composition_list_item, composites);
-            loadGrid.setAdapter(adapter);
+//            CompositeGridAdapter adapter = new CompositeGridAdapter(ActivityCompositeList.this, R.layout.composition_list_item, composites);
+//            loadGrid.setAdapter(adapter);
 
             loader.setVisibility(View.GONE);
             loadGrid.setVisibility(View.VISIBLE);

@@ -381,7 +381,6 @@ public class CompositeService {
             return false;
         }
 
-        // FIXME Put schedule into equals and then re-run all of our tests
         if (this.hours != other.getHours()) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: hours " + hours + " - " + other.getHours());
             return false;

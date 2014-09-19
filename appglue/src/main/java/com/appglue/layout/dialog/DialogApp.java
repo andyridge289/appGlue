@@ -1,5 +1,6 @@
 package com.appglue.layout.dialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -23,6 +24,8 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
 public class DialogApp extends DialogCustom {
+
+    @SuppressLint("InflateParams")
     public DialogApp(final ActivityWiring activity, final ServiceIO item) {
         super(activity, item);
 

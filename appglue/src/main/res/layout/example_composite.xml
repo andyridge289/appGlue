@@ -27,6 +27,7 @@
 	        android:layout_height="32dip"
 	        android:layout_margin="4dip"
 	        android:layout_marginLeft="10dip"
+            android:layout_marginStart="10dip"
 	        android:src="@drawable/icon" 
 	        android:duplicateParentState="true"
 	        />

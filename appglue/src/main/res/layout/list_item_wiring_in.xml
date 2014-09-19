@@ -84,7 +84,7 @@
         android:textSize="10sp"
         android:textStyle="italic"
         android:visibility="gone"
-        tools:ignore="SmallSp" />
+        tools:ignore="RtlSymmetry,SmallSp" />
 
     <TextView
         android:id="@+id/io_type"

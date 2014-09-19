@@ -136,7 +136,7 @@ public class TubeService extends ComposableService {
                 text.addToBundle(lineBundle, MINOR_DELAYS, LINE_STATUS);
                 text.addToBundle(lineBundle, "", LINE_MESSAGE);
                 urlType.addToBundle(lineBundle, "http://www.google.co.uk", LINE_URL);
-                imageDrawable.addToBundle(lineBundle, R.drawable.circle, LINE_ICON);
+                imageDrawable.addToBundle(lineBundle, R.drawable.tube_basic, LINE_ICON);
                 deadLines.add(lineBundle);
             }
 

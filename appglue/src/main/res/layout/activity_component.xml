@@ -35,7 +35,7 @@
 
     <TextView
         style="@style/Simple.Title"
-        android:text="@string/simple_title_description"></TextView>
+        android:text="@string/simple_title_description"/>
 
     <TextView
         android:id="@+id/description_text"
@@ -78,7 +78,9 @@
                 android:gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dip"
-                android:text="@string/app_name" />
+                android:paddingStart="5dip"
+                android:text="@string/app_name"
+                tools:ignore="RtlSymmetry" />
 
             <TextView
                 android:id="@+id/component_dev"
@@ -88,7 +90,9 @@
                 android:text="@string/dev_name"
                 android:textColor="@color/dim_text"
                 android:paddingLeft="5dip"
-                android:textSize="12sp" />
+                android:paddingStart="5dip"
+                android:textSize="12sp"
+                tools:ignore="RtlSymmetry" />
 
         </LinearLayout>
 
@@ -170,7 +174,7 @@
 
         <TextView
             style="@style/Simple.Title"
-            android:text="@string/simple_title_inputs"></TextView>
+            android:text="@string/simple_title_inputs"/>
 
         <LinearLayout
             style="@style/FillWrap.Horizontal"

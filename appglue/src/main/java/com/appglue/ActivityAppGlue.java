@@ -241,7 +241,7 @@ public class ActivityAppGlue extends ActionBarActivity
         this.view = view;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putInt(COMPOSITE_PAGE_VIEW, view);
+        prefs.edit().putInt(COMPOSITE_PAGE_VIEW, view).commit();
 
         if (homeFragment != null) {
             homeFragment.setViewMode();

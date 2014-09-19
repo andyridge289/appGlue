@@ -8,6 +8,7 @@
 
             android:id="@+id/comp_context_run"
             android:title="@string/run"
+            app:showAsAction="ifRoom"
             />
         <item
             android:id="@+id/comp_context_timer"

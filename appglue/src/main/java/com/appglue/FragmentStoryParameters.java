@@ -1,5 +1,6 @@
 package com.appglue;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -187,7 +188,8 @@ public class FragmentStoryParameters extends Fragment
 			inputContainer.addView(v);
 		}
 	}
-	
+
+    @SuppressLint("InflateParams")
 	private View setInput(ArrayList<IODescription> inputs, final int index)
 	{
 		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -478,7 +480,8 @@ public class FragmentStoryParameters extends Fragment
 			outputContainer.addView(v);
 		}
 	}
-	
+
+    @SuppressLint("InflateParams")
 	private View setupOutput(final ArrayList<IODescription> outputs, final int index)
 	{
 		LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -40,12 +40,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/io_name"
         android:layout_toRightOf="@id/mandatory_bar"
+        android:layout_toEndOf="@id/mandatory_bar"
         android:paddingLeft="5dip"
+        android:paddingStart="5dip"
         android:textColor="@color/red"
         android:textSize="10sp"
         android:textStyle="italic"
         android:visibility="gone"
-        tools:ignore="SmallSp" />
+        tools:ignore="RtlSymmetry,SmallSp" />
 
     <TextView
         android:id="@+id/io_type"
