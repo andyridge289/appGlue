@@ -100,7 +100,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         	Test.isValidBundle(index, cs.getComponents().size(), message.getData(), true);
         	
         	if(registry.isTerminated(cs, executionInstance)) {
-                // TODO Indicate that we've stopped prematurely
+
             } else {
                 sent[index] = message.getData();
                 messageSender.send(message);
@@ -182,8 +182,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 registry.terminate(cs, executionInstance, LogItem.ORCH_FAIL, "The message has been killed");
                 return;
             } else if(outputs.size() > 0) {
-
-                // FIXME Something in filtering is broken. Needs to allow the fact that they aren't providing any filter values.
 
 				// Then we need to check for filtering
                 Bundle filterValues = null;

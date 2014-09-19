@@ -128,12 +128,12 @@ public class OrchestrationService extends Service
 	
 		protected void onProgressUpdate(Integer... progress) 
 		{
-			// TODO Work out what to put here
+			// Work out what to put here
 		}
 
 		protected void onPostExecute(Boolean result) 
 		{
-			// TODO Work out what to put here
+			// Work out what to put here
 		}
 	}
 }

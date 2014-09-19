@@ -166,8 +166,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 //        recreate();
     }
 
-    // FIXME Probably want to lock some of the entries/exists
-
     @Override
     /**
      * Automagically called when the database needs to be created, usually on an upgrade
