@@ -62,7 +62,7 @@ public class CompositeService {
     private SparseArray<ComponentService> components;
     private LongSparseArray<ComponentService> componentSearch;
 
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
     public CompositeService() {
         this.id = -1;

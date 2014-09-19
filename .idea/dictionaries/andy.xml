@@ -2,6 +2,7 @@
   <dictionary name="andy">
     <words>
       <w>abbfb</w>
+      <w>app's</w>
       <w>appgluedb</w>
       <w>appname</w>
       <w>argh</w>
@@ -10,16 +11,20 @@
       <w>bdab</w>
       <w>cbfe</w>
       <w>ceba</w>
+      <w>chakotay</w>
+      <w>compositeexecutionlog</w>
       <w>cygpath</w>
       <w>cygpattern</w>
       <w>cygwin</w>
       <w>delimeter</w>
+      <w>derrial</w>
       <w>dexed</w>
       <w>dfile</w>
       <w>dirname</w>
       <w>dists</w>
       <w>dorg</w>
       <w>egrep</w>
+      <w>elanna</w>
       <w>endlocal</w>
       <w>errmsg</w>
       <w>errno</w>
@@ -27,13 +32,24 @@
       <w>esac</w>
       <w>eval</w>
       <w>executables</w>
+      <w>executionlog</w>
       <w>fdfc</w>
       <w>ffffff</w>
       <w>fixme</w>
       <w>fucksticks</w>
+      <w>geordi</w>
       <w>goto</w>
+      <w>h'smith</w>
+      <w>hammersmithcity</w>
+      <w>hoban</w>
+      <w>horiz</w>
       <w>icns</w>
+      <w>inara</w>
+      <w>inputoutputtype</w>
+      <w>iodescription</w>
       <w>iods</w>
+      <w>iosamples</w>
+      <w>jadzia</w>
       <w>javacmd</w>
       <w>jvmargs</w>
       <w>maxdepth</w>
@@ -41,6 +57,7 @@
       <w>mingw</w>
       <w>mkdirs</w>
       <w>msys</w>
+      <w>neelix</w>
       <w>noinput</w>
       <w>nooutput</w>
       <w>orch</w>
@@ -49,13 +66,19 @@
       <w>resized</w>
       <w>rootdirs</w>
       <w>rootdirsraw</w>
+      <w>sdhastag</w>
+      <w>servicedescription</w>
       <w>serviceregistry</w>
       <w>setlocal</w>
       <w>sqls</w>
+      <w>teal'c</w>
+      <w>tuvok</w>
       <w>ulimit</w>
       <w>uname</w>
       <w>userguide</w>
+      <w>waterloocity</w>
       <w>windowz</w>
+      <w>worf</w>
       <w>xdock</w>
     </words>
   </dictionary>

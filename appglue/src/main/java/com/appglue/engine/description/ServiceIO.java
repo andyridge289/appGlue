@@ -214,4 +214,8 @@ public class ServiceIO
 
         return true;
     }
+
+    public String toString() {
+        return this.getID() + ": " + this.getDescription().getName();
+    }
 }

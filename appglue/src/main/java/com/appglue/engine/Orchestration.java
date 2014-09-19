@@ -1,5 +1,7 @@
 package com.appglue.engine;
 
+import android.app.Service;
+
 import com.appglue.IODescription;
 import com.appglue.description.IOValue;
 import com.appglue.description.ServiceDescription;
@@ -10,13 +12,13 @@ import java.util.ArrayList;
 
 public class Orchestration {
     private TST<ServiceDescription> components;
-    private ArrayList<ArrayList<Edge>> edges;
+//    private ArrayList<ArrayList<Edge>> edges;
 
     private ArrayList<Node> nodes;
 
     public Orchestration() {
         components = new TST<ServiceDescription>();
-        edges = new ArrayList<ArrayList<Edge>>();
+//        edges = new ArrayList<ArrayList<Edge>>();
         nodes = new ArrayList<Node>();
     }
 
@@ -30,7 +32,7 @@ public class Orchestration {
         while (nodes.size() <= position) {
             // If we've got fewer things in it than where we want to end up, add more empty ones
             nodes.add(new Node());
-            edges.add(new ArrayList<Edge>());
+//            edges.add(new ArrayList<Edge>());
         }
 
         Node n = nodes.get(position);
@@ -57,6 +59,11 @@ public class Orchestration {
         private void addComponent(ServiceDescription component) {
             this.components.add(component);
         }
+        private ArrayList<ServiceDescription> getComponents() {
+            return components;
+        }
+
+        // FIXME Work out what these nodes and edges are and if we need to keep them. Maybe add it as a future project to git
     }
 
     private class Edge {

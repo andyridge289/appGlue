@@ -191,7 +191,7 @@ public class AppGlueLibrary {
     }
 
     private static String[] randomNames = new String[]{
-            "Benjamin", "Kira", "Worf", "Jadzia", "Julian", "Miles", "Jake", "Quark", "Odo", "Jean-Luc", "William", "Deanna", "Beverley", "Data", "Geordi", "Katherine", "Chakotay", "Tuvok", "B;Elanna", "Tom", "Harry", "Doctor", "Neelix", "Kes", "Seven", "Jack", "Daniel", "Samantha", "Teal'c", "George", "John", "Elizabeth", "Richard", "Rodney", "Mal", "Zoe", "Hoban", "Inara", "Jayne", "Kaylee", "Simon", "River", "Derrial", "Serena", "Blair", "Dan", "Nate", "Jenny", "Chuck", "Vanessa", "Ivy", "Lily", "Rufus"
+            "Benjamin", "Kira", "Worf", "Jadzia", "Julian", "Miles", "Jake", "Quark", "Odo", "Jean-Luc", "William", "Deanna", "Beverley", "Data", "Geordi", "Katherine", "Chakotay", "Tuvok", "B'Elanna", "Tom", "Harry", "Doctor", "Neelix", "Kes", "Seven", "Jack", "Daniel", "Samantha", "Teal'c", "George", "John", "Elizabeth", "Richard", "Rodney", "Mal", "Zoe", "Hoban", "Inara", "Jayne", "Kaylee", "Simon", "River", "Derrial", "Serena", "Blair", "Dan", "Nate", "Jenny", "Chuck", "Vanessa", "Ivy", "Lily", "Rufus"
     };
 
     public static String generateRandomName() {

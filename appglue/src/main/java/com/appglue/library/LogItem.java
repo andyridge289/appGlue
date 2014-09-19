@@ -78,4 +78,8 @@ public class LogItem
     public long getEndTime() {
         return endTime;
     }
+
+    public ArrayList<ComponentLogItem> getComponentLogs() {
+        return componentLogs;
+    }
 }

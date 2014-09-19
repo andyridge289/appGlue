@@ -150,10 +150,10 @@ public class ActivityCompositeList extends Activity {
                     break;
 
                 case R.id.comp_context_delete:
-                    ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
-                    for (Integer aSelected : selected) {
-                        killList.add(composites.get(aSelected));
-                    }
+//                    ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
+//                    for (Integer aSelected : selected) {
+//                        killList.add(composites.get(aSelected));
+//                    }
 //                    delete(killList);
                     break;
             }

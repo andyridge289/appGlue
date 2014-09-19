@@ -331,7 +331,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
         ServiceDescription sd = service.getDescription();
 		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.mapOutputs(to " + sd.getName() + ") " + System.currentTimeMillis());
 
-        // Get the inputs of the component to be mapped to and set up the other arraylists
+        // Get the inputs of the component to be mapped to and set up the other array lists
 		ArrayList<ServiceIO> inputs = service.getInputs();
 		ArrayList<Bundle> inputList = new ArrayList<Bundle>();
 

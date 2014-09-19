@@ -88,7 +88,7 @@ public class Registry {
         dbHandler.resetTemp();
 
 
-        // TODO Put a toast message up saying what the compostie has been saved as. Maybe highlight it for a few seconds on the composite list
+        // TODO Put a toast message up saying what the composite has been saved as. Maybe highlight it for a few seconds on the composite list
         return composite;
     }
 
