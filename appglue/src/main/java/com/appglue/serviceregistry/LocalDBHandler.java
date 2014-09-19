@@ -143,8 +143,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private ArrayList<String> queries = new ArrayList<String>();
 
-    private Object compositeLock = new Object();
-
     /**
      * Creates a new class to handle all the database crap
      *
@@ -331,7 +329,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public CompositeService saveTempAsComposite(String name, CompositeService temp) {
+    public synchronized CompositeService saveTempAsComposite(String name, CompositeService temp) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -428,7 +426,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             if (sd.hasTags()) {
-                addTagsForComponent(sd);
+                addTagsForSD(sd);
             }
         } catch (SQLiteConstraintException e) {
             // This means that that key is already in the database
@@ -695,7 +693,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return db.insertOrThrow(TBL_APP, null, values);
     }
 
-
     /**
      * Returns an IO if it exists, adds it if it doesn't
      *
@@ -718,7 +715,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         return type;
     }
-
 
     /**
      * Returns an IOType
@@ -757,7 +753,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return type;
     }
 
-
     /**
      * Gets an IOType, given its classname
      *
@@ -789,7 +784,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return type; //new IOType(getID, name, className);
     }
 
-
     /**
      * Adds an IOType with the given class name
      *
@@ -807,7 +801,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return db.insertOrThrow(TBL_IOTYPE, null, values);
     }
 
-    public CompositeService addComposite(CompositeService cs) {
+    public synchronized CompositeService addComposite(CompositeService cs) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -845,7 +839,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * @param cs
      * @return
      */
-    private boolean addIOConnections(CompositeService cs) {
+    private synchronized boolean addIOConnections(CompositeService cs) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         boolean success = true;
@@ -874,7 +868,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return success;
     }
 
-    public CompositeService updateComposite(CompositeService composite) {
+    public synchronized CompositeService updateComposite(CompositeService composite) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         if (composite.getID() == -1) {
@@ -909,7 +903,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    private ComponentService updateComponent(ComponentService component) {
+    private synchronized ComponentService updateComponent(ComponentService component) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -948,7 +942,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return getComponent(component.getID(), component.getComposite());
     }
 
-    private ServiceIO updateServiceIO(ServiceIO io) {
+    private synchronized ServiceIO updateServiceIO(ServiceIO io) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -986,7 +980,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void updateWiring(CompositeService cs) {
+    public synchronized void updateWiring(CompositeService cs) {
         // Just delete them all and then re-add them all again - this seems easiest?
         SQLiteDatabase db = this.getWritableDatabase();
         int delCount = db.delete(TBL_IOCONNECTION, COMPOSITE_ID + "=" + cs.getID(), null);
@@ -997,7 +991,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         addIOConnections(cs);
     }
 
-    public boolean deleteComposite(CompositeService cs) {
+    public synchronized boolean deleteComposite(CompositeService cs) {
         long id = cs.getID();
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1009,7 +1003,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return cStatus == -1 || chcStatus == -1 || cioStatus == -1 || fStatus == -1;
     }
 
-    public ArrayList<CompositeService> getIntendedRunningComposites() {
+    public synchronized ArrayList<CompositeService> getIntendedRunningComposites() {
         ArrayList<CompositeService> serviceList = new ArrayList<CompositeService>();
         String query = String.format(Locale.getDefault(), "SELECT * FROM %s WHERE %s = %d", TBL_COMPOSITE, ACTIVE_OR_TIMER, 1);
 
@@ -1049,7 +1043,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * @param id The getID of the composite to find out about the running status
      * @return The running status of the composite
      */
-    public Boolean compositeEnabled(long id) {
+    public synchronized Boolean compositeEnabled(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         if (id == -1) {
@@ -1075,7 +1069,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * @param running the new active status
      * @return The success of this?
      */
-    public boolean setCompositeActive(long id, long running) {
+    public synchronized boolean setCompositeActive(long id, long running) {
         return setCompositeRunning(id, running, ACTIVE_OR_TIMER);
     }
 
@@ -1088,7 +1082,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * @param type    Custom type
      * @return The status
      */
-    private boolean setCompositeRunning(long id, long running, String type) {
+    private synchronized boolean setCompositeRunning(long id, long running, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         if (id == -1) {
@@ -1111,7 +1105,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * ********************************************************************************
      */
 
-    private int deleteAllComponents(CompositeService cs) {
+    private synchronized int deleteAllComponents(CompositeService cs) {
 
         if(cs.getID() == -1)
             return 0;
@@ -1146,7 +1140,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return num;
     }
 
-    public long addComponent(ComponentService component) {
+    public synchronized long addComponent(ComponentService component) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -1172,7 +1166,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return componentId;
     }
 
-    public long addServiceIO(ServiceIO io) {
+    public synchronized long addServiceIO(ServiceIO io) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -1204,7 +1198,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return id;
     }
 
-    public boolean compositeExistsWithName(String name) {
+    public synchronized boolean compositeExistsWithName(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = String.format("SELECT * FROM %s WHERE %s = \"%s\"", TBL_COMPOSITE,
@@ -1272,7 +1266,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return new Pair<Long, Interval>(numeral, interval);
     }
 
-    public boolean updateFiltersAndValues(CompositeService cs) {
+    public synchronized boolean updateFiltersAndValues(CompositeService cs) {
         SQLiteDatabase db = this.getWritableDatabase();
         SparseArray<ComponentService> components = cs.getComponents();
         int runningFailures = 0;
@@ -1339,7 +1333,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return runningFailures == 0;
     }
 
-    public ArrayList<CompositeService> getExamples(String componentName) {
+    public synchronized ArrayList<CompositeService> getExamples(String componentName) {
         // Implement some examples of composites that can be used
         // Implement this?
         return new ArrayList<CompositeService>();
@@ -1384,7 +1378,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public long startComposite(CompositeService composite) {
+    public synchronized long startComposite(CompositeService composite) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -1673,7 +1667,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return Tag.createOneFromCursor(c);
     }
 
-    public boolean addTagsForComponent(ServiceDescription component) {
+    public boolean addTagsForSD(ServiceDescription component) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         boolean allWin = true;
@@ -1748,7 +1742,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         return ret == 1;
     }
-
 
     public ArrayList<ServiceDescription> getMatchingForIOs(ServiceDescription component, boolean inputs) {
         ArrayList<IODescription> ios = inputs ? component.getInputs() : component.getOutputs();
@@ -1826,7 +1819,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * ****************
      */
 
-    public ArrayList<CompositeService> getComposites(boolean includeTemp) {
+    public synchronized ArrayList<CompositeService> getComposites(boolean includeTemp) {
         ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
 
         String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
@@ -1868,7 +1861,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return composites;
     }
 
-    public CompositeService getComposite(long id) { // FIXME This should use the getComposites(ArrayList) but only have one thing in the list. Thus removing code duplication
+    public synchronized CompositeService getComposite(long id) { // FIXME This should use the getComposites(ArrayList) but only have one thing in the list. Thus removing code duplication
         String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
         String compositeComponentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
         String whereClause = " where " + TBL_COMPOSITE + "." + ID + " = " + id;
@@ -1927,7 +1920,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return currentComposite;
     }
 
-    private boolean connectComponentsForComposite(CompositeService composite) {
+    private synchronized boolean connectComponentsForComposite(CompositeService composite) {
 
         String query = String.format("SELECT * FROM %s " +
                 "WHERE %s = %d",
@@ -1971,7 +1964,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return allSuccess;
     }
 
-    private void connectComponents(Cursor c, CompositeService cs, String prefix) {
+    private synchronized void connectComponents(Cursor c, CompositeService cs, String prefix) {
 
         long csId = c.getLong(c.getColumnIndex(prefix + COMPOSITE_ID));
 
@@ -2011,7 +2004,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         input.setConnection(output);
     }
 
-    private void filterComponents(Cursor c, CompositeService cs, String prefix) {
+    private synchronized void filterComponents(Cursor c, CompositeService cs, String prefix) {
 
         long csId = c.getLong(c.getColumnIndex(prefix + COMPOSITE_ID));
         if (csId != cs.getID())
@@ -2050,8 +2043,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-
-    public ArrayList<CompositeService> componentAtPosition(String className, int position) {
+    public synchronized ArrayList<CompositeService> componentAtPosition(String className, int position) {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
 
@@ -2079,7 +2071,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return composites;
     }
 
-    public ArrayList<ComponentService> getComponents(String className, int position) {
+    public synchronized ArrayList<ComponentService> getComponents(String className, int position) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -2111,7 +2103,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return components;
     }
 
-    public ComponentService getComponent(long id, CompositeService cs) {
+    public synchronized ComponentService getComponent(long id, CompositeService cs) {
 
         String componentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
         String ioCols = AppGlueLibrary.buildGetAllString(TBL_SERVICEIO, COLS_SERVICEIO);
@@ -2353,7 +2345,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return currentComponent;
     }
 
-    public ArrayList<ServiceDescription>    getServiceDescriptions(ProcessType processType) {
+    public ArrayList<ServiceDescription> getServiceDescriptions(ProcessType processType) {
         String componentCols = AppGlueLibrary.buildGetAllString(TBL_SD, COLS_SD);
         String ioCols = AppGlueLibrary.buildGetAllString(TBL_IO_DESCRIPTION, COLS_IO_DESCRIPTION);
         String ioSamples = AppGlueLibrary.buildGetAllString(TBL_IO_SAMPLE, COLS_IO_SAMPLES);
@@ -2472,7 +2464,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return components;
     }
 
-
     /**
      * ******************************
      * Below here is the auto-caching stuff
@@ -2528,7 +2519,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
     }
 
-    public boolean isInstanceRunning(long compositeId, long executionInstance) {
+    public synchronized boolean isInstanceRunning(long compositeId, long executionInstance) {
         // FIXME Do this
         // Look for a row with the instance and the composite getID. If the timestamp is set then we're good. otherwise not.
 
@@ -2540,13 +2531,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return false;
     }
 
-    public long isCompositeRunning(long compositeId) {
+    public synchronized long isCompositeRunning(long compositeId) {
         // Look through all the rows for that compositeId, and see if there are any instances with the timestamp not set
         // Return the instance ID so that we can control it
         return -1L;
     }
 
-    public boolean isTerminated(CompositeService composite, long executionInstance) {
+    public synchronized boolean isTerminated(CompositeService composite, long executionInstance) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -2576,7 +2567,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return terminate;
     }
 
-    public boolean terminate(CompositeService composite, long executionInstance, int status, String message) {
+    public synchronized boolean terminate(CompositeService composite, long executionInstance, int status, String message) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
