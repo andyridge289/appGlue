@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.appglue.IODescription;
 import com.appglue.description.IOValue;
+import com.appglue.description.datatypes.IOType;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -137,6 +138,14 @@ public class ServiceIO
     }
     public boolean hasConnection() {
         return this.connection != null;
+    }
+
+    public IOType getType() {
+        return this.getDescription().getType();
+    }
+
+    public String getTypeName() {
+        return getType().getClassName();
     }
 
     public boolean equals(Object o) {

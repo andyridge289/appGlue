@@ -3,12 +3,16 @@ package com.appglue.services;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.library.AppGlueLibrary;
 
 import java.util.ArrayList;
 
@@ -37,17 +41,29 @@ public class NotificationService extends ComposableService {
                 .setVibrate(null)
                 .setTicker(title + ": " + text);
 
-        if(iconResource != -1) {
-            notificationBuilder.setSmallIcon(iconResource);
+        int smallIcon = -1;
+        int largeIcon = -1;
+
+        if(iconResource == -1) {
+            largeIcon = R.drawable.icon; // Use the icon of this application by default.
+            smallIcon = R.drawable.ic_notification;
         } else {
-            notificationBuilder.setSmallIcon(R.drawable.icon);
+            smallIcon = iconResource;
+            largeIcon = iconResource;
         }
+
+        notificationBuilder.setSmallIcon(smallIcon); // Use my app's icon as the small icon to show what
+
+        Bitmap largeBitmap = BitmapFactory.decodeResource(getResources(), largeIcon);
+        largeBitmap = AppGlueLibrary.scaleBitmapDIP(this, largeBitmap, 32, 32);
+
+        // Needs to be 32 dp x 32 dp
+
+        notificationBuilder.setLargeIcon(largeBitmap);
 
         Notification notification = notificationBuilder.build();
         n.notify(hashCode, notification);
     }
-
-    // FIXME Make the notification icon fit within the icon box.
 
     @Override
     public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {

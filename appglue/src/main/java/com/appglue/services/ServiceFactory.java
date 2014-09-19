@@ -203,8 +203,6 @@ public class ServiceFactory {
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, btJSON);
     }
 
-    // TODO Need to make sure all the text is escaped
-
     private String setupWifiService() {
         ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);

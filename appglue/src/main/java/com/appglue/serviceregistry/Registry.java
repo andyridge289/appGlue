@@ -14,7 +14,7 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
-import com.appglue.test.EngineTest;
+//import com.appglue.test.EngineTest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,10 +31,7 @@ public class Registry {
     private HashMap<String, ServiceDescription> remoteCache;
 
     // XXX Make the registry cache some things so we don't have to keep retrieving them
-    // Save things in a variable
-    // Null the variable when something relevant changes
-    // Then do a lookup and if it ain't null just use it
-    // FIXME The caches should be in this rather than the local DB handler
+    // TODO The caches should be in this rather than the local DB handler
 
     // This is whatever the current service being edited (or the last one to be edited).
     private CompositeService service;
@@ -318,7 +315,7 @@ public class Registry {
 
     public boolean compositeSuccess(CompositeService composite, long executionInstance) {
         boolean ret = dbHandler.terminate(composite, executionInstance, LogItem.SUCCESS, "Successfully executed");
-        EngineTest.executeFinished = true;
+        //EngineTest.executeFinished = true;
         return ret;
     }
 
@@ -329,7 +326,7 @@ public class Registry {
 
     public void genericTriggerFail(ComponentService component, Bundle inputData, String error) {
         dbHandler.addToLog(null, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL);
-        EngineTest.executeFinished = true;
+        //EngineTest.executeFinished = true;
     }
 
     /**
@@ -347,7 +344,7 @@ public class Registry {
         boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.COMPONENT_FAIL);
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
 
-        EngineTest.executeFinished = true;
+        //EngineTest.executeFinished = true;
 
         if (logComponent && logComposite) {
             return true;
@@ -363,7 +360,7 @@ public class Registry {
         boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.MESSAGE_FAIL);
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
 
-        EngineTest.executeFinished = true;
+        //EngineTest.executeFinished = true;
 
         if (logComponent && logComposite) {
             return true;
@@ -384,13 +381,13 @@ public class Registry {
         boolean logComponent = dbHandler.addToLog(cs, executionInstance, component, message, inputData, null, LogItem.FILTER);
         boolean logComposite = dbHandler.terminate(cs, executionInstance, LogItem.FILTER, message);
 
-        EngineTest.executeFinished = true;
+        //EngineTest.executeFinished = true;
         return logComposite && logComponent;
     }
 
     public boolean orchestratorFail(CompositeService composite, long executionInstance, ServiceDescription sd, String message) {
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.ORCH_FAIL, message);
-        EngineTest.executeFinished = true;
+        //EngineTest.executeFinished = true;
         return logComposite;
     }
 

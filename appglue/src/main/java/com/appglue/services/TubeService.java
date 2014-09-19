@@ -40,6 +40,7 @@ public class TubeService extends ComposableService {
     public static final String LINE_STATUS = "line_status";
     public static final String LINE_MESSAGE = "line_message";
     public static final String LINE_URL = "line_url";
+
     public static final String LINE_ICON = "line_icon";
 
     public static final String BAKERLOO = "Bakerloo";
@@ -79,27 +80,16 @@ public class TubeService extends ComposableService {
 
     public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {
         String output = "";
-        boolean fail = false;
 
         try {
             String url = "http://people.bath.ac.uk/ar289/services/tube/tube_status.php";
             output = getFromURL(url, parameters);
         } catch (ClientProtocolException e) {
-            e.printStackTrace();
-            fail = true;
+            fail("Network fail: " + e.getMessage());
+            return null;
         } catch (IOException e) {
-            e.printStackTrace();
-            fail = true;
-        }
-
-        if (fail) {
-            ArrayList<Bundle> deadLines = new ArrayList<Bundle>();
-//			deadLines.add(this.makeBundle("No network!", "failure", null, ""));
-            // FIXME This needs to use the failure mechanism rather than doing it this way
-
-            isList = true;
-
-            return deadLines;
+            fail("Network fail: " + e.getMessage());
+            return null;
         }
 
         return processOutput(output);
@@ -120,17 +110,21 @@ public class TubeService extends ComposableService {
                 JSONArray jsonMessages = jsonLine.getJSONArray(TAG_MESSAGES);
 
                 String[] messages = new String[jsonMessages.length()];
+                if(jsonMessages.length() == 0) {
+                    messages = new String[1];
+                    messages[0] = "";
+                }
+
                 for (int j = 0; j < jsonMessages.length(); j++) {
                     messages[j] = jsonMessages.getString(j);
                 }
 
-                // FIXME Add line message
-
                 Bundle lineBundle = new Bundle();
                 text.addToBundle(lineBundle, lineName, LINE_NAME);
                 text.addToBundle(lineBundle, status, LINE_STATUS);
+                text.addToBundle(lineBundle, messages[0], LINE_MESSAGE);
                 urlType.addToBundle(lineBundle, "http://www.google.co.uk", LINE_URL);
-                imageDrawable.addToBundle(lineBundle, R.drawable.circle, LINE_ICON);
+                imageDrawable.addToBundle(lineBundle, R.drawable.tube_basic, LINE_ICON);
 
                 if (!status.equals(GOOD_SERVICE))
                     deadLines.add(lineBundle);
@@ -140,6 +134,7 @@ public class TubeService extends ComposableService {
                 Bundle lineBundle = new Bundle();
                 text.addToBundle(lineBundle, "Bakerloo", LINE_NAME);
                 text.addToBundle(lineBundle, MINOR_DELAYS, LINE_STATUS);
+                text.addToBundle(lineBundle, "", LINE_MESSAGE);
                 urlType.addToBundle(lineBundle, "http://www.google.co.uk", LINE_URL);
                 imageDrawable.addToBundle(lineBundle, R.drawable.circle, LINE_ICON);
                 deadLines.add(lineBundle);
@@ -150,6 +145,7 @@ public class TubeService extends ComposableService {
             return deadLines;
         } catch (JSONException e) {
             e.printStackTrace();
+            fail("Parsing error: " + e.getMessage());
             return null;
         }
     }

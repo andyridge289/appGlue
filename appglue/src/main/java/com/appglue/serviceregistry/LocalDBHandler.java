@@ -142,6 +142,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     private LongSparseArray<Tag> tagMap;
 
     private ArrayList<String> queries = new ArrayList<String>();
+
+    private Object compositeLock = new Object();
+
     /**
      * Creates a new class to handle all the database crap
      *
@@ -166,7 +169,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     // FIXME Probably want to lock some of the entries/exists
-    // FIXME Fix the caching of the composites - need to do something to record the last time it was updated
 
     @Override
     /**

@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.appglue.ActivityWiring;
 import com.appglue.IODescription;
 import com.appglue.R;
+import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
 import com.appglue.description.ServiceDescription;
@@ -50,8 +51,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
 	private ComponentService first;
 	private ComponentService second;
-    private ServiceDescription firstDescription;
-    private ServiceDescription secondDescription;
 	
 	private ListView outputList;
     private SparseIntArray outputPositions;
@@ -81,7 +80,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 	private ServiceIO oSelected;
 	private int oIndex;
 	
-	HashMap<String, Integer> hueMap;
+	TST<Integer> hueMap;
 	private Registry registry;
 	
 	private ArrayList<Point> connections;
@@ -301,10 +300,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         for (IODescription io : ios) {
             IOType type = io.getType();
 
-            if (type.getClass().getCanonicalName().equals(previous) && !type.getClass().getCanonicalName().equals(Set.class.getCanonicalName()))
+            if (type.getClassName().equals(previous) && !type.getClassName().equals(Set.class.getCanonicalName()))
                 continue;
 
-            previous = type.getClass().getCanonicalName();
+            previous = type.getClassName();
             distinctTypes.add(type);
         }
 
@@ -313,10 +312,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 		
 		// Create colours equally spaced around the Hue spectrum but drop the Saturation
 		int gap = 360 / distinctTypes.size();
-		hueMap = new HashMap<String, Integer>();
+		hueMap = new TST<Integer>();
 		for(int i = 0; i < distinctTypes.size(); i++)
 		{
-			hueMap.put(distinctTypes.get(i).getClass().getCanonicalName(), i * gap);
+			hueMap.put(distinctTypes.get(i).getClassName(), i * gap);
 		}
 	}
 	
@@ -382,7 +381,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         if (b.getType() == null)
             Log.e(TAG, "b type null");
 
-		return a.getType().getClass().getCanonicalName().compareTo(b.getType().getClass().getCanonicalName());
+		return a.getType().getClass().getCanonicalName().compareTo(b.getType().getClassName());
 	}
 	
 	private ArrayList<PathColour> getPaths()
@@ -403,7 +402,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             }
 
             String className = first.getDescription().getOutputs().get(connection.x).getType().getClassName();
-            int col = Color.HSVToColor(FULL_ALPHA, new float[]{hueMap.get(className), 1, 1});
+            int col = Color.HSVToColor(FULL_ALPHA, new float[]{ hueMap.get(className), 1, 1});
 
             // This should be half the width of the ``tab'' you click on
             int px = 0;//(int) ((24 + 5) * scale + 0.5); // Half the square plus the border
@@ -471,7 +470,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 			String className = type.getClass().getCanonicalName();
 			for(int i = 0; i < lv.getChildCount(); i++)
 			{
-				String itemClassName = ioList.get(i).getType().getClass().getCanonicalName();
+				String itemClassName = ioList.get(i).getType().getClassName();
 				
 				if(inputConnection(i) && inputs)
 					continue;
@@ -584,7 +583,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
 			int col = Color.HSVToColor( FULL_ALPHA / BASE_ALPHA,
 					new float[]{
-						hueMap.get(iod.getType().getClass().getCanonicalName()),
+						hueMap.get(iod.getType().getClassName()),
 						1,
 						1
 					}
@@ -646,7 +645,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 				@Override
 				public void onClick(View b)
 				{
-					if(inputConnection(position) || first == null || !firstDescription.hasOutputs())
+					if(inputConnection(position) || first == null || !first.getDescription().hasOutputs())
 					{
                         if(LOG) Log.d(TAG, "No highlights");
 					}
@@ -657,7 +656,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						b.setBackgroundColor(
 							Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA,
 							new float[] {
-								hueMap.get(iod.getType().getClass().getCanonicalName()),
+								hueMap.get(iod.getType().getClassName()),
 								1,
 								1
 							}
@@ -686,7 +685,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA,
 								new float[] {
-									hueMap.get(iod.getType().getClass().getCanonicalName()),
+									hueMap.get(iod.getType().getClassName()),
 									1,
 									1
 								}
@@ -694,15 +693,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 						);
 
 						// The corresponding output needs to be put back
-						outputList.getChildAt(oIndex).findViewById(R.id.endpoint).setBackgroundColor(Color.HSVToColor(
-								FULL_ALPHA / HIGHLIGHT_ALPHA,
-								new float[] {
-									hueMap.get(oSelected.getDescription().getClass().getCanonicalName()),
-									1,
-									1
-								}
-							)
-						);
+                        View outElement = outputList.getChildAt(oIndex);
+                        View outEndpoint = outElement.findViewById(R.id.endpoint);
+                        String className = oSelected.getDescription().getType().getClassName();
+                        Integer hue = hueMap.get(className);
+                        int colour = Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA, new float[]{ hue, 1, 1 } );
+						outEndpoint.setBackgroundColor(colour);
 
                         redraw(true);
 
@@ -728,7 +724,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 							b.setBackgroundColor(
 								Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA,
 								new float[] {
-									hueMap.get(iod.getType().getClass().getCanonicalName()),
+									hueMap.get(iod.getType().getClassName()),
 									1,
 									1
 								}
@@ -749,7 +745,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 							Color.HSVToColor(
 								FULL_ALPHA / HIGHLIGHT_ALPHA,
 								new float[] {
-									hueMap.get(iod.getType().getClass().getCanonicalName()),
+									hueMap.get(iod.getType().getClassName()),
 									1,
 									1
 								}
@@ -842,7 +838,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
 			int col = Color.HSVToColor( FULL_ALPHA / BASE_ALPHA,
 									new float[]{
-										hueMap.get(iod.getType().getClass().getCanonicalName()),
+										hueMap.get(iod.getType().getClassName()),
 										1,
 										1
 									}
@@ -901,126 +897,126 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 				@Override
 				public void onClick(View b)
 				{
-//					if(LOG) Log.d(TAG, "Output " + position + " (" + oIndex + ", " + iIndex + ")");
-//
-//					if(second == null || !secondDescription.hasInputs())
-//					{
-//						return;
-//					}
-//					if(iSelected == null && oSelected == null)
-//					{
-//						if(LOG) Log.d(TAG, "Output " + position + " (Both null)");
-//						// If they click an output first then just work normally and connect it for them
-//						setHighlight(item.getDescription().getType(), parent);
-//						b.setBackgroundColor(
-//							Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA,
-//							new float[] {
-//								hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
-//								1,
-//								1
-//							}
-//						));
-//
-//						oSelected = item;
-//						oIndex = position;
-//						activity.setStatus("Selected " + item.getDescription().getName());
-//					}
-//					else if(iSelected != null && iSelected.getDescription().getType().equals(item.getDescription().getType()) && oSelected == null)
-//					{
-//						if(LOG) Log.d(TAG, "Output " + position  + " We have a match");
-//
-//						// If the current input and output are in the connections list then do nothing. That would be stupid
-//						if(checkConnection(oIndex, position))
-//							return;
-//
-//						setHighlight(null, parent);
-//
-//						oSelected = item;
-//						oIndex = position;
-//						activity.setStatus("Selected " + item.getDescription().getName());
-//
-//						// This one
-//						b.setBackgroundColor(
-//						Color.HSVToColor(
-//								FULL_ALPHA / HIGHLIGHT_ALPHA,
-//								new float[] {
-//									hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
-//									1,
-//									1
-//								}
-//							)
-//						);
-//
-//						// The corresponding output needs to be put back
-//						inputList.getChildAt(iIndex).findViewById(R.id.endpoint).setBackgroundColor(Color.HSVToColor(
-//								FULL_ALPHA / HIGHLIGHT_ALPHA,
-//								new float[] {
-//									hueMap.get(oSelected.getDescription().getType().getClass().getCanonicalName()),
-//									1,
-//									1
-//								}
-//							)
-//						);
-//
-//                        redraw(true);
-//
-//                        // Update the drawing a bit later...
-//						Handler h = new Handler();
-//						h.postDelayed(new RedrawRunnable(oIndex, iIndex), 200);
-//					}
-//					else if(oSelected != null && iSelected == null)
-//					{
-//						if(LOG) Log.d(TAG, "Output " + position + " (input is null, output is not)");
-//						// This means that we need to deselect the current one?
-//						setHighlight(null, parent);
-//
-//						if(oIndex == position)
-//						{
-//							// We don't have a new one
-//							oSelected = null;
-//							oIndex = -1;
-//						}
-//						else
-//						{
-//							setHighlight(item.getDescription().getType(), parent);
-//							b.setBackgroundColor(
-//								Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA,
-//								new float[] {
-//									hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
-//									1,
-//									1
-//								}
-//							));
-//
-//							oSelected = item;
-//							oIndex = position;
-//							activity.setStatus("Selected " + item.getDescription().getName());
-//						}
-//
-//                        redraw(true);
-//                    }
-//					else
-//					{
-//						if(LOG) Log.d(TAG, "Output " + position + " (else....)");
-//						setHighlight(item.getDescription().getType(), parent);
-//
-//						b.setBackgroundColor(
-//							Color.HSVToColor(
-//								FULL_ALPHA / HIGHLIGHT_ALPHA,
-//								new float[] {
-//									hueMap.get(item.getDescription().getType().getClass().getCanonicalName()),
-//									1,
-//									1
-//								}
-//							)
-//						);
-//
-//						oSelected = item;
-//						oIndex = position;
-//						activity.setStatus("Selected " + item.getDescription().getName());
-//						iSelected = null;
-//						iIndex = -1;
-//					}
+					if(LOG) Log.d(TAG, "Output " + position + " (" + oIndex + ", " + iIndex + ")");
+
+					if(second == null || !second.getDescription().hasInputs())
+					{
+						return;
+					}
+					if(iSelected == null && oSelected == null)
+					{
+						if(LOG) Log.d(TAG, "Output " + position + " (Both null)");
+						// If they click an output first then just work normally and connect it for them
+						setHighlight(item.getDescription().getType(), parent);
+						b.setBackgroundColor(
+							Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA,
+							new float[] {
+								hueMap.get(item.getDescription().getType().getClassName()),
+								1,
+								1
+							}
+						));
+
+						oSelected = item;
+						oIndex = position;
+						activity.setStatus("Selected " + item.getDescription().getName());
+					}
+					else if(iSelected != null && iSelected.getDescription().getType().equals(item.getDescription().getType()) && oSelected == null)
+					{
+						if(LOG) Log.d(TAG, "Output " + position  + " We have a match");
+
+						// If the current input and output are in the connections list then do nothing. That would be stupid
+						if(checkConnection(oIndex, position))
+							return;
+
+						setHighlight(null, parent);
+
+						oSelected = item;
+						oIndex = position;
+						activity.setStatus("Selected " + item.getDescription().getName());
+
+						// This one
+						b.setBackgroundColor(
+						Color.HSVToColor(
+								FULL_ALPHA / HIGHLIGHT_ALPHA,
+								new float[] {
+									hueMap.get(item.getDescription().getType().getClassName()),
+									1,
+									1
+								}
+							)
+						);
+
+						// The corresponding output needs to be put back
+						inputList.getChildAt(iIndex).findViewById(R.id.endpoint).setBackgroundColor(Color.HSVToColor(
+								FULL_ALPHA / HIGHLIGHT_ALPHA,
+								new float[] {
+									hueMap.get(oSelected.getDescription().getType().getClassName()),
+									1,
+									1
+								}
+							)
+						);
+
+                        redraw(true);
+
+                        // Update the drawing a bit later...
+						Handler h = new Handler();
+						h.postDelayed(new RedrawRunnable(oIndex, iIndex), 200);
+					}
+					else if(oSelected != null && iSelected == null)
+					{
+						if(LOG) Log.d(TAG, "Output " + position + " (input is null, output is not)");
+						// This means that we need to deselect the current one?
+						setHighlight(null, parent);
+
+						if(oIndex == position)
+						{
+							// We don't have a new one
+							oSelected = null;
+							oIndex = -1;
+						}
+						else
+						{
+							setHighlight(item.getDescription().getType(), parent);
+							b.setBackgroundColor(
+								Color.HSVToColor(FULL_ALPHA / HIGHLIGHT_ALPHA,
+								new float[] {
+									hueMap.get(item.getDescription().getType().getClassName()),
+									1,
+									1
+								}
+							));
+
+							oSelected = item;
+							oIndex = position;
+							activity.setStatus("Selected " + item.getDescription().getName());
+						}
+
+                        redraw(true);
+                    }
+					else
+					{
+						if(LOG) Log.d(TAG, "Output " + position + " (else....)");
+						setHighlight(item.getDescription().getType(), parent);
+
+						b.setBackgroundColor(
+							Color.HSVToColor(
+								FULL_ALPHA / HIGHLIGHT_ALPHA,
+								new float[] {
+									hueMap.get(item.getDescription().getType().getClassName()),
+									1,
+									1
+								}
+							)
+						);
+
+						oSelected = item;
+						oIndex = position;
+						activity.setStatus("Selected " + item.getDescription().getName());
+						iSelected = null;
+						iIndex = -1;
+					}
 				}
 			});
 

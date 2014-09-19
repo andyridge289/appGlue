@@ -183,6 +183,8 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 return;
             } else if(outputs.size() > 0) {
 
+                // FIXME Something in filtering is broken. Needs to allow the fact that they aren't providing any filter values.
+
 				// Then we need to check for filtering
                 Bundle filterValues = null;
                 try {
@@ -254,13 +256,16 @@ public class OrchestrationServiceConnection implements ServiceConnection
         for (Bundle data : messageData) {
 
             int matchCount = 0;
+            int unfilteredCount = 0;
 
             for (int i = 0; i < outputs.size(); i++) {
 
                 ServiceIO output = outputs.get(i);
 
-                if (output.getFilterState() == ServiceIO.UNFILTERED) // We don't need to worry if the output doesn't need to be filtered
+                if (output.getFilterState() == ServiceIO.UNFILTERED) {
+                    unfilteredCount++;
                     continue;
+                }
 
                 // Now we know we need to filter it
                 FilterValue fv = IOFilter.filters.get(output.getCondition());
@@ -305,7 +310,7 @@ public class OrchestrationServiceConnection implements ServiceConnection
             }
 
             // If we get to here we've checked all of the values for the different IOs for that message, so it can be retained
-            if (matchCount == outputs.size()) {
+            if (matchCount == outputs.size() - unfilteredCount) {
                 retained.add(data);
             } else {
                 filtered.add(data);

@@ -1,8 +1,11 @@
 package com.appglue.library;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
+import android.util.TypedValue;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
@@ -72,7 +75,6 @@ public class AppGlueLibrary {
             }
         } catch (JSONException e) {
             Log.e(TAG, "bundle to JSON string Fail");
-            // TODO Put something in the log maybe?
         }
         return json.toString();
     }
@@ -193,7 +195,41 @@ public class AppGlueLibrary {
     };
 
     public static String generateRandomName() {
-        Random random = new Random(randomNames.length);
-        return randomNames[random.nextInt()];
+        Random random = new Random(System.currentTimeMillis());
+        return randomNames[random.nextInt() % randomNames.length];
+    }
+
+    public static Bitmap scaleBitmapDIP(Context context, Bitmap bmp, int maxWidth, int maxHeight) {
+
+        int w = bmp.getWidth();
+        int h = bmp.getHeight();
+
+        float newWidth;
+        float newHeight;
+
+        if (w > h) {
+            // w needs to be resized to maxWidth
+            newWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxWidth, context.getResources().getDisplayMetrics());
+
+            // h needs to be resized to the appropriate proportion
+            int propHeight = (maxWidth / w) * h;
+            newHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, propHeight, context.getResources().getDisplayMetrics());
+
+        } else if(h > w) {
+            // h needs to be resized to maxHeight
+            newHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxHeight, context.getResources().getDisplayMetrics());
+
+            // w needs to be resized to the appropriate proportion
+            int propWidth = (maxHeight / w) * h;
+            newWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, propWidth, context.getResources().getDisplayMetrics());
+
+        } else {
+            // w needs to be resized to maxWidth and h needs to be resized to maxHeight
+            newWidth = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxWidth, context.getResources().getDisplayMetrics());
+            newHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxHeight, context.getResources().getDisplayMetrics());
+        }
+
+        return Bitmap.createScaledBitmap(bmp, (int) newWidth, (int) newHeight, false);
+
     }
 }

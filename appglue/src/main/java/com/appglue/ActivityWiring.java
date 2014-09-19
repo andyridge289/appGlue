@@ -196,7 +196,7 @@ public class ActivityWiring extends ActionBarActivity {
 	}
 
 	public void setStatus(String statusString) {
-		status.setText(statusString);
+//		status.setText(statusString);
 	}
 
     public void redraw() {
