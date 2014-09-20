@@ -12,8 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,7 +50,7 @@ public class FragmentValue extends FragmentVW {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-//        position = getArguments().getInt(INDEX);
+        position = getArguments().getInt(INDEX);
     }
 
     public int getPosition() {
@@ -88,9 +91,14 @@ public class FragmentValue extends FragmentVW {
 
         LocalStorage localStorage = LocalStorage.getInstance();
 
+        RotateAnimation ranim = (RotateAnimation) AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
+        ranim.setFillAfter(true); //For the textview to remain at the same place after the rotation
+
+
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (pre != null) {
             preName.setText(pre.getDescription().getName());
+//            preName.setAnimation(ranim);
             preName.setTextColor(Color.BLACK);
 
             try {
@@ -111,7 +119,7 @@ public class FragmentValue extends FragmentVW {
                 e.printStackTrace();
             }
 
-            preContainer.setBackgroundResource(R.drawable.wiring_output);
+            preContainer.setBackgroundResource(R.drawable.value_pre);
             preContainer.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -123,7 +131,7 @@ public class FragmentValue extends FragmentVW {
             preName.setText("Add");
             preName.setTextColor(getResources().getColor(R.color.colorPrimary));
             preIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
-            preContainer.setBackgroundResource(R.drawable.wiring_add_default);
+            preContainer.setBackgroundResource(R.drawable.wiring_add_pre);
 
             // Make it add at this position when we click it
             preContainer.setOnClickListener(new OnClickListener() {
@@ -142,7 +150,9 @@ public class FragmentValue extends FragmentVW {
         if (post != null) {
             postName.setText(post.getDescription().getName());
             postName.setTextColor(Color.BLACK);
-            postContainer.setBackgroundResource(R.drawable.wiring_input);
+//            postName.setAnimation(ranim);
+
+            postContainer.setBackgroundResource(R.drawable.value_post);
 
             try {
                 AppDescription firstApp = post.getDescription().getApp();
@@ -172,7 +182,7 @@ public class FragmentValue extends FragmentVW {
         } else {
             postName.setText("Add");
             postName.setTextColor(getResources().getColor(R.color.colorPrimary));
-            postContainer.setBackgroundResource(R.drawable.wiring_add_default);
+            postContainer.setBackgroundResource(R.drawable.wiring_add_post);
             postIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
 
             // Make it add at this position when we click it
@@ -272,16 +282,15 @@ public class FragmentValue extends FragmentVW {
             ioName.setText(item.getDescription().getFriendlyName());
 
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
+            LinearLayout ioValueContainer = (LinearLayout) v.findViewById(R.id.io_value_container);
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
             int visibility = item.getDescription().isMandatory() ? View.VISIBLE : View.GONE;
             v.findViewById(R.id.mandatory_bar).setVisibility(visibility);
 
-            ImageView setButton = (ImageView) v.findViewById(R.id.set_button);
-            setButton.bringToFront();
-            setButton.setOnClickListener(new OnClickListener() {
+            v.setOnClickListener(new OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View vv) {
                     if (item.getDescription().getType().equals(IOType.Factory.getType(IOType.Factory.APP)))
                         showAppDialog(item);
                     else
@@ -289,21 +298,13 @@ public class FragmentValue extends FragmentVW {
                 }
             });
 
-            if (!item.hasValue()) {
-                ioType.setText(item.getDescription().getType().getName());
-                setButton.setImageResource(R.drawable.ic_add);
-                ioValue.setText("");
-            } else {
-                ioType.setText(item.getDescription().getType().getName() + ": ");
-                ioValue.setText(item.getManualValue().toString());
-                setButton.setImageResource(R.drawable.ic_add_on);
-            }
+            ioType.setText(item.getDescription().getType().getName());
 
             // If it's not unfiltered, then it's either manual or not
             if (item.getFilterState() == ServiceIO.UNFILTERED) {
-                ioType.setText(item.getDescription().getType().getName());
+                ioValueContainer.setVisibility(View.GONE);
             } else {
-                // This is for a manual one
+                ioValueContainer.setVisibility(View.VISIBLE);
                 if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
                     String value = item.getDescription().getType().toString(item.getManualValue());
                     ioValue.setText(value);
@@ -312,8 +313,6 @@ public class FragmentValue extends FragmentVW {
                     ioValue.setText(item.getChosenSampleValue().name);
                 }
             }
-
-            setButton.setVisibility(View.VISIBLE);
 
             return v;
         }

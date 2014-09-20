@@ -37,7 +37,8 @@ public class ActivityWiring extends ActionBarActivity {
 
     private boolean makingNew = false;
 
-    private int position = 0;
+    private int pagerPosition = 0;
+    private int componentPosition = 0;
 
     public ActivityWiring() {
     }
@@ -50,8 +51,6 @@ public class ActivityWiring extends ActionBarActivity {
     public static final int MODE_CREATE = 0;
     public static final int MODE_CHOOSE = 1;
 
-    private int lastAddedPosition = -1;
-
 	@Override
 	public void onCreate(Bundle icicle)
 	{
@@ -62,14 +61,16 @@ public class ActivityWiring extends ActionBarActivity {
 
     public void setMode(int mode) {
         this.mode = mode;
+    }
 
+    public void redraw() {
         Fragment attach = null;
 
         switch(mode) {
             case MODE_CREATE:
                 makingNew = false;
                 mTitle = "Create glued app";
-                wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(cs.getID());
+                wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(cs.getID(), pagerPosition);
                 attach = wiringFragment;
                 break;
 
@@ -85,6 +86,9 @@ public class ActivityWiring extends ActionBarActivity {
 
         setActionBar();
         invalidateOptionsMenu();
+
+        if(wiringFragment != null)
+            wiringFragment.redraw();
     }
 
     public void setActionBar() {
@@ -132,6 +136,7 @@ public class ActivityWiring extends ActionBarActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 cs = registry.getTemp();
                                 setMode(MODE_CREATE);
+                                redraw();
                             }
                         });
 
@@ -139,9 +144,9 @@ public class ActivityWiring extends ActionBarActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 cs = registry.resetTemp();
-                                setMode(MODE_CHOOSE);
+                                setMode(MODE_CREATE);
                                 makingNew = true;
-
+                                redraw();
                             }
                         });
             }
@@ -149,8 +154,9 @@ public class ActivityWiring extends ActionBarActivity {
             {
                 // There isn't stuff in the temp, just use that
                 cs = registry.resetTemp();
-                setMode(MODE_CHOOSE);
+                setMode(MODE_CREATE);
                 makingNew = true;
+                redraw();
             }
         } else { // They might not be creating a new one
             if(cs == null) {
@@ -168,6 +174,7 @@ public class ActivityWiring extends ActionBarActivity {
                                 registry.saveTempAsComposite("Saved draft");
                                 setMode(MODE_CREATE);
                                 makingNew = true;
+                                redraw();
                             }
                         });
                 keepTemp.setNegativeButton("Discard draft",
@@ -177,11 +184,13 @@ public class ActivityWiring extends ActionBarActivity {
                                 cs = registry.getComposite(cs.getID());
                                 setMode(MODE_CREATE);
                                 makingNew = true;
+                                redraw();
                             }
                         });
             } else {
                 cs = registry.getComposite(cs.getID());
                 setMode(MODE_CREATE);
+                redraw();
             }
         }
 
@@ -200,11 +209,6 @@ public class ActivityWiring extends ActionBarActivity {
 	public void setStatus(String statusString) {
 //		status.setText(statusString);
 	}
-
-    public void redraw() {
-        if(wiringFragment != null)
-            wiringFragment.redraw();
-    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -248,33 +252,31 @@ public class ActivityWiring extends ActionBarActivity {
         return true;
 	}
 
-    public void chooseComponentFromList(int position) {
-        this.position = position;
+    public void chooseComponentFromList(int componentPosition, int pagerPosition) {
+        this.pagerPosition = pagerPosition;
+        this.componentPosition = componentPosition;
         setMode(MODE_CHOOSE);
+        redraw();
     }
 
     public void chooseItem(String className) {
         ServiceDescription sd = registry.getServiceDescription(className);
-        ComponentService component = new ComponentService(cs, sd, position);
+        ComponentService component = new ComponentService(cs, sd, componentPosition);
         long id = registry.addComponent(component);
 
-        if(id != -1) {
+        if (id != -1) {
             component.setID(id);
-            cs.addComponent(component, position);
-            lastAddedPosition = position;
+            cs.addComponent(component, componentPosition);
         } else {
             Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Failed to add component");
         }
 
         setMode(MODE_CREATE);
+        redraw();
     }
 
     public CompositeService getComposite() {
         return cs;
     }
-    public void setLastAddedPosition(int lastAddedPosition) {
-        this.lastAddedPosition = lastAddedPosition;
-    }
-    public int getLastAddedPosition() { return lastAddedPosition; }
 }

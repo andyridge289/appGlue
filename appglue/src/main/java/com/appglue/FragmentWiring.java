@@ -120,7 +120,8 @@ public class FragmentWiring extends FragmentVW {
             firstContainer.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((ActivityWiring) getActivity()).chooseComponentFromList(position);
+                    ((FragmentWiringPager) getParentFragment()).chooseComponentFromList(position);
+
                 }
             });
         }
@@ -166,7 +167,7 @@ public class FragmentWiring extends FragmentVW {
             secondContainer.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((ActivityWiring) getActivity()).chooseComponentFromList(position);
+                    ((ActivityWiring) getActivity()).chooseComponentFromList(position, position);
                 }
             });
         }
@@ -185,7 +186,6 @@ public class FragmentWiring extends FragmentVW {
     public ComponentService getFirst() {
         return first;
     }
-
     public ComponentService getSecond() {
         return second;
     }

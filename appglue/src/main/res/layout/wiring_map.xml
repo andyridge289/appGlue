@@ -42,7 +42,7 @@
 				android:paddingLeft="20dip"
 				android:paddingRight="20dip"
 		        android:background="@drawable/wiring_output"
-		        android:textColor="@color/wiring_border"
+		        android:textColor="@color/white"
 			    />
 		    
 	    </RelativeLayout>
@@ -110,7 +110,7 @@
 				android:paddingLeft="20dip"
 				android:paddingRight="20dip"
 		        android:background="@drawable/wiring_input"
-		        android:textColor="@color/wiring_bg"
+		        android:textColor="@color/white"
 		        android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
 	       	 />

@@ -292,7 +292,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
                 try {
                     // This returns whether it PASSES the test, so we need to filter it if it doesn't
-                    Log.d(TAG, "Checking " + first + " " + fv.method.getName() + " " + value);
                     Boolean result = (Boolean) fv.method.invoke(null, first, value);
                     if (result) {
                         // Put the name of the condition that failed, and the value that should have been set
@@ -315,8 +314,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
             } else {
                 filtered.add(data);
             }
-
-            Log.d(TAG, "" + matchCount + " + " + skipCount + " = " + outputs.size());
         }
 
 		b.putParcelableArrayList(FILTER_REMOVED, filtered);
@@ -468,8 +465,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
 			Message m = params[0];
             osc.received[osc.index] = m.getData();
 
-            Log.d(TAG, "" + osc.index + " < " + (components.size() - 1));
-
         	if(osc.index >= components.size() - 1)
         	{
 
@@ -482,8 +477,6 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
         		return null;
         	}
-
-            Log.d(TAG, String.format("2 [%d:%d] - %d: %s", osc.index, components.size(), m.what, Library.printBundle(m.getData())));
         	
             switch (m.what)
             {

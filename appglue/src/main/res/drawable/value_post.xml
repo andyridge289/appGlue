@@ -8,7 +8,7 @@
             android:shape="rectangle"
             >
             <stroke
-                android:color="@color/wiring_border"
+                android:color="@color/wiring_border_light"
                 android:width="5dip"
                 />
             <solid

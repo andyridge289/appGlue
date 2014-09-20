@@ -18,7 +18,7 @@
         jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\appGlue\appGlueLib\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="7f6e7434a604ee5b7fa351a03b4fbd59fcfbf479"/>
+        sha1="4601ac2dc3a39466e3273d92f397d216a772a606"/>
     <item
         dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-a6af005bc380ef4e2bea571e3e9292b9f6ad540c.jar"
         jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"

@@ -51,12 +51,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     private int position;
 
-    public static Fragment create(long compositeId) {
+    public static Fragment create(long compositeId, int position) {
 
-        FragmentWiringPager instance = new FragmentWiringPager();
+        instance = new FragmentWiringPager();
 
         Bundle args = new Bundle();
         args.putLong(COMPOSITE_ID, compositeId);
+        args.putInt(POSITION, position);
         instance.setArguments(args);
 
         return instance;
@@ -139,10 +140,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-//        Bundle args = new Bundle();
-//        args.putLong(COMPOSITE_ID, cs.getID());
-//        this.setArguments(args);
     }
 
     @Override
@@ -206,14 +203,16 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         valuePager.setAdapter(valuePagerAdapter);
         valuePager.setOnPageChangeListener(this);
 
-        int lastPosition = ((ActivityWiring) getActivity()).getLastAddedPosition();
-        if (lastPosition != -1) {
-            wiringPager.setCurrentItem(lastPosition);
-            valuePager.setCurrentItem(lastPosition);
-            ((ActivityWiring) getActivity()).setLastAddedPosition(-1); // Reset this?
+        if (position != -1) {
+            wiringPager.setCurrentItem(position);
+            valuePager.setCurrentItem(position);
         } else {
             wiringPager.setCurrentItem(0);
             valuePager.setCurrentItem(0);
+        }
+
+        if(cs.getComponents().size() == 0) {
+            ((ActivityWiring) getActivity()).chooseComponentFromList(0, 1);
         }
     }
 
@@ -244,22 +243,17 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 break;
         }
 
-        int lastPosition = ((ActivityWiring) getActivity()).getLastAddedPosition();
-        if (lastPosition != -1) {
-            wiringPager.setCurrentItem(lastPosition);
-            valuePager.setCurrentItem(lastPosition);
-            ((ActivityWiring) getActivity()).setLastAddedPosition(-1);
+        if (position != -1) {
+            wiringPager.setCurrentItem(position);
+            valuePager.setCurrentItem(position);
         } else {
             int current = hide.getCurrentItem();
             show.setCurrentItem(current);
             setPageIndex(current);
         }
 
-
-
         show.setVisibility(View.VISIBLE);
         hide.setVisibility(View.GONE);
-
 
         redraw();
     }
@@ -273,6 +267,19 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             for (int i = 0; i < adapter.getCount(); i++) {
                 FragmentVW f = (FragmentVW) adapter.getItem(i);
                 f.redraw();
+            }
+        }
+
+        if (position != -1) {
+
+            Log.d(TAG, "Position " + position);
+
+            if (wiringPager != null) {
+                wiringPager.setCurrentItem(position);
+            }
+
+            if (valuePager != null) {
+                valuePager.setCurrentItem(position);
             }
         }
     }
@@ -329,6 +336,11 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    public void chooseComponentFromList(int position) {
+        Log.d(TAG, "Choose component from list " + position);
+        ((ActivityWiring) getActivity()).chooseComponentFromList(position, position);
     }
 
     private class WiringPagerAdapter extends FragmentStatePagerAdapter {

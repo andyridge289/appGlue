@@ -8,7 +8,7 @@
             android:shape="rectangle"
             >
             <stroke
-                android:color="@color/wiring_border"
+                android:color="@color/wiring_border_light"
                 android:width="5dip"
                 />
             <solid
@@ -17,11 +17,11 @@
             <padding
                 android:bottom="5dp"
                 android:top="5dp"
-                android:left="5dip"
+                android:right="5dip"
                 />
             <corners
-                android:topLeftRadius="5dp"
-                android:bottomLeftRadius="5dip" />
+                android:topRightRadius="5dp"
+                android:bottomRightRadius="5dip" />
         </shape>
     </item>
 

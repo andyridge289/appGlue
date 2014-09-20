@@ -181,4 +181,6 @@
     <string name="composite_components">Components</string>
     <string name="cd_composite_icon">Composite icon</string>
 
+    <string name="bullet">\u2022</string>
+
 </resources>
