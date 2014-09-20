@@ -30,9 +30,6 @@ public class Registry {
 
     private HashMap<String, ServiceDescription> remoteCache;
 
-    // XXX Make the registry cache some things so we don't have to keep retrieving them
-    // TODO The caches should be in this rather than the local DB handler
-
     // This is whatever the current service being edited (or the last one to be edited).
     private CompositeService service;
 
@@ -84,11 +81,8 @@ public class Registry {
         }
 
         CompositeService composite = dbHandler.saveTempAsComposite(name, getTemp());
-        Toast.makeText(context, "Saved composite called \"" + name + "\"", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, "Saved composite with name \"" + name + "\"", Toast.LENGTH_LONG).show();
         dbHandler.resetTemp();
-
-
-        // TODO Put a toast message up saying what the composite has been saved as. Maybe highlight it for a few seconds on the composite list
         return composite;
     }
 
@@ -173,12 +167,14 @@ public class Registry {
         if (compositeId == -1) {
             return null;
         } else {
-            return dbHandler.getComposite(compositeId);
+            long[] id = new long[] { compositeId };
+            ArrayList<CompositeService> composite = dbHandler.getComposites(id);
+            return composite.get(0);
         }
     }
 
-    public ArrayList<CompositeService> getComposites(boolean includeTemp) {
-        return dbHandler.getComposites(includeTemp);
+    public ArrayList<CompositeService> getComposites() {
+        return dbHandler.getComposites(null);
     }
 
     public boolean deleteComposite(CompositeService cs) {
@@ -376,7 +372,6 @@ public class Registry {
     }
 
     public ArrayList<CompositeService> getScheduledComposites() {
-        // TODO Need to work out how to do this in the database
-        return new ArrayList<CompositeService>();
+        return dbHandler.getScheduledComposites();
     }
 }

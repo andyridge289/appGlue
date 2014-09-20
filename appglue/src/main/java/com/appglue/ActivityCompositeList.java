@@ -582,7 +582,7 @@ public class ActivityCompositeList extends Activity {
                 }
             }
 
-            ArrayList<CompositeService> composites = registry.getComposites(false);
+            ArrayList<CompositeService> composites = registry.getComposites();
             composites.add(CompositeService.makePlaceholder());
 
             return composites;

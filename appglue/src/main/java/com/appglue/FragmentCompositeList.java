@@ -289,7 +289,7 @@ public class FragmentCompositeList extends Fragment {
                             Toast.makeText(getActivity(), String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
 
                         // This only works when you click on something else?
-                        composites = registry.getComposites(false);
+                        composites = registry.getComposites();
                         composites.add(CompositeService.makePlaceholder());
 
                         if (gridAdapter != null) {
@@ -462,15 +462,19 @@ public class FragmentCompositeList extends Fragment {
             ImageView icon = (ImageView) v.findViewById(R.id.service_icon);
             SparseArray<ComponentService> components = cs.getComponents();
 
-            AppDescription app = components.get(0).getDescription().getApp();
-
-
-            if (app == null || app.iconLocation() == null) {
+            if (components.size() == 0) {
                 icon.setBackgroundResource(R.drawable.icon);
             } else {
-                String iconLocation = app.iconLocation();
-                Bitmap b = localStorage.readIcon(iconLocation);
-                icon.setImageBitmap(b);
+
+                AppDescription app = components.get(0).getDescription().getApp();
+
+                if (app == null || app.iconLocation() == null) {
+                    icon.setBackgroundResource(R.drawable.icon);
+                } else {
+                    String iconLocation = app.iconLocation();
+                    Bitmap b = localStorage.readIcon(iconLocation);
+                    icon.setImageBitmap(b);
+                }
             }
 
             v.setOnClickListener(new OnClickListener() {
@@ -631,7 +635,7 @@ public class FragmentCompositeList extends Fragment {
                 }
             }
 
-            ArrayList<CompositeService> composites = registry.getComposites(false);
+            ArrayList<CompositeService> composites = registry.getComposites();
             composites.add(CompositeService.makePlaceholder());
 
             return composites;

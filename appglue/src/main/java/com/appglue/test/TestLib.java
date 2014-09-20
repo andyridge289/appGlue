@@ -42,7 +42,7 @@ public class TestLib {
         return ServiceDescription.parseFromNewJSON(service, app);
     }
 
-    public static CompositeService createAComposite(Registry registry, Context context) throws Exception {
+    public static CompositeService createAComposite(Registry registry, Context context, String name) throws Exception {
 
         ServiceDescription tubeService = getService(registry, context, "setupTubeService");
         ServiceDescription notificationService = getService(registry, context, "setupNotificationService");
@@ -86,7 +86,7 @@ public class TestLib {
         ServiceIO textIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
         textIO.setManualValue(lineIO.getDescription().getType().fromString("Test message"));
 
-        CompositeService fred = new CompositeService("Fred", "This is called fred", components);
+        CompositeService fred = new CompositeService(name, "This is called " + name, components);
 
         return fred;
     }

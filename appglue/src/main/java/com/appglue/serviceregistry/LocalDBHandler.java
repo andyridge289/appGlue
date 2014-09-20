@@ -165,7 +165,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -1656,48 +1656,97 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * ****************
      */
 
-    public synchronized ArrayList<CompositeService> getComposites(boolean includeTemp) {
+    /**
+     * Get all the composites that have been created in the application - but not the temp.
+     * @return
+     */
+    public synchronized ArrayList<CompositeService> getComposites(long[] ids) {
+
         ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
 
         String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
-        String componentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
-        String whereClause = includeTemp ? "" : " where " + TBL_COMPOSITE + "." + ID + " <> " + CompositeService.TEMP_ID;
+        String compositeComponentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
+
+        String whereClause = "";
+        if(ids != null) {
+            whereClause = " where ";
+            for(int i = 0; i < ids.length; i++) {
+                if(i > 0)
+                    whereClause += " OR ";
+
+                whereClause += TBL_COMPOSITE + "." + ID + " = " + ids[i];
+            }
+        }
 
         String query = String.format("SELECT %s FROM %s" +
                         " LEFT JOIN %s ON %s.%s = %s.%s" +
                         " %s %s",
-                new StringBuilder(compositeCols).append(",").append(componentCols),
+                new StringBuilder(compositeCols).append(",").append(compositeComponentCols),
                 TBL_COMPOSITE,
                 TBL_COMPONENT, TBL_COMPOSITE, ID, TBL_COMPONENT, COMPOSITE_ID,
                 whereClause,
-                "ORDER BY " + POSITION
+                "ORDER BY " + TBL_COMPOSITE + "." + ID
         );
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composite: " + query);
-            return composites;
+            Log.e(TAG, "Cursor is null for getting composites: " + query);
+            return null;
         }
 
         if (c.getCount() == 0) {
-            return composites;
+            return null;
         }
 
         c.moveToFirst();
 
+        CompositeService currentComposite = null;
+
+        // If they are different
 
         do {
-            composites.add(getComposite(c.getLong(c.getColumnIndex(TBL_COMPOSITE + "_" + ID))));
+
+            long compositeId = c.getLong(c.getColumnIndex(TBL_COMPOSITE + "_" + ID));
+
+            if (currentComposite == null) {
+                currentComposite = new CompositeService(false);
+                currentComposite.setInfo(TBL_COMPOSITE + "_", c);
+
+                composites.add(currentComposite);
+            } else if (currentComposite.getID() != compositeId) {
+
+                // Make sure the other one is wired up before we do anything else
+                connectComponentsForComposite(currentComposite);
+
+                currentComposite = new CompositeService(false);
+                currentComposite.setInfo(TBL_COMPOSITE + "_", c);
+
+                composites.add(currentComposite);
+            }
+
+            long componentId = c.getLong(c.getColumnIndex(TBL_COMPONENT + "_" + ID));
+            if (componentId < 1) {
+                String row = DatabaseUtils.dumpCurrentRowToString(c);
+                continue;
+            }
+
+            ComponentService component = getComponent(componentId, currentComposite);
+            if(component != null)
+                currentComposite.addComponent(component, component.getPosition());
         }
         while (c.moveToNext());
         c.close();
 
+        // Wire up the last one
+        connectComponentsForComposite(currentComposite);
+
         return composites;
     }
 
-    public synchronized CompositeService getComposite(long id) { // FIXME This should use the getComposites(ArrayList) but only have one thing in the list. Thus removing code duplication
+    public synchronized CompositeService getComposite(long id) {
+
         String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
         String compositeComponentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
         String whereClause = " where " + TBL_COMPOSITE + "." + ID + " = " + id;
@@ -2355,7 +2404,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     public synchronized boolean isInstanceRunning(long compositeId, long executionInstance) {
-        // FIXME Do this
         // Look for a row with the instance and the composite getID. If the timestamp is set then we're good. otherwise not.
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -2363,7 +2411,23 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         String query = String.format("SELECT %s FROM %s WHERE %s = %d",
                 TERMINATED, TBL_COMPOSITE_EXECUTION_LOG, EXECUTION_INSTANCE, executionInstance);
 
-        return false;
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: instance running");
+            return false;
+        }
+
+        if (c.getCount() == 0) {
+            Log.e(TAG, "There's no record of instanceId " + executionInstance + " for composite " + compositeId);
+            return false; // There's no record of this instance id
+        }
+
+        c.moveToFirst();
+        boolean terminated = c.getInt(c.getColumnIndex(TERMINATED)) == 1;
+        c.close();
+
+        return !terminated;
     }
 
     public synchronized long isCompositeRunning(long compositeId) {
@@ -2415,5 +2479,44 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 COMPOSITE_ID + " = ? AND " + ID + " = ?",
                 new String[]{"" + composite.getID(), "" + executionInstance});
         return num == 1;
+    }
+
+    public ArrayList<CompositeService> getScheduledComposites() {
+
+        ArrayList<CompositeService> scheduledComposites = new ArrayList<CompositeService>();
+
+        String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
+                                    ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: Scheduled composites");
+            return scheduledComposites;
+        }
+
+        if (c.getCount() == 0) {
+            return scheduledComposites;
+        }
+
+        ArrayList<Long> idList = new ArrayList<Long>();
+
+        do {
+
+            long compositeId = c.getLong(c.getColumnIndex(ID));
+            idList.add(compositeId);
+
+        } while(c.moveToNext());
+        c.close();
+
+        long[] ids = new long[idList.size()];
+        for (int i = 0; i < idList.size(); i++) {
+            ids[i] = idList.get(i);
+        }
+
+        scheduledComposites = getComposites(ids);
+
+        return scheduledComposites;
     }
 }

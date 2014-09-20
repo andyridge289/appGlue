@@ -33,7 +33,7 @@ public class ActivityLog extends Activity
 		TextView noLog = (TextView) findViewById(R.id.no_log);
 		
 		Registry registry = Registry.getInstance(this);
-        ArrayList<CompositeService> composites = registry.getComposites(false);
+        ArrayList<CompositeService> composites = registry.getComposites();
 
         if(composites.size() == 0)
             return;

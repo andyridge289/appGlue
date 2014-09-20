@@ -29,7 +29,7 @@ public class DBTest extends AndroidTestCase {
     public void testAComposite() throws Exception {
 
         Registry registry = Registry.getInstance(getContext());
-        CompositeService fred = TestLib.createAComposite(registry, getContext());
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
         registry.addComposite(fred);
 
         CompositeService fred2 = registry.getComposite(fred.getID());

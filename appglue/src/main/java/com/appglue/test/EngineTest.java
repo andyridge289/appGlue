@@ -57,7 +57,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
     public void testMapOutputs() throws Exception {
 
         Registry registry = Registry.getInstance(getContext());
-        CompositeService fred = TestLib.createAComposite(registry, getContext());
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
         registry.addComposite(fred);
 
         OrchestrationServiceConnection osc = new OrchestrationServiceConnection(getContext(), fred, false);
@@ -112,7 +112,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         // Run it and assert that a new entry has been added to the Log to account for it running properly
         Registry registry = Registry.getInstance(getContext());
-        CompositeService fred = TestLib.createAComposite(registry, getContext());
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
         registry.addComposite(fred);
 
         OrchestrationServiceConnection osc = new OrchestrationServiceConnection(getContext(), fred, false);
