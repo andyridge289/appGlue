@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item 
-        android:id="@+id/composite_edit"
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+
+        android:id="@+id/comp_context_run"
+        android:title="@string/run"
+        app:showAsAction="ifRoom"
+        />
+    <item
+        android:id="@+id/comp_context_timer"
+        android:title="@string/schedule"
+        />
+    <item
+        android:id="@+id/comp_context_shortcut"
+        android:title="@string/create_shortcut"
+        android:icon="@drawable/ab_shortcut"
+        />
+    <item
+        android:id="@+id/comp_context_edit"
         android:title="@string/edit"
         />
     <item
-        android:id="@+id/composite_share"
-        android:title="@string/share"
+        android:id="@+id/comp_context_delete"
+        android:title="@string/delete"
         />
 </menu>

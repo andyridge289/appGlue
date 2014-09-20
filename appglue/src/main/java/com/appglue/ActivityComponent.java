@@ -1,47 +1,24 @@
 package com.appglue;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.description.CompositeService;
-import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
-import java.util.ArrayList;
-
 import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.ID;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.RESULT;
 import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 import static com.appglue.library.AppGlueConstants.MARKET_LOOKUP;
-import static com.appglue.library.AppGlueConstants.NOT_SET;
-import static com.appglue.library.AppGlueConstants.SUCCESS;
 
 public class ActivityComponent extends ActionBarActivity {
     private ServiceDescription service;
@@ -107,7 +84,7 @@ public class ActivityComponent extends ActionBarActivity {
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle icicle) {
+    public void onRestoreInstanceState(@NonNull Bundle icicle) {
         super.onRestoreInstanceState(icicle);
 
         if (!icicle.containsKey(CLASSNAME))

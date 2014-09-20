@@ -46,8 +46,7 @@ public class FragmentComponent extends Fragment {
     private Registry registry;
 
     public static Fragment create() {
-        FragmentComponent f = new FragmentComponent();
-        return f;
+        return new FragmentComponent();
     }
 
     @Override
@@ -158,8 +157,10 @@ public class FragmentComponent extends Fragment {
             else
                 appName.setText(sd.getApp().getName());
 
-            if (sd.getApp() != null)
+            if (sd.getApp() != null) {
                 appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
+                appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
+            }
         } else {
             appName.setVisibility(View.GONE);
             appIcon.setVisibility(View.GONE);

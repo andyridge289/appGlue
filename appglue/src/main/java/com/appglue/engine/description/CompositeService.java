@@ -1,7 +1,6 @@
 package com.appglue.engine.description;
 
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.util.SparseArray;
@@ -50,8 +49,8 @@ public class CompositeService {
         INTERVAL(1, "Interval"),
         TIME(2, "Time");
 
-        int index;
-        String name;
+        public int index;
+        public String name;
 
         Schedule(int index, String name) {
             this.index = index;
@@ -177,23 +176,6 @@ public class CompositeService {
             components.put(position, component);
         }
     }
-
-    // FIXME Put this in the wiring update stuff
-    public void recreateSearch() {
-
-        synchronized (lock) { // Lock it because we're clearing the thing, make sure nothing is looking in it at the
-            componentSearch.clear();
-            for (int i = 0; i < components.size(); i++) {
-                ComponentService component = components.valueAt(i);
-                if(component.getID() != -1)
-                    componentSearch.put(component.getID(), component);
-            }
-
-        }
-
-
-    }
-
 
     public void addComponent(ComponentService component, int position) {
 

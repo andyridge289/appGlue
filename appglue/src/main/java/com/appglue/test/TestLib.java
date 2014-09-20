@@ -1,7 +1,6 @@
 package com.appglue.test;
 
 import android.content.Context;
-import android.test.AndroidTestCase;
 import android.util.Log;
 
 import com.appglue.IODescription;
@@ -86,9 +85,7 @@ public class TestLib {
         ServiceIO textIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
         textIO.setManualValue(lineIO.getDescription().getType().fromString("Test message"));
 
-        CompositeService fred = new CompositeService(name, "This is called " + name, components);
-
-        return fred;
+        return new CompositeService(name, "This is called " + name, components);
     }
 
     public static ComponentService createComponentForFilterSample(ServiceDescription sd, IODescription[] filterOns,

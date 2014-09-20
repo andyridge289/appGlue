@@ -50,6 +50,8 @@ public class ActivityWiring extends ActionBarActivity {
     public static final int MODE_CREATE = 0;
     public static final int MODE_CHOOSE = 1;
 
+    private int lastAddedPosition = -1;
+
 	@Override
 	public void onCreate(Bundle icicle)
 	{
@@ -259,6 +261,7 @@ public class ActivityWiring extends ActionBarActivity {
         if(id != -1) {
             component.setID(id);
             cs.addComponent(component, position);
+            lastAddedPosition = position;
         } else {
             Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Failed to add component");
@@ -270,4 +273,8 @@ public class ActivityWiring extends ActionBarActivity {
     public CompositeService getComposite() {
         return cs;
     }
+    public void setLastAddedPosition(int lastAddedPosition) {
+        this.lastAddedPosition = lastAddedPosition;
+    }
+    public int getLastAddedPosition() { return lastAddedPosition; }
 }

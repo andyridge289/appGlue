@@ -9,7 +9,7 @@
         android:layout_width="48dip"
         android:layout_height="48dip"
         android:background="@drawable/icon"
-        android:contentDescription="Composite icon" />
+        android:contentDescription="@string/cd_composite_icon" />
 
     <TextView
         android:id="@+id/schedule_composite_name"

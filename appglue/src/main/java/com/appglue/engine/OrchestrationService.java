@@ -102,7 +102,7 @@ public class OrchestrationService extends Service
                 OrchestrationServiceConnection connection = new OrchestrationServiceConnection(OrchestrationService.this, cs, test);
 
                 if (duration != 0) {
-                    // TODO Need to make the executing work on a timer
+                    // Need to make the executing work on a timer
 //					if(!test)
 //						{
 //							if(duration != 0)

@@ -12,14 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
-import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
-import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
-
-import static com.appglue.Constants.POSITION;
-
 import java.util.ArrayList;
+
+import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
 public class FragmentComponentList extends Fragment
 {

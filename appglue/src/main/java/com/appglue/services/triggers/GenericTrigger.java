@@ -12,7 +12,6 @@ import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;

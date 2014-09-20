@@ -66,9 +66,6 @@ public class ServiceDescription {
     // A text description
     private String description = "";
 
-    // The price of the service - this will just be the price of the app
-    private double price = 0;
-
     // Inputs and getOutputs to/from the service
     private SparseArray<IODescription> inputs = new SparseArray<IODescription>();
     private SparseArray<IODescription> outputs = new SparseArray<IODescription>();
@@ -91,7 +88,6 @@ public class ServiceDescription {
         this.className = className;
         this.packageName = packageName;
         this.description = description;
-        this.price = price;
 
         this.setInputs(inputs);
         this.setOutputs(outputs);
@@ -105,7 +101,6 @@ public class ServiceDescription {
         this.className = "";
         this.packageName = "";
         this.description = "";
-        this.price = 0.0f;
 
         this.inputs = new SparseArray<IODescription>();
         this.outputs = new SparseArray<IODescription>();
@@ -156,10 +151,6 @@ public class ServiceDescription {
 
     public boolean isConverter() {
         return this.processType == ProcessType.CONVERTER;
-    }
-
-    public double getPrice() {
-        return this.price;
     }
 
     public boolean hasInputs() {
@@ -393,11 +384,6 @@ public class ServiceDescription {
 
         if(!this.description.equals(other.getDescription())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: description");
-            return false;
-        }
-
-        if(this.price != other.getPrice()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: price");
             return false;
         }
 

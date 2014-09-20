@@ -8,10 +8,8 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
-import android.util.Pair;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
@@ -31,9 +29,6 @@ import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.ComponentLogItem;
 import com.appglue.library.LogItem;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +37,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.FRIENDLY_NAME;
@@ -64,23 +58,21 @@ import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.VALUE;
-import static com.appglue.library.AppGlueConstants.SCHEDULED;
-import static com.appglue.library.AppGlueConstants.HOURS;
-import static com.appglue.library.AppGlueConstants.MINUTES;
 import static com.appglue.library.AppGlueConstants.COLS_APP;
 import static com.appglue.library.AppGlueConstants.COLS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.COLS_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE;
 import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_EXECUTION_LOG;
-import static com.appglue.library.AppGlueConstants.COLS_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.COLS_EXECUTION_LOG;
-import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.COLS_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.COLS_IOTYPE;
 import static com.appglue.library.AppGlueConstants.COLS_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.COLS_SD;
+import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.COLS_TAG;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.DB_NAME;
 import static com.appglue.library.AppGlueConstants.DB_VERSION;
 import static com.appglue.library.AppGlueConstants.ENABLED;
@@ -88,11 +80,12 @@ import static com.appglue.library.AppGlueConstants.END_TIME;
 import static com.appglue.library.AppGlueConstants.EXECUTION_INSTANCE;
 import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
 import static com.appglue.library.AppGlueConstants.FILTER_STATE;
+import static com.appglue.library.AppGlueConstants.HOURS;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_HAS_COMPONENT;
-import static com.appglue.library.AppGlueConstants.INDEX_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.INDEX_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.INDEX_FILTER;
+import static com.appglue.library.AppGlueConstants.INDEX_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.INPUT_DATA;
@@ -101,17 +94,19 @@ import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.IO_DESCRIPTION_ID;
 import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_HAS_COMPONENT;
-import static com.appglue.library.AppGlueConstants.IX_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.IX_EXECUTION_LOG;
-import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.IX_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.IX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.IX_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.LOG_TYPE;
 import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
+import static com.appglue.library.AppGlueConstants.MINUTES;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
-import static com.appglue.library.AppGlueConstants.OUTPUT_ID;
 import static com.appglue.library.AppGlueConstants.OUTPUT_DATA;
+import static com.appglue.library.AppGlueConstants.OUTPUT_ID;
+import static com.appglue.library.AppGlueConstants.SCHEDULED;
 import static com.appglue.library.AppGlueConstants.SINK_IO;
 import static com.appglue.library.AppGlueConstants.SOURCE_IO;
 import static com.appglue.library.AppGlueConstants.START_TIME;
@@ -120,14 +115,14 @@ import static com.appglue.library.AppGlueConstants.TBL_APP;
 import static com.appglue.library.AppGlueConstants.TBL_COMPONENT;
 import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE;
 import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_EXECUTION_LOG;
-import static com.appglue.library.AppGlueConstants.TBL_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.TBL_EXECUTION_LOG;
-import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.TBL_IOCONNECTION;
 import static com.appglue.library.AppGlueConstants.TBL_IOTYPE;
+import static com.appglue.library.AppGlueConstants.TBL_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.TBL_IO_SAMPLE;
 import static com.appglue.library.AppGlueConstants.TBL_SD;
 import static com.appglue.library.AppGlueConstants.TBL_SD_HAS_TAG;
-import static com.appglue.library.AppGlueConstants.TBL_IO_DESCRIPTION;
+import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.TBL_TAG;
 import static com.appglue.library.AppGlueConstants.TERMINATED;
 import static com.appglue.library.AppGlueConstants.TIME;
@@ -812,8 +807,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     /**
      *
-     * @param cs
-     * @return
+     * @param cs The composite service for which the add the connections
+     * @return Whether the operation was successful
      */
     private synchronized boolean addIOConnections(CompositeService cs) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1658,7 +1653,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     /**
      * Get all the composites that have been created in the application - but not the temp.
-     * @return
+     * @return The list of composites
      */
     public synchronized ArrayList<CompositeService> getComposites(long[] ids) {
 
@@ -2486,7 +2481,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ArrayList<CompositeService> scheduledComposites = new ArrayList<CompositeService>();
 
         String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
-                                    ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE);
+                                    ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE.index);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);

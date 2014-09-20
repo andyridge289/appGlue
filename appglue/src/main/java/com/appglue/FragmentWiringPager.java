@@ -206,9 +206,14 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         valuePager.setAdapter(valuePagerAdapter);
         valuePager.setOnPageChangeListener(this);
 
-        if (position != -1) {
-            wiringPager.setCurrentItem(position);
-            valuePager.setCurrentItem(position);
+        int lastPosition = ((ActivityWiring) getActivity()).getLastAddedPosition();
+        if (lastPosition != -1) {
+            wiringPager.setCurrentItem(lastPosition);
+            valuePager.setCurrentItem(lastPosition);
+            ((ActivityWiring) getActivity()).setLastAddedPosition(-1); // Reset this?
+        } else {
+            wiringPager.setCurrentItem(0);
+            valuePager.setCurrentItem(0);
         }
     }
 
@@ -239,12 +244,22 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 break;
         }
 
-        int current = hide.getCurrentItem();
-        show.setCurrentItem(current);
+        int lastPosition = ((ActivityWiring) getActivity()).getLastAddedPosition();
+        if (lastPosition != -1) {
+            wiringPager.setCurrentItem(lastPosition);
+            valuePager.setCurrentItem(lastPosition);
+            ((ActivityWiring) getActivity()).setLastAddedPosition(-1);
+        } else {
+            int current = hide.getCurrentItem();
+            show.setCurrentItem(current);
+            setPageIndex(current);
+        }
+
+
 
         show.setVisibility(View.VISIBLE);
         hide.setVisibility(View.GONE);
-        setPageIndex(current);
+
 
         redraw();
     }

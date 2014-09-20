@@ -32,16 +32,15 @@ public class ActivityComposite extends Activity
 	
 	private boolean edit;
 
-    private LocalStorage localStorage;
-	private Registry registry;
+    private Registry registry;
 	
 	public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		
 		Intent intent = getIntent();
-		
-		localStorage = LocalStorage.getInstance();
+
+        LocalStorage localStorage = LocalStorage.getInstance();
 		registry = Registry.getInstance(this);
 		
 		long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
@@ -164,23 +163,23 @@ public class ActivityComposite extends Activity
 	
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		if(item.getItemId() == R.id.composite_edit)
-		{
-			edit = true;
-			invalidateOptionsMenu();
-			setup();
-		}
-		else if(item.getItemId() == R.id.composite_edit_done)
-		{
-			edit = false;
-			invalidateOptionsMenu();
-			setup();
-		}
-		else if(item.getItemId() == R.id.composite_share)
-		{
-			// Implement sharing - Google+?
-            Log.d(TAG, "Sharing not implemented yet");
-		}
+//		if(item.getItemId() == R.id.composite_edit)
+//		{
+//			edit = true;
+//			invalidateOptionsMenu();
+//			setup();
+//		}
+//		else if(item.getItemId() == R.id.composite_edit_done)
+//		{
+//			edit = false;
+//			invalidateOptionsMenu();
+//			setup();
+//		}
+//		else if(item.getItemId() == R.id.composite_share)
+//		{
+//			// Implement sharing - Google+?
+//            Log.d(TAG, "Sharing not implemented yet");
+//		}
 		
 		return false;
 	}

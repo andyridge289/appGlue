@@ -3,10 +3,8 @@ package com.appglue.serviceregistry;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.widget.Toast;
 
-import com.appglue.Constants.Interval;
 import com.appglue.Constants.ServiceType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
@@ -14,15 +12,15 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
-//import com.appglue.test.EngineTest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
+
+//import com.appglue.test.EngineTest;
 
 public class Registry {
     public static Registry registry = null;
@@ -256,8 +254,7 @@ public class Registry {
 
     public boolean terminate(CompositeService composite, long executionInstance, int status,
                              String message) {
-        boolean success = dbHandler.terminate(composite, executionInstance, status, message);
-        return success;
+        return dbHandler.terminate(composite, executionInstance, status, message);
     }
 
     public ArrayList<ServiceDescription> getMatchingForOutputs(ServiceDescription prior) {
@@ -290,9 +287,8 @@ public class Registry {
     }
 
     public boolean compositeSuccess(CompositeService composite, long executionInstance) {
-        boolean ret = dbHandler.terminate(composite, executionInstance, LogItem.SUCCESS, "Successfully executed");
         //EngineTest.executeFinished = true;
-        return ret;
+        return dbHandler.terminate(composite, executionInstance, LogItem.SUCCESS, "Successfully executed");
     }
 
     public boolean componentSuccess(CompositeService composite, long executionInstance, ComponentService component, String message, Bundle outputData) {
@@ -362,9 +358,8 @@ public class Registry {
     }
 
     public boolean orchestratorFail(CompositeService composite, long executionInstance, ServiceDescription sd, String message) {
-        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.ORCH_FAIL, message);
         //EngineTest.executeFinished = true;
-        return logComposite;
+        return dbHandler.terminate(composite, executionInstance, LogItem.ORCH_FAIL, message);
     }
 
     public ArrayList<ServiceDescription> getAllServiceDescriptions() {

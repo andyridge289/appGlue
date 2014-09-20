@@ -196,7 +196,8 @@ public class AppGlueLibrary {
 
     public static String generateRandomName() {
         Random random = new Random(System.currentTimeMillis());
-        return randomNames[random.nextInt() % randomNames.length];
+        int index = Math.abs(random.nextInt()) % randomNames.length;
+        return randomNames[index];
     }
 
     public static Bitmap scaleBitmapDIP(Context context, Bitmap bmp, int maxWidth, int maxHeight) {

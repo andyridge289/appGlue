@@ -23,7 +23,6 @@
 		        android:id="@+id/output_list"
 		      	android:layout_width="fill_parent"
 		      	android:layout_height="fill_parent"
-		      	
 		        />
 	    
 	    </LinearLayout>
@@ -58,8 +57,9 @@
 		   	<View
 		   	    android:layout_width="80dip"
 		   	    android:layout_height="fill_parent"
-                android:background="@drawable/wiring_add_pre"
+                android:background="@drawable/wiring_add_pre_default"
 		   	    android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
 		   	    />
 	   	
 	   	</RelativeLayout>
@@ -112,6 +112,7 @@
 		        android:background="@drawable/wiring_input"
 		        android:textColor="@color/wiring_bg"
 		        android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
 	       	 />
 	    
 	    </RelativeLayout>
@@ -126,7 +127,8 @@
 		        android:layout_width="80dip"
 		   	    android:layout_height="fill_parent"
 		   	    android:layout_alignParentRight="true"
-                android:background="@drawable/wiring_add_post"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/wiring_add_post_default"
 		        />
 	    
 	    </RelativeLayout>

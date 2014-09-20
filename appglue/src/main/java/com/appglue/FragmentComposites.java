@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.appglue.engine.description.CompositeService;
+
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.MODE;
@@ -25,8 +27,7 @@ public class FragmentComposites extends Fragment {
     private long compositeId = -1;
 
     public static Fragment create() {
-        FragmentComposites f = new FragmentComposites();
-        return f;
+        return new FragmentComposites();
     }
 
     @Override
@@ -46,8 +47,7 @@ public class FragmentComposites extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
-        View root = inflater.inflate(R.layout.fragment_composites, container, false);
-        return root;
+        return inflater.inflate(R.layout.fragment_composites, container, false);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class FragmentComposites extends Fragment {
         fm.beginTransaction().setCustomAnimations(slideIn, slideOut)
                 .replace(R.id.container, active).commit();
 
-
+        getActivity().invalidateOptionsMenu();
     }
 
     public void setViewMode() {
@@ -179,5 +179,12 @@ public class FragmentComposites extends Fragment {
 
         setMode(MODE_COMPOSITE);
         redraw();
+    }
+
+    public CompositeService getComposite() {
+        if (compositeFragment != null) {
+           return compositeFragment.getComposite();
+        }
+        return null;
     }
 }

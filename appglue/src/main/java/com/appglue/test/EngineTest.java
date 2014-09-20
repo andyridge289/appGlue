@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.test.ServiceTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.appglue.ComposableService;
 import com.appglue.IODescription;
@@ -16,7 +15,6 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.IOFilter;
-import com.appglue.library.LogItem;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.NotificationService;
 import com.appglue.services.TubeService;
@@ -24,17 +22,9 @@ import com.appglue.services.TubeService;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.DATA;
-import static com.appglue.library.AppGlueConstants.TEST;
 
 public class EngineTest extends ServiceTestCase<OrchestrationService> {
-
-    private Intent startIntent;
 
     public static boolean executeFinished = false;
     public static boolean timerFinished = false;
@@ -45,7 +35,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
     protected void setUp() throws Exception {
         super.setUp();
-        startIntent = new Intent();
+        Intent startIntent = new Intent();
         startIntent.setClass(getContext(), OrchestrationService.class);
 
     }
@@ -54,6 +44,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
     String out2 = "{\"update\":\"Kept old\",\"lines\":[{\"name\":\"Bakerloo\",\"id\":\"bakerloo\",\"status\":\"minor delays\",\"messages\":[]},{\"name\":\"Central\",\"id\":\"central\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Circle\",\"id\":\"circle\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"District\",\"id\":\"district\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"DLR\",\"id\":\"docklands\",\"status\":\"severe delays\",\"messages\":[]},{\"name\":\"H'smith & City\",\"id\":\"hammersmithcity\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Jubilee\",\"id\":\"jubilee\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Metropolitan\",\"id\":\"metropolitan\",\"status\":\"minor delays\",\"messages\":[]},{\"name\":\"Northern\",\"id\":\"northern\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Overground\",\"id\":\"overground\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Piccadilly\",\"id\":\"piccadilly\",\"status\":\"part closure\",\"messages\":[]},{\"name\":\"Victoria\",\"id\":\"victoria\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Waterloo & City\",\"id\":\"waterloocity\",\"status\":\"good service\",\"messages\":[]}]}";
 
     @LargeTest
+
     public void testMapOutputs() throws Exception {
 
         Registry registry = Registry.getInstance(getContext());

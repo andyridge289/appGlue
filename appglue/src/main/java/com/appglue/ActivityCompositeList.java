@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ActionMode;
@@ -281,12 +282,12 @@ public class ActivityCompositeList extends Activity {
 //		}
     }
 
-    protected void onSaveInstanceState(Bundle icicle) {
+    protected void onSaveInstanceState(@NonNull Bundle icicle) {
         icicle.describeContents();
         // Not sure we need to save anything here
     }
 
-    protected void onRestoreInstanceState(Bundle icicle) {
+    protected void onRestoreInstanceState(@NonNull Bundle icicle) {
         icicle.describeContents();
         // So we probably don't need to restore anything back
     }

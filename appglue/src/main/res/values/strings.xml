@@ -179,5 +179,6 @@
     <string name="wiring_value_switch">Set Values</string>
     <string name="wiring_wiring_switch">Do Wiring</string>
     <string name="composite_components">Components</string>
+    <string name="cd_composite_icon">Composite icon</string>
 
 </resources>

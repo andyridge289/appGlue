@@ -1,26 +1,16 @@
 package com.appglue.engine.description;
 
 
-import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
-import com.appglue.Constants;
 import com.appglue.TST;
 import com.appglue.description.ServiceDescription;
-import com.appglue.services.TubeService;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.DESCRIPTION;
-import static com.appglue.Constants.ID;
 import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.ENABLED;
-import static com.appglue.library.AppGlueConstants.INTERVAL;
-import static com.appglue.library.AppGlueConstants.NUMERAL;
 
 public class ComponentService {
     private long id;

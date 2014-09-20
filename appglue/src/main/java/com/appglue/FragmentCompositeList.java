@@ -122,9 +122,10 @@ public class FragmentCompositeList extends Fragment {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            ActivityAppGlue aag = (ActivityAppGlue) getActivity();
             switch (item.getItemId()) {
                 case R.id.comp_context_run:
-                    run(composites.get(selected.get(0)));
+                    aag.run(composites.get(selected.get(0)));
                     break;
 
                 case R.id.comp_context_timer:
@@ -306,24 +307,6 @@ public class FragmentCompositeList extends Fragment {
                 })
                 .setNegativeButton("No", null)
                 .show();
-    }
-
-    private void run(CompositeService cs) {
-        Intent serviceIntent = new Intent(getActivity(), OrchestrationService.class);
-        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
-        Bundle b = new Bundle();
-
-        b.putLong(COMPOSITE_ID, cs.getID());
-        b.putInt(INDEX, 0);
-        b.putBoolean(IS_LIST, false);
-        b.putInt(DURATION, 0);
-        b.putBoolean(TEST, false);
-
-        if (LOG) Log.w(TAG, "Trying to run " + cs.getID() + " : " + cs.getName());
-
-        intentData.add(b);
-        serviceIntent.putParcelableArrayListExtra(DATA, intentData);
-        getActivity().startService(serviceIntent);
     }
 
     private void schedule(final CompositeService cs) {

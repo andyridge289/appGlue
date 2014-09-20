@@ -1,49 +1,20 @@
 package com.appglue;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.GridView;
-import android.widget.ImageView;
-
-import com.appglue.Constants.ServiceType;
-import com.appglue.description.ServiceDescription;
-import com.appglue.engine.description.ComponentService;
-import com.appglue.library.LocalStorage;
-import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.RESULT;
-import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
 import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
-import static com.appglue.library.AppGlueConstants.MARKET_LOOKUP;
-import static com.appglue.library.AppGlueConstants.MATCHING;
-import static com.appglue.library.AppGlueConstants.NOT_SET;
-import static com.appglue.library.AppGlueConstants.SUCCESS;
-import static com.appglue.library.AppGlueConstants.TRIGGERS_ONLY;
 
 public class FragmentComponentListPager extends Fragment {
 

@@ -4,8 +4,6 @@ import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.appglue.description.ServiceDescription;
-
 import static com.appglue.Constants.INDEX;
 
 public abstract class FragmentVW extends Fragment {

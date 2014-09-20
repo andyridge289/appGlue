@@ -89,7 +89,7 @@
                 <View
                     android:layout_width="80dip"
                     android:layout_height="fill_parent"
-                    android:background="@drawable/wiring_add_post"
+                    android:background="@drawable/wiring_add_post_default"
                     android:layout_alignParentRight="true" />
 
             </RelativeLayout>

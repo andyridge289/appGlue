@@ -114,7 +114,7 @@ public class FragmentWiring extends FragmentVW {
             firstName.setText("Add");
             firstName.setTextColor(getResources().getColor(R.color.colorPrimary));
             firstIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
-            firstContainer.setBackgroundResource(R.drawable.wiring_add);
+            firstContainer.setBackgroundResource(R.drawable.wiring_add_default);
 
             // Make it add at this position when we click it
             firstContainer.setOnClickListener(new OnClickListener() {
@@ -159,7 +159,7 @@ public class FragmentWiring extends FragmentVW {
         } else {
             secondName.setText("Add");
             secondName.setTextColor(getResources().getColor(R.color.colorPrimary));
-            secondContainer.setBackgroundResource(R.drawable.wiring_add);
+            secondContainer.setBackgroundResource(R.drawable.wiring_add_default);
             secondIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
 
             // Make it add at this position when we click it

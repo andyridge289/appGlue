@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.Window;
 
 import com.appglue.Constants.ServiceType;
-import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.serviceregistry.Registry;
 

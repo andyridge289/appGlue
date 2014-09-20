@@ -1,6 +1,7 @@
 package com.appglue;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -9,12 +10,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.appglue.engine.OrchestrationService;
+import com.appglue.engine.description.CompositeService;
+
+import java.util.ArrayList;
+
+import static com.appglue.Constants.DATA;
+import static com.appglue.Constants.DURATION;
+import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.IS_LIST;
+import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.TEST;
 
 public class ActivityAppGlue extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -52,11 +68,6 @@ public class ActivityAppGlue extends ActionBarActivity
     private FragmentComponents componentFragment;
 
     /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
@@ -67,7 +78,10 @@ public class ActivityAppGlue extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_app_glue);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment)
+        /*
+      Fragment managing the behaviors, interactions and presentation of the navigation drawer.
+     */
+        NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
@@ -151,6 +165,7 @@ public class ActivityAppGlue extends ActionBarActivity
         currentPage = position;
 
         fragmentManager.beginTransaction().replace(R.id.container, f).commit();
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -174,6 +189,7 @@ public class ActivityAppGlue extends ActionBarActivity
                     .commit();
         }
 
+        invalidateOptionsMenu();
         super.onBackPressed();
     }
 
@@ -203,33 +219,65 @@ public class ActivityAppGlue extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_app_glue, menu);
-
         if (currentPage == Page.HOME.index) {
-            if (view == VIEW_LIST) {
-                menu.setGroupVisible(R.id.group_grid, false);
-                menu.setGroupVisible(R.id.group_list, true);
+
+            if (homeFragment.getMode() == FragmentComposites.MODE_LIST) {
+                getMenuInflater().inflate(R.menu.activity_app_glue, menu);
+                if (view == VIEW_LIST) {
+                    menu.setGroupVisible(R.id.group_grid, false);
+                    menu.setGroupVisible(R.id.group_list, true);
+                } else {
+                    menu.setGroupVisible(R.id.group_grid, true);
+                    menu.setGroupVisible(R.id.group_list, false);
+                }
             } else {
-                menu.setGroupVisible(R.id.group_grid, true);
-                menu.setGroupVisible(R.id.group_list, false);
+                getMenuInflater().inflate(R.menu.composite_menu, menu);
             }
         }
 
         return super.onCreateOptionsMenu(menu);
     }
 
-        @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-            switch(item.getItemId()) {
-                case R.id.change_view_grid:
-                    setViewMode(VIEW_GRID);
-                    break;
+        switch(item.getItemId()) {
+            case R.id.change_view_grid:
+                setViewMode(VIEW_GRID);
+                break;
 
-                case R.id.change_view_list:
-                    setViewMode(VIEW_LIST);
-                    break;
-            }
+            case R.id.change_view_list:
+                setViewMode(VIEW_LIST);
+                break;
+
+            case R.id.comp_context_run:
+                run(homeFragment.getComposite()); //composites.get(selected.get(0)));
+                break;
+
+            case R.id.comp_context_timer:
+//        schedule(composites.get((selected.get(0))));
+                break;
+
+            case R.id.comp_context_view:
+//        view(composites.get((selected.get(0))));
+                break;
+
+            case R.id.comp_context_edit:
+//        edit(composites.get((selected.get(0))));
+                break;
+
+            case R.id.comp_context_shortcut:
+//        createShortcut(composites.get((selected.get(0))));
+                break;
+
+        case R.id.comp_context_delete:
+//        ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
+//        for (Integer aSelected : selected) {
+//            killList.add(composites.get(aSelected));
+//        }
+//        delete(killList);
+                break;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -241,7 +289,7 @@ public class ActivityAppGlue extends ActionBarActivity
         this.view = view;
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putInt(COMPOSITE_PAGE_VIEW, view).commit();
+        prefs.edit().putInt(COMPOSITE_PAGE_VIEW, view).apply();
 
         if (homeFragment != null) {
             homeFragment.setViewMode();
@@ -278,8 +326,7 @@ public class ActivityAppGlue extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_activity_app_glue, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_activity_app_glue, container, false);
         }
 
         @Override
@@ -288,6 +335,29 @@ public class ActivityAppGlue extends ActionBarActivity
             ((ActivityAppGlue) activity).onSectionAttached(
                     Page.values()[getArguments().getInt(ARG_SECTION_NUMBER)]);
         }
+    }
+
+    public void run(CompositeService cs) {
+        if(cs == null) {
+            Toast.makeText(this, "Error when trying to run composite", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent serviceIntent = new Intent(this, OrchestrationService.class);
+        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
+        Bundle b = new Bundle();
+
+        b.putLong(COMPOSITE_ID, cs.getID());
+        b.putInt(INDEX, 0);
+        b.putBoolean(IS_LIST, false);
+        b.putInt(DURATION, 0);
+        b.putBoolean(TEST, false);
+
+        if (LOG) Log.w(TAG, "Trying to run " + cs.getID() + " : " + cs.getName());
+
+        intentData.add(b);
+        serviceIntent.putParcelableArrayListExtra(DATA, intentData);
+        this.startService(serviceIntent);
     }
 
 }
