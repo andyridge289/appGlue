@@ -318,12 +318,32 @@ public class FragmentValue extends FragmentVW {
         }
     }
 
+    private class IOValueStructure {
+
+    }
+
     private class OutputAdapter extends ArrayAdapter<ServiceIO> {
+
         public ArrayList<ServiceIO> items;
+        public ArrayList<ArrayList<IOValueStructure>> values;
 
         public OutputAdapter(Context parent, ArrayList<ServiceIO> items) {
             super(parent, R.layout.list_item_value_out, items);
             this.items = items;
+            values = new ArrayList<ArrayList<IOValueStructure>>();
+            for (int i = 0; i < items.size(); i++) {
+                values.add(new ArrayList<IOValueStructure>());
+            }
+        }
+
+        public void notifyDataSetChanged() {
+
+            values = new ArrayList<ArrayList<IOValueStructure>>();
+            for (int i = 0; i < items.size(); i++) {
+                values.add(new ArrayList<IOValueStructure>());
+            }
+
+            super.notifyDataSetChanged();
         }
 
         @SuppressLint("InflateParams")
@@ -341,46 +361,43 @@ public class FragmentValue extends FragmentVW {
             ioName.setText(description.getFriendlyName());
 
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
+            ioType.setText(item.getDescription().getType().getName());
+
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
-            ImageView filterButton = (ImageView) v.findViewById(R.id.filter_button);
-            filterButton.setOnClickListener(new OnClickListener() {
+            v.setOnClickListener(new OnClickListener() {
 
                 @Override
-                public void onClick(View v) {
+                public void onClick(View vv) {
                     showFilterDialog(item);
                 }
             });
 
+            ListView outputValueList = (ListView) v.findViewById(R.id.io_value_list);
+            // FIXME This is where you are
+
             if (!item.hasValue()) {
-                ioType.setText(item.getDescription().getType().getName());
-                filterButton.setImageResource(R.drawable.filter_small);
-                ioValue.setText("");
+//                ioValue.setText("");
             } else {
-                ioType.setText(item.getDescription().getType().getName() + ": ");
-                ioValue.setText(item.getManualValue().toString());
-                filterButton.setImageResource(R.drawable.filter_small_on);
+//                ioValue.setText(item.getManualValue().toString());
+//                filterButton.setImageResource(R.drawable.filter_small_on);
             }
+
+            // TODO This also needs to show if there is a connection from an output
 
             if (item.getFilterState() == ServiceIO.UNFILTERED) {
-                ioType.setText(item.getDescription().getType().getName());
             } else {
-                IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
-
-                ioType.setText(item.getDescription().getType().getName() + ": " + fv.text + " ");
-
+//                IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
+//
                 // This is for a manual one
                 if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
-                    String value = item.getDescription().getType().toString(item.getManualValue());
-                    ioValue.setText(value);
+//                    String value = item.getDescription().getType().toString(item.getManualValue());
+//                    ioValue.setText(value);
                 } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
-                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
-                    ioValue.setText(item.getChosenSampleValue().name);
+//                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
+//                    ioValue.setText(item.getChosenSampleValue().name);
                 }
             }
-
-            filterButton.setVisibility(View.VISIBLE);
-            v.findViewById(R.id.endpoint).setVisibility(View.GONE);
 
             return v;
         }

@@ -1,40 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:id="@+id/endpoint_container"
-        android:layout_width="48dip"
-        android:layout_height="48dip"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true">
-
-        <View
-            android:layout_height="fill_parent"
-            android:layout_width="1dip"
-            android:background="@color/dim_text"
-            android:layout_marginTop="5dip"
-            android:layout_marginBottom="5dip" />
-
-        <ImageView
-            android:id="@+id/filter_button"
-            android:layout_width="48dip"
-            android:layout_height="48dip"
-            android:background="?android:selectableItemBackground"
-            android:visibility="gone"
-            android:src="@drawable/filter_small"
-            android:contentDescription="@string/filter_button" />
-
-    </LinearLayout>
+    android:layout_height="wrap_content"
+    android:minHeight="48dip"
+    >
 
     <TextView
         android:id="@+id/io_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
+        android:text="Output name"
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:textStyle="bold" />
@@ -43,18 +21,23 @@
         android:id="@+id/io_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Output type"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:paddingLeft="5dip"
         android:paddingRight="5dip"
         android:layout_below="@id/io_name" />
 
-    <TextView
-        android:id="@+id/io_value"
+    <ListView
+        android:id="@+id/io_value_list"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/io_type"
-        android:layout_below="@id/io_name"
+        android:layout_below="@id/io_type"
         android:textStyle="italic"
-        android:textColor="@color/dim_text" />
+        android:textColor="@color/dim_text" >
+    </ListView>
 
 
 </RelativeLayout>

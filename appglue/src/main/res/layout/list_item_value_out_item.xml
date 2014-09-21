@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dip"
+    >
+
+    <TextView
+        android:id="@+id/out_bullet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bullet"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="4dip"
+        />
+
+    <TextView
+        android:id="@+id/value_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/out_bullet"
+        android:layout_toStartOf="@id/out_bullet"
+        android:text="Output name"
+        android:paddingRight="5dip"
+        android:textStyle="bold"
+        />
+
+</RelativeLayout>
