@@ -26,16 +26,16 @@ import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
 import com.appglue.Test;
-import com.appglue.description.datatypes.IOType;
 import com.appglue.description.ServiceDescription;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.AppGlueLibrary;
-import com.appglue.library.err.OrchestrationException;
-import com.appglue.library.IOFilter;
 import com.appglue.library.IOFilter.FilterValue;
 import com.appglue.library.LogItem;
+import com.appglue.library.err.OrchestrationException;
 import com.appglue.serviceregistry.Registry;
 
 import java.lang.reflect.InvocationTargetException;
@@ -45,27 +45,26 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.PREFS;
 
-public class OrchestrationServiceConnection implements ServiceConnection
-{
-	boolean isBound;
-	
-	Messenger messageReceiver;
-    
+public class OrchestrationServiceConnection implements ServiceConnection {
+    boolean isBound;
+
+    Messenger messageReceiver;
+
     private int index;
-    
+
     private Context context;
-    
+
     private Message message;
-    
+
     private CompositeService cs;
-    
+
     private boolean test;
-    
+
     private Registry registry;
-    
+
     public static final String FILTER_REMOVED = "filter_removed";
     public static final String FILTER_RETAINED = "filter_retained";
-    
+
     private static final String FILTER_OUTPUTID = "filter_name";
     private static final String FILTER_CONDITION = "filter_condition";
     private static final String FILTER_VALUE = "filter_value";
@@ -74,117 +73,119 @@ public class OrchestrationServiceConnection implements ServiceConnection
     private Bundle[] received;
 
     private long executionInstance = -1L; // Initialise this to -1
-    
-    public OrchestrationServiceConnection(Context context, CompositeService cs, boolean test)
-    {   
-    	if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection() " + System.currentTimeMillis());
-    	this.registry = Registry.getInstance(context);
-    	this.context = context;
-    	
-    	this.cs = cs;
-    	this.index = 0;
-    	this.test = test;
-    	
-    	this.messageReceiver = new Messenger(new IncomingHandler(this));
-    	this.message = null;
+
+    public OrchestrationServiceConnection(Context context, CompositeService cs, boolean test) {
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection() " + System.currentTimeMillis());
+        this.registry = Registry.getInstance(context);
+        this.context = context;
+
+        this.cs = cs;
+        this.index = 0;
+        this.test = test;
+
+        this.messageReceiver = new Messenger(new IncomingHandler(this));
+        this.message = null;
 
         this.sent = new Bundle[cs.size()];
         this.received = new Bundle[cs.size()];
     }
-    
-	@Override
-	public void onServiceConnected(ComponentName className, final IBinder service) {
-		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.onServiceConnected() " + System.currentTimeMillis());
+
+    @Override
+    public void onServiceConnected(ComponentName className, final IBinder service) {
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.onServiceConnected() " + System.currentTimeMillis());
         Messenger messageSender = new Messenger(service);
 
         try {
-        	Test.isValidBundle(index, cs.getComponents().size(), message.getData(), true);
-        	
-        	if(registry.isTerminated(cs, executionInstance)) {
+            Test.isValidBundle(index, cs.getComponents().size(), message.getData(), true);
+
+            if (registry.isTerminated(cs, executionInstance)) {
 
             } else {
                 sent[index] = message.getData();
                 messageSender.send(message);
-        	}
-        }
-        catch (RemoteException e) {
+            }
+        } catch (RemoteException e) {
             registry.messageFail(cs, executionInstance, cs.getComponents().get(index), sent[index]);
         }
-	}
+    }
 
-	@Override
-	public void onServiceDisconnected(ComponentName className) 
-	{
+    @Override
+    public void onServiceDisconnected(ComponentName className) {
         messageReceiver = null;
-	}
-	
-	public void start() {
-		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.start() " + System.currentTimeMillis());
-		
-		// We can't send a list the first time, but I'm not sure it matters to say that we're not sending anything
-		message = Message.obtain(null, ComposableService.MSG_OBJECT);
-    	message.replyTo = messageReceiver;
-    	
-    	executionInstance = registry.startComposite(cs);
-		this.doBindService(cs.getComponents().get(0));
-	}
-	
-	public void startAtPosition(int position, boolean isList, Bundle data) {
-		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.startAtPosition(" + position + ") " + System.currentTimeMillis());
-		this.index = position;
-		
-		if(isList)
-			message = Message.obtain(null, ComposableService.MSG_LIST);
-		else
-			message = Message.obtain(null, ComposableService.MSG_OBJECT);
-		
-		message.replyTo = messageReceiver;
-		
-		ArrayList<Bundle> input = new ArrayList<Bundle>();
-		input.add(data);
-		
-		Bundle stuff = new Bundle();
-		stuff.putParcelableArrayList(ComposableService.INPUT, input);
-		
-		message.setData(stuff);
+    }
+
+    public void start() {
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.start() " + System.currentTimeMillis());
+
+        // We can't send a list the first time, but I'm not sure it matters to say that we're not sending anything
+        message = Message.obtain(null, ComposableService.MSG_OBJECT);
+        message.replyTo = messageReceiver;
+
+        executionInstance = registry.startComposite(cs);
+        this.doBindService(cs.getComponents().get(0));
+    }
+
+    public void startAtPosition(int position, boolean isList, Bundle data) {
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.startAtPosition(" + position + ") " + System.currentTimeMillis());
+        this.index = position;
+
+        if (isList)
+            message = Message.obtain(null, ComposableService.MSG_LIST);
+        else
+            message = Message.obtain(null, ComposableService.MSG_OBJECT);
+
+        message.replyTo = messageReceiver;
+
+        ArrayList<Bundle> input = new ArrayList<Bundle>();
+        input.add(data);
+
+        Bundle stuff = new Bundle();
+        stuff.putParcelableArrayList(ComposableService.INPUT, input);
+
+        message.setData(stuff);
 
         if (position >= cs.size()) {
             Log.e(TAG, String.format("Tried Executing %d (%s) at position %d [size %d]",
-                       cs.getID(), cs.getName(), position, cs.size()));
+                    cs.getID(), cs.getName(), position, cs.size()));
             return;
         }
 
-		executionInstance = registry.startComposite(cs);
-		this.doBindService(cs.getComponents().get(position));
-	}
-	
-	/**
-	 * Bind the service.
-	 * 
-	 * Also get the parameters if we have any
-	 * 
-	 * @param service The service to be bound
-	 */
-	private void doBindService(ComponentService service) {
+        executionInstance = registry.startComposite(cs);
+        this.doBindService(cs.getComponents().get(position));
+    }
 
-		if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doBindService(" + service.getDescription().getName() + ") " + System.currentTimeMillis());
-		Bundle messageData = message.getData();
+    /**
+     * Bind the service.
+     * <p/>
+     * Also get the parameters if we have any
+     *
+     * @param service The service to be bound
+     */
+    private void doBindService(ComponentService service) {
+
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doBindService(" + service.getDescription().getName() + ") " + System.currentTimeMillis());
+        Bundle messageData = message.getData();
         Library.printBundle(messageData);
-		
-		if (registry.isTerminated(cs, executionInstance)) {
-			return;
-    	}
-		
-		if (this.index != 0) {
-			// Make the composition execution thing take into account the filter values
-			ArrayList<Bundle> outputs = messageData.getParcelableArrayList(ComposableService.INPUT);
 
-            if(outputs == null) {
+        if (registry.isTerminated(cs, executionInstance)) {
+            return;
+        }
+
+        if (this.index != 0) {
+            // Make the composition execution thing take into account the filter values
+            ArrayList<Bundle> outputs = messageData.getParcelableArrayList(ComposableService.INPUT);
+
+            if (outputs == null) {
                 registry.terminate(cs, executionInstance, LogItem.ORCH_FAIL, "The message has been killed");
                 return;
-            } else if(outputs.size() > 0) {
+            } else if (outputs.size() > 0) {
 
-				// Then we need to check for filtering
+                // Then we need to check for filtering
                 Bundle filterValues = null;
                 try {
                     filterValues = this.filter(outputs, cs.getComponents().get(index - 1));
@@ -194,20 +195,20 @@ public class OrchestrationServiceConnection implements ServiceConnection
                 }
 
                 ArrayList<Bundle> retained = filterValues.getParcelableArrayList(FILTER_RETAINED);
-				
-				if(retained.size() > 0) {
-					messageData.remove(ComposableService.INPUT);
-					messageData.putParcelableArrayList(ComposableService.INPUT, retained);
-				} else {
-					ArrayList<Bundle> removed = filterValues.getParcelableArrayList(FILTER_REMOVED);
+
+                if (retained.size() > 0) {
+                    messageData.remove(ComposableService.INPUT);
+                    messageData.putParcelableArrayList(ComposableService.INPUT, retained);
+                } else {
+                    ArrayList<Bundle> removed = filterValues.getParcelableArrayList(FILTER_REMOVED);
                     for (Bundle b : removed) {
 
                         ComponentService currentComponent = cs.getComponents().get(index - 1); // Need to get the last index because we've moved on
                         registry.filter(cs, executionInstance, currentComponent, b);
                     }
-					return;
-				}
-			}
+                    return;
+                }
+            }
 
             try {
                 messageData = this.mapOutputs(messageData, service);
@@ -222,35 +223,38 @@ public class OrchestrationServiceConnection implements ServiceConnection
             }
         }
 
-		Bundle bDescription = service.getDescription().toBundle();
-		messageData.putBundle(ComposableService.DESCRIPTION, bDescription);
+        Bundle bDescription = service.getDescription().toBundle();
+        messageData.putBundle(ComposableService.DESCRIPTION, bDescription);
         ServiceDescription description = service.getDescription();
-		
-		// Do one last check before we send
-		if(registry.isTerminated(cs, executionInstance)) {
-			return;
-    	}
 
-    	Intent intent = new Intent();
-    	intent.setClassName(description.getPackageName(), description.getClassName());
+        // Do one last check before we send
+        if (registry.isTerminated(cs, executionInstance)) {
+            return;
+        }
 
-        if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": Sending data -- " + Library.printBundle(messageData) + "  " + System.currentTimeMillis());
+        Intent intent = new Intent();
+        intent.setClassName(description.getPackageName(), description.getClassName());
+
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": Sending data -- " + Library.printBundle(messageData) + "  " + System.currentTimeMillis());
         message.setData(messageData);
 
-    	if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": Binding service -- " + description.getPackageName() + " ; " + description.getClassName() + "  " + System.currentTimeMillis());
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": Binding service -- " + description.getPackageName() + " ; " + description.getClassName() + "  " + System.currentTimeMillis());
         context.bindService(intent, this, Context.BIND_AUTO_CREATE);
 
-        if (LOG) Log.d(TAG, Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
         isBound = true;
     }
-	
-	private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {
-        ArrayList<Bundle> filtered = new ArrayList<Bundle>();
-		ArrayList<Bundle> retained = new ArrayList<Bundle>();
 
-		Bundle b = new Bundle();
-		
-		ArrayList<ServiceIO> outputs = service.getOutputs();
+    private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {
+        ArrayList<Bundle> filtered = new ArrayList<Bundle>();
+        ArrayList<Bundle> retained = new ArrayList<Bundle>();
+
+        Bundle b = new Bundle();
+
+        ArrayList<ServiceIO> outputs = service.getOutputs();
 
         for (Bundle data : messageData) {
 
@@ -263,22 +267,22 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
                 ServiceIO output = outputs.get(i);
 
-                if (output.getFilterState() == ServiceIO.UNFILTERED) {
+                if (output.getFilterState() == IOValue.UNFILTERED) {
                     skipCount++;
                     continue;
                 }
 
                 // Now we know we need to filter it
-                FilterValue fv = IOFilter.filters.get(output.getCondition());
+                FilterValue fv = output.getCondition();
                 Object first = data.get(output.getDescription().getName());
                 Object value = null;
 
                 // At this point we have an object that is the thing we need. Do we need to make it into something else we can deal with?
 
-                if (output.getFilterState() == ServiceIO.MANUAL_FILTER)
+                if (output.getFilterState() == IOValue.MANUAL_FILTER)
                     value = output.getManualValue();
-                else if (output.getFilterState() == ServiceIO.SAMPLE_FILTER)
-                    value = output.getChosenSampleValue().value;
+                else if (output.getFilterState() == IOValue.SAMPLE_FILTER)
+                    value = output.getChosenSampleValue().getValue();
 
                 if (value == null) {  // Something has gone very very wrong
                     Log.e(TAG, "Filter value is dead, you've done something rather stupid");
@@ -316,31 +320,31 @@ public class OrchestrationServiceConnection implements ServiceConnection
             }
         }
 
-		b.putParcelableArrayList(FILTER_REMOVED, filtered);
-		b.putParcelableArrayList(FILTER_RETAINED, retained);
-		return b;
-	}
+        b.putParcelableArrayList(FILTER_REMOVED, filtered);
+        b.putParcelableArrayList(FILTER_RETAINED, retained);
+        return b;
+    }
 
     @SuppressWarnings("unchecked")
-	private Bundle mapOutputs(Bundle bundle, ComponentService service) throws OrchestrationException
-	{
+    private Bundle mapOutputs(Bundle bundle, ComponentService service) throws OrchestrationException {
         // Get the description of the component to be mapped to
         ServiceDescription sd = service.getDescription();
-		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.mapOutputs(to " + sd.getName() + ") " + System.currentTimeMillis());
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.mapOutputs(to " + sd.getName() + ") " + System.currentTimeMillis());
 
         // Get the inputs of the component to be mapped to and set up the other array lists
-		ArrayList<ServiceIO> inputs = service.getInputs();
-		ArrayList<Bundle> inputList = new ArrayList<Bundle>();
+        ArrayList<ServiceIO> inputs = service.getInputs();
+        ArrayList<Bundle> inputList = new ArrayList<Bundle>();
 
-		if(bundle != null && bundle.get(ComposableService.INPUT) != null) {
+        if (bundle != null && bundle.get(ComposableService.INPUT) != null) {
 
             ArrayList<Bundle> outputList = new ArrayList<Bundle>();
             Object o = bundle.get(ComposableService.INPUT);
 
             // This gives us a list of bundles to iterate through to process
-            if(o instanceof Bundle) {
+            if (o instanceof Bundle) {
                 outputList.add((Bundle) o);
-            } else if(o.getClass().equals(ArrayList.class)) {
+            } else if (o.getClass().equals(ArrayList.class)) {
                 outputList = (ArrayList<Bundle>) o;
             } else {
                 String message = "Map outputs: Data is not Bundle or AL<Bundle>: " + o.getClass().getCanonicalName();
@@ -371,158 +375,146 @@ public class OrchestrationServiceConnection implements ServiceConnection
 
                 inputList.add(inputBundle);
             }
-		}
+        }
 
-        if(inputList.size() == 0) {
+        if (inputList.size() == 0) {
 
         }
 
         // Go through the getInputs and input any manual values that are there
         for (ServiceIO input : inputs) {
-            if (input.getFilterState() != ServiceIO.UNFILTERED) {
+            if (input.getFilterState() != IOValue.UNFILTERED) {
                 // Then add it to the input list
                 String name = input.getDescription().getName();
                 IOType type = input.getDescription().getType();
                 Object value = null;
 
-                if (input.getFilterState() == ServiceIO.MANUAL_FILTER)
+                if (input.getFilterState() == IOValue.MANUAL_FILTER)
                     value = input.getManualValue();
-                else if (input.getFilterState() == ServiceIO.SAMPLE_FILTER)
-                    value = input.getChosenSampleValue().value;
+                else if (input.getFilterState() == IOValue.SAMPLE_FILTER)
+                    value = input.getChosenSampleValue().getValue();
 
-                if(inputList.size() == 0)
+                if (inputList.size() == 0)
                     inputList.add(new Bundle());
 
-                for(Bundle b : inputList)
+                for (Bundle b : inputList)
                     type.addToBundle(b, value, name);
             }
         }
 
         bundle = new Bundle();
-		bundle.putParcelableArrayList(ComposableService.INPUT, inputList);
-		return bundle;
-	}
-    
-    public void doUnbindService() 
-    {
-    	if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doUnbindService() " + System.currentTimeMillis());
-        if (isBound) 
-        {
+        bundle.putParcelableArrayList(ComposableService.INPUT, inputList);
+        return bundle;
+    }
+
+    public void doUnbindService() {
+        if (LOG)
+            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doUnbindService() " + System.currentTimeMillis());
+        if (isBound) {
             // Detach our existing connection.
             context.unbindService(OrchestrationServiceConnection.this);
             isBound = false;
         }
     }
 
-    private void incrementIndex()
-    {
-    	this.index++;
+    private void incrementIndex() {
+        this.index++;
     }
 
     /**
      * Handler of incoming messages from service.
      */
-    private static class IncomingHandler extends Handler
-    {
-    	private OrchestrationServiceConnection osc;
-    	
-    	private IncomingHandler(OrchestrationServiceConnection osc)
-    	{
-    		super(Looper.getMainLooper());
-    		
-    		this.osc = osc;
-    	}
-    	
+    private static class IncomingHandler extends Handler {
+        private OrchestrationServiceConnection osc;
+
+        private IncomingHandler(OrchestrationServiceConnection osc) {
+            super(Looper.getMainLooper());
+
+            this.osc = osc;
+        }
+
         @Override
-        public void handleMessage(Message msg) 
-        {   
-        	Log.w(TAG, Thread.currentThread().getName() + ": IncomingHandler.handleMessage() " + System.currentTimeMillis());
-        	if(LOG) Log.d(TAG, String.format("Orchestration received [%d] - %d: %s", osc.index, msg.what, Library.printBundle(msg.getData())));
-        	
-        	ReceiverTask rt = osc.new ReceiverTask(osc);
-        	Message m = Message.obtain();
-        	m.copyFrom(msg);
-        	rt.execute(m);
+        public void handleMessage(Message msg) {
+            Log.w(TAG, Thread.currentThread().getName() + ": IncomingHandler.handleMessage() " + System.currentTimeMillis());
+            if (LOG)
+                Log.d(TAG, String.format("Orchestration received [%d] - %d: %s", osc.index, msg.what, Library.printBundle(msg.getData())));
+
+            ReceiverTask rt = osc.new ReceiverTask(osc);
+            Message m = Message.obtain();
+            m.copyFrom(msg);
+            rt.execute(m);
         }
     }
-    
-    private class ReceiverTask extends AsyncTask<Message, Object, Object>
-    {
-    	private OrchestrationServiceConnection osc;
-    	
-    	private ReceiverTask(OrchestrationServiceConnection osc)
-    	{
-    		this.osc = osc;	
-    	}
-    	
-		@Override
-		protected Object doInBackground(Message... params) 
-		{
-        	// Handle the case of it being the last position here because we don't need to do anything else
-			ArrayList<ComponentService> components = osc.cs.getComponentsAL();
-			
-			// There should only be one message
-			Message m = params[0];
+
+    private class ReceiverTask extends AsyncTask<Message, Object, Object> {
+        private OrchestrationServiceConnection osc;
+
+        private ReceiverTask(OrchestrationServiceConnection osc) {
+            this.osc = osc;
+        }
+
+        @Override
+        protected Object doInBackground(Message... params) {
+            // Handle the case of it being the last position here because we don't need to do anything else
+            ArrayList<ComponentService> components = osc.cs.getComponentsAL();
+
+            // There should only be one message
+            Message m = params[0];
             osc.received[osc.index] = m.getData();
 
-        	if(osc.index >= components.size() - 1)
-        	{
+            if (osc.index >= components.size() - 1) {
 
-        		osc.doUnbindService();
-        		
-        		if(!osc.test && m.what != ComposableService.MSG_FAIL)
-        			osc.registry.compositeSuccess(osc.cs, executionInstance);
-        		else if(!osc.test)
-        			osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
+                osc.doUnbindService();
 
-        		return null;
-        	}
-        	
-            switch (m.what)
-            {
-                case ComposableService.MSG_OBJECT:
-                {
-                	// Got a single object back from a service, send it on to the next one
-                	osc.doUnbindService();
+                if (!osc.test && m.what != ComposableService.MSG_FAIL)
+                    osc.registry.compositeSuccess(osc.cs, executionInstance);
+                else if (!osc.test)
+                    osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
+
+                return null;
+            }
+
+            switch (m.what) {
+                case ComposableService.MSG_OBJECT: {
+                    // Got a single object back from a service, send it on to the next one
+                    osc.doUnbindService();
                     Log.d(TAG, "Unbinding for object " + components.get(osc.index).getDescription().getName());
 
-            		osc.incrementIndex();
-            		ComponentService next = components.get(osc.index);
+                    osc.incrementIndex();
+                    ComponentService next = components.get(osc.index);
 
-                	// Create the new register message and bind the service
-            		osc.message = Message.obtain(null, ComposableService.MSG_OBJECT);
-            		osc.message.replyTo = osc.messageReceiver;
-                	
-                	// In this case it's just a bundle, pass it along
-                	osc.message.setData(m.getData());
-                	osc.doBindService(next);
+                    // Create the new register message and bind the service
+                    osc.message = Message.obtain(null, ComposableService.MSG_OBJECT);
+                    osc.message.replyTo = osc.messageReceiver;
+
+                    // In this case it's just a bundle, pass it along
+                    osc.message.setData(m.getData());
+                    osc.doBindService(next);
                 }
                 break;
-                    
-                case ComposableService.MSG_LIST:
-                {
+
+                case ComposableService.MSG_LIST: {
                     Log.d(TAG, "Unbinding for list " + components.get(osc.index).getDescription().getName());
-                	// Then we need to make it so that it sends one message to register, and then sends another to start processing the list (one object at a time)
-                	osc.doUnbindService();
-                	
-                	osc.incrementIndex();
-                	ComponentService next = components.get(osc.index);
-                	
-                	if(next != null)
-                	{
-                		osc.message = Message.obtain(null, ComposableService.MSG_LIST);
-                		osc.message.replyTo = osc.messageReceiver;
-                		osc.message.setData(m.getData());
-                		osc.doBindService(next);
-                	}
+                    // Then we need to make it so that it sends one message to register, and then sends another to start processing the list (one object at a time)
+                    osc.doUnbindService();
+
+                    osc.incrementIndex();
+                    ComponentService next = components.get(osc.index);
+
+                    if (next != null) {
+                        osc.message = Message.obtain(null, ComposableService.MSG_LIST);
+                        osc.message.replyTo = osc.messageReceiver;
+                        osc.message.setData(m.getData());
+                        osc.doBindService(next);
+                    }
                 }
                 break;
-                
+
                 case ComposableService.MSG_WAIT:
-                	if(LOG) Log.d(TAG, "WAAAAAAAAIIIIIIIIT");
-                	// I'm not sure if I actually need to do anything here
-                	break;
-                	 
+                    if (LOG) Log.d(TAG, "WAAAAAAAAIIIIIIIIT");
+                    // I'm not sure if I actually need to do anything here
+                    break;
+
                 case ComposableService.MSG_FAIL:
 
                     // Unbind the service that failed
@@ -537,14 +529,14 @@ public class OrchestrationServiceConnection implements ServiceConnection
                     SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 
                     // Sorts out the showing notifications preference.
-                    if(prefs.getBoolean(context.getResources().getString(R.string.prefs_notifications), false)) {
+                    if (prefs.getBoolean(context.getResources().getString(R.string.prefs_notifications), false)) {
 
                         // Notify the user that there has been a failure
                         NotificationManager n = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
 
-                    	Intent intent = new Intent(context, ActivityLog.class);
-                	    PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                        Intent intent = new Intent(context, ActivityLog.class);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
                         NotificationCompat.Builder notificationBuilder;
                         notificationBuilder = new NotificationCompat.Builder(
@@ -557,30 +549,28 @@ public class OrchestrationServiceConnection implements ServiceConnection
                                 .setPriority(NotificationCompat.PRIORITY_MIN)
                                 .setVibrate(null)
                                 .setTicker(String.format("AppGlue: %s failed", osc.cs.getName()))
-                				.setContentIntent(pendingIntent);
+                                .setContentIntent(pendingIntent);
 
                         Notification notification = notificationBuilder.build();
                         n.notify(this.hashCode(), notification);
                     }
 
 
-                	break;
-                    
-                default:
-                	if(LOG) Log.d(TAG, "DEFAULT");
-            }
-			return null;
-		}
-		
-		protected void onProgressUpdate(Object... progress) 
-		{
-			// Work out what to put here
-		}
+                    break;
 
-		protected void onPostExecute(Object result) 
-		{
-			// Work out what to put here
-		}
-    	
+                default:
+                    if (LOG) Log.d(TAG, "DEFAULT");
+            }
+            return null;
+        }
+
+        protected void onProgressUpdate(Object... progress) {
+            // Work out what to put here
+        }
+
+        protected void onPostExecute(Object result) {
+            // Work out what to put here
+        }
+
     }
 }

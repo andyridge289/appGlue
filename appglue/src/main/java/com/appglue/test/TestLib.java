@@ -5,10 +5,11 @@ import android.util.Log;
 
 import com.appglue.IODescription;
 import com.appglue.description.AppDescription;
-import com.appglue.description.IOValue;
+import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.IOFilter;
 import com.appglue.serviceregistry.Registry;
@@ -21,9 +22,9 @@ import org.json.JSONObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.JSON_SERVICE;
 import static com.appglue.Constants.JSON_SERVICE_DATA;
+import static com.appglue.Constants.TAG;
 
 public class TestLib {
 
@@ -59,18 +60,17 @@ public class TestLib {
         IODescription lineName = tubeComponent.getDescription().getOutput(TubeService.LINE_NAME);
         IODescription lineIcon = tubeComponent.getDescription().getOutput(TubeService.LINE_ICON);
 
-        IOValue bakerlooSample = null;
-        ArrayList<IOValue> samples = lineName.getSampleValues();
-        for(IOValue sample : samples) {
+        SampleValue bakerlooSample = null;
+        ArrayList<SampleValue> samples = lineName.getSampleValues();
+        for (SampleValue sample : samples) {
             if (sample.getName().equals(TubeService.BAKERLOO)) {
                 bakerlooSample = sample;
             }
         }
 
         ServiceIO lineIO = tubeComponent.getOutput(TubeService.LINE_NAME);
-        lineIO.setChosenSampleValue(bakerlooSample);
-        lineIO.setFilterState(ServiceIO.SAMPLE_FILTER);
-        lineIO.setCondition(IOFilter.STR_EQUALS.index);
+        IOValue value = new IOValue(IOFilter.STR_EQUALS, bakerlooSample, lineIO);
+        lineIO.addFilter(value);
 
         ServiceIO titleIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TITLE);
         lineIO.setConnection(titleIO);
@@ -89,19 +89,19 @@ public class TestLib {
     }
 
     public static ComponentService createComponentForFilterSample(ServiceDescription sd, IODescription[] filterOns,
-                                                           String[] sampleValues, int[] filterConditions) {
+                                                                  String[] sampleValues, IOFilter.FilterValue[] filterConditions) {
 
         ComponentService component = new ComponentService(sd, -1);
 
-        for(int i = 0; i < filterOns.length; i++) {
+        for (int i = 0; i < filterOns.length; i++) {
 
             IODescription filterOn = filterOns[i];
             String sampleValue = sampleValues[i];
-            int filterCondition = filterConditions[i];
+            IOFilter.FilterValue filterCondition = filterConditions[i];
 
-            IOValue chosenSample = null;
-            ArrayList<IOValue> samples = filterOn.getSampleValues();
-            for (IOValue sample : samples) {
+            SampleValue chosenSample = null;
+            ArrayList<SampleValue> samples = filterOn.getSampleValues();
+            for (SampleValue sample : samples) {
                 if (sample.getName().equals(sampleValue)) {
                     chosenSample = sample;
                 }
@@ -112,9 +112,8 @@ public class TestLib {
 
             ServiceIO filterOnIO = component.getIO(filterOn.getName());
 
-            filterOnIO.setChosenSampleValue(chosenSample);
-            filterOnIO.setFilterState(ServiceIO.SAMPLE_FILTER);
-            filterOnIO.setCondition(filterCondition);
+            IOValue value = new IOValue(filterCondition, chosenSample, filterOnIO);
+            filterOnIO.setValue(value);
         }
 
         return component;

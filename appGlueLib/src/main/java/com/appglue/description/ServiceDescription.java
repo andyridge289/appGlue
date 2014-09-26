@@ -30,6 +30,7 @@ import static com.appglue.Constants.JSON_APP;
 import static com.appglue.Constants.JSON_SERVICE;
 import static com.appglue.Constants.JSON_SERVICE_DATA;
 import static com.appglue.Constants.JSON_SERVICE_LIST;
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.OUTPUTS;
@@ -42,9 +43,8 @@ import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
-import static com.appglue.Constants.TAGS;
 import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAGS;
 
 public class ServiceDescription {
 
@@ -193,6 +193,7 @@ public class ServiceDescription {
     public IODescription getOutput(long outputId) {
         return idSearchOutputs.get(outputId);
     }
+
     public IODescription getOutput(String outputName) {
         return nameSearchOutputs.get(outputName);
     }
@@ -200,7 +201,10 @@ public class ServiceDescription {
     public IODescription getInput(long inputId) {
         return idSearchInputs.get(inputId);
     }
-    public IODescription getInput(String inputName) { return nameSearchInputs.get(inputName); }
+
+    public IODescription getInput(String inputName) {
+        return nameSearchInputs.get(inputName);
+    }
 
     public IODescription getIO(long ioId) {
 
@@ -228,10 +232,10 @@ public class ServiceDescription {
         }
 
         for (IODescription in : inputs) {
-            if(idSearchInputs.get(in.getID()) == null)
+            if (idSearchInputs.get(in.getID()) == null)
                 idSearchInputs.put(in.getID(), in);
 
-            if(nameSearchInputs.get(in.getName()) == null)
+            if (nameSearchInputs.get(in.getName()) == null)
                 nameSearchInputs.put(in.getName(), in);
         }
     }
@@ -251,10 +255,10 @@ public class ServiceDescription {
         }
 
         for (IODescription out : outputs) {
-            if(idSearchOutputs.get(out.getID()) == null)
+            if (idSearchOutputs.get(out.getID()) == null)
                 idSearchOutputs.put(out.getID(), out);
 
-            if(nameSearchOutputs.get(out.getName()) == null)
+            if (nameSearchOutputs.get(out.getName()) == null)
                 nameSearchOutputs.put(out.getName(), out);
         }
     }
@@ -347,77 +351,79 @@ public class ServiceDescription {
     @Override
     public boolean equals(Object o) {
 
-        if(o == null) {
-            if(LOG) Log.d(TAG, "ServiceDescription->Equals: null");
+        if (o == null) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: null");
             return false;
         }
-        if(!(o instanceof ServiceDescription)) {
+        if (!(o instanceof ServiceDescription)) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: Not a ServiceDescription");
             return false;
         }
         ServiceDescription other = (ServiceDescription) o;
 
-        if(!this.name.equals(other.getName())) {
+        if (!this.name.equals(other.getName())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: name");
             return false;
         }
 
-        if(!this.serviceType.equals(other.getServiceType())) {
+        if (!this.serviceType.equals(other.getServiceType())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: service type");
             return false;
         }
 
-        if(!this.processType.equals(other.getProcessType())) {
+        if (!this.processType.equals(other.getProcessType())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
             return false;
         }
 
-        if(!this.className.equals(other.getClassName())) {
+        if (!this.className.equals(other.getClassName())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: class name");
             return false;
         }
 
-        if(!this.packageName.equals(other.getPackageName())) {
+        if (!this.packageName.equals(other.getPackageName())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: package name");
             return false;
         }
 
-        if(!this.description.equals(other.getDescription())) {
+        if (!this.description.equals(other.getDescription())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: description");
             return false;
         }
 
-        if(!this.app.equals(other.getApp())) {
+        if (!this.app.equals(other.getApp())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: app");
             return false;
         }
 
-        if(this.inputs.size() != other.getInputs().size()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Inputs size -- " + inputs.size() + " - " + other.getInputs().size());
+        if (this.inputs.size() != other.getInputs().size()) {
+            if (LOG)
+                Log.d(TAG, "ServiceDescription->Equals: Inputs size -- " + inputs.size() + " - " + other.getInputs().size());
             return false;
         }
 
-        for(int i = 0 ; i < inputs.size(); i++) {
-            if(!inputs.valueAt(i).equals(other.getInput(inputs.valueAt(i).getID()))) {
+        for (int i = 0; i < inputs.size(); i++) {
+            if (!inputs.valueAt(i).equals(other.getInput(inputs.valueAt(i).getID()))) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: input " + i);
                 return false;
             }
         }
 
-        if(this.outputs.size() != other.getOutputs().size()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Outputs size -- " + outputs.size() + " - " + other.getOutputs().size());
+        if (this.outputs.size() != other.getOutputs().size()) {
+            if (LOG)
+                Log.d(TAG, "ServiceDescription->Equals: Outputs size -- " + outputs.size() + " - " + other.getOutputs().size());
             return false;
         }
 
-        for(int i = 0; i < outputs.size(); i++) {
-            if(!outputs.valueAt(i).equals(other.getOutput(outputs.valueAt(i).getID()))) {
+        for (int i = 0; i < outputs.size(); i++) {
+            if (!outputs.valueAt(i).equals(other.getOutput(outputs.valueAt(i).getID()))) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: output " + i);
                 return false;
             }
         }
 
         ArrayList<Tag> otherTags = other.getTags();
-        if(tags.size() != otherTags.size()) {
+        if (tags.size() != otherTags.size()) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag sizes don't match");
             return false;
         }
@@ -544,7 +550,7 @@ public class ServiceDescription {
 
             // Get the sample values for the thing
             JSONArray samples = io.getJSONArray(SAMPLES);
-            ArrayList<IOValue> sampleValues = new ArrayList<IOValue>();
+            ArrayList<SampleValue> sampleValues = new ArrayList<SampleValue>();
 
             for (int j = 0; j < samples.length(); j++) {
                 JSONObject obj = samples.getJSONObject(j);
@@ -552,7 +558,7 @@ public class ServiceDescription {
                 String stringValue = obj.getString(SAMPLE_VALUE);
                 Object value = type.fromString(stringValue);
 
-                sampleValues.add(new IOValue(-1, obj.getString(SAMPLE_NAME), value));
+                sampleValues.add(new SampleValue(-1, obj.getString(SAMPLE_NAME), value));
             }
 
             list.add(new IODescription(-1, ioName, friendlyName, i, type, ioDescription, sd, mandatory, sampleValues, input));

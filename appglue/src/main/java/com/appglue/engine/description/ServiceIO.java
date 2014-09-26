@@ -3,17 +3,18 @@ package com.appglue.engine.description;
 import android.util.Log;
 
 import com.appglue.IODescription;
-import com.appglue.description.IOValue;
+import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.library.IOFilter;
+
+import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
 public class ServiceIO
 {
-    public static final int UNFILTERED = 0;
-    public static final int MANUAL_FILTER = 1;
-    public static final int SAMPLE_FILTER = 2;
+
 
     private long id;
     private ComponentService component;
@@ -22,22 +23,17 @@ public class ServiceIO
 
     private ServiceIO connection;
 
-    private int filterState = UNFILTERED;
-
-    private Object manualValue; // This is used for getOutputs on filtering, or its hardcoded value if its an input
-    private IOValue chosenSampleValue;
-
-    private int condition;
+    private ArrayList<IOValue> values;
 
     public ServiceIO(ComponentService component, IODescription ioDescription) {
         this.component = component;
         this.ioDescription = ioDescription;
+        this.values = new ArrayList<IOValue>();
     }
 
     public ServiceIO(long id, ComponentService component, IODescription ioDescription) {
+        this(component, ioDescription);
         this.id = id;
-        this.component = component;
-        this.ioDescription = ioDescription;
     }
 
     public long getID() {
@@ -67,52 +63,91 @@ public class ServiceIO
     }
 
     public Object getValue() {
-        if(this.getFilterState() == MANUAL_FILTER)
-            return this.getManualValue();
-        else if(this.getFilterState() == SAMPLE_FILTER)
-            return this.getChosenSampleValue();
-        else
+        if (this.values.size() == 0) {
             return null;
+        }
+
+        // Just use the first one for now, this method will need to be changed when we enable multiple filters, etc.
+        IOValue value = values.get(0);
+        if (value.getFilterState() == IOValue.MANUAL_FILTER) {
+            return value.getManualValue();
+        } else if (value.getFilterState() == IOValue.SAMPLE_FILTER) {
+            return value.getSampleValue().getValue();
+        }
+
+        // If we get here something has gone a bit wrong
+        return null;
     }
-    public boolean hasValue()
-    {
-        return this.manualValue != null || this.chosenSampleValue != null;
+
+    public boolean hasValue() {
+        return this.values.size() != 0;
+    }
+
+    /**
+     * There can be as many filters as you like
+     *
+     * @param value
+     */
+    public void addFilter(IOValue value) {
+        this.values.add(value);
+    }
+
+    /**
+     * This is because there can only be one input at the moment.
+     *
+     * @param value
+     */
+    public void setValue(IOValue value) {
+        this.values.clear();
+        this.values.add(value);
     }
 
     public void setManualValue(Object value) {
-        this.manualValue = value;
-        this.filterState = MANUAL_FILTER;
+        this.values.add(new IOValue(IOFilter.NONE, value, this));
     }
 
-    public IOValue getChosenSampleValue() {
-        return chosenSampleValue;
-    }
-    public void setChosenSampleValue(IOValue value) {
-        this.chosenSampleValue = value;
-        this.filterState = SAMPLE_FILTER;
+    public SampleValue getChosenSampleValue() {
+        if (this.values.size() == 0)
+            return null;
+
+        IOValue value = values.get(0);
+
+        if (value.getFilterState() == IOValue.SAMPLE_FILTER)
+            return value.getSampleValue();
+
+        return null;
     }
 
-    public int getFilterState()
-    {
-        return filterState;
+    public void setChosenSampleValue(SampleValue value) {
+        this.values.add(new IOValue(IOFilter.NONE, value, this));
     }
-    public void setFilterState(int filterState)
-    {
-        this.filterState = filterState;
+
+    public int getFilterState() {
+        if (this.values.isEmpty()) {
+            return IOValue.UNFILTERED;
+        }
+
+        return values.get(0).getFilterState();
+    }
+
+    public IOFilter.FilterValue getCondition() {
+        if (this.values.isEmpty()) {
+            return IOFilter.NONE;
+        }
+
+        return values.get(0).getCondition();
     }
 
     public Object getManualValue() {
-        return manualValue;
-    }
+        if (this.values.size() == 0)
+            return null;
 
-    public int getCondition()
-    {
-        return condition;
-    }
+        IOValue value = values.get(0);
 
-    public void setCondition(int condition)
-    {
-        this.condition = condition;
+        if (value.getFilterState() == IOValue.MANUAL_FILTER)
+            return value.getManualValue();
+
+        return null;
     }
 
     public ServiceIO getConnection()
@@ -132,6 +167,14 @@ public class ServiceIO
 
     public String getTypeName() {
         return getType().getClassName();
+    }
+
+    public ArrayList<IOValue> getValues() {
+        return values;
+    }
+
+    public void setValues(ArrayList<IOValue> values) {
+        this.values = values;
     }
 
     public boolean equals(Object o) {
@@ -161,25 +204,16 @@ public class ServiceIO
             return false;
         }
 
-        if (this.filterState != other.getFilterState()) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: filter state");
+        if (this.values.size() != other.getValues().size()) {
+            if (LOG)
+                Log.d(TAG, "ServiceIO->Equals: value size: " + this.values.size() + " -- " + other.getValues().size());
             return false;
         }
 
-        if (this.condition != other.getCondition()) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: condition");
-            return false;
-        }
-
-        if(this.chosenSampleValue != null || other.getChosenSampleValue() != null) {
-
-            if ((this.chosenSampleValue == null && other.getChosenSampleValue() != null) ||
-                    (this.chosenSampleValue != null && other.getChosenSampleValue() == null)) {
-                if (LOG)  Log.d(TAG, "ServiceIO->Equals: chosen sample null " + this.chosenSampleValue + " -- " + other.getChosenSampleValue());
-                return false;
-            } else if (!this.chosenSampleValue.equals(other.getChosenSampleValue())) {
-                if (LOG)
-                    Log.d(TAG, "ServiceIO->Equals: chosen sample value (" + ioDescription.getFriendlyName() + ")");
+        for (int i = 0; i < values.size(); i++) {
+            IOValue value = values.get(i);
+            if (!other.getValues().contains(value)) {
+                if (LOG) Log.d(TAG, "ServiceIO->Equals: value: " + i);
                 return false;
             }
         }
@@ -193,21 +227,6 @@ public class ServiceIO
 
             if (this.connection.getID() != other.getConnection().getID()) {
                 if (LOG) Log.d(TAG, "ServiceIO->Equals: connection");
-                return false;
-            }
-        }
-
-        if(this.manualValue != null || other.getManualValue() != null) {
-
-            if((this.manualValue == null && other.getManualValue() != null) ||
-                    (this.manualValue != null && other.getManualValue() == null)) {
-                if (LOG) Log.d(TAG, "ServiceIO->Equals: manual value null " + this.manualValue + " -- " + other.getManualValue());
-                return false;
-            }
-
-            boolean same = this.getDescription().getType().compare(this.manualValue, other.getManualValue());
-            if (!same) {
-                if (LOG) Log.d(TAG, "ServiceIO->Equals: manual");
                 return false;
             }
         }

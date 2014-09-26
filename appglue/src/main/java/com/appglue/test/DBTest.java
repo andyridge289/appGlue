@@ -33,7 +33,11 @@ public class DBTest extends AndroidTestCase {
         registry.addComposite(fred);
 
         CompositeService fred2 = registry.getComposite(fred.getID());
-        assertEquals(fred, fred2);
+        if (fred.equals(fred2)) {
+            assertEquals(1, 1);
+        } else {
+            assertEquals(1, 2);
+        }
     }
 
     @MediumTest
@@ -93,11 +97,6 @@ public class DBTest extends AndroidTestCase {
 
         origTemp = registry.getComposite(CompositeService.TEMP_ID);
         assertEquals(origTemp, testTemp);
-
-
-        // Reset it, see what happens
-
-//        assertEquals(1, 2);
     }
 
 

@@ -9,8 +9,8 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.description.IOValue;
 import com.appglue.R;
+import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ServiceIO;
 
@@ -33,15 +33,15 @@ public class DialogIO extends DialogCustom {
         final Spinner ioSpinner = (Spinner) v.findViewById(R.id.io_value_spinner);
 
         final IOType type = description.getType();
-        ArrayList<IOValue> values = description.getSampleValues();
+        ArrayList<SampleValue> values = description.getSampleValues();
         if (values == null)
-            values = new ArrayList<IOValue>();
+            values = new ArrayList<SampleValue>();
 
         final boolean hasSamples = values.size() != 0;
 
         if (!hasSamples) {
-            values = new ArrayList<IOValue>();
-            values.add(new IOValue("No samples", ""));
+            values = new ArrayList<SampleValue>();
+            values.add(new SampleValue("No samples", ""));
         }
 
         if (type.equals(IOType.Factory.getType(IOType.Factory.TEXT))) {
@@ -56,9 +56,9 @@ public class DialogIO extends DialogCustom {
         } else if (type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
             if (!hasSamples) {
                 // These might need to be hard-coded as acceptable values
-                values = new ArrayList<IOValue>();
-                values.add(new IOValue("True", true));
-                values.add(new IOValue("False", false));
+                values = new ArrayList<SampleValue>();
+                values.add(new SampleValue("True", true));
+                values.add(new SampleValue("False", false));
             }
 
             setupDialog(null, FILTER_BOOL_VALUES, -1,
@@ -85,7 +85,7 @@ public class DialogIO extends DialogCustom {
                     DialogIO.this.activity.setStatus("Set manual value for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
-                    IOValue value = (IOValue) ioSpinner.getSelectedItem();
+                    SampleValue value = (SampleValue) ioSpinner.getSelectedItem();
                     item.setChosenSampleValue(value);
                     DialogIO.this.activity.setStatus("Set sample value for " + description.getName());
                 }
@@ -100,7 +100,8 @@ public class DialogIO extends DialogCustom {
         neutralButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item.setFilterState(ServiceIO.UNFILTERED);
+                // Put this back
+//                item.setFilterState(ServiceIO.UNFILTERED);
                 DialogIO.this.activity.setStatus("Removed for " + description.getName());
                 registry.updateComposite(activity.getComposite());
                 DialogIO.this.activity.redraw();

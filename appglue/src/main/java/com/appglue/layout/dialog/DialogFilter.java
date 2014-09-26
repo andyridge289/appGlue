@@ -12,8 +12,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 
 import com.appglue.ActivityWiring;
-import com.appglue.description.IOValue;
 import com.appglue.R;
+import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.IOFilter.FilterValue;
@@ -41,15 +41,15 @@ public class DialogFilter extends DialogCustom {
         final Spinner filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
 
         IOType type = description.getType();
-        ArrayList<IOValue> values = description.getSampleValues();
+        ArrayList<SampleValue> values = description.getSampleValues();
         if (values == null)
-            values = new ArrayList<IOValue>();
+            values = new ArrayList<SampleValue>();
 
         final boolean hasSamples = values.size() != 0;
 
         if (!hasSamples) {
-            values = new ArrayList<IOValue>();
-            values.add(new IOValue("No samples", ""));
+            values = new ArrayList<SampleValue>();
+            values.add(new SampleValue("No samples", ""));
         }
 
         // XXX Compound filters
@@ -95,9 +95,9 @@ public class DialogFilter extends DialogCustom {
         } else if (type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
             if (!hasSamples) {
                 // These might need to be hard-coded as acceptable values
-                values = new ArrayList<IOValue>();
-                values.add(new IOValue("True", true));
-                values.add(new IOValue("False", false));
+                values = new ArrayList<SampleValue>();
+                values.add(new SampleValue("True", true));
+                values.add(new SampleValue("False", false));
             }
 
             setupDialog(filterConditionSpinner, FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
@@ -123,6 +123,8 @@ public class DialogFilter extends DialogCustom {
         Button neutralButton = (Button) v.findViewById(R.id.dialog_filter_neutral);
         Button negativeButton = (Button) v.findViewById(R.id.dialog_filter_negative);
 
+        // TODO Put all the value stuff back in
+
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,19 +133,19 @@ public class DialogFilter extends DialogCustom {
                     Object value = description.getType().fromString(filterValueText.getText().toString());
                     // This should work, it's the same as the other stuff. But it might not...
                     item.setManualValue(value);
-                    item.setFilterState(ServiceIO.MANUAL_FILTER);
+//                    item.setFilterState(ServiceIO.MANUAL_FILTER);
                     DialogFilter.this.activity.setStatus("Set manual filter for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
-                    IOValue value = (IOValue) filterValueSpinner.getSelectedItem();
+                    SampleValue value = (SampleValue) filterValueSpinner.getSelectedItem();
                     item.setChosenSampleValue(value);
-                    item.setFilterState(ServiceIO.SAMPLE_FILTER);
+//                    item.setFilterState(ServiceIO.SAMPLE_FILTER);
                     DialogFilter.this.activity.setStatus("Set sample filter for " + description.getName());
                 }
 
                 // Now we just need to make sure that the condition is set
                 FilterValue condition = (FilterValue) filterConditionSpinner.getSelectedItem();
-                item.setCondition(condition.index);
+//                item.setCondition(condition.index);
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate
                 registry.updateComposite(DialogFilter.this.activity.getComposite());
@@ -161,7 +163,7 @@ public class DialogFilter extends DialogCustom {
         neutralButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                item.setFilterState(ServiceIO.UNFILTERED);
+//                item.setFilterState(ServiceIO.UNFILTERED);
                 DialogFilter.this.activity.setStatus("Cleared filter for " + description.getName());
                 registry.updateComposite(DialogFilter.this.activity.getComposite());
                 DialogFilter.this.activity.redraw();

@@ -64,7 +64,8 @@ public class DialogApp extends DialogCustom {
 
                 if (LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
                 item.setManualValue(selected.packageName);
-                item.setFilterState(ServiceIO.MANUAL_FILTER);
+                // TODO Put this back in
+//                item.setFilterState(ServiceIO.MANUAL_FILTER);
                 DialogApp.this.activity.setStatus("Chosen app: " + selected.packageName);
 
                 registry.updateComposite(activity.getComposite());

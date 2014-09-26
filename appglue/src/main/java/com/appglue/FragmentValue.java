@@ -1,12 +1,12 @@
 package com.appglue;
 
 import android.annotation.SuppressLint;
-import android.support.v4 .app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,18 +21,17 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.appglue.description.datatypes.IOType;
 import com.appglue.description.AppDescription;
+import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.ServiceIO;
-import com.appglue.library.IOFilter;
 import com.appglue.library.LocalStorage;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.POSITION;
+import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.FIRST;
 import static com.appglue.library.AppGlueConstants.SERVICE_REQUEST;
 
@@ -298,51 +297,63 @@ public class FragmentValue extends FragmentVW {
                 }
             });
 
+            // TODO This also needs to show if there is a connection from an output
+
             ioType.setText(item.getDescription().getType().getName());
 
             // If it's not unfiltered, then it's either manual or not
-            if (item.getFilterState() == ServiceIO.UNFILTERED) {
-                ioValueContainer.setVisibility(View.GONE);
-            } else {
-                ioValueContainer.setVisibility(View.VISIBLE);
-                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
-                    String value = item.getDescription().getType().toString(item.getManualValue());
-                    ioValue.setText(value);
-                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
-                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
-                    ioValue.setText(item.getChosenSampleValue().name);
-                }
-            }
+//            if (item.getFilterState() == ServiceIO.UNFILTERED) {
+//                ioValueContainer.setVisibility(View.GONE);
+//            } else {
+//                ioValueContainer.setVisibility(View.VISIBLE);
+//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+//                    String value = item.getDescription().getType().toString(item.getManualValue());
+//                    ioValue.setText(value);
+//                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
+//                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
+//                    ioValue.setText(item.getChosenSampleValue().name);
+//                }
+//            }
 
             return v;
         }
     }
 
-    private class IOValueStructure {
+    private class OutputValueAdapter extends ArrayAdapter<Object> {
+        private ArrayList<Object> items;
+        private ServiceIO io;
 
+        public OutputValueAdapter(Context parent, ArrayList<Object> items, ServiceIO io) {
+            super(parent, R.layout.list_item_value_out_item, items);
+            this.items = items;
+            this.io = io;
+        }
+
+        @SuppressLint("InflateParams")
+        public View getView(final int position, View convertView, final ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = vi.inflate(R.layout.list_item_value_out_item, null);
+            }
+
+            final View v = convertView;
+
+            // TODO Put the relevant code in here. It won't quite work like this because we'll need a condition and a value for each
+
+            return v;
+        }
     }
 
     private class OutputAdapter extends ArrayAdapter<ServiceIO> {
 
         public ArrayList<ServiceIO> items;
-        public ArrayList<ArrayList<IOValueStructure>> values;
 
         public OutputAdapter(Context parent, ArrayList<ServiceIO> items) {
             super(parent, R.layout.list_item_value_out, items);
             this.items = items;
-            values = new ArrayList<ArrayList<IOValueStructure>>();
-            for (int i = 0; i < items.size(); i++) {
-                values.add(new ArrayList<IOValueStructure>());
-            }
         }
 
         public void notifyDataSetChanged() {
-
-            values = new ArrayList<ArrayList<IOValueStructure>>();
-            for (int i = 0; i < items.size(); i++) {
-                values.add(new ArrayList<IOValueStructure>());
-            }
-
             super.notifyDataSetChanged();
         }
 
@@ -350,7 +361,7 @@ public class FragmentValue extends FragmentVW {
         public View getView(final int position, View convertView, final ViewGroup parent) {
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = vi.inflate(R.layout.list_item_wiring_out, null);
+                convertView = vi.inflate(R.layout.list_item_value_out, null);
             }
 
             final View v = convertView;
@@ -363,10 +374,8 @@ public class FragmentValue extends FragmentVW {
             TextView ioType = (TextView) v.findViewById(R.id.io_type);
             ioType.setText(item.getDescription().getType().getName());
 
-            TextView ioValue = (TextView) v.findViewById(R.id.io_value);
-
+            // Clicking on the list item brings up the filter dialog
             v.setOnClickListener(new OnClickListener() {
-
                 @Override
                 public void onClick(View vv) {
                     showFilterDialog(item);
@@ -377,27 +386,33 @@ public class FragmentValue extends FragmentVW {
             // FIXME This is where you are
 
             if (!item.hasValue()) {
+                outputValueList.setVisibility(View.GONE);
+//                values.add(item)
 //                ioValue.setText("");
             } else {
-//                ioValue.setText(item.getManualValue().toString());
-//                filterButton.setImageResource(R.drawable.filter_small_on);
+                ArrayList<Object> values = new ArrayList<Object>();
+
+//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+//                    values.add(item.getManualValue());
+//                } else {
+//                    // It's a sample value
+//                    values.add(item.getChosenSampleValue().getValue());
+//                }
             }
 
-            // TODO This also needs to show if there is a connection from an output
-
-            if (item.getFilterState() == ServiceIO.UNFILTERED) {
-            } else {
-//                IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
-//
-                // This is for a manual one
-                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
-//                    String value = item.getDescription().getType().toString(item.getManualValue());
-//                    ioValue.setText(value);
-                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
-//                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
-//                    ioValue.setText(item.getChosenSampleValue().name);
-                }
-            }
+//            if (item.getFilterState() == ServiceIO.UNFILTERED) {
+//            } else {
+////                IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
+////
+//                // This is for a manual one
+//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+////                    String value = item.getDescription().getType().toString(item.getManualValue());
+////                    ioValue.setText(value);
+//                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
+////                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
+////                    ioValue.setText(item.getChosenSampleValue().name);
+//                }
+//            }
 
             return v;
         }

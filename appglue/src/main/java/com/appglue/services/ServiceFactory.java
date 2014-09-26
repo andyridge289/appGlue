@@ -9,7 +9,7 @@ import com.appglue.IODescription;
 import com.appglue.Library;
 import com.appglue.R;
 import com.appglue.description.AppDescription;
-import com.appglue.description.IOValue;
+import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.library.LocalStorage;
@@ -121,7 +121,7 @@ public class ServiceFactory {
                         {PACKAGENAME, "com.appglue",},
                         {DESCRIPTION, "This is the app that does all the gluing, or is it glueing?"},
                         {DEVELOPER, "Andy Ridge"},
-                        {ICON, iconLocation }
+                        {ICON, iconLocation}
                 };
 
         return setupApp(appData);
@@ -185,9 +185,9 @@ public class ServiceFactory {
         ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
-        ArrayList<IOValue> samples = new ArrayList<IOValue>();
-        samples.add(new IOValue("On", true));
-        samples.add(new IOValue("Off", false));
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("On", true));
+        samples.add(new SampleValue("Off", false));
 
         inputs.add(new IODescription(-1, BluetoothService.BLUETOOTH_STATE, "New state", bool, "The new state of Bluetooth", false, samples));
 
@@ -207,9 +207,9 @@ public class ServiceFactory {
         ArrayList<IODescription> inputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
-        ArrayList<IOValue> samples = new ArrayList<IOValue>();
-        samples.add(new IOValue("On", true));
-        samples.add(new IOValue("Off", false));
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("On", true));
+        samples.add(new SampleValue("Off", false));
 
         inputs.add(new IODescription(-1, WifiService.WIFI_STATE, "New state", bool, "The new state of the wifi", false, samples));
 
@@ -232,26 +232,26 @@ public class ServiceFactory {
         IOType url = IOType.Factory.getType(IOType.Factory.URL);
         IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
 
-        ArrayList<IOValue> sampleLines = new ArrayList<IOValue>();
-        sampleLines.add(new IOValue(TubeService.BAKERLOO, "Bakerloo"));
-        sampleLines.add(new IOValue(TubeService.CENTRAL, "Central"));
-        sampleLines.add(new IOValue(TubeService.CIRCLE, "Circle"));
-        sampleLines.add(new IOValue(TubeService.DISTRICT, "District"));
-        sampleLines.add(new IOValue(TubeService.DLR, "Docklands"));
-        sampleLines.add(new IOValue(TubeService.HAMMERSMITH_CITY, "Hammersmith & City"));
-        sampleLines.add(new IOValue(TubeService.JUBILEE, "Jubilee"));
-        sampleLines.add(new IOValue(TubeService.METROPOLITAN, "Metropolitan"));
-        sampleLines.add(new IOValue(TubeService.NORTHERN, "Northern"));
-        sampleLines.add(new IOValue(TubeService.OVERGROUND, "Overground"));
-        sampleLines.add(new IOValue(TubeService.PICCADILLY, "Piccadilly"));
-        sampleLines.add(new IOValue(TubeService.VICTORIA, "Victoria"));
-        sampleLines.add(new IOValue(TubeService.WATERLOO_CITY, "Waterloo & City"));
+        ArrayList<SampleValue> sampleLines = new ArrayList<SampleValue>();
+        sampleLines.add(new SampleValue(TubeService.BAKERLOO, "Bakerloo"));
+        sampleLines.add(new SampleValue(TubeService.CENTRAL, "Central"));
+        sampleLines.add(new SampleValue(TubeService.CIRCLE, "Circle"));
+        sampleLines.add(new SampleValue(TubeService.DISTRICT, "District"));
+        sampleLines.add(new SampleValue(TubeService.DLR, "Docklands"));
+        sampleLines.add(new SampleValue(TubeService.HAMMERSMITH_CITY, "Hammersmith & City"));
+        sampleLines.add(new SampleValue(TubeService.JUBILEE, "Jubilee"));
+        sampleLines.add(new SampleValue(TubeService.METROPOLITAN, "Metropolitan"));
+        sampleLines.add(new SampleValue(TubeService.NORTHERN, "Northern"));
+        sampleLines.add(new SampleValue(TubeService.OVERGROUND, "Overground"));
+        sampleLines.add(new SampleValue(TubeService.PICCADILLY, "Piccadilly"));
+        sampleLines.add(new SampleValue(TubeService.VICTORIA, "Victoria"));
+        sampleLines.add(new SampleValue(TubeService.WATERLOO_CITY, "Waterloo & City"));
 
-        ArrayList<IOValue> sampleStatuses = new ArrayList<IOValue>();
-        sampleStatuses.add(new IOValue(TubeService.MINOR_DELAYS, "minor delays"));
-        sampleStatuses.add(new IOValue(TubeService.GOOD_SERVICE, "good service"));
-        sampleStatuses.add(new IOValue(TubeService.SEVERE_DELAYS, "severe delays"));
-        sampleStatuses.add(new IOValue(TubeService.PART_CLOSURE, "part closure"));
+        ArrayList<SampleValue> sampleStatuses = new ArrayList<SampleValue>();
+        sampleStatuses.add(new SampleValue(TubeService.MINOR_DELAYS, "minor delays"));
+        sampleStatuses.add(new SampleValue(TubeService.GOOD_SERVICE, "good service"));
+        sampleStatuses.add(new SampleValue(TubeService.SEVERE_DELAYS, "severe delays"));
+        sampleStatuses.add(new SampleValue(TubeService.PART_CLOSURE, "part closure"));
 
         outputs.add(new IODescription(-1, TubeService.LINE_NAME, "Line name", text, "The name of the line.", false, sampleLines));
         outputs.add(new IODescription(-1, TubeService.LINE_STATUS, "Status", text, "The status of the line.", false, sampleStatuses));
@@ -296,10 +296,10 @@ public class ServiceFactory {
         IOType imageD = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
         IOType set = IOType.Factory.getType(IOType.Factory.SET);
 
-        ArrayList<IOValue> priorities = new ArrayList<IOValue>();
-        priorities.add(new IOValue("Default", NotificationCompat.PRIORITY_DEFAULT));
-        priorities.add(new IOValue("Low", NotificationCompat.PRIORITY_LOW));
-        priorities.add(new IOValue("High", NotificationCompat.PRIORITY_HIGH));
+        ArrayList<SampleValue> priorities = new ArrayList<SampleValue>();
+        priorities.add(new SampleValue("Default", NotificationCompat.PRIORITY_DEFAULT));
+        priorities.add(new SampleValue("Low", NotificationCompat.PRIORITY_LOW));
+        priorities.add(new SampleValue("High", NotificationCompat.PRIORITY_HIGH));
 
         inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_TITLE, "Title", text, "The title of the notification.", true, null));
         inputs.add(new IODescription(-1, NotificationService.NOTIFICATION_TEXT, "Notification Message", text, "The message in the notification.", false, null));
@@ -421,9 +421,9 @@ public class ServiceFactory {
         ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
-        ArrayList<IOValue> sample = new ArrayList<IOValue>();
-        sample.add(new IOValue("Connected", true));
-        sample.add(new IOValue("Disconnected", false));
+        ArrayList<SampleValue> sample = new ArrayList<SampleValue>();
+        sample.add(new SampleValue("Connected", true));
+        sample.add(new SampleValue("Disconnected", false));
 
         outputs.add(new IODescription(-1, PowerTrigger.CONNECTED, "Connected", bool, "Power connected = true, power disconnected = false", true, sample));
 
@@ -442,13 +442,13 @@ public class ServiceFactory {
         ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType set = IOType.Factory.getType(IOType.Factory.SET);
 
-        ArrayList<IOValue> samples = new ArrayList<IOValue>();
-        samples.add(new IOValue("On", BluetoothAdapter.STATE_OFF));
-        samples.add(new IOValue("Off", BluetoothAdapter.STATE_ON));
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("On", BluetoothAdapter.STATE_OFF));
+        samples.add(new SampleValue("Off", BluetoothAdapter.STATE_ON));
 //		samples.add(new IOValue("Turning on", BluetoothAdapter.STATE_TURNING_ON));
 //		samples.add(new IOValue("Turning off", BluetoothAdapter.STATE_TURNING_OFF));
-        samples.add(new IOValue("Connected", BluetoothAdapter.STATE_CONNECTED));
-        samples.add(new IOValue("Disconnected", BluetoothAdapter.STATE_DISCONNECTED));
+        samples.add(new SampleValue("Connected", BluetoothAdapter.STATE_CONNECTED));
+        samples.add(new SampleValue("Disconnected", BluetoothAdapter.STATE_DISCONNECTED));
 //		samples.add(new IOValue("Connecting", BluetoothAdapter.STATE_CONNECTING));
 //		samples.add(new IOValue("Disconnecting", BluetoothAdapter.STATE_DISCONNECTING));
 
@@ -489,14 +489,14 @@ public class ServiceFactory {
         ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
-        ArrayList<IOValue> plugged = new ArrayList<IOValue>();
-        plugged.add(new IOValue("Plugged", true));
-        plugged.add(new IOValue("Unplugged", false));
+        ArrayList<SampleValue> plugged = new ArrayList<SampleValue>();
+        plugged.add(new SampleValue("Plugged", true));
+        plugged.add(new SampleValue("Unplugged", false));
         outputs.add(new IODescription(-1, HeadphoneTrigger.STATE, "Headphone State", bool, "The new state of the headphones", true, plugged));
 
-        ArrayList<IOValue> mic = new ArrayList<IOValue>();
-        mic.add(new IOValue("Microphone", true));
-        mic.add(new IOValue("No microphone", false));
+        ArrayList<SampleValue> mic = new ArrayList<SampleValue>();
+        mic.add(new SampleValue("Microphone", true));
+        mic.add(new SampleValue("No microphone", false));
         outputs.add(new IODescription(-1, HeadphoneTrigger.MICROPHONE, "Microphone", bool, "Whether the headphones have a microphone", true, mic));
 
         String[] tags = {"Headphone", "Headset", "Plugged", "Unplugged", "Connected", "Disconnected"};

@@ -121,8 +121,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         IODescription lineName = sd.getOutput(TubeService.LINE_NAME);
         IODescription lineStatus = sd.getOutput(TubeService.LINE_STATUS);
 
-        int strEquals = IOFilter.STR_EQUALS.index;
-        int strNEquals = IOFilter.STR_NOTEQUALS.index;
+        IOFilter.FilterValue strEquals = IOFilter.STR_EQUALS;
+        IOFilter.FilterValue strNEquals = IOFilter.STR_NOTEQUALS;
 
 //        Bundle { line_icon => 2130837606; line_name => Bakerloo; line_status => minor delays; line_url => http://www.google.co.uk; }
 //        Bundle { line_icon => 2130837606; line_name => DLR; line_status => severe delays; line_url => http://www.google.co.uk; }
@@ -131,26 +131,26 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         // First filter on Bakerloo and check what's in the thing
         ComponentService isBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
-                                                new String[]{ TubeService.BAKERLOO }, new int[]{ strEquals });
+                new String[]{TubeService.BAKERLOO}, new IOFilter.FilterValue[]{strEquals});
 
         // Test whether it isn't the bakerloo line
         ComponentService isntBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
-                                                new String[]{ TubeService.BAKERLOO }, new int[]{ strNEquals });
+                new String[]{TubeService.BAKERLOO}, new IOFilter.FilterValue[]{strNEquals});
 
         // Get the ones with minor delays
         ComponentService minorDelaysComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
-                                                new String[]{ TubeService.MINOR_DELAYS }, new int[]{ strEquals });
+                new String[]{TubeService.MINOR_DELAYS}, new IOFilter.FilterValue[]{strEquals});
 
         // Get one where the it's the Bakerloo line with not minor delays
         ComponentService bakerlooMinorDelays = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName, lineStatus },
                                                 new String[]{ TubeService.BAKERLOO, TubeService.MINOR_DELAYS },
-                                                new int[]{ strEquals, strNEquals});
+                new IOFilter.FilterValue[]{strEquals, strNEquals});
 
         // Get one where isn't not part closed
         ComponentService notPartClosed = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
-                                                new String[]{ TubeService.PART_CLOSURE }, new int[]{ strNEquals });
+                new String[]{TubeService.PART_CLOSURE}, new IOFilter.FilterValue[]{strNEquals});
 
-        ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new int[]{});
+        ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new IOFilter.FilterValue[]{});
 
         ArrayList<ComponentService> testComponents = new ArrayList<ComponentService>();
         testComponents.add(isBakerlooComponent);

@@ -112,10 +112,20 @@ public class IOFilter {
             SET_NOTEQUALS = new FilterValue("isn't", 0x31, IOFilter.class.getMethod("numNotEquals", Integer.class, Integer.class));
             filters.put(SET_NOTEQUALS.index, SET_NOTEQUALS);
 
+            NONE = new FilterValue("none", -1, null);
+            filters.put(NONE.index, NONE);
+
+
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
+
+    public static FilterValue getFilterValue(int index) {
+        return filters.get(index);
+    }
+
+    public static FilterValue NONE;
 
     public static FilterValue STR_EQUALS;
     public static FilterValue STR_NOTEQUALS;
