@@ -83,7 +83,8 @@ public class TestLib {
         imageIO.setConnection(lineIconIO);
 
         ServiceIO textIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
-        textIO.setManualValue(lineIO.getDescription().getType().fromString("Test message"));
+        IOValue ioValue = new IOValue(IOFilter.NONE, lineIO.getDescription().getType().fromString("Test message"), textIO);
+        textIO.setValue(ioValue);
 
         return new CompositeService(name, "This is called " + name, components);
     }

@@ -267,7 +267,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
                 ServiceIO output = outputs.get(i);
 
-                if (output.getFilterState() == IOValue.UNFILTERED) {
+                if (!output.hasValues()) {
                     skipCount++;
                     continue;
                 }
@@ -279,36 +279,59 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
                 // At this point we have an object that is the thing we need. Do we need to make it into something else we can deal with?
 
-                if (output.getFilterState() == IOValue.MANUAL_FILTER)
-                    value = output.getManualValue();
-                else if (output.getFilterState() == IOValue.SAMPLE_FILTER)
-                    value = output.getChosenSampleValue().getValue();
+                ArrayList<Boolean> results = new ArrayList<Boolean>();
+                for (IOValue outputValue : output.getValues()) {
 
-                if (value == null) {  // Something has gone very very wrong
-                    Log.e(TAG, "Filter value is dead, you've done something rather stupid");
-                    continue;
-                }
+                    if (outputValue.getFilterState() == IOValue.MANUAL_FILTER)
+                        value = outputValue.getManualValue();
+                    else if (outputValue.getFilterState() == IOValue.SAMPLE_FILTER)
+                        value = outputValue.getSampleValue().getValue();
 
-                if (first == null) {
-                    Log.e(TAG, "No value from the component... What have you done...");
-                    continue;
-                }
-
-                try {
-                    // This returns whether it PASSES the test, so we need to filter it if it doesn't
-                    Boolean result = (Boolean) fv.method.invoke(null, first, value);
-                    if (result) {
-                        // Put the name of the condition that failed, and the value that should have been set
-                        matchCount++;
+                    if (value == null) {  // Something has gone very very wrong
+                        Log.e(TAG, "Filter value is dead, you've done something rather stupid");
+                        continue;
                     }
-                } catch (IllegalArgumentException e) {
-                    throw new OrchestrationException("Wrong arguments passed to filter method: " +
-                            fv.method.getName() + first + ", " + value);
-                } catch (IllegalAccessException e) {
-                    throw new OrchestrationException("Can't access filter condition method: " +
-                            fv.method.getName());
-                } catch (InvocationTargetException e) {
-                    throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
+
+                    if (first == null) {
+                        Log.e(TAG, "No value from the component... What have you done...");
+                        continue;
+                    }
+
+                    try {
+                        // This returns whether it PASSES the test, so we need to filter it if it doesn't
+                        results.add((Boolean) fv.method.invoke(null, first, value));
+                    } catch (IllegalArgumentException e) {
+                        throw new OrchestrationException("Wrong arguments passed to filter method: " +
+                                fv.method.getName() + first + ", " + value);
+                    } catch (IllegalAccessException e) {
+                        throw new OrchestrationException("Can't access filter condition method: " +
+                                fv.method.getName());
+                    } catch (InvocationTargetException e) {
+                        throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
+                    }
+                }
+
+                if (output.getValueCombinator() == ServiceIO.COMBO_AND) {
+                    // If it's an AND relation then only increment if all are true
+                    boolean allSet = true;
+                    for (int j = 0; j < results.size(); j++) {
+                        if (!results.get(j)) {
+                            allSet = false;
+                            break;
+                        }
+                    }
+
+                    if (allSet)
+                        matchCount++;
+
+                } else {
+                    // If it's an OR relation then increment if one is true
+                    for (int j = 0; j < results.size(); j++) {
+                        if (results.get(j)) {
+                            matchCount++;
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -383,16 +406,17 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         // Go through the getInputs and input any manual values that are there
         for (ServiceIO input : inputs) {
-            if (input.getFilterState() != IOValue.UNFILTERED) {
+            if (input.hasValues()) {
                 // Then add it to the input list
                 String name = input.getDescription().getName();
                 IOType type = input.getDescription().getType();
+                IOValue inputValue = input.getValues().get(0);
                 Object value = null;
 
-                if (input.getFilterState() == IOValue.MANUAL_FILTER)
-                    value = input.getManualValue();
-                else if (input.getFilterState() == IOValue.SAMPLE_FILTER)
-                    value = input.getChosenSampleValue().getValue();
+                if (inputValue.getFilterState() == IOValue.MANUAL_FILTER)
+                    value = inputValue.getManualValue();
+                else if (inputValue.getFilterState() == IOValue.SAMPLE_FILTER)
+                    value = inputValue.getSampleValue().getValue();
 
                 if (inputList.size() == 0)
                     inputList.add(new Bundle());

@@ -24,7 +24,11 @@ import android.widget.TextView;
 import com.appglue.description.AppDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.dialog.DialogApp;
+import com.appglue.layout.dialog.DialogFilter;
+import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.LocalStorage;
 
 import java.util.ArrayList;
@@ -243,19 +247,19 @@ public class FragmentValue extends FragmentVW {
     }
 
     private void showFilterDialog(final ServiceIO item) {
-//        DialogFilter df = new DialogFilter((ActivityWiring) getActivity(), item);
-//        df.show();
+        DialogFilter df = new DialogFilter((ActivityWiring) getActivity(), item);
+        df.show();
     }
 
     private void showAppDialog(final ServiceIO item) {
-//        DialogApp da = new DialogApp((ActivityWiring) getActivity(), item);
-//        da.show();
+        DialogApp da = new DialogApp((ActivityWiring) getActivity(), item);
+        da.show();
     }
 
 
     private void showIODialog(final ServiceIO item) {
-//        DialogIO di = new DialogIO((ActivityWiring) getActivity(), item);
-//        di.show();
+        DialogIO di = new DialogIO((ActivityWiring) getActivity(), item);
+        di.show();
     }
 
     private class InputAdapter extends ArrayAdapter<ServiceIO> {
@@ -301,29 +305,30 @@ public class FragmentValue extends FragmentVW {
 
             ioType.setText(item.getDescription().getType().getName());
 
-            // If it's not unfiltered, then it's either manual or not
-//            if (item.getFilterState() == ServiceIO.UNFILTERED) {
-//                ioValueContainer.setVisibility(View.GONE);
-//            } else {
-//                ioValueContainer.setVisibility(View.VISIBLE);
-//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
-//                    String value = item.getDescription().getType().toString(item.getManualValue());
-//                    ioValue.setText(value);
-//                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
-//                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
-//                    ioValue.setText(item.getChosenSampleValue().name);
-//                }
-//            }
+            // There can only be one input value
+            if (!item.hasValues()) {
+                ioValueContainer.setVisibility(View.GONE);
+            } else {
+                IOValue value = item.getValues().get(0);
+                ioValueContainer.setVisibility(View.VISIBLE);
+                if (value.getFilterState() == IOValue.MANUAL_FILTER) {
+                    String strValue = item.getDescription().getType().toString(value.getManualValue());
+                    ioValue.setText(strValue);
+                } else if (value.getFilterState() == IOValue.SAMPLE_FILTER) {
+                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
+                    ioValue.setText(value.getSampleValue().getName());
+                }
+            }
 
             return v;
         }
     }
 
-    private class OutputValueAdapter extends ArrayAdapter<Object> {
-        private ArrayList<Object> items;
+    private class OutputValueAdapter extends ArrayAdapter<IOValue> {
+        private ArrayList<IOValue> items;
         private ServiceIO io;
 
-        public OutputValueAdapter(Context parent, ArrayList<Object> items, ServiceIO io) {
+        public OutputValueAdapter(Context parent, ArrayList<IOValue> items, ServiceIO io) {
             super(parent, R.layout.list_item_value_out_item, items);
             this.items = items;
             this.io = io;
@@ -338,7 +343,22 @@ public class FragmentValue extends FragmentVW {
 
             final View v = convertView;
 
-            // TODO Put the relevant code in here. It won't quite work like this because we'll need a condition and a value for each
+            //            if (item.getFilterState() == ServiceIO.UNFILTERED) {
+//            } else {
+////                IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
+////
+//                // This is for a manual one
+//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+////                    String value = item.getDescription().getType().toString(item.getManualValue());
+////                    ioValue.setText(value);
+//                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
+////                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
+////                    ioValue.setText(item.getChosenSampleValue().name);
+//                }
+//            }
+
+            // TODO Output values need to show the value and the
+
 
             return v;
         }
@@ -383,36 +403,14 @@ public class FragmentValue extends FragmentVW {
             });
 
             ListView outputValueList = (ListView) v.findViewById(R.id.io_value_list);
-            // FIXME This is where you are
 
-            if (!item.hasValue()) {
+            if (!item.hasValues()) {
                 outputValueList.setVisibility(View.GONE);
 //                values.add(item)
 //                ioValue.setText("");
             } else {
-                ArrayList<Object> values = new ArrayList<Object>();
-
-//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
-//                    values.add(item.getManualValue());
-//                } else {
-//                    // It's a sample value
-//                    values.add(item.getChosenSampleValue().getValue());
-//                }
+                outputValueList.setAdapter(new OutputValueAdapter(getActivity(), item.getValues(), item));
             }
-
-//            if (item.getFilterState() == ServiceIO.UNFILTERED) {
-//            } else {
-////                IOFilter.FilterValue fv = IOFilter.filters.get(item.getCondition());
-////
-//                // This is for a manual one
-//                if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
-////                    String value = item.getDescription().getType().toString(item.getManualValue());
-////                    ioValue.setText(value);
-//                } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
-////                    // Need to look up what the value for this thing is, but return the friendly name not the other thing
-////                    ioValue.setText(item.getChosenSampleValue().name);
-//                }
-//            }
 
             return v;
         }

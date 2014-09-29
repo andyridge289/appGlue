@@ -3,7 +3,6 @@ package com.appglue.engine.description;
 import android.util.Log;
 
 import com.appglue.IODescription;
-import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.library.IOFilter;
 
@@ -12,10 +11,7 @@ import java.util.ArrayList;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
-public class ServiceIO
-{
-
-
+public class ServiceIO {
     private long id;
     private ComponentService component;
 
@@ -23,7 +19,11 @@ public class ServiceIO
 
     private ServiceIO connection;
 
+    public static final int COMBO_OR = 1;
+    public static final int COMBO_AND = 2;
+
     private ArrayList<IOValue> values;
+    private int valueCombinator = COMBO_OR;
 
     public ServiceIO(ComponentService component, IODescription ioDescription) {
         this.component = component;
@@ -45,7 +45,7 @@ public class ServiceIO
         this.id = id;
 
         // IF we are setting the ID we also need to update where it is in the component, if it was there at all
-        if(ioDescription.isInput()) {
+        if (ioDescription.isInput()) {
             component.removeInputSearch(id);
             component.addInputSearch(this);
         } else {
@@ -62,24 +62,7 @@ public class ServiceIO
         return component;
     }
 
-    public Object getValue() {
-        if (this.values.size() == 0) {
-            return null;
-        }
-
-        // Just use the first one for now, this method will need to be changed when we enable multiple filters, etc.
-        IOValue value = values.get(0);
-        if (value.getFilterState() == IOValue.MANUAL_FILTER) {
-            return value.getManualValue();
-        } else if (value.getFilterState() == IOValue.SAMPLE_FILTER) {
-            return value.getSampleValue().getValue();
-        }
-
-        // If we get here something has gone a bit wrong
-        return null;
-    }
-
-    public boolean hasValue() {
+    public boolean hasValues() {
         return this.values.size() != 0;
     }
 
@@ -102,34 +85,6 @@ public class ServiceIO
         this.values.add(value);
     }
 
-    public void setManualValue(Object value) {
-        this.values.add(new IOValue(IOFilter.NONE, value, this));
-    }
-
-    public SampleValue getChosenSampleValue() {
-        if (this.values.size() == 0)
-            return null;
-
-        IOValue value = values.get(0);
-
-        if (value.getFilterState() == IOValue.SAMPLE_FILTER)
-            return value.getSampleValue();
-
-        return null;
-    }
-
-    public void setChosenSampleValue(SampleValue value) {
-        this.values.add(new IOValue(IOFilter.NONE, value, this));
-    }
-
-    public int getFilterState() {
-        if (this.values.isEmpty()) {
-            return IOValue.UNFILTERED;
-        }
-
-        return values.get(0).getFilterState();
-    }
-
     public IOFilter.FilterValue getCondition() {
         if (this.values.isEmpty()) {
             return IOFilter.NONE;
@@ -138,25 +93,14 @@ public class ServiceIO
         return values.get(0).getCondition();
     }
 
-    public Object getManualValue() {
-        if (this.values.size() == 0)
-            return null;
-
-        IOValue value = values.get(0);
-
-        if (value.getFilterState() == IOValue.MANUAL_FILTER)
-            return value.getManualValue();
-
-        return null;
-    }
-
-    public ServiceIO getConnection()
-    {
+    public ServiceIO getConnection() {
         return connection;
     }
+
     public void setConnection(ServiceIO other) {
         this.connection = other;
     }
+
     public boolean hasConnection() {
         return this.connection != null;
     }
@@ -175,6 +119,10 @@ public class ServiceIO
 
     public void setValues(ArrayList<IOValue> values) {
         this.values = values;
+    }
+
+    public int getValueCombinator() {
+        return valueCombinator;
     }
 
     public boolean equals(Object o) {
@@ -220,8 +168,9 @@ public class ServiceIO
 
         if (this.connection != null || other.getConnection() != null) {
             if ((this.connection == null && other.getConnection() != null) ||
-                (this.connection != null && other.getConnection() == null)) {
-                if (LOG) Log.d(TAG, "ServiceIO->Equals: connection null " + this.connection + " -- " + other.getConnection());
+                    (this.connection != null && other.getConnection() == null)) {
+                if (LOG)
+                    Log.d(TAG, "ServiceIO->Equals: connection null " + this.connection + " -- " + other.getConnection());
                 return false;
             }
 

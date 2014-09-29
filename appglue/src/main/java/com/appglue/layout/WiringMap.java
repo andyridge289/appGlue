@@ -557,12 +557,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             v.findViewById(R.id.mandatory_bar).setVisibility(visibility);
 
             if (item != null) {
-                if (!item.hasValue()) {
+                if (!item.hasValues()) {
                     ioType.setText(iod.getType().getName());
                     ioValue.setText("");
                 } else {
                     ioType.setText(iod.getType().getName() + ": ");
-                    ioValue.setText(item.getManualValue().toString());
+                    String valueName = item.getType().toString(item.getValues().get(0).getManualValue());
+                    ioValue.setText(valueName);
                 }
 
                 // If it's not unfiltered, then it's either manual or not
@@ -787,12 +788,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             TextView ioValue = (TextView) v.findViewById(R.id.io_value);
 
             if (item != null) {
-                if (!item.hasValue()) {
+                if (!item.hasValues()) {
                     ioType.setText(iod.getType().getName());
                     ioValue.setText("");
                 } else {
                     ioType.setText(iod.getType().getName() + ": ");
-                    ioValue.setText(item.getManualValue().toString());
+                    String valueName = item.getType().toString(item.getValues().get(0).getManualValue());
+                    ioValue.setText(valueName);
                 }
 
                 // If it's not unfiltered, then it's either manual or not

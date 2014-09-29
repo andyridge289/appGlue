@@ -16,7 +16,9 @@ import android.widget.TextView;
 
 import com.appglue.ActivityWiring;
 import com.appglue.R;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.library.IOFilter;
 
 import java.util.List;
 
@@ -63,9 +65,9 @@ public class DialogApp extends DialogCustom {
                 }
 
                 if (LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
-                item.setManualValue(selected.packageName);
-                // TODO Put this back in
-//                item.setFilterState(ServiceIO.MANUAL_FILTER);
+
+                IOValue value = new IOValue(IOFilter.NONE, selected.packageName, item);
+                item.setValue(value);
                 DialogApp.this.activity.setStatus("Chosen app: " + selected.packageName);
 
                 registry.updateComposite(activity.getComposite());

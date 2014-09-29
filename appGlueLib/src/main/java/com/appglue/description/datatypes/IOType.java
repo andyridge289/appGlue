@@ -76,6 +76,10 @@ public abstract class IOType
 		this.name = name;
 	}
 
+    public boolean typeEquals(IOType t) {
+        return className.equals(t.getClassName());
+    }
+
 	public boolean equals(Object o) {
 
         if(o == null)  {

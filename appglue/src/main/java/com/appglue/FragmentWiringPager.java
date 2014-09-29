@@ -197,11 +197,15 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         wiringPagerAdapter.notifyDataSetChanged();
         valuePagerAdapter.notifyDataSetChanged();
 
-        wiringPager.setAdapter(wiringPagerAdapter);
-        wiringPager.setOnPageChangeListener(this);
+        if (wiringPager.getAdapter() == null) {
+            wiringPager.setAdapter(wiringPagerAdapter);
+            wiringPager.setOnPageChangeListener(this);
+        }
 
-        valuePager.setAdapter(valuePagerAdapter);
-        valuePager.setOnPageChangeListener(this);
+        if (valuePager.getAdapter() == null) {
+            valuePager.setAdapter(valuePagerAdapter);
+            valuePager.setOnPageChangeListener(this);
+        }
 
         if (position != -1) {
             wiringPager.setCurrentItem(position);
@@ -211,7 +215,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             valuePager.setCurrentItem(0);
         }
 
-        if(cs.getComponents().size() == 0) {
+        if (cs.getComponents().size() == 0) {
             ((ActivityWiring) getActivity()).chooseComponentFromList(0, 1);
         }
     }

@@ -12,7 +12,9 @@ import com.appglue.ActivityWiring;
 import com.appglue.R;
 import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.library.IOFilter;
 
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
 import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
 
 public class DialogIO extends DialogCustom {
-    public DialogIO(ActivityWiring context, ServiceIO io) {
+    public DialogIO(ActivityWiring context, final ServiceIO io) {
         super(context, io);
 
         LayoutInflater inflater = activity.getLayoutInflater();
@@ -78,15 +80,15 @@ public class DialogIO extends DialogCustom {
                 // Get the value they entered - not sure what happens
                 if (textRadio.isChecked()) {
                     // Then look up the text value
-
-                    // This should work, but it might not...
-                    Object value = description.getType().fromString(ioText.getText().toString());
-                    item.setManualValue(value);
+                    Object objectValue = description.getType().fromString(ioText.getText().toString());
+                    IOValue value = new IOValue(IOFilter.NONE, objectValue, io);
+                    item.setValue(value);
                     DialogIO.this.activity.setStatus("Set manual value for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
-                    SampleValue value = (SampleValue) ioSpinner.getSelectedItem();
-                    item.setChosenSampleValue(value);
+                    SampleValue sampleValue = (SampleValue) ioSpinner.getSelectedItem();
+                    IOValue value = new IOValue(IOFilter.NONE, sampleValue, io);
+                    item.setValue(value);
                     DialogIO.this.activity.setStatus("Set sample value for " + description.getName());
                 }
 

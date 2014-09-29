@@ -6,15 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.appglue.ActivityWiring;
 import com.appglue.R;
 import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.IOFilter.FilterValue;
 
@@ -27,18 +31,111 @@ import static com.appglue.library.AppGlueConstants.FILTER_SET_VALUES;
 import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
 
 public class DialogFilter extends DialogCustom {
-    public DialogFilter(ActivityWiring activity, final ServiceIO io) {
+
+    private ArrayList<IOValue> setValues = new ArrayList<IOValue>();
+
+    public DialogFilter(final ActivityWiring activity, final ServiceIO io) {
         super(activity, io);
 
         LayoutInflater inflater = activity.getLayoutInflater();
         final View v = inflater.inflate(R.layout.dialog_filter, null);
+        setView(v);
 
         // 1 - Work out what we're filtering and set up the shit
         setTitle("Filter: " + description.getFriendlyName());
 
+        final LinearLayout listContainer = (LinearLayout) v.findViewById(R.id.list_container);
+        final LinearLayout valueContainer = (LinearLayout) v.findViewById(R.id.value_container);
+
+        if (io.getValues().size() == 0) {
+            // Then we need to go straight to the second view
+            listContainer.setVisibility(View.GONE);
+            valueContainer.setVisibility(View.VISIBLE);
+        } else {
+            for (int i = 0; i < io.getValues().size(); i++) {
+                if (!setValues.contains(io.getValues().get(i))) {
+                    setValues.add(io.getValues().get(i));
+                }
+            }
+
+            // Show the list version
+            listContainer.setVisibility(View.VISIBLE);
+            valueContainer.setVisibility(View.GONE);
+        }
+
+        LinearLayout valueList = (LinearLayout) v.findViewById(R.id.value_list);
+        valueList.removeAllViews();
+        for (int i = 0; i < setValues.size(); i++) {
+
+            LinearLayout ll = (LinearLayout) inflater.inflate(R.layout.dialog_filter_value, null);
+            TextView valueName = (TextView) ll.findViewById(R.id.value_name);
+
+            IOValue value = setValues.get(i);
+            if (value.getFilterState() == IOValue.SAMPLE_FILTER) {
+                valueName.setText(value.getSampleValue().getName());
+            } else if (value.getFilterState() == IOValue.MANUAL_FILTER) {
+                valueName.setText(io.getType().toString(value.getManualValue()));
+            }
+
+            if (setValues.size() == 1)
+                ll.findViewById(R.id.and_or).setVisibility(View.GONE);
+
+            valueList.addView(ll);
+        }
+
+        Button positiveButton = (Button) v.findViewById(R.id.dialog_filter_positive);
+        Button neutralButton = (Button) v.findViewById(R.id.dialog_filter_neutral);
+        Button negativeButton = (Button) v.findViewById(R.id.dialog_filter_negative);
+        Button addButton = (Button) v.findViewById(R.id.dialog_filter_add);
+
+        final RadioGroup radio = (RadioGroup) v.findViewById(R.id.filter_radio);
+        final RadioButton spinnerRadio = (RadioButton) v.findViewById(R.id.filter_radio_spinner);
+        final RadioButton textRadio = (RadioButton) v.findViewById(R.id.filter_radio_text);
+
         final EditText filterValueText = (EditText) v.findViewById(R.id.filter_value_text);
         final Spinner filterValueSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
         final Spinner filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
+
+        ImageView addImage = (ImageView) v.findViewById(R.id.another_value);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listContainer.setVisibility(View.VISIBLE);
+                valueContainer.setVisibility(View.GONE);
+
+                FilterValue condition = (FilterValue) filterConditionSpinner.getSelectedItem();
+
+                // Get the value that has been selected, and add it to the array list of values
+                if (textRadio.isChecked()) {
+                    Object value = description.getType().fromString(filterValueText.getText().toString());
+                    item.addFilter(new IOValue(condition, value, io));
+                    DialogFilter.this.activity.setStatus("Set manual filter for " + description.getName());
+                } else if (spinnerRadio.isChecked()) {
+                    // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
+                    SampleValue value = (SampleValue) filterValueSpinner.getSelectedItem();
+                    item.addFilter(new IOValue(condition, value, io));
+                    DialogFilter.this.activity.setStatus("Set sample filter for " + description.getName());
+                }
+
+//                // The setting of the list values needs to move to the creating of the list. Do an invalidate
+//                registry.updateComposite(DialogFilter.this.activity.getComposite());
+//                DialogFilter.this.activity.redraw();
+//                dismiss();
+
+                // TODO Make list add elements to the dialog
+            }
+        });
+
+        addImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listContainer.setVisibility(View.GONE);
+                valueContainer.setVisibility(View.VISIBLE);
+
+                // TODO Remove the things from the spinner that are in the (sample) values list
+            }
+        });
 
         IOType type = description.getType();
         ArrayList<SampleValue> values = description.getSampleValues();
@@ -52,11 +149,7 @@ public class DialogFilter extends DialogCustom {
             values.add(new SampleValue("No samples", ""));
         }
 
-        // XXX Compound filters
 
-        final RadioGroup radio = (RadioGroup) v.findViewById(R.id.filter_radio);
-        final RadioButton spinnerRadio = (RadioButton) v.findViewById(R.id.filter_radio_spinner);
-        final RadioButton textRadio = (RadioButton) v.findViewById(R.id.filter_radio_text);
 
         radio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
@@ -80,19 +173,19 @@ public class DialogFilter extends DialogCustom {
         // Set value spinner needs to have the right things or be disabled saying there are none
         // Text field needs to be the right type or be hidden if boolean
 
-        if (type.equals(IOType.Factory.getType(IOType.Factory.TEXT))) {
+        if (type.typeEquals(IOType.Factory.getType(IOType.Factory.TEXT))) {
             setupDialog(filterConditionSpinner, FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
                     hasSamples, filterValueSpinner, values, spinnerRadio, textRadio, item,
                     String.class, filterValueText);
-        } else if (type.equals(IOType.Factory.getType(IOType.Factory.NUMBER))) {
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.NUMBER))) {
             setupDialog(filterConditionSpinner, FILTER_NUMBER_VALUES, InputType.TYPE_CLASS_NUMBER,
                     hasSamples, filterValueSpinner, values, spinnerRadio, textRadio, item,
                     Integer.class, filterValueText);
-        } else if (type.equals(IOType.Factory.getType(IOType.Factory.SET))) {
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.SET))) {
             setupDialog(filterConditionSpinner, FILTER_SET_VALUES, -1,
                     hasSamples, filterValueSpinner, values, spinnerRadio, textRadio, item,
                     Integer.class, filterValueText);
-        } else if (type.equals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
             if (!hasSamples) {
                 // These might need to be hard-coded as acceptable values
                 values = new ArrayList<SampleValue>();
@@ -103,11 +196,11 @@ public class DialogFilter extends DialogCustom {
             setupDialog(filterConditionSpinner, FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
                     hasSamples, filterValueSpinner, values, spinnerRadio, textRadio, item,
                     Integer.class, filterValueText);
-        } else if (type.equals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
             setupDialog(filterConditionSpinner, FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
                     hasSamples, filterValueSpinner, values, spinnerRadio, textRadio, item,
                     String.class, filterValueText);
-        } else if (type.equals(IOType.Factory.getType(IOType.Factory.URL))) {
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.URL))) {
             setupDialog(filterConditionSpinner, FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
                     hasSamples, filterValueSpinner, values, spinnerRadio, textRadio, item,
                     String.class, filterValueText);
@@ -117,40 +210,12 @@ public class DialogFilter extends DialogCustom {
         }
 
 
-        setView(v);
-
-        Button positiveButton = (Button) v.findViewById(R.id.dialog_filter_positive);
-        Button neutralButton = (Button) v.findViewById(R.id.dialog_filter_neutral);
-        Button negativeButton = (Button) v.findViewById(R.id.dialog_filter_negative);
-
-        // TODO Put all the value stuff back in
-
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the value they entered - not sure what happens
-                if (textRadio.isChecked()) {
-                    Object value = description.getType().fromString(filterValueText.getText().toString());
-                    // This should work, it's the same as the other stuff. But it might not...
-                    item.setManualValue(value);
-//                    item.setFilterState(ServiceIO.MANUAL_FILTER);
-                    DialogFilter.this.activity.setStatus("Set manual filter for " + description.getName());
-                } else if (spinnerRadio.isChecked()) {
-                    // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
-                    SampleValue value = (SampleValue) filterValueSpinner.getSelectedItem();
-                    item.setChosenSampleValue(value);
-//                    item.setFilterState(ServiceIO.SAMPLE_FILTER);
-                    DialogFilter.this.activity.setStatus("Set sample filter for " + description.getName());
-                }
+                // TODO We need to add everything that's in the values array list
+//                // Get the value they entered - not sure what happens
 
-                // Now we just need to make sure that the condition is set
-                FilterValue condition = (FilterValue) filterConditionSpinner.getSelectedItem();
-//                item.setCondition(condition.index);
-
-                // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                registry.updateComposite(DialogFilter.this.activity.getComposite());
-                DialogFilter.this.activity.redraw();
-                dismiss();
             }
         });
 
@@ -163,10 +228,11 @@ public class DialogFilter extends DialogCustom {
         neutralButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                item.setFilterState(ServiceIO.UNFILTERED);
-                DialogFilter.this.activity.setStatus("Cleared filter for " + description.getName());
-                registry.updateComposite(DialogFilter.this.activity.getComposite());
-                DialogFilter.this.activity.redraw();
+                // TODO Remove everything from the value list
+////                item.setFilterState(ServiceIO.UNFILTERED);
+//                DialogFilter.this.activity.setStatus("Cleared filter for " + description.getName());
+//                registry.updateComposite(DialogFilter.this.activity.getComposite());
+//                DialogFilter.this.activity.redraw();
             }
         });
     }

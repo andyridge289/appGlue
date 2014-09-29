@@ -165,14 +165,14 @@ public class Registry {
         if (compositeId == -1) {
             return null;
         } else {
-            long[] id = new long[] { compositeId };
-            ArrayList<CompositeService> composite = dbHandler.getComposites(id);
+            long[] id = new long[]{compositeId};
+            ArrayList<CompositeService> composite = dbHandler.getComposites(id, true);
             return composite.get(0);
         }
     }
 
     public ArrayList<CompositeService> getComposites() {
-        return dbHandler.getComposites(null);
+        return dbHandler.getComposites(null, false);
     }
 
     public boolean deleteComposite(CompositeService cs) {
