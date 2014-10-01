@@ -64,7 +64,7 @@ public class FragmentStory extends Fragment implements OnClickListener
 		if(requestCode == STORY_MODE && resultCode == Activity.RESULT_OK)
 		{
 			// Then we need to go to add services
-			CompositeService cs = registry.getService();
+			CompositeService cs = registry.getCurrent();
 			
 			String className = intent.getStringExtra(CLASSNAME);
 			final int position = intent.getIntExtra(INDEX, -1);

@@ -1,6 +1,7 @@
 package com.appglue.layout;
 
 import android.annotation.SuppressLint;
+import android.app.Service;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -512,7 +513,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     }
 
     private class InputAdapter extends ArrayAdapter<ServiceIO> {
-        public ArrayList<ServiceIO> items;
+
+        private ArrayList<ServiceIO> items;
 
         public InputAdapter(Context parent, ArrayList<ServiceIO> items) {
             super(parent, R.layout.list_item_wiring_in, items);
@@ -747,7 +749,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     }
 
     private class OutputAdapter extends ArrayAdapter<ServiceIO> {
-        public ArrayList<ServiceIO> items;
+
+        private ArrayList<ServiceIO> items;
+
+        private TextView ioName;
+        private TextView ioType;
+        private TextView ioValue;
 
         public OutputAdapter(Context parent, ArrayList<ServiceIO> items) {
             super(parent, R.layout.list_item_wiring_out, items);
@@ -781,11 +788,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             blob.setColorFilter(col, PorterDuff.Mode.ADD);
             stub.setColorFilter(col, PorterDuff.Mode.ADD);
 
-            TextView ioName = (TextView) v.findViewById(R.id.io_name);
+            ioName = (TextView) v.findViewById(R.id.io_name);
             ioName.setText(iod.getFriendlyName());
 
-            TextView ioType = (TextView) v.findViewById(R.id.io_type);
-            TextView ioValue = (TextView) v.findViewById(R.id.io_value);
+            ioType = (TextView) v.findViewById(R.id.io_type);
+            ioValue = (TextView) v.findViewById(R.id.io_value);
 
             if (item != null) {
                 if (!item.hasValues()) {

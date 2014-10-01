@@ -45,7 +45,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
         registry = Registry.getInstance(getActivity());
         
         ListView componentList = (ListView) v.findViewById(R.id.story_composite_components);
-        componentList.setAdapter(new ComponentAdapter(getActivity(), registry.getService().getComponentsAL()));
+        componentList.setAdapter(new ComponentAdapter(getActivity(), registry.getCurrent().getComponentsAL()));
         
         addLayout = (LinearLayout) v.findViewById(R.id.choice_carry_on);
         addLayout.setOnClickListener(this);
@@ -62,7 +62,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 		{
 			Intent intent = new Intent(getActivity(), ActivityComponentList.class);
 			intent.putExtra(NO_TRIGGERS, true);
-			intent.putExtra(POSITION, registry.getService().getComponents().size());
+			intent.putExtra(POSITION, registry.getCurrent().getComponents().size());
 			
 			// Send the position to make the component list start in a different place.
 			startActivityForResult(intent, STORY_MODE);
@@ -80,7 +80,7 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 		if(requestCode == STORY_MODE && resultCode == Activity.RESULT_OK)
 		{
 			// Then we need to go to add services
-			CompositeService cs = registry.getService();
+			CompositeService cs = registry.getCurrent();
 			
 			String className = intent.getStringExtra(CLASSNAME);
 			final int position = intent.getIntExtra(INDEX, -1);

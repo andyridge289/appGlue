@@ -44,7 +44,7 @@ public class FragmentStoryAnnotate extends Fragment implements OnClickListener
 			String name = nameText.getText().toString();
 			String description = descriptionText.getText().toString();
 			
-			CompositeService cs = registry.getService();
+			CompositeService cs = registry.getCurrent();
 			cs.setName(name);
 			cs.setDescription(description);
 			

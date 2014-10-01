@@ -9,7 +9,7 @@ import static com.appglue.Constants.INDEX;
 public abstract class FragmentVW extends Fragment {
 
     public static Fragment create(int position, boolean wiring) {
-        FragmentVW fragment = wiring ? new FragmentWiring() : new FragmentValue();
+        FragmentVW fragment = wiring ? new FragmentWiring() : new FragmentValuePager();
         Bundle args = new Bundle();
         args.putInt(INDEX, position);
         fragment.setArguments(args);

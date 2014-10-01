@@ -26,10 +26,13 @@ public class Registry {
     public static Registry registry = null;
     private LocalDBHandler dbHandler = null;
 
+    // FIXME Need to make a composite cache here
+
     private HashMap<String, ServiceDescription> remoteCache;
 
     // This is whatever the current service being edited (or the last one to be edited).
-    private CompositeService service;
+    private CompositeService composite;
+    private CompositeService temp;
 
     private Context context;
 
@@ -48,21 +51,28 @@ public class Registry {
         return registry;
     }
 
-    public void setService(CompositeService service) {
-        this.service = service;
+    public void setComposite(CompositeService service) {
+        this.composite = service;
     }
 
-    public void setService(long id) {
-        this.service = this.getComposite(id);
+    public void setComposite(long id) {
+        this.composite = this.getComposite(id);
     }
 
     public CompositeService resetTemp() {
-        return dbHandler.resetTemp();
+        temp = dbHandler.resetTemp();
+        // TODO Might need tio
+        return temp;
+    }
+
+    public CompositeService getCurrent() {
+        return composite;
     }
 
     public CompositeService getTemp() {
-        service = getComposite(CompositeService.TEMP_ID);
-        return service;
+        temp = getComposite(CompositeService.TEMP_ID);
+        composite = temp;
+        return composite;
     }
 
     public boolean tempExists() {
@@ -82,10 +92,6 @@ public class Registry {
         Toast.makeText(context, "Saved composite with name \"" + name + "\"", Toast.LENGTH_LONG).show();
         dbHandler.resetTemp();
         return composite;
-    }
-
-    public CompositeService getService() {
-        return service;
     }
 
     public void addRemote(ServiceDescription service) {
@@ -181,16 +187,6 @@ public class Registry {
 
     public CompositeService updateComposite(CompositeService composite) {
         return dbHandler.updateComposite(composite);
-    }
-
-    public boolean reset() {
-        // Reset the current composite and then reset it in the database.
-        boolean success = dbHandler.deleteComposite(service);
-
-        service = new CompositeService(true);
-        dbHandler.resetTemp();
-
-        return success;
     }
 
     public ArrayList<ComponentService> getComponents(String className, int position) {

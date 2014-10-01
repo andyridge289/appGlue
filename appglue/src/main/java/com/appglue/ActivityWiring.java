@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.dialog.DialogFilterList;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -30,10 +32,13 @@ public class ActivityWiring extends ActionBarActivity {
 
     private FragmentWiringPager wiringFragment;
     private FragmentComponentListPager componentListFragment;
+    private FragmentValue valueFragment;
 
     private CharSequence mTitle;
 
     private Menu menu;
+
+    private ServiceIO io;
 
     private boolean makingNew = false;
 
@@ -50,6 +55,7 @@ public class ActivityWiring extends ActionBarActivity {
     private int mode;
     public static final int MODE_CREATE = 0;
     public static final int MODE_CHOOSE = 1;
+    public static final int MODE_FILTER = 2;
 
 	@Override
 	public void onCreate(Bundle icicle)
@@ -59,6 +65,11 @@ public class ActivityWiring extends ActionBarActivity {
 		setContentView(R.layout.activity_wiring);
     }
 
+    public void setFilterMode(ServiceIO io) {
+        this.io = io;
+        setMode(MODE_FILTER);
+        redraw();
+    }
     public void setMode(int mode) {
         this.mode = mode;
     }
@@ -79,6 +90,12 @@ public class ActivityWiring extends ActionBarActivity {
                 componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
                 attach = componentListFragment;
                 break;
+
+            case MODE_FILTER:
+                mTitle = "Choose filter values";
+                valueFragment = (FragmentValue) FragmentValue.create(io);
+                attach = valueFragment;
+                break;
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -91,6 +108,12 @@ public class ActivityWiring extends ActionBarActivity {
             wiringFragment.redraw();
     }
 
+//    public void showFilterDialog(ServiceIO io) {
+//        DialogFilterList dFragment = new DialogFilterList();
+////            // Show DialogFragment
+//            dFragment.show(getSupportFragmentManager(), "Dialog Fragment");
+//    }
+
     public void setActionBar() {
 		ActionBar actionBar = getSupportActionBar();
 		actionBar.setHomeButtonEnabled(true);
@@ -99,6 +122,10 @@ public class ActivityWiring extends ActionBarActivity {
 
     public void onBackPressed() {
         if (mode == MODE_CHOOSE && !makingNew) {
+            setMode(MODE_CREATE);
+            redraw();
+            return;
+        } else if(mode == MODE_FILTER) {
             setMode(MODE_CREATE);
             redraw();
             return;
@@ -199,7 +226,10 @@ public class ActivityWiring extends ActionBarActivity {
 	}
 
 	public ArrayList<ComponentService> getComponents() {
-		return cs.getComponentsAL();
+        if(cs != null)
+		    return cs.getComponentsAL();
+        else
+            return new ArrayList<ComponentService>();
 	}
 
 	public int getMode() {

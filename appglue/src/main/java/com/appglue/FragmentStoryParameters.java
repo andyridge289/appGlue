@@ -122,7 +122,7 @@ public class FragmentStoryParameters extends Fragment {
         if (registry == null)
             registry = Registry.getInstance(getActivity());
 
-        CompositeService cs = registry.getService();
+        CompositeService cs = registry.getCurrent();
         ArrayList<ComponentService> components = cs.getComponentsAL();
         position = position == -1 ? components.size() - 1 : position;
         ServiceDescription component = components.get(position).getDescription(); // SparseArray

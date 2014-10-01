@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.appglue.engine.description.ComponentService;
@@ -46,6 +47,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private Button csNameSet;
     private TextView pageIndexText;
     private TextView status;
+
+    private LinearLayout buttonBar;
 
     private Registry registry;
 
@@ -87,6 +90,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         status = (TextView) root.findViewById(R.id.status);
         pageIndexText = (TextView) root.findViewById(R.id.page_index);
+
+        buttonBar = (LinearLayout) root.findViewById(R.id.value_button_bar);
 
         registry = Registry.getInstance(getActivity());
 
@@ -237,8 +242,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 break;
 
             case MODE_VALUE:
-                show = valuePager;
-                hide = wiringPager;
+                show = wiringPager; // TODO Note, I switched these around
+                hide = valuePager;
                 break;
 
             default:
@@ -258,6 +263,12 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         show.setVisibility(View.VISIBLE);
         hide.setVisibility(View.GONE);
+
+        if(mode == MODE_WIRING) {
+            buttonBar.setVisibility(View.GONE);
+        } else {
+            buttonBar.setVisibility(View.VISIBLE);
+        }
 
         redraw();
     }

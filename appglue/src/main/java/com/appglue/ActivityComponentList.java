@@ -65,8 +65,8 @@ public class ActivityComponentList extends ActionBarActivity {
 
         boolean showMatching = false;
 
-        if (registry.getService() != null) {
-            SparseArray<ComponentService> components = registry.getService().getComponents();
+        if (registry.getCurrent() != null) {
+            SparseArray<ComponentService> components = registry.getCurrent().getComponents();
             showMatching = components.size() != 0;
         }
 
