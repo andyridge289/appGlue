@@ -32,7 +32,7 @@ public class ActivityWiring extends ActionBarActivity {
 
     private FragmentWiringPager wiringFragment;
     private FragmentComponentListPager componentListFragment;
-    private FragmentValue valueFragment;
+//    private FragmentValue valueFragment;
 
     private CharSequence mTitle;
 
@@ -93,8 +93,8 @@ public class ActivityWiring extends ActionBarActivity {
 
             case MODE_FILTER:
                 mTitle = "Choose filter values";
-                valueFragment = (FragmentValue) FragmentValue.create(io);
-                attach = valueFragment;
+//                valueFragment = (FragmentValue) FragmentValue.create(io);
+//                attach = valueFragment;
                 break;
         }
 

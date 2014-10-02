@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -512,13 +513,17 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         return 0; // No view's position was in both previousPositions and mPositions
     }
 
-    private class InputAdapter extends ArrayAdapter<ServiceIO> {
+    public void valueMode() {
+        // Make the output stuff contracted
+        // TODO MAke the input stuff expanded
+        ((WiringIOAdapter) outputList.getAdapter()).contract();
+        ((WiringIOAdapter) inputList.getAdapter()).expand();
+    }
 
-        private ArrayList<ServiceIO> items;
+    private class InputAdapter extends WiringIOAdapter {
 
         public InputAdapter(Context parent, ArrayList<ServiceIO> items) {
             super(parent, R.layout.list_item_wiring_in, items);
-            this.items = items;
         }
 
         @SuppressLint("InflateParams")
@@ -748,9 +753,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
     }
 
-    private class OutputAdapter extends ArrayAdapter<ServiceIO> {
-
-        private ArrayList<ServiceIO> items;
+    private class OutputAdapter extends WiringIOAdapter {
 
         private TextView ioName;
         private TextView ioType;
@@ -758,7 +761,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
         public OutputAdapter(Context parent, ArrayList<ServiceIO> items) {
             super(parent, R.layout.list_item_wiring_out, items);
-            this.items = items;
         }
 
         @SuppressLint("InflateParams")
@@ -958,8 +960,61 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             });
 
+            if (this.isContracted()) {
+                ioName.setVisibility(View.GONE);
+                ioType.setVisibility(View.GONE);
+                ioValue.setVisibility(View.GONE);
+            } else if (this.isExpanded()) {
+                // TODO Work out how to expand stuff
+            } else {
+                ioName.setVisibility(View.VISIBLE);
+                ioType.setVisibility(View.VISIBLE);
+                ioValue.setVisibility(View.VISIBLE);
+            }
+
             return v;
         }
+    }
+
+    private abstract class WiringIOAdapter extends ArrayAdapter<ServiceIO> {
+
+        protected int mode;
+        protected final int MODE_NORMAL = 0;
+        protected final int MODE_EXPANDED = 1;
+        protected final int MODE_CONTRACTED = -1;
+
+        protected ArrayList<ServiceIO> items;
+
+        public WiringIOAdapter(Context context, int resource, ArrayList<ServiceIO> objects) {
+            super(context, resource, objects);
+            this.items = objects;
+            this.mode = MODE_NORMAL;
+        }
+
+        protected boolean isContracted() {
+            return this.mode == MODE_CONTRACTED;
+        }
+
+        protected boolean isExpanded() {
+            return this.mode == MODE_EXPANDED;
+        }
+
+        protected void expand() {
+            this.mode = MODE_EXPANDED;
+            notifyDataSetChanged();
+        }
+
+        protected void contract() {
+            this.mode = MODE_CONTRACTED;
+            notifyDataSetChanged();
+        }
+
+        protected void reset() {
+            this.mode = MODE_NORMAL;
+            notifyDataSetChanged();
+        }
+
+        public abstract View getView(final int position, View convertView, final ViewGroup parent);
     }
 
     private class PathColour {

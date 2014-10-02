@@ -5,12 +5,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.TAG;
 
 public class FragmentWiring extends FragmentVW {
     private int position;
@@ -31,6 +35,10 @@ public class FragmentWiring extends FragmentVW {
 
     private ComponentService first;
     private ComponentService second;
+
+    private LinearLayout buttonBar;
+    private Button filterButton;
+    private Button valueButton;
 
     HashMap<String, Integer> hueMap;
 
@@ -68,6 +76,10 @@ public class FragmentWiring extends FragmentVW {
 
         RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
         RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
+
+        buttonBar = (LinearLayout) rootView.findViewById(R.id.value_button_bar);
+        filterButton = (Button) rootView.findViewById(R.id.filter_button_all);
+        valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
         ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
 
@@ -172,6 +184,21 @@ public class FragmentWiring extends FragmentVW {
             });
         }
 
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // FIXME Work out what the hell we're going to do for the filter stuff
+            }
+        });
+
+        valueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wiringMap.valueMode();
+                // Then work out what to put in the expanded one
+            }
+        });
+
         return rootView;
     }
 
@@ -190,12 +217,19 @@ public class FragmentWiring extends FragmentVW {
         return second;
     }
 
-    public void redraw() {
-        if (wiringMap == null) {
-            return;
+    public void redraw(int mode) {
+
+        if (buttonBar != null) {
+            if (mode == FragmentWiringPager.MODE_WIRING) {
+                buttonBar.setVisibility(View.GONE);
+            } else {
+                buttonBar.setVisibility(View.VISIBLE);
+            }
         }
 
-        wiringMap.redraw(true);
+        if (wiringMap != null) {
+            wiringMap.redraw(true);
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

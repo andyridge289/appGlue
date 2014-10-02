@@ -240,7 +240,8 @@ public class FragmentValuePager extends FragmentVW {
         super.onResume();
     }
 
-    public void redraw() {
+    public void redraw(int mode) {
+        // FIXME Need to put something in here to make everything redraw
 //        this.outputList.invalidateViews();
 //        this.inputList.invalidateViews();
     }

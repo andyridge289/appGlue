@@ -64,33 +64,11 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/value_button_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_alignParentBottom="true">
-
-        <Button
-            android:id="@+id/filter_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add/Edit Filters"/>
-
-        <Button
-            android:id="@+id/value_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add/Edit Values"/>
-
-    </LinearLayout>
-
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/wiring_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/status_bar"
-        android:layout_above="@id/value_button_bar"
         />
 
     <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
@@ -98,7 +76,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/status_bar"
-        android:layout_above="@id/value_button_bar"
         />
 
 </RelativeLayout>

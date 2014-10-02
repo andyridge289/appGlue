@@ -16,7 +16,7 @@ public abstract class FragmentVW extends Fragment {
         return fragment;
     }
 
-    public abstract void redraw();
+    public abstract void redraw(int mode);
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 
