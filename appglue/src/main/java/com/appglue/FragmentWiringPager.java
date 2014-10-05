@@ -33,14 +33,14 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private CompositeService cs;
 
     private ViewPager wiringPager;
-//    private ViewPager valuePager;
+    private WiringPagerAdapter adapter;
 
-    private WiringPagerAdapter wiringPagerAdapter;
-//    private WiringPagerAdapter valuePagerAdapter;
-
-    private int mode;
+    private int wiringMode;
+    public static final int MODE_DEAD = -1;
     public static final int MODE_WIRING = 0;
     public static final int MODE_VALUE = 1;
+    public static final int MODE_FILTER = 2;
+
 
     private TextView csNameText;
     private EditText csNameEdit;
@@ -79,8 +79,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         View root = inflater.inflate(R.layout.fragment_wiring_pager, container, false);
 
         wiringPager = (ViewPager) root.findViewById(R.id.wiring_pager);
-//        valuePager = (ViewPager) root.findViewById(R.id.value_pager);
-//        valuePager.setPageTransformer(true, new DepthPageTransformer());
 
         csNameText = (TextView) root.findViewById(R.id.cs_name);
         csNameEdit = (EditText) root.findViewById(R.id.cs_name_edit);
@@ -192,28 +190,18 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
         });
 
-        wiringPagerAdapter = new WiringPagerAdapter(getFragmentManager(), true);
-//        valuePagerAdapter = new WiringPagerAdapter(getFragmentManager(), false);
-
-        wiringPagerAdapter.notifyDataSetChanged();
-//        valuePagerAdapter.notifyDataSetChanged();
+        adapter = new WiringPagerAdapter(getFragmentManager(), true);
+        adapter.notifyDataSetChanged();
 
         if (wiringPager.getAdapter() == null) {
-            wiringPager.setAdapter(wiringPagerAdapter);
+            wiringPager.setAdapter(adapter);
             wiringPager.setOnPageChangeListener(this);
         }
 
-//        if (valuePager.getAdapter() == null) {
-//            valuePager.setAdapter(valuePagerAdapter);
-//            valuePager.setOnPageChangeListener(this);
-//        }
-
         if (position != -1) {
             wiringPager.setCurrentItem(position);
-//            valuePager.setCurrentItem(position);
         } else {
             wiringPager.setCurrentItem(0);
-//            valuePager.setCurrentItem(0);
         }
 
         if (cs.getComponents().size() == 0) {
@@ -222,57 +210,24 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     }
 
     int getWiringMode() {
-        return mode;
+        return wiringMode;
     }
 
+    // TODO Work out what the best way to this is
     public void setWiringMode(int mode) {
-        this.mode = mode;
-
-        ViewPager show;
-        ViewPager hide;
-
-        switch (mode) {
-            case MODE_WIRING:
-                show = wiringPager;
-//                hide = valuePager;
-                break;
-
-            case MODE_VALUE:
-                show = wiringPager; // TODO Note, I switched these around
-//                hide = valuePager;
-                break;
-
-            default:
-                show = wiringPager;
-//                hide = valuePager;
-                break;
-        }
-
-//        if (position != -1) {
-//            wiringPager.setCurrentItem(position);
-//            valuePager.setCurrentItem(position);
-//        } else {
-//            int current = 0;//hide.getCurrentItem();
-//            wiringPager.setCurrentItem(current);
-//            setPageIndex(current);
-//        }
-
+        this.wiringMode = mode;
         wiringPager.setVisibility(View.VISIBLE);
         wiringPager.getAdapter().notifyDataSetChanged();
-//        valuePager.setVisibility(View.GONE);
-
         redraw();
     }
 
 
     public void redraw() {
-        WiringPagerAdapter adapter = wiringPagerAdapter; //mode == MODE_WIRING ? wiringPagerAdapter : valuePagerAdapter;
-
         // Tell all the fragments to redraw...
         if (adapter != null) {
             for (int i = 0; i < adapter.getCount(); i++) {
-                FragmentVW f = (FragmentVW) adapter.getItem(i);
-                f.redraw(mode);
+                FragmentWiring f = (FragmentWiring) adapter.getItem(i);
+                f.redraw(wiringMode);
             }
         }
     }
@@ -309,10 +264,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     }
 
     private void setPageIndex(int index) {
-        if (mode == MODE_WIRING) {
-            pageIndexText.setText(index + " - " + (index + 1) + " / " + (wiringPagerAdapter.getCount() + 1));
+        if (wiringMode == MODE_WIRING) {
+            pageIndexText.setText(index + " - " + (index + 1) + " / " + (adapter.getCount() + 1));
         } else {
-            pageIndexText.setText(index + " / " + wiringPagerAdapter.getCount());
+            pageIndexText.setText(index + " / " + adapter.getCount());
         }
     }
 
@@ -356,10 +311,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
 
             if (fragments[position] == null)
-                fragments[position] = FragmentVW.create(position, wiring);
+                fragments[position] = FragmentWiring.create(position);
 
-            FragmentVW f = (FragmentVW) fragments[position];
-            f.redraw(mode);
+            FragmentWiring f = (FragmentWiring) fragments[position];
+            f.redraw(wiringMode);
 
             return fragments[position];
         }

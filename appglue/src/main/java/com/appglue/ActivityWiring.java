@@ -55,7 +55,6 @@ public class ActivityWiring extends ActionBarActivity {
     private int mode;
     public static final int MODE_CREATE = 0;
     public static final int MODE_CHOOSE = 1;
-    public static final int MODE_FILTER = 2;
 
 	@Override
 	public void onCreate(Bundle icicle)
@@ -65,13 +64,29 @@ public class ActivityWiring extends ActionBarActivity {
 		setContentView(R.layout.activity_wiring);
     }
 
-    public void setFilterMode(ServiceIO io) {
-        this.io = io;
-        setMode(MODE_FILTER);
-        redraw();
-    }
+//    public void setFilterMode(ServiceIO io) {
+//        this.io = io;
+//        setMode(MODE_FILTER);
+//        redraw();
+//    }
     public void setMode(int mode) {
         this.mode = mode;
+    }
+    public void setWiringMode(int wiringMode) {
+        if(wiringFragment != null) {
+            wiringFragment.setWiringMode(wiringMode);
+        }
+    }
+
+    public int getMode() {
+        return mode;
+    }
+    public int getWiringMode() {
+        if(wiringFragment != null) {
+            return wiringFragment.getWiringMode();
+        }
+
+        return FragmentWiringPager.MODE_DEAD;
     }
 
     public void redraw() {
@@ -91,11 +106,11 @@ public class ActivityWiring extends ActionBarActivity {
                 attach = componentListFragment;
                 break;
 
-            case MODE_FILTER:
-                mTitle = "Choose filter values";
+//            case MODE_FILTER:
+//                mTitle = "Choose filter values";
 //                valueFragment = (FragmentValue) FragmentValue.create(io);
 //                attach = valueFragment;
-                break;
+//                break;
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -125,11 +140,12 @@ public class ActivityWiring extends ActionBarActivity {
             setMode(MODE_CREATE);
             redraw();
             return;
-        } else if(mode == MODE_FILTER) {
-            setMode(MODE_CREATE);
-            redraw();
-            return;
         }
+//      else if(mode == MODE_FILTER) {
+//            setMode(MODE_CREATE);
+//            redraw();
+//            return;
+//        }
 
         super.onBackPressed();
     }
@@ -230,10 +246,6 @@ public class ActivityWiring extends ActionBarActivity {
 		    return cs.getComponentsAL();
         else
             return new ArrayList<ComponentService>();
-	}
-
-	public int getMode() {
-		return mode;
 	}
 
 	public void setStatus(String statusString) {

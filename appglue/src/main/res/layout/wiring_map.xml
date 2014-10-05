@@ -6,6 +6,7 @@
     >
     
     <FrameLayout
+        android:id="@+id/wiring_output_frame"
     	android:layout_width="0dip"
 	    android:layout_weight="1"
 	    android:layout_height="fill_parent"
@@ -67,11 +68,28 @@
     </FrameLayout>
     
     <View
-        android:layout_width="20dip"
+        android:layout_width="10dip"
+        android:layout_height="fill_parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/wiring_filter_frame"
+        android:background="@color/android_red"
+        android:layout_width="0dip"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="10dip"
         android:layout_height="fill_parent"
         />
     
     <FrameLayout
+        android:id="@+id/wiring_input_frame"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="fill_parent"

@@ -42,7 +42,7 @@
             android:background="?android:selectableItemBackground"
             android:contentDescription="@string/set_button"
             android:src="@drawable/ic_add"
-            android:visibility="gone" />
+            />
     </LinearLayout>
 
     <View

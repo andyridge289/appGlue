@@ -28,7 +28,7 @@ import java.util.HashMap;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.TAG;
 
-public class FragmentWiring extends FragmentVW {
+public class FragmentWiring extends Fragment {
     private int position;
 
     private WiringMap wiringMap;
@@ -82,6 +82,8 @@ public class FragmentWiring extends FragmentVW {
         valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
         ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
+
+        // TODO Invalid index 0, size is 0
 
         first = position > 0 ? components.get(position - 1) : null;
         second = position < components.size() ? components.get(position) : null;
@@ -187,15 +189,26 @@ public class FragmentWiring extends FragmentVW {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // FIXME Work out what the hell we're going to do for the filter stuff
+                ActivityWiring wiringActivity = (ActivityWiring) getActivity();
+                if (wiringActivity.getWiringMode() == FragmentWiringPager.MODE_FILTER) {
+                    wiringMap.normalMode();
+                    wiringActivity.setWiringMode(FragmentWiringPager.MODE_WIRING);
+                    redraw(FragmentWiringPager.MODE_WIRING)
+                } else {
+                    wiringMap.filterMode();
+                    wiringActivity.setWiringMode(FragmentWiringPager.MODE_FILTER);
+                }
             }
         });
 
         valueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wiringMap.valueMode();
-                // Then work out what to put in the expanded one
+//                if (mode == FragmentWiringPager.MODE_VALUE ) {
+//                    wiringMap.normalMode();
+//                } else {
+//                    wiringMap.valueMode();
+//                }
             }
         });
 

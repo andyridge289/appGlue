@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -33,6 +35,8 @@ import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.dialog.DialogApp;
+import com.appglue.layout.dialog.DialogIO;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -49,6 +53,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
     private ComponentService first;
     private ComponentService second;
+
+    private FrameLayout inputFrame;
+    private LinearLayout filterFrame;
+    private FrameLayout outputFrame;
 
     private ListView outputList;
     private SparseIntArray outputPositions;
@@ -104,6 +112,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         this.activity = (ActivityWiring) context;
         this.addView(View.inflate(context, R.layout.wiring_map, null));
         registry = Registry.getInstance(context);
+
+        inputFrame = (FrameLayout) findViewById(R.id.wiring_input_frame);
+        outputFrame = (FrameLayout) findViewById(R.id.wiring_output_frame);
+        filterFrame = (LinearLayout) findViewById(R.id.wiring_filter_frame);
 
         outputList = (ListView) findViewById(R.id.output_list);
         outputList.setClickable(false);
@@ -447,6 +459,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     public void redraw(boolean doLists) {
         this.postInvalidate();
 
+        // FIXME Put all the code for changing the size of things in here!!!
+
         if (outputList != null && doLists) {
             this.outputList.invalidateViews();
         }
@@ -513,11 +527,80 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         return 0; // No view's position was in both previousPositions and mPositions
     }
 
+    public void filterMode() {
+
+        LinearLayout.LayoutParams ioParams = new LinearLayout.LayoutParams(
+                0, LayoutParams.MATCH_PARENT);
+        ioParams.weight = 1.0f;
+        inputFrame.setLayoutParams(ioParams);
+        outputFrame.setLayoutParams(ioParams);
+
+        LinearLayout.LayoutParams filterParams = new LinearLayout.LayoutParams(
+                0, LayoutParams.MATCH_PARENT);
+        filterParams.weight = 3.0f;
+        filterFrame.setLayoutParams(filterParams);
+        filterFrame.setVisibility(View.VISIBLE);
+
+
+    }
+
+    /**
+     * Reset the sizes
+     */
+    public void normalMode() {
+        ((WiringIOAdapter) outputList.getAdapter()).reset();
+        ((WiringIOAdapter) inputList.getAdapter()).reset();
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                0, LayoutParams.MATCH_PARENT);
+        params.weight = 1.0f;
+        inputFrame.setLayoutParams(params);
+        outputFrame.setLayoutParams(params);
+        filterFrame.setLayoutParams(params);
+        filterFrame.setVisibility(View.GONE);
+
+        // TODO We also need to hide whatever we show in each of the list items
+    }
+
+    /**
+     * Resize the list elements
+     */
     public void valueMode() {
-        // Make the output stuff contracted
-        // TODO MAke the input stuff expanded
+        // TODO Put some sort of value setting button into the input things
+        // TODO Change the buttons in the button bar
+
         ((WiringIOAdapter) outputList.getAdapter()).contract();
         ((WiringIOAdapter) inputList.getAdapter()).expand();
+
+        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+                0, LayoutParams.MATCH_PARENT);
+        inputParams.weight = 1.0f;
+        inputFrame.setLayoutParams(inputParams);
+
+        LinearLayout.LayoutParams outputParams = new LinearLayout.LayoutParams(
+            0, LayoutParams.MATCH_PARENT);
+        outputParams.weight = 4.0f;
+        outputFrame.setLayoutParams(outputParams);
+
+        filterFrame.setLayoutParams(inputParams); // The input one has the defaults so just use that
+        filterFrame.setVisibility(View.GONE);
+    }
+
+    /**
+     * This shows the dialog that is used to set values.
+     *
+     * @param item
+     */
+    private void showIODialog(final ServiceIO item) {
+        // Apps are different
+        if(item.getType().typeEquals(IOType.Factory.getType(IOType.Factory.APP))) {
+            DialogApp da = new DialogApp(activity, item);
+            da.show();
+        } else {
+            DialogIO di = new DialogIO(activity, item);
+            di.show();
+        }
+
     }
 
     private class InputAdapter extends WiringIOAdapter {
@@ -538,6 +621,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             final ServiceIO item = items.get(position);
             final IODescription iod = item.getDescription();
 
+            final ImageView setButton = (ImageView) v.findViewById(R.id.set_button);
 
             final View endpoint = v.findViewById(R.id.endpoint);
             final Drawable blob = v.findViewById(R.id.blob).getBackground();
@@ -707,6 +791,34 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     }
                 }
             });
+
+            if (item.hasValues()) {
+                // TODO This needs to look more like an edit button
+                setButton.setBackgroundResource(R.drawable.ic_add_on);
+            } else {
+                setButton.setBackgroundResource(R.drawable.ic_add);
+            }
+
+            setButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showIODialog(item);
+                }
+            });
+
+            if (mode == MODE_EXPANDED) {
+                // TODO Need to do something different with the endpoint depending on whether the thing is set or not
+                if(item.getConnection() == null) {
+                    endpoint.setVisibility(View.GONE);
+                    setButton.setVisibility(View.VISIBLE);
+                }
+            } else if (mode == MODE_CONTRACTED) {
+                endpoint.setVisibility(View.VISIBLE);
+                setButton.setVisibility(View.GONE);
+            } else { // It's normal
+                endpoint.setVisibility(View.VISIBLE);
+                setButton.setVisibility(View.GONE);
+            }
 
             return v;
         }
