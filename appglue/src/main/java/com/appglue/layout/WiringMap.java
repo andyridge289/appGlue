@@ -1,7 +1,6 @@
 package com.appglue.layout;
 
 import android.annotation.SuppressLint;
-import android.app.Service;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -23,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -460,6 +458,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         this.postInvalidate();
 
         // FIXME Put all the code for changing the size of things in here!!!
+//        switch()
 
         if (outputList != null && doLists) {
             this.outputList.invalidateViews();
@@ -529,36 +528,39 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
     public void filterMode() {
 
-        LinearLayout.LayoutParams ioParams = new LinearLayout.LayoutParams(
-                0, LayoutParams.MATCH_PARENT);
-        ioParams.weight = 1.0f;
-        inputFrame.setLayoutParams(ioParams);
-        outputFrame.setLayoutParams(ioParams);
+//        LinearLayout.LayoutParams ioParams = new LinearLayout.LayoutParams(
+//                0, LayoutParams.MATCH_PARENT);
+//        ioParams.weight = 1.0f;
+//        inputFrame.setLayoutParams(ioParams);
+//        outputFrame.setLayoutParams(ioParams);
 
-        LinearLayout.LayoutParams filterParams = new LinearLayout.LayoutParams(
-                0, LayoutParams.MATCH_PARENT);
-        filterParams.weight = 3.0f;
-        filterFrame.setLayoutParams(filterParams);
-        filterFrame.setVisibility(View.VISIBLE);
-
-
+//        LinearLayout.LayoutParams filterParams = new LinearLayout.LayoutParams(
+//                0, LayoutParams.MATCH_PARENT);
+//        filterParams.weight = 3.0f;
+//        filterFrame.setLayoutParams(filterParams);
+//        filterFrame.setVisibility(View.VISIBLE);
+//
+//
     }
 
     /**
      * Reset the sizes
      */
     public void normalMode() {
-        ((WiringIOAdapter) outputList.getAdapter()).reset();
-        ((WiringIOAdapter) inputList.getAdapter()).reset();
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                0, LayoutParams.MATCH_PARENT);
-        params.weight = 1.0f;
-        inputFrame.setLayoutParams(params);
-        outputFrame.setLayoutParams(params);
-        filterFrame.setLayoutParams(params);
-        filterFrame.setVisibility(View.GONE);
-
+//        if (outputList != null && outputList.getAdapter() != null)
+//            ((WiringIOAdapter) outputList.getAdapter()).reset();
+//
+//        if (inputList != null && inputList.getAdapter() != null)
+//            ((WiringIOAdapter) inputList.getAdapter()).reset();
+//
+//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+//                0, LayoutParams.MATCH_PARENT);
+//        params.weight = 1.0f;
+//        inputFrame.setLayoutParams(params);
+//        outputFrame.setLayoutParams(params);
+//        filterFrame.setLayoutParams(params);
+//        filterFrame.setVisibility(View.GONE);
         // TODO We also need to hide whatever we show in each of the list items
     }
 
@@ -568,22 +570,21 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     public void valueMode() {
         // TODO Put some sort of value setting button into the input things
         // TODO Change the buttons in the button bar
-
-        ((WiringIOAdapter) outputList.getAdapter()).contract();
-        ((WiringIOAdapter) inputList.getAdapter()).expand();
-
-        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
-                0, LayoutParams.MATCH_PARENT);
-        inputParams.weight = 1.0f;
-        inputFrame.setLayoutParams(inputParams);
-
-        LinearLayout.LayoutParams outputParams = new LinearLayout.LayoutParams(
-            0, LayoutParams.MATCH_PARENT);
-        outputParams.weight = 4.0f;
-        outputFrame.setLayoutParams(outputParams);
-
-        filterFrame.setLayoutParams(inputParams); // The input one has the defaults so just use that
-        filterFrame.setVisibility(View.GONE);
+//        ((WiringIOAdapter) outputList.getAdapter()).contract();
+//        ((WiringIOAdapter) inputList.getAdapter()).expand();
+//
+//        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+//                0, LayoutParams.MATCH_PARENT);
+//        inputParams.weight = 1.0f;
+//        inputFrame.setLayoutParams(inputParams);
+//
+//        LinearLayout.LayoutParams outputParams = new LinearLayout.LayoutParams(
+//            0, LayoutParams.MATCH_PARENT);
+//        outputParams.weight = 4.0f;
+//        outputFrame.setLayoutParams(outputParams);
+//
+//        filterFrame.setLayoutParams(inputParams); // The input one has the defaults so just use that
+//        filterFrame.setVisibility(View.GONE);
     }
 
     /**

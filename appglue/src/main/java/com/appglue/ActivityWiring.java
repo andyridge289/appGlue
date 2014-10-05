@@ -19,7 +19,6 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.ServiceIO;
-import com.appglue.layout.dialog.DialogFilterList;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public class ActivityWiring extends ActionBarActivity {
 
     private FragmentWiringPager wiringFragment;
     private FragmentComponentListPager componentListFragment;
-//    private FragmentValue valueFragment;
 
     private CharSequence mTitle;
 
@@ -64,29 +62,11 @@ public class ActivityWiring extends ActionBarActivity {
 		setContentView(R.layout.activity_wiring);
     }
 
-//    public void setFilterMode(ServiceIO io) {
-//        this.io = io;
-//        setMode(MODE_FILTER);
-//        redraw();
-//    }
     public void setMode(int mode) {
         this.mode = mode;
     }
-    public void setWiringMode(int wiringMode) {
-        if(wiringFragment != null) {
-            wiringFragment.setWiringMode(wiringMode);
-        }
-    }
-
     public int getMode() {
         return mode;
-    }
-    public int getWiringMode() {
-        if(wiringFragment != null) {
-            return wiringFragment.getWiringMode();
-        }
-
-        return FragmentWiringPager.MODE_DEAD;
     }
 
     public void redraw() {
@@ -262,7 +242,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         if(mode == MODE_CREATE) {
 
-            if(wiringFragment != null && wiringFragment.getWiringMode() == FragmentWiringPager.MODE_WIRING) {
+            if (wiringFragment != null && wiringFragment.getCurrentWiringMode() == FragmentWiring.MODE_WIRING) {
                 menu.setGroupVisible(R.id.menu_group_create_wiring, true);
                 menu.setGroupVisible(R.id.menu_group_create_value, false);
             } else {
@@ -284,10 +264,10 @@ public class ActivityWiring extends ActionBarActivity {
 		} else if(item.getItemId() == R.id.wiring_done) {
 			wiringFragment.saveDialog();
 		} else if (item.getItemId() == R.id.wiring_value_switch) {
-            wiringFragment.setWiringMode(FragmentWiringPager.MODE_VALUE);
+            wiringFragment.setWiringMode(FragmentWiring.MODE_VALUE);
             invalidateOptionsMenu();
         } else if (item.getItemId() == R.id.wiring_wiring_switch) {
-            wiringFragment.setWiringMode(FragmentWiringPager.MODE_WIRING);
+            wiringFragment.setWiringMode(FragmentWiring.MODE_WIRING);
             invalidateOptionsMenu();
         }
 

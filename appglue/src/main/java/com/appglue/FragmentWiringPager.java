@@ -13,12 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.layout.DepthPageTransformer;
 import com.appglue.serviceregistry.Registry;
 
 import static com.appglue.Constants.LOG;
@@ -34,13 +32,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     private ViewPager wiringPager;
     private WiringPagerAdapter adapter;
-
-    private int wiringMode;
-    public static final int MODE_DEAD = -1;
-    public static final int MODE_WIRING = 0;
-    public static final int MODE_VALUE = 1;
-    public static final int MODE_FILTER = 2;
-
 
     private TextView csNameText;
     private EditText csNameEdit;
@@ -118,8 +109,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         finishWiringSetup();
-        setWiringMode(MODE_WIRING);
-
     }
 
     public void onSaveInstanceState(Bundle out) {
@@ -209,25 +198,12 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
     }
 
-    int getWiringMode() {
-        return wiringMode;
-    }
-
-    // TODO Work out what the best way to this is
-    public void setWiringMode(int mode) {
-        this.wiringMode = mode;
-        wiringPager.setVisibility(View.VISIBLE);
-        wiringPager.getAdapter().notifyDataSetChanged();
-        redraw();
-    }
-
-
     public void redraw() {
         // Tell all the fragments to redraw...
         if (adapter != null) {
             for (int i = 0; i < adapter.getCount(); i++) {
                 FragmentWiring f = (FragmentWiring) adapter.getItem(i);
-                f.redraw(wiringMode);
+                f.redraw();
             }
         }
     }
@@ -263,13 +239,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         getActivity().finish();
     }
 
-    private void setPageIndex(int index) {
-        if (wiringMode == MODE_WIRING) {
-            pageIndexText.setText(index + " - " + (index + 1) + " / " + (adapter.getCount() + 1));
-        } else {
-            pageIndexText.setText(index + " / " + adapter.getCount());
-        }
-    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -278,7 +247,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     @Override
     public void onPageSelected(int position) {
-        setPageIndex(position);
+        pageIndexText.setText(position + " / " + adapter.getCount());
+        // TODO We need to change the action bar somewhere in here
     }
 
     @Override
@@ -291,8 +261,29 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         ((ActivityWiring) getActivity()).chooseComponentFromList(position, position);
     }
 
+    public void setWiringMode(int wiringMode) {
+        FragmentWiring fw = adapter.getItem(wiringPager.getCurrentItem());
+        if (fw == null) {
+            Log.e(TAG, "Current fragment is dead");
+        } else {
+            fw.setWiringMode(wiringMode);
+        }
+    }
+
+    public int getCurrentWiringMode() {
+        if (adapter == null)
+            return FragmentWiring.MODE_DEAD;
+
+        FragmentWiring fw = adapter.getItem(wiringPager.getCurrentItem());
+        if (fw == null) {
+            return FragmentWiring.MODE_DEAD;
+        } else {
+            return fw.getWiringMode();
+        }
+    }
+
     private class WiringPagerAdapter extends FragmentStatePagerAdapter {
-        private Fragment[] fragments;
+        private FragmentWiring[] fragments;
         private boolean wiring;
 
         public WiringPagerAdapter(FragmentManager fragmentManager, boolean wiring) {
@@ -300,21 +291,21 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             this.wiring = wiring;
 
             fragments = wiring ?
-                    new Fragment[cs.getComponents().size() + 1] :
-                    new Fragment[cs.getComponents().size()];
+                    new FragmentWiring[cs.getComponents().size() + 1] :
+                    new FragmentWiring[cs.getComponents().size()];
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public FragmentWiring getItem(int position) {
             if (fragments.length <= position) {
-                fragments = new Fragment[cs.getComponents().size() + 1];
+                fragments = new FragmentWiring[cs.getComponents().size() + 1];
             }
 
             if (fragments[position] == null)
                 fragments[position] = FragmentWiring.create(position);
 
             FragmentWiring f = (FragmentWiring) fragments[position];
-            f.redraw(wiringMode);
+            f.redraw();
 
             return fragments[position];
         }

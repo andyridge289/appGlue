@@ -1,11 +1,9 @@
 package com.appglue;
 
-import android.support.v4.app.Fragment;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.TAG;
 
 public class FragmentWiring extends Fragment {
     private int position;
@@ -40,9 +37,15 @@ public class FragmentWiring extends Fragment {
     private Button filterButton;
     private Button valueButton;
 
+    private int wiringMode;
+    public static final int MODE_DEAD = -1;
+    public static final int MODE_WIRING = 0;
+    public static final int MODE_VALUE = 1;
+    public static final int MODE_FILTER = 2;
+
     HashMap<String, Integer> hueMap;
 
-    public static Fragment create(int position) {
+    public static FragmentWiring create(int position) {
         FragmentWiring fragment = new FragmentWiring();
         Bundle args = new Bundle();
         args.putInt(INDEX, position);
@@ -190,14 +193,14 @@ public class FragmentWiring extends Fragment {
             @Override
             public void onClick(View v) {
                 ActivityWiring wiringActivity = (ActivityWiring) getActivity();
-                if (wiringActivity.getWiringMode() == FragmentWiringPager.MODE_FILTER) {
-                    wiringMap.normalMode();
-                    wiringActivity.setWiringMode(FragmentWiringPager.MODE_WIRING);
-                    redraw(FragmentWiringPager.MODE_WIRING)
-                } else {
-                    wiringMap.filterMode();
-                    wiringActivity.setWiringMode(FragmentWiringPager.MODE_FILTER);
-                }
+//                if (wiringActivity.getWiringMode() == MODE_FILTER) {
+//                    wiringMap.normalMode();
+//
+//                    redraw();
+//                } else {
+//                    wiringMap.filterMode();
+//                    wiringActivity.setWiringMode(MODE_FILTER);
+//                }
             }
         });
 
@@ -230,10 +233,10 @@ public class FragmentWiring extends Fragment {
         return second;
     }
 
-    public void redraw(int mode) {
+    public void redraw() {
 
         if (buttonBar != null) {
-            if (mode == FragmentWiringPager.MODE_WIRING) {
+            if (wiringMode == MODE_WIRING) {
                 buttonBar.setVisibility(View.GONE);
             } else {
                 buttonBar.setVisibility(View.VISIBLE);
@@ -245,9 +248,12 @@ public class FragmentWiring extends Fragment {
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-
+    public int getWiringMode() {
+        return wiringMode;
     }
 
-
+    public void setWiringMode(int wiringMode) {
+        this.wiringMode = wiringMode;
+        redraw();
+    }
 }
