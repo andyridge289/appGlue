@@ -241,17 +241,13 @@ public class ActivityWiring extends ActionBarActivity {
 	    inflater.inflate(R.menu.wiring, menu);
 
         if(mode == MODE_CREATE) {
-
             if (wiringFragment != null && wiringFragment.getCurrentWiringMode() == FragmentWiring.MODE_WIRING) {
                 menu.setGroupVisible(R.id.menu_group_create_wiring, true);
-                menu.setGroupVisible(R.id.menu_group_create_value, false);
             } else {
                 menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-                menu.setGroupVisible(R.id.menu_group_create_value, true);
             }
         } else {
             menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-            menu.setGroupVisible(R.id.menu_group_create_value, false);
             menu.setGroupVisible(R.id.menu_group_choose, true);
         }
 
@@ -263,12 +259,6 @@ public class ActivityWiring extends ActionBarActivity {
 			finish();
 		} else if(item.getItemId() == R.id.wiring_done) {
 			wiringFragment.saveDialog();
-		} else if (item.getItemId() == R.id.wiring_value_switch) {
-            wiringFragment.setWiringMode(FragmentWiring.MODE_VALUE);
-            invalidateOptionsMenu();
-        } else if (item.getItemId() == R.id.wiring_wiring_switch) {
-            wiringFragment.setWiringMode(FragmentWiring.MODE_WIRING);
-            invalidateOptionsMenu();
         }
 
         return true;

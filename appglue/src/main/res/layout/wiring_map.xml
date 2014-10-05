@@ -1,129 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:baselineAligned="false"
     >
-    
     <FrameLayout
         android:id="@+id/wiring_output_frame"
     	android:layout_width="0dip"
 	    android:layout_weight="1"
-	    android:layout_height="fill_parent"
-	    >
-	    
+	    android:layout_height="match_parent"
+        android:paddingRight="10dip"
+        android:paddingEnd="10dip"
+        tools:ignore="RtlSymmetry"
+        >
         <LinearLayout
             android:id="@+id/outputs"
             android:background="@drawable/wiring_output_list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:visibility="visible"
             >
-        
 		    <ListView
 		        android:id="@+id/output_list"
-		      	android:layout_width="fill_parent"
-		      	android:layout_height="fill_parent"
+		      	android:layout_width="match_parent"
+		      	android:layout_height="match_parent"
 		        />
-	    
 	    </LinearLayout>
-	    
-    	<RelativeLayout 
+
+    	<RelativeLayout
     	    android:id="@+id/no_outputs"
-    	    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
+    	    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
 		    android:visibility="invisible"
 		    >
-		    
+
 		    <TextView
 		        android:text="@string/none"
-		        android:layout_height="fill_parent"
-				android:layout_width="fill_parent"
+		        android:layout_height="match_parent"
+				android:layout_width="match_parent"
 				android:gravity="center"
 				android:paddingLeft="20dip"
 				android:paddingRight="20dip"
 		        android:background="@drawable/wiring_output"
 		        android:textColor="@color/white"
 			    />
-		    
+
 	    </RelativeLayout>
-	    
+
     	<RelativeLayout
     	    android:id="@+id/add_output"
-	   	    android:layout_width="fill_parent"
-	   	    android:layout_height="fill_parent"
+	   	    android:layout_width="match_parent"
+	   	    android:layout_height="match_parent"
 	   	    android:visibility="invisible"
 	   	    >
-    	
+
 		   	<View
-		   	    android:layout_width="80dip"
-		   	    android:layout_height="fill_parent"
+		   	    android:layout_width="match_parent"
+		   	    android:layout_height="match_parent"
                 android:background="@drawable/wiring_add_pre_default"
 		   	    android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
 		   	    />
-	   	
+
 	   	</RelativeLayout>
     
     </FrameLayout>
-    
-    <View
-        android:layout_width="10dip"
-        android:layout_height="fill_parent"
-        />
 
+    <!-- Initialise the weight of the filter thing to be zero -->
     <LinearLayout
         android:id="@+id/wiring_filter_frame"
-        android:background="@color/android_red"
+        android:background="@drawable/wiring_filter"
         android:layout_width="0dip"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/wiring_filter_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/wiring_border"
+            android:textColor="@color/white"
+            android:text="@string/wiring_filter_title"
+            android:textAllCaps="true"
+            android:gravity="center_horizontal"
+            android:paddingTop="5dip"
+            />
 
-    <View
-        android:layout_width="10dip"
-        android:layout_height="fill_parent"
-        />
+        <Button
+            android:id="@+id/wiring_filter_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/wiring_filter_add"
+            />
+
+        <TextView
+            android:id="@+id/wiring_no_filters"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/wiring_filters_none"
+            android:textAllCaps="true"
+            android:textSize="12sp"
+            />
+
+        <ListView
+            android:id="@+id/wiring_filter_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
     
     <FrameLayout
         android:id="@+id/wiring_input_frame"
         android:layout_width="0dip"
         android:layout_weight="1"
-        android:layout_height="fill_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="10dip"
+        android:paddingStart="10dip"
+        tools:ignore="RtlSymmetry"
         >
     	
         <LinearLayout
             android:id="@+id/inputs"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
 	        android:background="@drawable/wiring_input_list"
 	        android:visibility="visible"
 	        >
-    
+
 		    <ListView
 		        android:id="@+id/input_list"
-		        android:layout_width="fill_parent"
-		        android:layout_height="fill_parent"
+		        android:layout_width="match_parent"
+		        android:layout_height="match_parent"
 		        android:duplicateParentState="true"
-		        
+
 		        />
-	    
+
 	    </LinearLayout>
-	    
-	    <RelativeLayout 
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
+
+	    <RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
 	        android:id="@+id/no_inputs"
 	        android:visibility="invisible"
 	        >
-    
+
 		    <TextView
 		        android:text="@string/none"
-		        android:layout_height="fill_parent"
-				android:layout_width="fill_parent"
+		        android:layout_height="match_parent"
+				android:layout_width="match_parent"
 				android:gravity="center"
 				android:paddingLeft="20dip"
 				android:paddingRight="20dip"
@@ -132,23 +163,23 @@
 		        android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
 	       	 />
-	    
+
 	    </RelativeLayout>
-	    
+
 	    <RelativeLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
 	        android:id="@+id/add_input"
 	        android:visibility="invisible">
-		    
+
 		    <View
-		        android:layout_width="80dip"
-		   	    android:layout_height="fill_parent"
+		        android:layout_width="match_parent"
+		   	    android:layout_height="match_parent"
 		   	    android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/wiring_add_post_default"
 		        />
-	    
+
 	    </RelativeLayout>
     
     </FrameLayout>

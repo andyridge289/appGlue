@@ -33,7 +33,7 @@ public class FragmentWiring extends Fragment {
     private ComponentService first;
     private ComponentService second;
 
-    private LinearLayout buttonBar;
+    private Button wiringButton;
     private Button filterButton;
     private Button valueButton;
 
@@ -68,7 +68,6 @@ public class FragmentWiring extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_wiring, container, false);
 
         hueMap = new HashMap<String, Integer>();
-
         wiringMap = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
 
         TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
@@ -80,18 +79,22 @@ public class FragmentWiring extends Fragment {
         RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
         RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
 
-        buttonBar = (LinearLayout) rootView.findViewById(R.id.value_button_bar);
+        wiringButton = (Button) rootView.findViewById(R.id.wiring_button_all);
         filterButton = (Button) rootView.findViewById(R.id.filter_button_all);
         valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
         ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
 
-        // TODO Invalid index 0, size is 0
+        if (components.size() == 0) { // TODO Work out if this is actually a problem
+            first = null;
+            second = null;
+        } else {
+            first = position > 0 ? components.get(position - 1) : null;
+            second = position < components.size() ? components.get(position) : null;
+        }
 
-        first = position > 0 ? components.get(position - 1) : null;
-        second = position < components.size() ? components.get(position) : null;
-
-        wiringMap.set(first, second);
+        setWiringMode(MODE_WIRING);
+        wiringMap.set(first, second, wiringMode);
 
         LocalStorage localStorage = LocalStorage.getInstance();
 
@@ -189,29 +192,24 @@ public class FragmentWiring extends Fragment {
             });
         }
 
+        wiringButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setWiringMode(MODE_WIRING);
+            }
+        });
+
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ActivityWiring wiringActivity = (ActivityWiring) getActivity();
-//                if (wiringActivity.getWiringMode() == MODE_FILTER) {
-//                    wiringMap.normalMode();
-//
-//                    redraw();
-//                } else {
-//                    wiringMap.filterMode();
-//                    wiringActivity.setWiringMode(MODE_FILTER);
-//                }
+                setWiringMode(MODE_FILTER);
             }
         });
 
         valueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (mode == FragmentWiringPager.MODE_VALUE ) {
-//                    wiringMap.normalMode();
-//                } else {
-//                    wiringMap.valueMode();
-//                }
+                setWiringMode(MODE_VALUE);
             }
         });
 
@@ -235,16 +233,8 @@ public class FragmentWiring extends Fragment {
 
     public void redraw() {
 
-        if (buttonBar != null) {
-            if (wiringMode == MODE_WIRING) {
-                buttonBar.setVisibility(View.GONE);
-            } else {
-                buttonBar.setVisibility(View.VISIBLE);
-            }
-        }
-
         if (wiringMap != null) {
-            wiringMap.redraw(true);
+            wiringMap.setWiringMode(wiringMode);
         }
     }
 
@@ -254,6 +244,26 @@ public class FragmentWiring extends Fragment {
 
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
+
+        switch(wiringMode) {
+            case MODE_VALUE:
+                wiringButton.setSelected(false);
+                filterButton.setSelected(false);
+                valueButton.setSelected(true);
+                break;
+
+            case MODE_FILTER:
+                wiringButton.setSelected(false);
+                filterButton.setSelected(true);
+                valueButton.setSelected(false);
+                break;
+
+            default:
+                wiringButton.setSelected(true);
+                filterButton.setSelected(false);
+                valueButton.setSelected(false);
+                break;
+        }
         redraw();
     }
 }

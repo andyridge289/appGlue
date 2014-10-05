@@ -5,26 +5,37 @@
     android:layout_height="fill_parent"
     >
     <LinearLayout
+        style="@style/tab_bar"
         android:id="@+id/value_button_bar"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_alignParentBottom="true">
 
         <Button
+            style="@style/tab"
+            android:id="@+id/wiring_button_all"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="@string/wiring_tab"
+            />
+
+        <Button
+            style="@style/tab"
             android:id="@+id/filter_button_all"
             android:layout_width="0dip"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Add/Edit Filters"
+            android:text="@string/filter_tab"
             />
 
         <Button
+            style="@style/tab"
             android:id="@+id/value_button_all"
             android:layout_width="0dip"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Add/Edit Values"
+            android:text="@string/value_tab"
             />
 
     </LinearLayout>

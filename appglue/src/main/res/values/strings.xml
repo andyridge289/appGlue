@@ -182,5 +182,11 @@
     <string name="cd_composite_icon">Composite icon</string>
 
     <string name="bullet">\u2022</string>
+    <string name="wiring_tab">Wiring</string>
+    <string name="filter_tab">Filters</string>
+    <string name="value_tab">Values</string>
+    <string name="wiring_filter_title">filters</string>
+    <string name="wiring_filters_none">No Filters</string>
+    <string name="wiring_filter_add">Add</string>
 
 </resources>

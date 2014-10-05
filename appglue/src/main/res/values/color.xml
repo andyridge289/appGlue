@@ -28,11 +28,14 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
 
+    <!-- Theme colours -->
     <color name="bg">#fff3f3f3</color>
+    <color name="bar_bg">#2D2D2D</color>
 
     <color name="none">#0000</color>
 
     <color name="white">#FFF</color>
+    <color name="translucent_white">#EFFF</color>
 
     <!--<color name="active">#CFF</color>-->
     <!--<color name="done">#39F</color>-->
@@ -84,4 +87,6 @@
     <!-- Colours for IO things -->
     <color name="dull_bg">#222</color>
     <!--<color name="dull_fg">#666</color>-->
+
+    <!-- Misc -->
 </resources>

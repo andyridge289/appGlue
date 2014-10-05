@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ActionMode;
@@ -282,12 +281,12 @@ public class ActivityCompositeList extends Activity {
 //		}
     }
 
-    protected void onSaveInstanceState(@NonNull Bundle icicle) {
+    protected void onSaveInstanceState(Bundle icicle) {
         icicle.describeContents();
         // Not sure we need to save anything here
     }
 
-    protected void onRestoreInstanceState(@NonNull Bundle icicle) {
+    protected void onRestoreInstanceState(Bundle icicle) {
         icicle.describeContents();
         // So we probably don't need to restore anything back
     }
@@ -337,54 +336,54 @@ public class ActivityCompositeList extends Activity {
 
     @SuppressLint("InflateParams")
     private void createTimerDialog(final CompositeService cs) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
-        builder.setTitle("Set timer duration");
-
-        LayoutInflater inflater = getLayoutInflater();
-        View layout = inflater.inflate(R.layout.dialog_timer, null);
-        builder.setView(layout);
-
-        if (layout == null)
-            return;
-
-        final EditText numeralEdit = (EditText) layout.findViewById(R.id.timer_edit_numerals);
-        final CheckBox runNowCheck = (CheckBox) layout.findViewById(R.id.timer_run_now);
-
-        if (numeralEdit == null || runNowCheck == null)
-            return;
-
-        final Spinner intervalSpinner = (Spinner) layout.findViewById(R.id.timer_spinner_intervals);
-        ArrayAdapter<CharSequence> intervalAdapter = ArrayAdapter.createFromResource(this, R.array.time_array, R.layout.dialog_spinner_dropdown);
-        intervalAdapter.setDropDownViewResource(R.layout.dialog_spinner_dropdown);
-        intervalSpinner.setAdapter(intervalAdapter);
-
-        Dialog.OnClickListener okayClick = new Dialog.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Get the things of each of the spinners and work out the duration
-                long numeral = Integer.parseInt(numeralEdit.getText().toString());
-                int intervalIndex = intervalSpinner.getSelectedItemPosition();
-                Interval interval;
-
-                if (intervalIndex == Interval.SECONDS.index) {
-                    interval = Interval.SECONDS;
-                } else if (intervalIndex == Interval.MINUTES.index) {
-                    interval = Interval.MINUTES;
-                } else if (intervalIndex == Interval.HOURS.index) {
-                    interval = Interval.HOURS;
-                } else {
-                    interval = Interval.DAYS;
-                }
-
-                runOnTimer(cs, numeral * interval.value, runNowCheck.isChecked());
-            }
-        };
-
-        builder.setPositiveButton("Okay", okayClick);
-        builder.setNegativeButton("Cancel", null);
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
+//        builder.setTitle("Set timer duration");
+//
+//        LayoutInflater inflater = getLayoutInflater();
+//        View layout = inflater.inflate(R.layout.dialog_timer, null);
+//        builder.setView(layout);
+//
+//        if (layout == null)
+//            return;
+//
+//        final EditText numeralEdit = (EditText) layout.findViewById(R.id.timer_edit_numerals);
+//        final CheckBox runNowCheck = (CheckBox) layout.findViewById(R.id.timer_run_now);
+//
+//        if (numeralEdit == null || runNowCheck == null)
+//            return;
+//
+//        final Spinner intervalSpinner = (Spinner) layout.findViewById(R.id.timer_spinner_intervals);
+//        ArrayAdapter<CharSequence> intervalAdapter = ArrayAdapter.createFromResource(this, R.array.time_array, R.layout.dialog_spinner_dropdown);
+//        intervalAdapter.setDropDownViewResource(R.layout.dialog_spinner_dropdown);
+//        intervalSpinner.setAdapter(intervalAdapter);
+//
+//        Dialog.OnClickListener okayClick = new Dialog.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // Get the things of each of the spinners and work out the duration
+//                long numeral = Integer.parseInt(numeralEdit.getText().toString());
+//                int intervalIndex = intervalSpinner.getSelectedItemPosition();
+//                Interval interval;
+//
+//                if (intervalIndex == Interval.SECONDS.index) {
+//                    interval = Interval.SECONDS;
+//                } else if (intervalIndex == Interval.MINUTES.index) {
+//                    interval = Interval.MINUTES;
+//                } else if (intervalIndex == Interval.HOURS.index) {
+//                    interval = Interval.HOURS;
+//                } else {
+//                    interval = Interval.DAYS;
+//                }
+//
+//                runOnTimer(cs, numeral * interval.value, runNowCheck.isChecked());
+//            }
+//        };
+//
+//        builder.setPositiveButton("Okay", okayClick);
+//        builder.setNegativeButton("Cancel", null);
+//
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
     }
 
     private void runOnTimer(CompositeService cs, long duration, boolean runNow) {

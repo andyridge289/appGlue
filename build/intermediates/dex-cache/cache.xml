@@ -2,10 +2,52 @@
 <pre-dex-items>
 
     <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-62a5fc9a29c12e483da2acff544ed3828367ad1d.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\support-v13\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e128103d5281ddd26195a7f980b36d0d005a4e56"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-9b892f4845b4954d312aaa13fa113cb42e77952c.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\appcompat-v7\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="f21927d22fe31889ecce94dd697a2e75b137e0ef"/>
+    <item
         dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-899cb823e7e9266af22bd6f05e25d29eba75356d.jar"
         jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\appGlue\appGlueLib\unspecified\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="f3fb1c769763dd3c1dfe6adee1e8a666a5f574e4"/>
+        sha1="25f8ea93a7137f750beb339da47e7791259660da"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-a6af005bc380ef4e2bea571e3e9292b9f6ad540c.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-14d9feb3fa6be974db2258e67e0280ca2f7c03c3.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\support-v13\20.0.0\libs\internal_impl-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="27bbd3982cdfe4468a9bf99c8c773734a9049e33"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-ce3cc32a54842cf7e84cc5279dc00a9e1781625b.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="e5531cb41e35c81a051a274945542f6b31e4c97e"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-f1fba2a35ec14685abfee86bcc61cf40b903935b.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="8694693636ab36910c8100ce527c258ff3ebece0"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-b29c5fdbbe3b14a91bd7ff55907403b8a12015ea.jar"
+        jar="C:\Users\andy\AppData\Local\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa"/>
 
 </pre-dex-items>

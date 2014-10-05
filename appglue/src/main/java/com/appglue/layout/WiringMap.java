@@ -17,17 +17,22 @@ import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.ActivityWiring;
-import com.appglue.IODescription;
 import com.appglue.R;
+
+import com.appglue.ActivityWiring;
+import com.appglue.FragmentWiring;
+import com.appglue.IODescription;
 import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
@@ -52,31 +57,35 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     private ComponentService first;
     private ComponentService second;
 
-    private FrameLayout inputFrame;
-    private LinearLayout filterFrame;
     private FrameLayout outputFrame;
-
     private ListView outputList;
+    private OutputAdapter outputAdapter;
     private SparseIntArray outputPositions;
     private Queue<Integer> outputOffsets;
+    private View outputContainer;
+    private View noInputs;
+    private View addInput;
 
+    private FrameLayout inputFrame;
     private ListView inputList;
+    private InputAdapter inputAdapter;
     private SparseIntArray inputPositions;
     private Queue<Integer> inputOffsets;
-
-    // I don't think we actually care what these are
-    private View outputContainer;
     private View inputContainer;
     private View noOutputs;
-    private View noInputs;
     private View addOutput;
-    private View addInput;
+
+    private LinearLayout filterFrame;
+    private View noFilter;
+    private ListView filterList;
+    private View addFilter;
 
     private static final int LOWLIGHT_ALPHA = 10;
     private static final int HIGHLIGHT_ALPHA = 5;
     private static final int BASE_ALPHA = 2;
 
     private ActivityWiring activity;
+    private int wiringMode;
 
     private ServiceIO iSelected;
     private int iIndex;
@@ -107,8 +116,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
     public void create(Context context) {
         this.setWillNotDraw(false);
+
         this.activity = (ActivityWiring) context;
-        this.addView(View.inflate(context, R.layout.wiring_map, null));
+
+        View v = View.inflate(context, R.layout.wiring_map, null);
+        v.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        this.addView(v);
+
         registry = Registry.getInstance(context);
 
         inputFrame = (FrameLayout) findViewById(R.id.wiring_input_frame);
@@ -123,14 +137,18 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         inputList.setClickable(false);
         inputList.setOnScrollListener(this);
 
+        filterList = (ListView) findViewById(R.id.wiring_filter_list);
+
         outputContainer = findViewById(R.id.outputs);
         inputContainer = findViewById(R.id.inputs);
 
         noOutputs = findViewById(R.id.no_outputs);
         noInputs = findViewById(R.id.no_inputs);
+        noFilter = findViewById(R.id.wiring_no_filters);
 
         addOutput = findViewById(R.id.add_output);
         addInput = findViewById(R.id.add_input);
+        addFilter = findViewById(R.id.wiring_filter_add);
 
         connections = new ArrayList<Point>();
 
@@ -139,6 +157,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
         iIndex = -1;
         oIndex = -1;
+
+        wiringMode = -1;
     }
 
     public ComponentService getFirst() {
@@ -212,12 +232,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     }
 
 
-    public void set(ComponentService first, ComponentService second) {
+    public void set(ComponentService first, ComponentService second, int mode) {
         this.first = first;
         if (first != null) {
             if (first.getDescription().getOutputs().size() > 0) {
                 // There are getOutputs, show the list, hide the none and the add
-                outputList.setAdapter(new OutputAdapter(activity, first.getOutputs()));
+                outputAdapter = new OutputAdapter(activity, first.getOutputs());
+                outputList.setAdapter(outputAdapter);
                 outputContainer.setVisibility(View.VISIBLE);
                 noOutputs.setVisibility(View.INVISIBLE);
                 addOutput.setVisibility(View.INVISIBLE);
@@ -237,7 +258,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         this.second = second;
         if (second != null) {
             if (second.getDescription().getInputs().size() > 0) {
-                inputList.setAdapter(new InputAdapter(activity, second.getInputs()));
+                inputAdapter = new InputAdapter(activity, second.getInputs());
+                inputList.setAdapter(inputAdapter);
                 inputContainer.setVisibility(View.VISIBLE);
                 noInputs.setVisibility(View.INVISIBLE);
                 addInput.setVisibility(View.INVISIBLE);
@@ -265,9 +287,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         }
 
         hueGeneration();
-
-        // Try to force a re-draw
-        this.postInvalidate();
+        this.wiringMode = mode;
+        redraw(true); // There's a post invalidate in redraw
     }
 
     private void hueGeneration() {
@@ -376,6 +397,9 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             View selectedOutput = outputList.getChildAt(connection.x);
             View selectedInput = inputList.getChildAt(connection.y);
 
+            if (selectedInput == null || selectedOutput == null)
+                continue; // Probably just try again at the next redraw. It probably doesn't like the animations
+
             if (connection.x == -1 || connection.y == -1) {
                 Log.e(TAG, "Path epic failure, not really sure why");
                 continue;
@@ -454,17 +478,74 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         }
     }
 
-    public void redraw(boolean doLists) {
+    public void redraw(boolean refreshLists) {
+
+        if (wiringMode == -1) {
+            // If we don't have one yet then it should have defaulted to wiring.
+            wiringMode = FragmentWiring.MODE_WIRING;
+        }
+
+        float inputWeight;
+        float outputWeight;
+        float filterWeight;
+
+        switch(wiringMode) {
+            case FragmentWiring.MODE_FILTER:
+                outputWeight = 1.0f;
+                inputWeight = 1.0f;
+                filterWeight = 2.0f;
+                if (outputAdapter != null) {
+                    outputAdapter.contract();
+                }
+                if (inputAdapter != null) {
+                    inputAdapter.contract();
+                }
+                break;
+
+            case FragmentWiring.MODE_VALUE:
+                outputWeight = 1.0f;
+                inputWeight = 3.0f;
+                filterWeight = 0.0f;
+                if (outputAdapter != null) {
+                    outputAdapter.contract();
+                }
+                if (inputAdapter != null) {
+                    inputAdapter.expand();
+                }
+                break;
+
+            default: // Wiring mode I guess, or just anything else
+                outputWeight = 1.0f;
+                inputWeight = 1.0f;
+                filterWeight = 0.0f;
+                if (outputAdapter != null) {
+                    outputAdapter.reset();
+                }
+                if (inputAdapter != null) {
+                    inputAdapter.reset();
+                }
+                break;
+        }
+
+        ExpandAnimation ia = new ExpandAnimation(inputFrame, ((LayoutParams) inputFrame.getLayoutParams()).weight, inputWeight);
+        ia.setDuration(500);
+        inputFrame.startAnimation(ia);
+
+        ExpandAnimation oa = new ExpandAnimation(outputFrame, ((LayoutParams) outputFrame.getLayoutParams()).weight, outputWeight);
+        oa.setDuration(500);
+        outputFrame.startAnimation(oa);
+
+        ExpandAnimation fa = new ExpandAnimation(filterFrame, ((LayoutParams) filterFrame.getLayoutParams()).weight, filterWeight);
+        fa.setDuration(500);
+        filterFrame.startAnimation(fa);
+
         this.postInvalidate();
 
-        // FIXME Put all the code for changing the size of things in here!!!
-//        switch()
-
-        if (outputList != null && doLists) {
+        if (outputList != null && refreshLists) {
             this.outputList.invalidateViews();
         }
 
-        if (doLists && inputList != null) {
+        if (refreshLists && inputList != null) {
             this.inputList.invalidateViews();
         }
     }
@@ -526,67 +607,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         return 0; // No view's position was in both previousPositions and mPositions
     }
 
-    public void filterMode() {
-
-//        LinearLayout.LayoutParams ioParams = new LinearLayout.LayoutParams(
-//                0, LayoutParams.MATCH_PARENT);
-//        ioParams.weight = 1.0f;
-//        inputFrame.setLayoutParams(ioParams);
-//        outputFrame.setLayoutParams(ioParams);
-
-//        LinearLayout.LayoutParams filterParams = new LinearLayout.LayoutParams(
-//                0, LayoutParams.MATCH_PARENT);
-//        filterParams.weight = 3.0f;
-//        filterFrame.setLayoutParams(filterParams);
-//        filterFrame.setVisibility(View.VISIBLE);
-//
-//
-    }
-
-    /**
-     * Reset the sizes
-     */
-    public void normalMode() {
-
-//        if (outputList != null && outputList.getAdapter() != null)
-//            ((WiringIOAdapter) outputList.getAdapter()).reset();
-//
-//        if (inputList != null && inputList.getAdapter() != null)
-//            ((WiringIOAdapter) inputList.getAdapter()).reset();
-//
-//        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-//                0, LayoutParams.MATCH_PARENT);
-//        params.weight = 1.0f;
-//        inputFrame.setLayoutParams(params);
-//        outputFrame.setLayoutParams(params);
-//        filterFrame.setLayoutParams(params);
-//        filterFrame.setVisibility(View.GONE);
-        // TODO We also need to hide whatever we show in each of the list items
-    }
-
-    /**
-     * Resize the list elements
-     */
-    public void valueMode() {
-        // TODO Put some sort of value setting button into the input things
-        // TODO Change the buttons in the button bar
-//        ((WiringIOAdapter) outputList.getAdapter()).contract();
-//        ((WiringIOAdapter) inputList.getAdapter()).expand();
-//
-//        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
-//                0, LayoutParams.MATCH_PARENT);
-//        inputParams.weight = 1.0f;
-//        inputFrame.setLayoutParams(inputParams);
-//
-//        LinearLayout.LayoutParams outputParams = new LinearLayout.LayoutParams(
-//            0, LayoutParams.MATCH_PARENT);
-//        outputParams.weight = 4.0f;
-//        outputFrame.setLayoutParams(outputParams);
-//
-//        filterFrame.setLayoutParams(inputParams); // The input one has the defaults so just use that
-//        filterFrame.setVisibility(View.GONE);
-    }
-
     /**
      * This shows the dialog that is used to set values.
      *
@@ -601,7 +621,11 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             DialogIO di = new DialogIO(activity, item);
             di.show();
         }
+    }
 
+    public void setWiringMode(int wiringMode) {
+        this.wiringMode = wiringMode;
+        redraw(true);
     }
 
     private class InputAdapter extends WiringIOAdapter {
@@ -658,7 +682,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     ioValue.setText(valueName);
                 }
 
-                // If it's not unfiltered, then it's either manual or not
+                // TODO If it's not unfiltered, then it's either manual or not. This probably needs to go back in
 //    			if (item.getFilterState() == ServiceIO.UNFILTERED)
 //    			{
 //    				ioType.setText(iod.getType().getName());
@@ -807,18 +831,27 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             });
 
-            if (mode == MODE_EXPANDED) {
+            if (this.isExpanded()) {
                 // TODO Need to do something different with the endpoint depending on whether the thing is set or not
                 if(item.getConnection() == null) {
                     endpoint.setVisibility(View.GONE);
                     setButton.setVisibility(View.VISIBLE);
                 }
-            } else if (mode == MODE_CONTRACTED) {
+                ioName.setVisibility(View.VISIBLE);
+                ioType.setVisibility(View.VISIBLE);
+                ioValue.setVisibility(View.VISIBLE);
+            } else if (this.isContracted()) {
                 endpoint.setVisibility(View.VISIBLE);
                 setButton.setVisibility(View.GONE);
+                ioName.setVisibility(View.GONE);
+                ioType.setVisibility(View.GONE);
+                ioValue.setVisibility(View.GONE);
             } else { // It's normal
                 endpoint.setVisibility(View.VISIBLE);
                 setButton.setVisibility(View.GONE);
+                ioName.setVisibility(View.VISIBLE);
+                ioType.setVisibility(View.VISIBLE);
+                ioValue.setVisibility(View.VISIBLE);
             }
 
             return v;
@@ -1139,6 +1172,31 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             this.start = start;
             this.end = end;
             this.colour = colour;
+        }
+    }
+
+    private class ExpandAnimation extends Animation {
+
+        private final float mStartWeight;
+        private final float mDeltaWeight;
+        private View mContent;
+
+        public ExpandAnimation(View v, float startWeight, float endWeight) {
+            mStartWeight = startWeight;
+            mDeltaWeight = endWeight - startWeight;
+            mContent = v;
+        }
+
+        @Override
+        protected void applyTransformation(float interpolatedTime, Transformation t) {
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContent.getLayoutParams();
+            lp.weight = (mStartWeight + (mDeltaWeight * interpolatedTime));
+            mContent.setLayoutParams(lp);
+        }
+
+        @Override
+        public boolean willChangeBounds() {
+            return true;
         }
     }
 }
