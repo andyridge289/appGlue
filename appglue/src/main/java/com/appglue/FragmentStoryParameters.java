@@ -27,7 +27,7 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
-import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;

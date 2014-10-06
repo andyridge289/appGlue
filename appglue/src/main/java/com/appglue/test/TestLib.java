@@ -11,7 +11,7 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.NotificationService;
 import com.appglue.services.ServiceFactory;
@@ -69,7 +69,7 @@ public class TestLib {
         }
 
         ServiceIO lineIO = tubeComponent.getOutput(TubeService.LINE_NAME);
-        IOValue value = new IOValue(IOFilter.STR_EQUALS, bakerlooSample, lineIO);
+        IOValue value = new IOValue(FilterFactory.STR_EQUALS, bakerlooSample, lineIO);
         lineIO.addFilter(value);
 
         ServiceIO titleIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TITLE);
@@ -83,14 +83,14 @@ public class TestLib {
         imageIO.setConnection(lineIconIO);
 
         ServiceIO textIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
-        IOValue ioValue = new IOValue(IOFilter.NONE, lineIO.getDescription().getType().fromString("Test message"), textIO);
+        IOValue ioValue = new IOValue(FilterFactory.NONE, lineIO.getDescription().getType().fromString("Test message"), textIO);
         textIO.setValue(ioValue);
 
         return new CompositeService(name, "This is called " + name, components);
     }
 
     public static ComponentService createComponentForFilterSample(ServiceDescription sd, IODescription[] filterOns,
-                                                                  String[] sampleValues, IOFilter.FilterValue[] filterConditions) {
+                                                                  String[] sampleValues, FilterFactory.FilterValue[] filterConditions) {
 
         ComponentService component = new ComponentService(sd, -1);
 
@@ -98,7 +98,7 @@ public class TestLib {
 
             IODescription filterOn = filterOns[i];
             String sampleValue = sampleValues[i];
-            IOFilter.FilterValue filterCondition = filterConditions[i];
+            FilterFactory.FilterValue filterCondition = filterConditions[i];
 
             SampleValue chosenSample = null;
             ArrayList<SampleValue> samples = filterOn.getSampleValues();

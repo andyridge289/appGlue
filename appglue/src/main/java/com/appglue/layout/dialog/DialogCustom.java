@@ -11,7 +11,7 @@ import com.appglue.description.SampleValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
-import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;

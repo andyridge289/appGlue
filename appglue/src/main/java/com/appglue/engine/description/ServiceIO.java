@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.appglue.IODescription;
 import com.appglue.description.datatypes.IOType;
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 
 import java.util.ArrayList;
 
@@ -85,9 +85,9 @@ public class ServiceIO {
         this.values.add(value);
     }
 
-    public IOFilter.FilterValue getCondition() {
+    public FilterFactory.FilterValue getCondition() {
         if (this.values.isEmpty()) {
-            return IOFilter.NONE;
+            return FilterFactory.NONE;
         }
 
         return values.get(0).getCondition();

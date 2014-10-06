@@ -28,7 +28,7 @@ import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.ComponentLogItem;
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 import com.appglue.library.LogItem;
 
 import java.text.SimpleDateFormat;
@@ -2127,7 +2127,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long id = c.getLong(c.getColumnIndex(ID));
             int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
             int conditionIndex = c.getInt(c.getColumnIndex(FILTER_CONDITION));
-            IOFilter.FilterValue condition = IOFilter.getFilterValue(conditionIndex);
+            FilterFactory.FilterValue condition = FilterFactory.getFilterValue(conditionIndex);
 
             String manualValueString = c.isNull(c.getColumnIndex(MANUAL_VALUE)) ? null :
                     c.getString(c.getColumnIndex(MANUAL_VALUE));

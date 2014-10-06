@@ -1,6 +1,6 @@
 package com.appglue.library;
 
-import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.FilterFactory.FilterValue;
 
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
@@ -72,23 +72,23 @@ public class AppGlueConstants {
 
     public static final FilterValue[] FILTER_STRING_VALUES = new FilterValue[]
             {
-                    IOFilter.STR_EQUALS, IOFilter.STR_NOTEQUALS, IOFilter.STR_CONTAINS
+                    FilterFactory.STR_EQUALS, FilterFactory.STR_NOTEQUALS, FilterFactory.STR_CONTAINS
             };
 
     public static final FilterValue[] FILTER_NUMBER_VALUES = new FilterValue[]
             {
-                    IOFilter.INT_EQUALS, IOFilter.INT_NOTEQUALS, IOFilter.INT_LEQUALS,
-                    IOFilter.INT_LT, IOFilter.INT_GEQUALS, IOFilter.INT_GT
+                    FilterFactory.INT_EQUALS, FilterFactory.INT_NOTEQUALS, FilterFactory.INT_LEQUALS,
+                    FilterFactory.INT_LT, FilterFactory.INT_GEQUALS, FilterFactory.INT_GT
             };
 
     public static final FilterValue[] FILTER_BOOL_VALUES = new FilterValue[]
             {
-                    IOFilter.BOOL_EQUALS, IOFilter.BOOL_NOTEQUALS
+                    FilterFactory.BOOL_EQUALS, FilterFactory.BOOL_NOTEQUALS
             };
 
     public static final FilterValue[] FILTER_SET_VALUES = new FilterValue[]
             {
-                    IOFilter.SET_EQUALS, IOFilter.SET_NOTEQUALS
+                    FilterFactory.SET_EQUALS, FilterFactory.SET_NOTEQUALS
             };
 
     public static String[] FILTER_BOOL = new String[]{"true", "false"};

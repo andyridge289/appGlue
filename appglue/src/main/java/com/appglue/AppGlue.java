@@ -1,6 +1,6 @@
 package com.appglue;
 
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 
 import android.app.Application;
 
@@ -12,6 +12,6 @@ public class AppGlue extends Application
 	{
 		super.onCreate();
 		
-		IOFilter.filterFactory();
+		FilterFactory.filterFactory();
 	}	
 }

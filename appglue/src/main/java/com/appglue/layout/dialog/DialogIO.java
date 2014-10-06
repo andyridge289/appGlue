@@ -14,7 +14,7 @@ import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 
 import java.util.ArrayList;
 
@@ -81,13 +81,13 @@ public class DialogIO extends DialogCustom {
                 if (textRadio.isChecked()) {
                     // Then look up the text value
                     Object objectValue = description.getType().fromString(ioText.getText().toString());
-                    IOValue value = new IOValue(IOFilter.NONE, objectValue, io);
+                    IOValue value = new IOValue(FilterFactory.NONE, objectValue, io);
                     item.setValue(value);
                     DialogIO.this.activity.setStatus("Set manual value for " + description.getName());
                 } else if (spinnerRadio.isChecked()) {
                     // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
                     SampleValue sampleValue = (SampleValue) ioSpinner.getSelectedItem();
-                    IOValue value = new IOValue(IOFilter.NONE, sampleValue, io);
+                    IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
                     item.setValue(value);
                     DialogIO.this.activity.setStatus("Set sample value for " + description.getName());
                 }

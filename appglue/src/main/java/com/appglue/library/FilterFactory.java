@@ -4,7 +4,7 @@ import android.util.SparseArray;
 
 import java.lang.reflect.Method;
 
-public class IOFilter {
+public class FilterFactory {
     public static SparseArray<FilterValue> filters = new SparseArray<FilterValue>();
 
     /**
@@ -72,44 +72,44 @@ public class IOFilter {
     public static void filterFactory() {
         try {
             // Strings
-            STR_EQUALS = new FilterValue("Equals", 0x00, IOFilter.class.getMethod("strEquals", String.class, String.class));
+            STR_EQUALS = new FilterValue("Equals", 0x00, FilterFactory.class.getMethod("strEquals", String.class, String.class));
             filters.put(STR_EQUALS.index, STR_EQUALS);
 
-            STR_NOTEQUALS = new FilterValue("Doesn't equal", 0x01, IOFilter.class.getMethod("strNotEquals", String.class, String.class));
+            STR_NOTEQUALS = new FilterValue("Doesn't equal", 0x01, FilterFactory.class.getMethod("strNotEquals", String.class, String.class));
             filters.put(STR_NOTEQUALS.index, STR_NOTEQUALS);
 
-            STR_CONTAINS = new FilterValue("Contains", 0x02, IOFilter.class.getMethod("strContains", String.class, String.class));
+            STR_CONTAINS = new FilterValue("Contains", 0x02, FilterFactory.class.getMethod("strContains", String.class, String.class));
             filters.put(STR_CONTAINS.index, STR_CONTAINS);
 
             // Numbers
-            INT_EQUALS = new FilterValue("=", 0x10, IOFilter.class.getMethod("numEquals", Integer.class, Integer.class));
+            INT_EQUALS = new FilterValue("=", 0x10, FilterFactory.class.getMethod("numEquals", Integer.class, Integer.class));
             filters.put(INT_EQUALS.index, INT_EQUALS);
 
-            INT_NOTEQUALS = new FilterValue(Character.toString((char) 0x2260), 0x11, IOFilter.class.getMethod("numNotEquals", Integer.class, Integer.class)); // !=
+            INT_NOTEQUALS = new FilterValue(Character.toString((char) 0x2260), 0x11, FilterFactory.class.getMethod("numNotEquals", Integer.class, Integer.class)); // !=
             filters.put(INT_NOTEQUALS.index, INT_NOTEQUALS);
 
-            INT_LEQUALS = new FilterValue(Character.toString((char) 0x2264), 0x12, IOFilter.class.getMethod("numLEquals", Integer.class, Integer.class)); // <=
+            INT_LEQUALS = new FilterValue(Character.toString((char) 0x2264), 0x12, FilterFactory.class.getMethod("numLEquals", Integer.class, Integer.class)); // <=
             filters.put(INT_LEQUALS.index, INT_LEQUALS);
 
-            INT_GEQUALS = new FilterValue(Character.toString((char) 0x2265), 0x13, IOFilter.class.getMethod("numGEquals", Integer.class, Integer.class)); // >=
+            INT_GEQUALS = new FilterValue(Character.toString((char) 0x2265), 0x13, FilterFactory.class.getMethod("numGEquals", Integer.class, Integer.class)); // >=
             filters.put(INT_GEQUALS.index, INT_GEQUALS);
 
-            INT_LT = new FilterValue(Character.toString((char) 0x003E), 0x14, IOFilter.class.getMethod("numLT", Integer.class, Integer.class)); // <
+            INT_LT = new FilterValue(Character.toString((char) 0x003E), 0x14, FilterFactory.class.getMethod("numLT", Integer.class, Integer.class)); // <
             filters.put(INT_LT.index, INT_LT);
 
-            INT_GT = new FilterValue(Character.toString((char) 0x003D), 0x15, IOFilter.class.getMethod("numGT", Integer.class, Integer.class)); // >
+            INT_GT = new FilterValue(Character.toString((char) 0x003D), 0x15, FilterFactory.class.getMethod("numGT", Integer.class, Integer.class)); // >
             filters.put(INT_GT.index, INT_GT);
 
-            BOOL_EQUALS = new FilterValue("is", 0x20, IOFilter.class.getMethod("boolEquals", Boolean.class, Boolean.class));
+            BOOL_EQUALS = new FilterValue("is", 0x20, FilterFactory.class.getMethod("boolEquals", Boolean.class, Boolean.class));
             filters.put(BOOL_EQUALS.index, BOOL_EQUALS);
 
-            BOOL_NOTEQUALS = new FilterValue("isn't", 0x21, IOFilter.class.getMethod("boolNotEquals", Boolean.class, Boolean.class));
+            BOOL_NOTEQUALS = new FilterValue("isn't", 0x21, FilterFactory.class.getMethod("boolNotEquals", Boolean.class, Boolean.class));
             filters.put(BOOL_NOTEQUALS.index, BOOL_NOTEQUALS);
 
-            SET_EQUALS = new FilterValue("is", 0x30, IOFilter.class.getMethod("numEquals", Integer.class, Integer.class));
+            SET_EQUALS = new FilterValue("is", 0x30, FilterFactory.class.getMethod("numEquals", Integer.class, Integer.class));
             filters.put(SET_EQUALS.index, SET_EQUALS);
 
-            SET_NOTEQUALS = new FilterValue("isn't", 0x31, IOFilter.class.getMethod("numNotEquals", Integer.class, Integer.class));
+            SET_NOTEQUALS = new FilterValue("isn't", 0x31, FilterFactory.class.getMethod("numNotEquals", Integer.class, Integer.class));
             filters.put(SET_NOTEQUALS.index, SET_NOTEQUALS);
 
             NONE = new FilterValue("none", -1, null);

@@ -28,6 +28,9 @@ public class ComponentService {
     private TST<ServiceIO> inputNameSearch;
     private TST<ServiceIO> outputNameSearch;
 
+    private ArrayList<IOFilter> andFilters;
+    private ArrayList<IOFilter> orFilters;
+
     public ComponentService() {
 
         this.inputs = new ArrayList<ServiceIO>();

@@ -21,18 +21,16 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.R;
-
 import com.appglue.ActivityWiring;
 import com.appglue.FragmentWiring;
 import com.appglue.IODescription;
+import com.appglue.R;
 import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
@@ -285,6 +283,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             }
         }
+
+        // FIXME At this point we need to check the filters. Need to slightly tweak how this works...
 
         hueGeneration();
         this.wiringMode = mode;
@@ -610,7 +610,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     /**
      * This shows the dialog that is used to set values.
      *
-     * @param item
+     * @param item The item for the dialog to show.
      */
     private void showIODialog(final ServiceIO item) {
         // Apps are different

@@ -13,7 +13,7 @@ import com.appglue.R;
 import com.appglue.description.SampleValue;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class DialogFilterValue extends DialogFragment {
         return rootView;
     }
 
-    void setupDialog(IOFilter.FilterValue[] conditions, int type,
+    void setupDialog(FilterFactory.FilterValue[] conditions, int type,
                      boolean hasSamples, ArrayList<SampleValue> values) {
 
         if (filterConditionSpinner != null)

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.FilterFactory.FilterValue;
 
 public class WiringFilterAdapter extends ArrayAdapter<FilterValue>
 {

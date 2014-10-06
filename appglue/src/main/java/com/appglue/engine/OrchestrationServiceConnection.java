@@ -33,7 +33,7 @@ import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.AppGlueLibrary;
-import com.appglue.library.IOFilter.FilterValue;
+import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.library.LogItem;
 import com.appglue.library.err.OrchestrationException;
 import com.appglue.serviceregistry.Registry;

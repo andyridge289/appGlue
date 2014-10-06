@@ -3,7 +3,7 @@ package com.appglue.engine.description;
 import android.util.Log;
 
 import com.appglue.description.SampleValue;
-import com.appglue.library.IOFilter;
+import com.appglue.library.FilterFactory;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -18,28 +18,28 @@ public class IOValue {
 
     private int filterState;
 
-    private IOFilter.FilterValue condition;
+    private FilterFactory.FilterValue condition;
 
     private ServiceIO io;
 
     private Object manualValue;
     private SampleValue sampleValue;
 
-    public IOValue(IOFilter.FilterValue condition, Object manualValue, ServiceIO io) {
+    public IOValue(FilterFactory.FilterValue condition, Object manualValue, ServiceIO io) {
         this.condition = condition;
         this.manualValue = manualValue;
         this.io = io;
         this.filterState = MANUAL_FILTER;
     }
 
-    public IOValue(IOFilter.FilterValue condition, SampleValue sampleValue, ServiceIO io) {
+    public IOValue(FilterFactory.FilterValue condition, SampleValue sampleValue, ServiceIO io) {
         this.condition = condition;
         this.sampleValue = sampleValue;
         this.io = io;
         this.filterState = SAMPLE_FILTER;
     }
 
-    public IOValue(long id, int filterState, IOFilter.FilterValue condition, Object manualValue, SampleValue sample) {
+    public IOValue(long id, int filterState, FilterFactory.FilterValue condition, Object manualValue, SampleValue sample) {
         this.id = id;
         this.filterState = filterState;
         this.condition = condition;
@@ -63,11 +63,11 @@ public class IOValue {
         this.filterState = filterState;
     }
 
-    public IOFilter.FilterValue getCondition() {
+    public FilterFactory.FilterValue getCondition() {
         return condition;
     }
 
-    public void setCondition(IOFilter.FilterValue condition) {
+    public void setCondition(FilterFactory.FilterValue condition) {
         this.condition = condition;
     }
 
