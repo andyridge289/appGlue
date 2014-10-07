@@ -28,8 +28,8 @@ public class ComponentService {
     private TST<ServiceIO> inputNameSearch;
     private TST<ServiceIO> outputNameSearch;
 
-    private ArrayList<IOFilter> andFilters;
-    private ArrayList<IOFilter> orFilters;
+    private ArrayList<IOFilter> filters;
+    private boolean and; // Everything must have the same relation for now
 
     public ComponentService() {
 
@@ -46,6 +46,8 @@ public class ComponentService {
 
         this.inputNameSearch = new TST<ServiceIO>();
         this.outputNameSearch = new TST<ServiceIO>();
+
+        this.filters = new ArrayList<IOFilter>();
     }
 
     public ComponentService(ServiceDescription description, int position) {
@@ -163,6 +165,16 @@ public class ComponentService {
             io = getOutput(name);
         }
         return io;
+    }
+
+    public void addFilter(IOFilter filter) {
+        filters.add(filter);
+    }
+    public ArrayList<IOFilter> getFilters() {
+        return filters;
+    }
+    public boolean getFilterCondition() {
+        return and;
     }
 
     public boolean hasIncomingLinks() {

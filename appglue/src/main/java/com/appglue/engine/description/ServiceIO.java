@@ -25,10 +25,13 @@ public class ServiceIO {
     private ArrayList<IOValue> values;
     private int valueCombinator = COMBO_OR;
 
+    private ArrayList<IOFilter> filters;
+
     public ServiceIO(ComponentService component, IODescription ioDescription) {
         this.component = component;
         this.ioDescription = ioDescription;
         this.values = new ArrayList<IOValue>();
+        this.filters = new ArrayList<IOFilter>();
     }
 
     public ServiceIO(long id, ComponentService component, IODescription ioDescription) {

@@ -22,6 +22,10 @@ import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.VALUE;
 
 public class AppGlueConstants {
+
+    public static final boolean AND = true;
+    public static final boolean OR = false;
+
     public static final String CREATE_NEW = "create_new";
     public static final String MATCHING = "matching";
     public static final String TEST = "test";

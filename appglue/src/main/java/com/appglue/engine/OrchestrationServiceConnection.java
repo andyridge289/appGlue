@@ -20,16 +20,20 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.util.Pair;
+import android.util.SparseArray;
 
 import com.appglue.ActivityLog;
 import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
+import com.appglue.TST;
 import com.appglue.Test;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.AppGlueLibrary;
@@ -43,6 +47,7 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
 import static com.appglue.library.AppGlueConstants.PREFS;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
@@ -246,6 +251,179 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         if (LOG)
             Log.d(TAG, Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
         isBound = true;
+    }
+
+    private Pair<ArrayList<Bundle>, ArrayList<Bundle>> filter2(ArrayList<Bundle> messageData, ComponentService component) throws OrchestrationException {
+
+        ArrayList<Bundle> retained = new ArrayList<Bundle>();
+        ArrayList<Bundle> removed = new ArrayList<Bundle>();
+
+        ArrayList<IOFilter> filters = component.getFilters();
+        boolean and = component.getFilterCondition();
+
+        String FILTER_ID = "filter_id";
+
+        // Give each bundle a filter ID so that we can keep track of them
+        for (int i = 0; i < messageData.size(); i++) {
+            messageData.get(i).putInt(FILTER_ID, i);
+        }
+
+        // Record each of the results, splitting them into retained and removed
+        ArrayList<Pair<ArrayList<Bundle>, ArrayList<Bundle>>> pairs = new ArrayList<Pair<ArrayList<Bundle>, ArrayList<Bundle>>>();
+        for (int i = 0; i < filters.size(); i++) {
+            pairs.add(filter(messageData, filters.get(i)));
+        }
+
+        if (pairs.size() == 1) { // What about if there aren't any?
+            // If there's only one we just return it, AND and OR are both the same
+            return pairs.get(0);
+        }
+
+        SparseArray<Bundle> retSparse = new SparseArray<Bundle>();
+
+        if (and) {
+            // We need to see what's in the first one, and then check if it's in all the others.
+            // If it is then we put it in retained, else, removed
+            ArrayList<Bundle> first = pairs.get(0).first;
+            for (Bundle b : first) {
+                // Check if the bundle is in ALL of the others
+                // If it is, put it in the sparse array of things we need to keep
+                int id = b.getInt(FILTER_ID);
+                boolean foundAll = true;
+
+                for (int i = 1; i < pairs.size(); i++) {
+                    // Try to find it in this pair
+                    ArrayList<Bundle> ret = pairs.get(i).first;
+                    boolean found = false;
+
+                    for (int j = 0; j < ret.size(); j++) {
+                        if (ret.get(j).getInt(FILTER_ID) == id) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if(!found) {
+                        foundAll = false;
+                        break;
+                    }
+                }
+
+                if (foundAll) {
+                    retSparse.put(id, b);
+                }
+            }
+
+        } else {
+            // Add what's in the first one, what's in the second one that hasn't already been added, Ad nauseum
+
+            for (int i = 0; i < pairs.size(); i++) {
+                ArrayList<Bundle> ret = pairs.get(i).first;
+                for(int j = 0; j < ret.size(); j++) {
+                    if(retSparse.get(ret.get(j).getInt(FILTER_ID)) == null) {
+                        retSparse.put(ret.get(j).getInt(FILTER_ID), ret.get(j));
+                    }
+                }
+            }
+        }
+
+        // Put the message data in the two lists depending on how our condition goes
+        // If we've added it to the sparse array then it exists in all of the things
+        for (Bundle b : messageData) {
+            if(retSparse.get(b.getInt(FILTER_ID)) != null) {
+                retained.add(b);
+            } else {
+                removed.add(b);
+            }
+        }
+
+        // And now remove all of the filter IDs because no one else needs them
+        for (Bundle b : retained) {
+            b.remove(FILTER_ID);
+        }
+        for (Bundle b : removed) {
+            b.remove(FILTER_ID);
+        }
+
+        return new Pair<ArrayList<Bundle>, ArrayList<Bundle>>(retained, removed);
+    }
+
+    private Pair<ArrayList<Bundle>, ArrayList<Bundle>> filter(ArrayList<Bundle> messageData, IOFilter filter) throws OrchestrationException {
+        ArrayList<Bundle> retained = new ArrayList<Bundle>();
+        ArrayList<Bundle> removed = new ArrayList<Bundle>();
+
+        // We need to know what IOs are being looked at in the filter so that we can check each of them.
+        ArrayList<ServiceIO> ios = filter.getIOs();
+
+        for (Bundle data : messageData) {
+
+            // For now it needs to match ALL of the IOs in this filter, but I suppose that might change later
+            boolean allMatch = true;
+            for (int i = 0; i < ios.size(); i++) {
+
+                ServiceIO io = ios.get(i);
+                boolean and = filter.getCondition(io);
+                ArrayList<IOValue> values = filter.getValues(io);
+
+                // Then for each IO we need to see what values we are expecting
+                if(!filterTest(data.get(io.getDescription().getName()), and, values)) {
+                    allMatch = false;
+                }
+            }
+
+            if(allMatch) {
+                retained.add(data);
+            } else {
+                removed.add(data);
+            }
+        }
+
+        return new Pair<ArrayList<Bundle>, ArrayList<Bundle>>(retained, removed);
+    }
+
+    private boolean filterTest(Object actualValue, boolean and, ArrayList<IOValue> filterValues) throws OrchestrationException {
+
+        // We need to compare the actual value with each of the expected values
+        // Deal with the result differently depending on whether its an AND or an OR
+
+        ArrayList<Boolean> results = new ArrayList<Boolean>();
+
+        for(int i = 0 ; i < filterValues.size(); i++) {
+            IOValue ioValue = filterValues.get(i);
+            FilterValue fv = ioValue.getCondition();
+            Object expectedValue = null;
+
+            if (ioValue.getFilterState() == IOValue.MANUAL_FILTER) {
+                expectedValue = ioValue.getManualValue();
+            } else if (ioValue.getFilterState() == IOValue.SAMPLE_FILTER) {
+                expectedValue = ioValue.getSampleValue().getValue();
+            }
+
+            if (ioValue == null) {  // Something has gone very very wrong
+                Log.e(TAG, "Filter value is dead, you've done something rather stupid");
+                continue;
+            }
+
+            if (actualValue == null) {
+                Log.e(TAG, "No value from the component... What have you done...");
+                continue;
+            }
+
+            try {
+                // This returns whether it PASSES the test, so we need to filter it if it doesn't
+                results.add((Boolean) fv.method.invoke(null, actualValue, expectedValue));
+            } catch (IllegalArgumentException e) {
+                throw new OrchestrationException("Wrong arguments passed to filter method: " +
+                        fv.method.getName() + actualValue + ", " + expectedValue);
+            } catch (IllegalAccessException e) {
+                throw new OrchestrationException("Can't access filter condition method: " +
+                        fv.method.getName());
+            } catch (InvocationTargetException e) {
+                throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
+            }
+        }
+
+        return false;
     }
 
     private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {

@@ -9,6 +9,7 @@ import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.FilterFactory;
@@ -112,9 +113,10 @@ public class TestLib {
             }
 
             ServiceIO filterOnIO = component.getIO(filterOn.getName());
-
+            IOFilter filter = new IOFilter(component);
             IOValue value = new IOValue(filterCondition, chosenSample, filterOnIO);
-            filterOnIO.setValue(value);
+            filter.addValue(filterOnIO, value);
+            component.addFilter(filter);
         }
 
         return component;
