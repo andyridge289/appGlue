@@ -423,7 +423,24 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             }
         }
 
-        return false;
+        if (and) {
+            // IF one of them is false then we need to say no
+            for (boolean bool : results) {
+                if (!bool)
+                    return false;
+            }
+
+            return true;
+
+        } else {
+            // If one of them is true then we say yes
+            for (boolean bool : results) {
+                if (bool)
+                    return true;
+            }
+
+            return false;
+        }
     }
 
     private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {
