@@ -71,7 +71,6 @@ public class TestLib {
 
         ServiceIO lineIO = tubeComponent.getOutput(TubeService.LINE_NAME);
         IOValue value = new IOValue(FilterFactory.STR_EQUALS, bakerlooSample, lineIO);
-        lineIO.addFilter(value);
 
         ServiceIO titleIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TITLE);
         lineIO.setConnection(titleIO);
@@ -86,6 +85,10 @@ public class TestLib {
         ServiceIO textIO = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
         IOValue ioValue = new IOValue(FilterFactory.NONE, lineIO.getDescription().getType().fromString("Test message"), textIO);
         textIO.setValue(ioValue);
+
+        IOFilter filter = new IOFilter(tubeComponent);
+        filter.addValue(lineIO, value);
+        tubeComponent.addFilter(filter);
 
         return new CompositeService(name, "This is called " + name, components);
     }

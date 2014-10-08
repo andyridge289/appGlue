@@ -29,6 +29,8 @@ public class ComponentService {
     private TST<ServiceIO> outputNameSearch;
 
     private ArrayList<IOFilter> filters;
+    private LongSparseArray<IOFilter> filterSearch;
+
     private boolean and; // Everything must have the same relation for now
 
     public ComponentService() {
@@ -48,6 +50,7 @@ public class ComponentService {
         this.outputNameSearch = new TST<ServiceIO>();
 
         this.filters = new ArrayList<IOFilter>();
+        this.filterSearch = new LongSparseArray<IOFilter>();
     }
 
     public ComponentService(ServiceDescription description, int position) {
@@ -169,10 +172,19 @@ public class ComponentService {
 
     public void addFilter(IOFilter filter) {
         filters.add(filter);
+        if(filter.getID() != -1) {
+            filterSearch.put(filter.getID(), filter);
+        }
+
+        // TODO What about adding them from the database.
     }
     public ArrayList<IOFilter> getFilters() {
         return filters;
     }
+    public IOFilter getFilter(long id) {
+        return filterSearch.get(id);
+    }
+
     public boolean getFilterCondition() {
         return and;
     }
@@ -253,6 +265,32 @@ public class ComponentService {
             }
         }
 
+        if (this.and != other.getFilterCondition()) {
+            if (LOG) Log.d(TAG, "ComponentService->Equals: filter condition (and) -- " + this.and + other.getFilterCondition());
+            return false;
+        }
+
+        if (this.filters.size() != other.getFilters().size()) {
+            if (LOG) Log.d(TAG, "ComponentService->Equals: num filters -- " + filters.size() + " - " + other.getFilters().size());
+            return false;
+        }
+
+        for (int i = 0; i < filters.size(); i++) {
+            IOFilter f = other.getFilter(filters.get(i).getID());
+            if(!filters.get(i).equals(f)) {
+                if (LOG) Log.d(TAG, "ComponentService->Equals: filter " + i);
+                return false;
+            }
+        }
+
         return true;
+    }
+
+    public void setFilters(ArrayList<IOFilter> filters) {
+        this.filters = filters;
+        this.filterSearch.clear();
+        for (int i = 0; i < filters.size(); i++) {
+            filterSearch.put(filters.get(i).getID(), filters.get(i));
+        }
     }
 }

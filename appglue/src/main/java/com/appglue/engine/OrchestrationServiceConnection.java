@@ -191,21 +191,21 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             } else if (outputs.size() > 0) {
 
                 // Then we need to check for filtering
-                Bundle filterValues = null;
+                Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterValues = null;
                 try {
-                    filterValues = this.filter(outputs, cs.getComponents().get(index - 1));
+                    filterValues = this.filter2(outputs, cs.getComponents().get(index - 1));
                 } catch (OrchestrationException e) {
                     registry.terminate(cs, executionInstance, LogItem.ORCH_FAIL, "Filter failed: " + e.getMessage());
                     return;
                 }
 
-                ArrayList<Bundle> retained = filterValues.getParcelableArrayList(FILTER_RETAINED);
+                ArrayList<Bundle> retained = filterValues.first;
 
                 if (retained.size() > 0) {
                     messageData.remove(ComposableService.INPUT);
                     messageData.putParcelableArrayList(ComposableService.INPUT, retained);
                 } else {
-                    ArrayList<Bundle> removed = filterValues.getParcelableArrayList(FILTER_REMOVED);
+                    ArrayList<Bundle> removed = filterValues.second;
                     for (Bundle b : removed) {
 
                         ComponentService currentComponent = cs.getComponents().get(index - 1); // Need to get the last index because we've moved on
@@ -443,105 +443,105 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         }
     }
 
-    private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {
-        ArrayList<Bundle> filtered = new ArrayList<Bundle>();
-        ArrayList<Bundle> retained = new ArrayList<Bundle>();
-
-        Bundle b = new Bundle();
-
-        ArrayList<ServiceIO> outputs = service.getOutputs();
-
-        for (Bundle data : messageData) {
-
-            int matchCount = 0;
-            int skipCount = 0;
-
-            Log.d(TAG, "Checking: " + AppGlueLibrary.bundleToString(data));
-
-            for (int i = 0; i < outputs.size(); i++) {
-
-                ServiceIO output = outputs.get(i);
-
-                if (!output.hasValues()) {
-                    skipCount++;
-                    continue;
-                }
-
-                // Now we know we need to filter it
-                FilterValue fv = output.getCondition();
-                Object first = data.get(output.getDescription().getName());
-                Object value = null;
-
-                // At this point we have an object that is the thing we need. Do we need to make it into something else we can deal with?
-
-                ArrayList<Boolean> results = new ArrayList<Boolean>();
-                for (IOValue outputValue : output.getValues()) {
-
-                    if (outputValue.getFilterState() == IOValue.MANUAL_FILTER)
-                        value = outputValue.getManualValue();
-                    else if (outputValue.getFilterState() == IOValue.SAMPLE_FILTER)
-                        value = outputValue.getSampleValue().getValue();
-
-                    if (value == null) {  // Something has gone very very wrong
-                        Log.e(TAG, "Filter value is dead, you've done something rather stupid");
-                        continue;
-                    }
-
-                    if (first == null) {
-                        Log.e(TAG, "No value from the component... What have you done...");
-                        continue;
-                    }
-
-                    try {
-                        // This returns whether it PASSES the test, so we need to filter it if it doesn't
-                        results.add((Boolean) fv.method.invoke(null, first, value));
-                    } catch (IllegalArgumentException e) {
-                        throw new OrchestrationException("Wrong arguments passed to filter method: " +
-                                fv.method.getName() + first + ", " + value);
-                    } catch (IllegalAccessException e) {
-                        throw new OrchestrationException("Can't access filter condition method: " +
-                                fv.method.getName());
-                    } catch (InvocationTargetException e) {
-                        throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
-                    }
-                }
-
-                if (output.getValueCombinator() == ServiceIO.COMBO_AND) {
-                    // If it's an AND relation then only increment if all are true
-                    boolean allSet = true;
-                    for (int j = 0; j < results.size(); j++) {
-                        if (!results.get(j)) {
-                            allSet = false;
-                            break;
-                        }
-                    }
-
-                    if (allSet)
-                        matchCount++;
-
-                } else {
-                    // If it's an OR relation then increment if one is true
-                    for (int j = 0; j < results.size(); j++) {
-                        if (results.get(j)) {
-                            matchCount++;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // If we get to here we've checked all of the values for the different IOs for that message, so it can be retained
-            if (matchCount + skipCount == outputs.size()) {
-                retained.add(data);
-            } else {
-                filtered.add(data);
-            }
-        }
-
-        b.putParcelableArrayList(FILTER_REMOVED, filtered);
-        b.putParcelableArrayList(FILTER_RETAINED, retained);
-        return b;
-    }
+//    private Bundle filter(ArrayList<Bundle> messageData, ComponentService service) throws OrchestrationException {
+//        ArrayList<Bundle> filtered = new ArrayList<Bundle>();
+//        ArrayList<Bundle> retained = new ArrayList<Bundle>();
+//
+//        Bundle b = new Bundle();
+//
+//        ArrayList<ServiceIO> outputs = service.getOutputs();
+//
+//        for (Bundle data : messageData) {
+//
+//            int matchCount = 0;
+//            int skipCount = 0;
+//
+//            Log.d(TAG, "Checking: " + AppGlueLibrary.bundleToString(data));
+//
+//            for (int i = 0; i < outputs.size(); i++) {
+//
+//                ServiceIO output = outputs.get(i);
+//
+//                if (!output.hasValues()) {
+//                    skipCount++;
+//                    continue;
+//                }
+//
+//                // Now we know we need to filter it
+//                FilterValue fv = output.getCondition();
+//                Object first = data.get(output.getDescription().getName());
+//                Object value = null;
+//
+//                // At this point we have an object that is the thing we need. Do we need to make it into something else we can deal with?
+//
+//                ArrayList<Boolean> results = new ArrayList<Boolean>();
+//                for (IOValue outputValue : output.getValues()) {
+//
+//                    if (outputValue.getFilterState() == IOValue.MANUAL_FILTER)
+//                        value = outputValue.getManualValue();
+//                    else if (outputValue.getFilterState() == IOValue.SAMPLE_FILTER)
+//                        value = outputValue.getSampleValue().getValue();
+//
+//                    if (value == null) {  // Something has gone very very wrong
+//                        Log.e(TAG, "Filter value is dead, you've done something rather stupid");
+//                        continue;
+//                    }
+//
+//                    if (first == null) {
+//                        Log.e(TAG, "No value from the component... What have you done...");
+//                        continue;
+//                    }
+//
+//                    try {
+//                        // This returns whether it PASSES the test, so we need to filter it if it doesn't
+//                        results.add((Boolean) fv.method.invoke(null, first, value));
+//                    } catch (IllegalArgumentException e) {
+//                        throw new OrchestrationException("Wrong arguments passed to filter method: " +
+//                                fv.method.getName() + first + ", " + value);
+//                    } catch (IllegalAccessException e) {
+//                        throw new OrchestrationException("Can't access filter condition method: " +
+//                                fv.method.getName());
+//                    } catch (InvocationTargetException e) {
+//                        throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
+//                    }
+//                }
+//
+//                if (output.getValueCombinator() == ServiceIO.COMBO_AND) {
+//                    // If it's an AND relation then only increment if all are true
+//                    boolean allSet = true;
+//                    for (int j = 0; j < results.size(); j++) {
+//                        if (!results.get(j)) {
+//                            allSet = false;
+//                            break;
+//                        }
+//                    }
+//
+//                    if (allSet)
+//                        matchCount++;
+//
+//                } else {
+//                    // If it's an OR relation then increment if one is true
+//                    for (int j = 0; j < results.size(); j++) {
+//                        if (results.get(j)) {
+//                            matchCount++;
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//
+//            // If we get to here we've checked all of the values for the different IOs for that message, so it can be retained
+//            if (matchCount + skipCount == outputs.size()) {
+//                retained.add(data);
+//            } else {
+//                filtered.add(data);
+//            }
+//        }
+//
+//        b.putParcelableArrayList(FILTER_REMOVED, filtered);
+//        b.putParcelableArrayList(FILTER_RETAINED, retained);
+//        return b;
+//    }
 
     @SuppressWarnings("unchecked")
     private Bundle mapOutputs(Bundle bundle, ComponentService service) throws OrchestrationException {

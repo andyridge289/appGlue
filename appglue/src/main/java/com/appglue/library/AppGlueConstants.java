@@ -43,14 +43,18 @@ public class AppGlueConstants {
     public static final String TBL_IOTYPE = "inputoutputtype";
     public static final String TBL_TAG = "tag";
     public static final String TBL_SD_HAS_TAG = "sdhastag";
-    public static final String TBL_IOVALUE = "iovalue";
     public static final String TBL_IO_SAMPLE = "iosamples";
+
 
     // 'dynamic' database tables
     public static final String TBL_COMPOSITE = "composite";
     public static final String TBL_COMPONENT = "component";
     public static final String TBL_SERVICEIO = "serviceio";
     public static final String TBL_IOCONNECTION = "ioconnections";
+    public static final String TBL_IOVALUE = "iovalue";
+    public static final String TBL_IOFILTER = "iofilter";
+    public static final String TBL_VALUENODE = "valuenode";
+
 
     public static final String TBL_COMPOSITE_EXECUTION_LOG = "compositeexecutionlog";
     public static final String TBL_EXECUTION_LOG = "executionlog";
@@ -240,11 +244,13 @@ public class AppGlueConstants {
     };
 
     public static final String IO_ID = "serviceio_id";
+    public static final String VALUE_NODE_ID = "value_node_id";
 
     public static final String[][] COLS_IOVALUE = new String[][]{
             {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
             {IO_ID, "INTEGER", TBL_SERVICEIO, ID},
             {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
+            {VALUE_NODE_ID, "INTEGER"},
             {FILTER_STATE, "INTEGER"},
             {FILTER_CONDITION, "INTEGER"},
             {MANUAL_VALUE, "TEXT DEFAULT NULL"}, // The value could be anything, better just set it as text so we can do some clever stuff at some point
@@ -254,6 +260,31 @@ public class AppGlueConstants {
     public static final String IX_IOVALUE = "index_iovalue";
     public static final String[] INDEX_IOVALUE = new String[]{
             IO_ID, COMPOSITE_ID, SAMPLE_VALUE
+    };
+
+    public static final String[][] COLS_IOFILTER = new String[][] {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { COMPONENT_ID, "INTEGER" }
+    };
+
+    public static final String IX_IOFILTER = "index_iofilter";
+    public static final String[] INDEX_IOFILTER = new String[] {
+        COMPONENT_ID
+    };
+
+    public static final String FILTER_ID = "filter_id";
+    public static final String CONDITION = "condition";
+
+    public static final String[][] COLS_VALUENODE = new String[][] {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { FILTER_ID, "INTEGER" },
+        { CONDITION, "TINYINT" },
+        { IO_ID, "INTEGER" }
+    };
+
+    public static final String IX_VALUENODE = "index_valuenode";
+    public static final String[] INDEX_VALUENODE = new String[] {
+        IO_ID, FILTER_ID
     };
 
     public static final String SOURCE_IO = "source_io";

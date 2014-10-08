@@ -23,15 +23,11 @@ public class ServiceIO {
     public static final int COMBO_AND = 2;
 
     private ArrayList<IOValue> values;
-    private int valueCombinator = COMBO_OR;
-
-    private ArrayList<IOFilter> filters;
 
     public ServiceIO(ComponentService component, IODescription ioDescription) {
         this.component = component;
         this.ioDescription = ioDescription;
         this.values = new ArrayList<IOValue>();
-        this.filters = new ArrayList<IOFilter>();
     }
 
     public ServiceIO(long id, ComponentService component, IODescription ioDescription) {
@@ -67,15 +63,6 @@ public class ServiceIO {
 
     public boolean hasValues() {
         return this.values.size() != 0;
-    }
-
-    /**
-     * There can be as many filters as you like
-     *
-     * @param value
-     */
-    public void addFilter(IOValue value) {
-        this.values.add(value);
     }
 
     /**
@@ -122,10 +109,6 @@ public class ServiceIO {
 
     public void setValues(ArrayList<IOValue> values) {
         this.values = values;
-    }
-
-    public int getValueCombinator() {
-        return valueCombinator;
     }
 
     public boolean equals(Object o) {

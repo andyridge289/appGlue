@@ -24,6 +24,7 @@ import com.appglue.description.Tag;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.AppGlueLibrary;
@@ -74,6 +75,8 @@ import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.COLS_SD;
 import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.COLS_TAG;
+import static com.appglue.library.AppGlueConstants.COLS_IOFILTER;
+import static com.appglue.library.AppGlueConstants.COLS_VALUENODE;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.DB_NAME;
@@ -92,6 +95,10 @@ import static com.appglue.library.AppGlueConstants.INDEX_IOVALUE;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.INDEX_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.INDEX_IOFILTER;
+import static com.appglue.library.AppGlueConstants.INDEX_VALUENODE;
+import static com.appglue.library.AppGlueConstants.IX_IOFILTER;
+import static com.appglue.library.AppGlueConstants.IX_VALUENODE;
 import static com.appglue.library.AppGlueConstants.INPUT_DATA;
 import static com.appglue.library.AppGlueConstants.INPUT_ID;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
@@ -116,6 +123,8 @@ import static com.appglue.library.AppGlueConstants.SCHEDULED;
 import static com.appglue.library.AppGlueConstants.SINK_IO;
 import static com.appglue.library.AppGlueConstants.SOURCE_IO;
 import static com.appglue.library.AppGlueConstants.START_TIME;
+import static com.appglue.library.AppGlueConstants.CONDITION;
+import static com.appglue.library.AppGlueConstants.FILTER_ID;
 import static com.appglue.library.AppGlueConstants.TAG_ID;
 import static com.appglue.library.AppGlueConstants.TBL_APP;
 import static com.appglue.library.AppGlueConstants.TBL_COMPONENT;
@@ -131,8 +140,11 @@ import static com.appglue.library.AppGlueConstants.TBL_SD;
 import static com.appglue.library.AppGlueConstants.TBL_SD_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.TBL_TAG;
+import static com.appglue.library.AppGlueConstants.TBL_IOFILTER;
+import static com.appglue.library.AppGlueConstants.TBL_VALUENODE;
 import static com.appglue.library.AppGlueConstants.TERMINATED;
 import static com.appglue.library.AppGlueConstants.TIME;
+import static com.appglue.library.AppGlueConstants.VALUE_NODE_ID;
 
 public class LocalDBHandler extends SQLiteOpenHelper {
     private TST<AppDescription> appMap;
@@ -158,7 +170,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         appMap = new TST<AppDescription>();
         componentMap = new TST<ServiceDescription>();
 
-//        compositeMap = new LongSparseArray<CompositeService>();
         ioMap = new LongSparseArray<IODescription>();
         typeMap = new LongSparseArray<IOType>();
         tagMap = new LongSparseArray<Tag>();
@@ -167,7 +178,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     @Override
@@ -256,6 +267,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IOVALUE));
         db.execSQL(AppGlueLibrary.createTableString(TBL_IOVALUE, COLS_IOVALUE));
 
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IOFILTER));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_IOFILTER, COLS_IOFILTER));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_VALUENODE));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_VALUENODE, COLS_VALUENODE));
+
         db.execSQL(AppGlueLibrary.createIndexString(TBL_SERVICEIO, IX_SERVICEIO, INDEX_SERVICEIO));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IOCONNECTION, IX_IOCONNECTION, INDEX_IOCONNECTION));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IO_DESCRIPTION, IX_IO_DESCRIPTION, INDEX_IO_DESCRIPTION));
@@ -264,6 +281,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         db.execSQL(AppGlueLibrary.createIndexString(TBL_COMPONENT, IX_COMPOSITE_HAS_COMPONENT, INDEX_COMPOSITE_HAS_COMPONENT));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IO_SAMPLE, IX_IO_SAMPLES, INDEX_IO_SAMPLES));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IOVALUE, IX_IOVALUE, INDEX_IOVALUE));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_IOFILTER, IX_IOFILTER, INDEX_IOFILTER));
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_VALUENODE, IX_VALUENODE, INDEX_VALUENODE));
 
         postCreateInsert(db);
     }
@@ -928,11 +947,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return getComponent(component.getID(), component.getComposite());
     }
 
-    private synchronized IOValue addIOValue(IOValue value) {
+    private synchronized IOValue addIOValue(IOValue value, IOFilter.ValueNode valueNode) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
+
+        if(valueNode != null)
+            cv.put(VALUE_NODE_ID, valueNode.getID());
+        else
+            cv.put(VALUE_NODE_ID, -1);
 
         cv.put(FILTER_STATE, value.getFilterState());
         cv.put(FILTER_CONDITION, value.getCondition().index);
@@ -965,7 +989,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         if (value.getID() == -1) {
-            addIOValue(value);
+            addIOValue(value, null);
             return value;
         }
 
@@ -1132,12 +1156,56 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         ArrayList<ServiceIO> outputs = component.getOutputs();
-        for (int i = 0; i < component.getOutputs().size(); i++) {
+        for (int i = 0; i < outputs.size(); i++) {
             long ioId = addServiceIO(outputs.get(i));
             outputs.get(i).setID(ioId);
         }
 
+        ArrayList<IOFilter> filters = component.getFilters();
+        for (int i = 0; i < filters.size(); i++) {
+            long filterId = addFilter(filters.get(i));
+            // TODO Do something with the ID
+        }
+
         return componentId;
+    }
+
+    private synchronized long addFilter(IOFilter filter) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(COMPONENT_ID, filter.getComponent().getID());
+
+        long id = db.insertOrThrow(TBL_IOFILTER, null, cv);
+        filter.setID(id);
+
+        for (int i = 0; i < filter.getValues().size(); i++) {
+            long valueId = addValueNode(filter.getValues().valueAt(i));
+        }
+
+        return id;
+    }
+
+    private synchronized long addValueNode(IOFilter.ValueNode valueNode) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(CONDITION, valueNode.getCondition() ? 1 : 0);
+        cv.put(IO_ID, valueNode.getIO().getID());
+        cv.put(FILTER_ID, valueNode.getFilter().getID());
+
+        long id = db.insertOrThrow(TBL_VALUENODE, null, cv);
+        valueNode.setID(id);
+
+        ArrayList<IOValue> values = valueNode.getValues();
+        for (int i = 0; i < values.size(); i++) {
+            addIOValue(values.get(i), valueNode);
+        }
+
+        return id;
     }
 
     public synchronized long addServiceIO(ServiceIO io) {
@@ -1158,7 +1226,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         io.setID(id);
 
         for (IOValue value : io.getValues()) {
-            addIOValue(value);
+            addIOValue(value, null);
         }
 
         return id;
@@ -2080,12 +2148,132 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             ServiceIO io = iod.isInput() ? currentComponent.getInput(iod.getName()) :
                     currentComponent.getOutput(iod.getName());
             io.setID(ioId);
-            ArrayList<IOValue> values = getIOValues(io);
-            io.setValues(values);
+
+            if(iod.isInput()) {
+                ArrayList<IOValue> values = getIOValues(io);
+                io.setValues(values);
+            }
 
         } while (c.moveToNext());
 
+        // This is probably where we need to get the filters
+        currentComponent.setFilters(getFilters(currentComponent));
+
+
         return currentComponent;
+    }
+
+    private ArrayList<IOFilter> getFilters(ComponentService component) {
+
+        ArrayList<IOFilter> filters = new ArrayList<IOFilter>();
+
+        String filterString = AppGlueLibrary.buildGetAllString(TBL_IOFILTER, COLS_IOFILTER);
+        String filterValueString = AppGlueLibrary.buildGetAllString(TBL_VALUENODE, COLS_VALUENODE);
+
+        String query = String.format("SELECT %s FROM %s " +
+                "LEFT JOIN %s ON %s.%s = %s.%s " +
+                "WHERE %s = %d",
+                filterString + "," + filterValueString, TBL_IOFILTER,
+                TBL_VALUENODE, TBL_IOFILTER, ID, TBL_VALUENODE, FILTER_ID,
+                TBL_IOFILTER + "." + COMPONENT_ID, component.getID());
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Cursor is null for getting filters: " + query);
+            return filters;
+        }
+
+        if (c.getCount() == 0) {
+            return filters;
+        }
+
+        c.moveToFirst();
+
+        IOFilter currentFilter = null;
+
+        do {
+
+            long id = c.getLong(c.getColumnIndex(TBL_IOFILTER + "_" + ID));
+
+            if (currentFilter == null || currentFilter.getID() != id) {
+
+                long componentId = c.getLong(c.getColumnIndex(TBL_IOFILTER + "_" + COMPONENT_ID));
+                if (componentId != component.getID()) {
+                    Log.e(TAG, "Something has gone horribly horribly wrong (component IDs don't match)");
+                    return filters;
+                }
+
+                currentFilter = new IOFilter(id, component);
+                filters.add(currentFilter);
+            }
+
+            long valueNodeId = c.getLong(c.getColumnIndex(TBL_VALUENODE + "_" + ID));
+            long filterId = c.getLong(c.getColumnIndex(TBL_VALUENODE + "_" + FILTER_ID));
+            boolean condition = c.getInt(c.getColumnIndex(TBL_VALUENODE + "_" + CONDITION)) == 1;
+            long ioId = c.getLong(c.getColumnIndex(TBL_VALUENODE + "_" + IO_ID));
+
+            if (filterId != currentFilter.getID()) {
+                Log.e(TAG, "Something has gone horribly horribly wrong (filter IDs don't match)");
+                return filters;
+            }
+
+            // Look up the ServiceIO
+            ServiceIO io = component.getIO(ioId);
+
+            // Associate the relevant value nodes
+            IOFilter.ValueNode vn = currentFilter.getNode(valueNodeId, condition, io);
+
+            // Then look up the iovalues that are associated with each of the valuenodes
+            getIOValues(vn);
+
+        } while (c.moveToNext());
+
+        return filters;
+    }
+
+    private void getIOValues(IOFilter.ValueNode valueNode) {
+
+        String query = String.format("SELECT * FROM %s " +
+                "WHERE %s = %d",
+                TBL_IOVALUE, VALUE_NODE_ID, valueNode.getID());
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Cursor is null for getting values for filter: " + query);
+            return;
+        }
+
+        if (c.getCount() == 0) {
+            return;
+        }
+
+        c.moveToFirst();
+        ServiceIO io = valueNode.getIO();
+
+        do {
+
+            long id = c.getLong(c.getColumnIndex(ID));
+            int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
+            int conditionIndex = c.getInt(c.getColumnIndex(FILTER_CONDITION));
+            FilterFactory.FilterValue condition = FilterFactory.getFilterValue(conditionIndex);
+
+            String manualValueString = c.isNull(c.getColumnIndex(MANUAL_VALUE)) ? null :
+                    c.getString(c.getColumnIndex(MANUAL_VALUE));
+            Object manualValue = manualValueString == null ? null :
+                    io.getType().fromString(manualValueString);
+
+            long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
+            SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
+
+            IOValue value = new IOValue(id, filterState, condition, manualValue, sample);
+            valueNode.add(value);
+
+        } while (c.moveToNext());
+        c.close();
     }
 
     private ArrayList<IOValue> getIOValues(ServiceIO io) {
