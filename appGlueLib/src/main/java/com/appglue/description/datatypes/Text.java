@@ -10,6 +10,7 @@ public class Text extends IOType
 		this.name = "Text";
 		this.className = Text.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = true;
 	}
 
     @Override

@@ -8,5 +8,6 @@ public class URLObject extends Text
 		this.name = "URL";
 		this.className = URLObject.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = true;
 	}
 }

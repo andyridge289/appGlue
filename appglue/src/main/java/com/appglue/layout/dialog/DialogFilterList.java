@@ -74,12 +74,12 @@ public class DialogFilterList extends DialogFragment {
 
         // TODO This needs to go back in
         // Make it load the saved filter value
-//        if (item.getFilterState() == ServiceIO.MANUAL_FILTER) {
+//        if (item.getFilterState() == ServiceIO.MANUAL) {
 //
 //            String result = item.getDescription().getType().toString(item.getManualValue());
 //            filterValueText.setText(result);
 //            rt.setChecked(true);
-//        } else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER) {
+//        } else if (item.getFilterState() == ServiceIO.SAMPLE) {
 //            SampleValue selected = item.getChosenSampleValue();
 //            for (int i = 0; i < filterValueSpinner.getAdapter().getCount(); i++) {
 //                SampleValue sampleValue = (SampleValue) filterValueSpinner.getItemAtPosition(i);

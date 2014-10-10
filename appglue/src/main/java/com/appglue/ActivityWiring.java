@@ -27,16 +27,19 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class ActivityWiring extends ActionBarActivity {
-	private CompositeService cs;
+	private CompositeService composite;
 
     private FragmentWiringPager wiringFragment;
     private FragmentComponentListPager componentListFragment;
+    private FragmentFilter filterFragment;
 
     private CharSequence mTitle;
 
     private Menu menu;
 
     private ServiceIO io;
+    private long componentId = -1;
+    private long filterId = -1;
 
     private boolean makingNew = false;
 
@@ -53,12 +56,11 @@ public class ActivityWiring extends ActionBarActivity {
     private int mode;
     public static final int MODE_CREATE = 0;
     public static final int MODE_CHOOSE = 1;
+    public static final int MODE_FILTER = 2;
 
 	@Override
-	public void onCreate(Bundle icicle)
-	{
+	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-
 		setContentView(R.layout.activity_wiring);
     }
 
@@ -76,7 +78,7 @@ public class ActivityWiring extends ActionBarActivity {
             case MODE_CREATE:
                 makingNew = false;
                 mTitle = "Create glued app";
-                wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(cs.getID(), pagerPosition);
+                wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(composite.getID(), pagerPosition);
                 attach = wiringFragment;
                 break;
 
@@ -86,11 +88,11 @@ public class ActivityWiring extends ActionBarActivity {
                 attach = componentListFragment;
                 break;
 
-//            case MODE_FILTER:
-//                mTitle = "Choose filter values";
-//                valueFragment = (FragmentValue) FragmentValue.create(io);
-//                attach = valueFragment;
-//                break;
+            case MODE_FILTER:
+                mTitle = "Choose filter values";
+                filterFragment = (FragmentFilter) FragmentFilter.create(componentId, filterId);
+                attach = filterFragment;
+                break;
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -102,12 +104,6 @@ public class ActivityWiring extends ActionBarActivity {
         if(wiringFragment != null)
             wiringFragment.redraw();
     }
-
-//    public void showFilterDialog(ServiceIO io) {
-//        DialogFilterList dFragment = new DialogFilterList();
-////            // Show DialogFragment
-//            dFragment.show(getSupportFragmentManager(), "Dialog Fragment");
-//    }
 
     public void setActionBar() {
 		ActionBar actionBar = getSupportActionBar();
@@ -121,11 +117,6 @@ public class ActivityWiring extends ActionBarActivity {
             redraw();
             return;
         }
-//      else if(mode == MODE_FILTER) {
-//            setMode(MODE_CREATE);
-//            redraw();
-//            return;
-//        }
 
         super.onBackPressed();
     }
@@ -146,7 +137,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         AlertDialog.Builder keepTemp = null;
 
-        if(cs == null && compositeId == -1) {
+        if(composite == null && compositeId == -1) {
             // They are DEFINITELY creating a new one
             if(registry.tempExists())
             {
@@ -157,7 +148,7 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setPositiveButton("Keep draft",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                cs = registry.getTemp();
+                                composite = registry.getTemp();
                                 setMode(MODE_CREATE);
                                 redraw();
                             }
@@ -166,7 +157,7 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setNegativeButton("Start new",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                cs = registry.resetTemp();
+                                composite = registry.resetTemp();
                                 setMode(MODE_CREATE);
                                 makingNew = true;
                                 redraw();
@@ -176,15 +167,15 @@ public class ActivityWiring extends ActionBarActivity {
             else
             {
                 // There isn't stuff in the temp, just use that
-                cs = registry.resetTemp();
+                composite = registry.resetTemp();
                 setMode(MODE_CREATE);
                 makingNew = true;
                 redraw();
             }
         } else { // They might not be creating a new one
-            if(cs == null) {
+            if(composite == null) {
                 // If they've come in from the composite list then CS might not have been set yet, so set it.
-                cs = registry.getComposite(compositeId);
+                composite = registry.getComposite(compositeId);
             }
 
             if(registry.tempExists()) {
@@ -204,14 +195,14 @@ public class ActivityWiring extends ActionBarActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.resetTemp();
-                                cs = registry.getComposite(cs.getID());
+                                composite = registry.getComposite(composite.getID());
                                 setMode(MODE_CREATE);
                                 makingNew = true;
                                 redraw();
                             }
                         });
             } else {
-                cs = registry.getComposite(cs.getID());
+                composite = registry.getComposite(composite.getID());
                 setMode(MODE_CREATE);
                 redraw();
             }
@@ -222,14 +213,14 @@ public class ActivityWiring extends ActionBarActivity {
 	}
 
 	public ArrayList<ComponentService> getComponents() {
-        if(cs != null)
-		    return cs.getComponentsAL();
+        if(composite != null)
+		    return composite.getComponentsAL();
         else
             return new ArrayList<ComponentService>();
 	}
 
 	public void setStatus(String statusString) {
-//		status.setText(statusString);
+
 	}
 
 	@Override
@@ -240,16 +231,29 @@ public class ActivityWiring extends ActionBarActivity {
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.wiring, menu);
 
-        if(mode == MODE_CREATE) {
-            if (wiringFragment != null && wiringFragment.getCurrentWiringMode() == FragmentWiring.MODE_WIRING) {
-                menu.setGroupVisible(R.id.menu_group_create_wiring, true);
-            } else {
+        // TODO Orientation change needs to not trigger the  keep draft dialog
+
+        switch(mode) {
+            case MODE_CREATE:
+                if (wiringFragment != null && wiringFragment.getCurrentWiringMode() == FragmentWiring.MODE_WIRING) {
+                    menu.setGroupVisible(R.id.menu_group_create_wiring, true);
+                } else {
+                    menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+                }
+                menu.setGroupVisible(R.id.menu_group_filter, false);
+                break;
+
+            case MODE_FILTER:
                 menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-            }
-        } else {
-            menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-            menu.setGroupVisible(R.id.menu_group_choose, true);
+                menu.setGroupVisible(R.id.menu_group_filter, true);
+                break;
+
+            default:
+                menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+                menu.setGroupVisible(R.id.menu_group_filter, false);
+                break;
         }
+
 
         return true;
     }
@@ -259,6 +263,10 @@ public class ActivityWiring extends ActionBarActivity {
 			finish();
 		} else if(item.getItemId() == R.id.wiring_done) {
 			wiringFragment.saveDialog();
+        } else if(item.getItemId() == R.id.filter_done) {
+            setMode(MODE_CREATE);
+//            registry.updateComposite(composite); TODO put this back in
+            redraw();
         }
 
         return true;
@@ -273,12 +281,12 @@ public class ActivityWiring extends ActionBarActivity {
 
     public void chooseItem(String className) {
         ServiceDescription sd = registry.getServiceDescription(className);
-        ComponentService component = new ComponentService(cs, sd, componentPosition);
+        ComponentService component = new ComponentService(composite, sd, componentPosition);
         long id = registry.addComponent(component);
 
         if (id != -1) {
             component.setID(id);
-            cs.addComponent(component, componentPosition);
+            composite.addComponent(component, componentPosition);
         } else {
             Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Failed to add component");
@@ -289,6 +297,13 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public CompositeService getComposite() {
-        return cs;
+        return composite;
+    }
+
+    public void filter(long componentId, long filterId) {
+        this.componentId = componentId;
+        this.filterId = filterId;
+        this.setMode(MODE_FILTER);
+        this.redraw();
     }
 }

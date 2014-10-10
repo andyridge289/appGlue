@@ -40,6 +40,17 @@ public class DBTest extends AndroidTestCase {
         }
     }
 
+    public void testUpdate() throws Exception {
+        Registry registry = Registry.getInstance(getContext());
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
+        registry.addComposite(fred);
+
+        CompositeService fred2 = registry.getComposite(fred.getID());
+        assertEquals(fred, fred2);
+
+        // FIXME And now update fred and then get it out of the database again and see what happens
+    }
+
     @MediumTest
     public void testTemp() throws Exception {
 

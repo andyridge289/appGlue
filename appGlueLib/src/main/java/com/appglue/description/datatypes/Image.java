@@ -18,6 +18,7 @@ public class Image extends IOType
 		this.name = "Image";
 		this.className = Image.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = false;
 	}
 
     @Override

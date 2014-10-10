@@ -184,6 +184,12 @@ public class ComponentService {
     public IOFilter getFilter(long id) {
         return filterSearch.get(id);
     }
+    public boolean hasFilters() {
+        if (filters == null)
+            return false;
+
+        return filters.size() > 0;
+    }
 
     public boolean getFilterCondition() {
         return and;

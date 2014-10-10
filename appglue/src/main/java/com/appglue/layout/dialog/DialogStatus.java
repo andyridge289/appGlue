@@ -63,7 +63,7 @@ class DialogStatus extends DialogCustom {
 //
 //				if(LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
 //				item.setManualValue(selected.packageName);
-//				item.setFilterState(ServiceIO.MANUAL_FILTER);
+//				item.setFilterState(ServiceIO.MANUAL);
 //				DialogStatus.this.activity.setStatus("Chosen app: " + selected.packageName);
 //
 //				registry.updateCurrent();

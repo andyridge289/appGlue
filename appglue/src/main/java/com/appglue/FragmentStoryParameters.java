@@ -225,13 +225,13 @@ public class FragmentStoryParameters extends Fragment {
                     // It's the sample one
                     SampleValue value = (SampleValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
 //					item.setChosenSampleValue(value);
-//					item.setFilterState(IODescription.SAMPLE_FILTER); ServiceIO not IODescription
+//					item.setFilterState(IODescription.SAMPLE); ServiceIO not IODescription
                 } else if (tabs.getCurrentTab() == 1) {
                     // It's the custom one
                     String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
                     Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
-//					item.setFilterState(IODescription.MANUAL_FILTER); ServiceIO not IODescription
+//					item.setFilterState(IODescription.MANUAL); ServiceIO not IODescription
                 } else if (tabs.getCurrentTab() == 2) {
                     // It needs to be linked to a previous one.. This could be more complicated!
                     IODescription value = (IODescription) ((Spinner) container.findViewById(R.id.param_previous_spinner)).getSelectedItem();
@@ -380,12 +380,12 @@ public class FragmentStoryParameters extends Fragment {
 
 
         // Make it load the saved filter value
-//		if (item.getFilterState() == IODescription.MANUAL_FILTER)
+//		if (item.getFilterState() == IODescription.MANUAL)
 //		{
 //			String result = item.type().toString(item.getManualValue());
 //			valueText.setText(result);
 //		}
-//		else if (item.getFilterState() == IODescription.SAMPLE_FILTER)
+//		else if (item.getFilterState() == IODescription.SAMPLE)
 //		{
 //			IOValue selected = item.getChosenSampleValue();
 //			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
@@ -476,13 +476,13 @@ public class FragmentStoryParameters extends Fragment {
                     // It's the sample one
                     SampleValue value = (SampleValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
 //					item.setChosenSampleValue(value);
-//					item.setFilterState(IODescription.SAMPLE_FILTER); ServiceIO not IODescription
+//					item.setFilterState(IODescription.SAMPLE); ServiceIO not IODescription
                 } else if (tabs.getCurrentTab() == 1) {
                     // It's the custom one
                     String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
                     Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
-//					item.setFilterState(IODescription.MANUAL_FILTER); ServiceIO not IODescription
+//					item.setFilterState(IODescription.MANUAL); ServiceIO not IODescription
                 }
 
                 doneContainer.setVisibility(View.GONE);
@@ -602,13 +602,13 @@ public class FragmentStoryParameters extends Fragment {
         }
 
         // Make it load the saved filter value
-//		if (item.getFilterState() == IODescription.MANUAL_FILTER)
+//		if (item.getFilterState() == IODescription.MANUAL)
 //		{
 //
 //			String result = item.type().toString(item.getManualValue());
 //			valueText.setText(result);
 //		}
-//		else if (item.getFilterState() == IODescription.SAMPLE_FILTER) {
+//		else if (item.getFilterState() == IODescription.SAMPLE) {
 //			IOValue selected = item.getChosenSampleValue();
 //			for (int i = 0; i < valueSpinner.getAdapter().getCount(); i++) {
 //				IOValue ioValue = (IOValue) valueSpinner.getItemAtPosition(i);

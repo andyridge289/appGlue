@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryLight_trans"
+        >
+
+        <com.appglue.layout.FloatingActionButton
+            android:id="@+id/filter_add_button"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            app:color="@color/colorPrimary"
+            app:drawable="@drawable/ic_add_white"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            />
+
+        <TextView
+            android:id="@+id/filter_io_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/wiring_border"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:layout_marginTop="5dip"
+            android:gravity="center_horizontal"
+            android:layout_toLeftOf="@id/filter_add_button"
+            android:layout_toStartOf="@id/filter_add_button"
+            android:layout_alignParentTop="true"
+            />
+
+        <TextView
+            android:id="@+id/filter_io_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/wiring_border"
+            android:textAllCaps="true"
+            android:textSize="14sp"
+            android:gravity="center_horizontal"
+            android:layout_toLeftOf="@id/filter_add_button"
+            android:layout_toStartOf="@id/filter_add_button"
+            android:layout_below="@id/filter_io_name"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/filter_value_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        />
+
+</LinearLayout>

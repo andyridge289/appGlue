@@ -10,6 +10,7 @@ public class NumberInt extends IOType
 		this.name = "NumberInt";
 		this.className = NumberInt.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = true;
 	}
 
     @Override

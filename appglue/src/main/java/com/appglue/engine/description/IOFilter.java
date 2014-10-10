@@ -48,8 +48,20 @@ public class IOFilter {
     public ArrayList<IOValue> getValues(ServiceIO io) {
         return values.get(io.getID()).values;
     }
+
+    public boolean hasValues(ServiceIO io) {
+        ValueNode vn = values.get(io.getID());
+         return vn != null;
+    }
+
     public boolean getCondition(ServiceIO io) {
-        return values.get(io.getID()).condition;
+
+        ValueNode vn = values.get(io.getID());
+        if(vn != null) {
+            return vn.condition;
+        }
+
+        return OR;
     }
 
     public long getID() {
@@ -137,6 +149,13 @@ public class IOFilter {
             return vn;
         } else {
             return values.get(id);
+        }
+    }
+
+    public void setCondition(ServiceIO io, boolean condition) {
+        ValueNode vn = values.get(io.getID());
+        if (vn != null) {
+            vn.condition = condition;
         }
     }
 

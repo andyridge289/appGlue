@@ -8,5 +8,6 @@ public class Set extends NumberInt
 		this.name = "Set";
 		this.className = Set.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = false;
 	}
 }

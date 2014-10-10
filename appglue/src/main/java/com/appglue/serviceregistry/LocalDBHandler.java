@@ -178,7 +178,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -764,7 +764,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     public IOType getIOType(String inputClassName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        Cursor c = db.query(TBL_IOTYPE, new String[]{ID, NAME, CLASSNAME}, CLASSNAME + " = ?",
+        Cursor c = db.query(TBL_IOTYPE, new String[]{ ID, NAME, CLASSNAME }, CLASSNAME + " = ?",
                 new String[]{"" + inputClassName}, null, null, null);
 
         if (c == null) {
@@ -927,6 +927,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 Log.e(TAG, "Updated " + ret + " values for " + component.getID() + " (" + component.getDescription().getName() + ")");
             }
 
+            // FIXME Need to check this out, we really need the unit tests for updating too
             ArrayList<ServiceIO> inputs = component.getInputs();
             for (int i = 0; i < inputs.size(); i++) {
                 ServiceIO io = updateServiceIO(inputs.get(i));
@@ -962,6 +963,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(FILTER_CONDITION, value.getCondition().index);
         cv.put(COMPOSITE_ID, value.getServiceIO().getComponent().getComposite().getID());
         cv.put(IO_ID, value.getServiceIO().getID());
+        cv.put(ENABLED, value.isEnabled() ? 1 : 0);
 
         if (value.getManualValue() != null) {
             String manualValue = value.getServiceIO().getDescription().getType().toString(value.getManualValue());
@@ -996,6 +998,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(FILTER_STATE, value.getFilterState());
         values.put(FILTER_CONDITION, value.getCondition().index);
+        values.put(ENABLED, value.isEnabled() ? 1 : 0);
 
         if (value.getManualValue() != null) {
             String manualValue = value.getServiceIO().getDescription().getType().toString(value.getManualValue());
@@ -2259,6 +2262,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long id = c.getLong(c.getColumnIndex(ID));
             int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
             int conditionIndex = c.getInt(c.getColumnIndex(FILTER_CONDITION));
+            boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
             FilterFactory.FilterValue condition = FilterFactory.getFilterValue(conditionIndex);
 
             String manualValueString = c.isNull(c.getColumnIndex(MANUAL_VALUE)) ? null :
@@ -2269,7 +2273,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
             SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
 
-            IOValue value = new IOValue(id, filterState, condition, manualValue, sample);
+            IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
             valueNode.add(value);
 
         } while (c.moveToNext());
@@ -2315,6 +2319,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long id = c.getLong(c.getColumnIndex(ID));
             int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
             int conditionIndex = c.getInt(c.getColumnIndex(FILTER_CONDITION));
+            boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
             FilterFactory.FilterValue condition = FilterFactory.getFilterValue(conditionIndex);
 
             String manualValueString = c.isNull(c.getColumnIndex(MANUAL_VALUE)) ? null :
@@ -2325,7 +2330,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
             SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
 
-            IOValue value = new IOValue(id, filterState, condition, manualValue, sample);
+            IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
             values.add(value);
 
         } while (c.moveToNext());

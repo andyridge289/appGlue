@@ -11,8 +11,8 @@ import static com.appglue.Constants.TAG;
 public class IOValue {
 
     public static final int UNFILTERED = -1;
-    public static final int MANUAL_FILTER = 0;
-    public static final int SAMPLE_FILTER = 1;
+    public static final int MANUAL = 0;
+    public static final int SAMPLE = 1;
 
     private long id; // It'll be going in the database so we'll need an ID at some point
 
@@ -24,27 +24,39 @@ public class IOValue {
 
     private Object manualValue;
     private SampleValue sampleValue;
+    private boolean enabled;
+
+    public IOValue(ServiceIO io) {
+        this.condition = null;
+        this.manualValue = null;
+        this.io = io;
+        this.filterState = UNFILTERED;
+        this.enabled = true;
+    }
 
     public IOValue(FilterFactory.FilterValue condition, Object manualValue, ServiceIO io) {
         this.condition = condition;
         this.manualValue = manualValue;
         this.io = io;
-        this.filterState = MANUAL_FILTER;
+        this.filterState = MANUAL;
+        this.enabled = true;
     }
 
     public IOValue(FilterFactory.FilterValue condition, SampleValue sampleValue, ServiceIO io) {
         this.condition = condition;
         this.sampleValue = sampleValue;
         this.io = io;
-        this.filterState = SAMPLE_FILTER;
+        this.filterState = SAMPLE;
+        this.enabled = true;
     }
 
-    public IOValue(long id, int filterState, FilterFactory.FilterValue condition, Object manualValue, SampleValue sample) {
+    public IOValue(long id, int filterState, FilterFactory.FilterValue condition, Object manualValue, SampleValue sample, boolean enabled) {
         this.id = id;
         this.filterState = filterState;
         this.condition = condition;
         this.manualValue = manualValue;
         this.sampleValue = sample;
+        this.enabled = enabled;
     }
 
     public long getID() {
@@ -120,6 +132,10 @@ public class IOValue {
             if (LOG) Log.d(TAG, "IOValue->Equals: condition");
             return false;
         }
+        if (this.enabled != other.isEnabled()) {
+            if (LOG) Log.d(TAG, "IOValue->Equals: enabled");
+            return false;
+        }
 
         if (this.manualValue != null) {
             if (!this.manualValue.equals(other.getManualValue())) {
@@ -136,5 +152,13 @@ public class IOValue {
         }
 
         return true;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

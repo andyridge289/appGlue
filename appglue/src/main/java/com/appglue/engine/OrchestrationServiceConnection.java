@@ -27,7 +27,6 @@ import com.appglue.ActivityLog;
 import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
-import com.appglue.TST;
 import com.appglue.Test;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
@@ -36,7 +35,6 @@ import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
-import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.library.LogItem;
 import com.appglue.library.err.OrchestrationException;
@@ -47,7 +45,6 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
 import static com.appglue.library.AppGlueConstants.PREFS;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
@@ -393,9 +390,9 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             FilterValue fv = ioValue.getCondition();
             Object expectedValue = null;
 
-            if (ioValue.getFilterState() == IOValue.MANUAL_FILTER) {
+            if (ioValue.getFilterState() == IOValue.MANUAL) {
                 expectedValue = ioValue.getManualValue();
-            } else if (ioValue.getFilterState() == IOValue.SAMPLE_FILTER) {
+            } else if (ioValue.getFilterState() == IOValue.SAMPLE) {
                 expectedValue = ioValue.getSampleValue().getValue();
             }
 
@@ -479,7 +476,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 //
 //                    if (outputValue.getFilterState() == IOValue.MANUAL_FILTER)
 //                        value = outputValue.getManualValue();
-//                    else if (outputValue.getFilterState() == IOValue.SAMPLE_FILTER)
+//                    else if (outputValue.getFilterState() == IOValue.SAMPLE)
 //                        value = outputValue.getSampleValue().getValue();
 //
 //                    if (value == null) {  // Something has gone very very wrong
@@ -608,9 +605,9 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 IOValue inputValue = input.getValues().get(0);
                 Object value = null;
 
-                if (inputValue.getFilterState() == IOValue.MANUAL_FILTER)
+                if (inputValue.getFilterState() == IOValue.MANUAL)
                     value = inputValue.getManualValue();
-                else if (inputValue.getFilterState() == IOValue.SAMPLE_FILTER)
+                else if (inputValue.getFilterState() == IOValue.SAMPLE)
                     value = inputValue.getSampleValue().getValue();
 
                 if (inputList.size() == 0)

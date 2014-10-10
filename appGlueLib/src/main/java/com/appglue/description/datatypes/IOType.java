@@ -14,6 +14,7 @@ public abstract class IOType
 	protected String className;
 
     protected Sensitivity sensitivity;
+    protected boolean acceptsManual;
 
     enum Sensitivity {
         NORMAL,
@@ -26,18 +27,20 @@ public abstract class IOType
 		this.id = -1;
 		this.name = "";
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = false;
 	}
 	
-	public IOType(String name, String className)
+	public IOType(String name, String className, boolean acceptsManual)
 	{
         this();
 		this.name = name;
         this.className = className;
+        this.acceptsManual = acceptsManual;
 	}
 	
-	public IOType(long id, String name, String className)
+	public IOType(long id, String name, String className, boolean acceptsManual)
 	{
-		this(name, className);
+		this(name, className, acceptsManual);
         this.id = id;
 	}
 
@@ -76,6 +79,14 @@ public abstract class IOType
 		this.name = name;
 	}
 
+    public boolean acceptsManualValues() {
+        return acceptsManual;
+    }
+
+    public void setManualAcceptance(boolean acceptsManual) {
+        this.acceptsManual = acceptsManual;
+    }
+
     public boolean typeEquals(IOType t) {
         return className.equals(t.getClassName());
     }
@@ -111,6 +122,11 @@ public abstract class IOType
 
         if(sensitivity != other.getSensitivity()) {
             if(LOG) Log.d(TAG, "IOType->Equals: sensitivity - [" + sensitivity + " :: " + other.getSensitivity() + "]");
+            return false;
+        }
+
+        if (this.acceptsManual != other.acceptsManualValues()) {
+            if(LOG) Log.d(TAG, "IOType->Equals: manual accepted - [" + acceptsManual + " :: " + other.acceptsManualValues() + "]");
             return false;
         }
 

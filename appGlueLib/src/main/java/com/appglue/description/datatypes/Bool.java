@@ -9,8 +9,8 @@ public class Bool extends IOType
 		super();
 		this.name = "Bool";
 		this.className = Bool.class.getCanonicalName();
-//		this.value = false;
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = false;
 	}
 
     @Override

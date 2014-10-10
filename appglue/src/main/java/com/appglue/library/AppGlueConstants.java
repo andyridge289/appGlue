@@ -141,47 +141,47 @@ public class AppGlueConstants {
     };
 
     public static final String[][] COLS_TAG = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {NAME, "TEXT"}
-            };
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { NAME, "TEXT" }
+    };
 
     public static final String[][] COLS_IOTYPE = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {NAME, "TEXT"},
-                    {CLASSNAME, "TEXT"}
-            };
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { NAME, "TEXT" },
+        { CLASSNAME, "TEXT" }
+    };
 
     // Constants for the samples table (and below).
     public static final String IO_DESCRIPTION_ID = "io_description_id";
 
     // MAke a table for sample values
     public static final String[][] COLS_IO_SAMPLES = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {IO_DESCRIPTION_ID, "INTEGER"},
-                    {NAME, "TEXT"},
-                    {VALUE, "TEXT"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {IO_DESCRIPTION_ID, "INTEGER"},
+        {NAME, "TEXT"},
+        {VALUE, "TEXT"}
+    };
 
     public static final String IX_IO_SAMPLES = "index_io_samples";
     public static final String[] INDEX_IO_SAMPLES = new String[]{
-            IO_DESCRIPTION_ID
+        IO_DESCRIPTION_ID
     };
 
     public static final String TAG_ID = "tag_id";
 
     public static final String[][] COLS_COMPONENT_HAS_TAG = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {CLASSNAME, "TEXT"},
-                    {TAG_ID, "INTEGER"}
-            };
+    {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { CLASSNAME, "TEXT" },
+        { TAG_ID, "INTEGER" }
+    };
 
     public static final String IX_COMPONENT_HAS_TAG = "index_component_has_tag";
     public static final String[] INDEX_COMPONENT_HAS_TAG = new String[]{
-            CLASSNAME, TAG_ID
+        CLASSNAME, TAG_ID
     };
 
     // Database - Composite
@@ -194,17 +194,17 @@ public class AppGlueConstants {
 
     // 'dynamic' database tables
     public static final String[][] COLS_COMPOSITE = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {NAME, "TEXT"},
-                    {DESCRIPTION, "TEXT"},
-                    {SCHEDULED, "TINYINT"},
-                    {ENABLED, "TINYINT"},
-                    {NUMERAL, "INTEGER"},
-                    {INTERVAL, "INTEGER"},
-                    {HOURS, "INTEGER"},
-                    {MINUTES, "INTEGER"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {NAME, "TEXT"},
+        {DESCRIPTION, "TEXT"},
+        {SCHEDULED, "TINYINT"},
+        {ENABLED, "TINYINT"},
+        {NUMERAL, "INTEGER"},
+        {INTERVAL, "INTEGER"},
+        {HOURS, "INTEGER"},
+        {MINUTES, "INTEGER"}
+    };
 
     public static final String COMPOSITE_ID = "composite_id";
 
@@ -253,6 +253,7 @@ public class AppGlueConstants {
             {VALUE_NODE_ID, "INTEGER"},
             {FILTER_STATE, "INTEGER"},
             {FILTER_CONDITION, "INTEGER"},
+            { ENABLED, "TINYINT"},
             {MANUAL_VALUE, "TEXT DEFAULT NULL"}, // The value could be anything, better just set it as text so we can do some clever stuff at some point
             {SAMPLE_VALUE, "INTEGER DEFAULT '-1'", TBL_IO_SAMPLE, ID},
     };
@@ -291,15 +292,15 @@ public class AppGlueConstants {
     public static final String SINK_IO = "sink_io";
 
     public static final String[][] COLS_IOCONNECTION = new String[][]{
-            {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-            {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
-            {SOURCE_IO, "INTEGER", TBL_SERVICEIO, ID},
-            {SINK_IO, "INTEGER", TBL_SERVICEIO, ID}
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID },
+        { SOURCE_IO, "INTEGER", TBL_SERVICEIO, ID },
+        { SINK_IO, "INTEGER", TBL_SERVICEIO, ID }
     };
 
     public static final String IX_IOCONNECTION = "index_composite_ioconnection";
     public static final String[] INDEX_IOCONNECTION = new String[]{
-            SOURCE_IO, SINK_IO
+        SOURCE_IO, SINK_IO
     };
 
     public static final String START_TIME = "start_time";
@@ -309,15 +310,15 @@ public class AppGlueConstants {
     public static final String TERMINATED = "terminate";
 
     public static final String[][] COLS_COMPOSITE_EXECUTION_LOG = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {COMPOSITE_ID, "INTEGER"},
-                    {START_TIME, "INTEGER"},
-                    {END_TIME, "INTEGER"},
-                    {LOG_TYPE, "INTEGER"},
-                    {TERMINATED, "TINYINT DEFAULT 0"},
-                    {MESSAGE, "TEXT"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {COMPOSITE_ID, "INTEGER"},
+        {START_TIME, "INTEGER"},
+        {END_TIME, "INTEGER"},
+        {LOG_TYPE, "INTEGER"},
+        {TERMINATED, "TINYINT DEFAULT 0"},
+        {MESSAGE, "TEXT"}
+    };
 
     public static final String TIME = "time";
 
@@ -326,21 +327,21 @@ public class AppGlueConstants {
     public static final String EXECUTION_INSTANCE = "execution_instance";
 
     public static final String[][] COLS_EXECUTION_LOG = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
-                    {EXECUTION_INSTANCE, "INTEGER", TBL_COMPOSITE_EXECUTION_LOG, ID},
-                    {COMPONENT_ID, "INTEGER", TBL_COMPONENT, ID},
-                    {MESSAGE, "TEXT"},
-                    {INPUT_DATA, "BLOB"},
-                    {OUTPUT_DATA, "BLOB"},
-                    {LOG_TYPE, "INTEGER"},
-                    {TIME, "INTEGER"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
+        {EXECUTION_INSTANCE, "INTEGER", TBL_COMPOSITE_EXECUTION_LOG, ID},
+        {COMPONENT_ID, "INTEGER", TBL_COMPONENT, ID},
+        {MESSAGE, "TEXT"},
+        {INPUT_DATA, "BLOB"},
+        {OUTPUT_DATA, "BLOB"},
+        {LOG_TYPE, "INTEGER"},
+        {TIME, "INTEGER"}
+    };
 
     public static final String IX_EXECUTION_LOG = "index_execution_log";
     public static final String[] INDEX_EXECUTION_LOG = new String[]{
-            COMPOSITE_ID, COMPONENT_ID, EXECUTION_INSTANCE
+        COMPOSITE_ID, COMPONENT_ID, EXECUTION_INSTANCE
     };
 
     public static final String HAS_INPUTS = "has_inputs";

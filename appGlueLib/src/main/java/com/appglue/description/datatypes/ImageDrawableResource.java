@@ -10,6 +10,7 @@ public class ImageDrawableResource extends IOType {
         this.name = "Image";
         this.className = ImageDrawableResource.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
+        this.acceptsManual = false;
     }
 
     @Override

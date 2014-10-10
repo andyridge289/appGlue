@@ -17,8 +17,6 @@ import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
@@ -35,7 +33,9 @@ import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
 import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.animation.WeightedExpandAnimation;
 import com.appglue.layout.dialog.DialogApp;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.serviceregistry.Registry;
@@ -74,7 +74,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     private View addOutput;
 
     private LinearLayout filterFrame;
-    private View noFilter;
+    private View noFilters;
     private ListView filterList;
     private View addFilter;
 
@@ -142,11 +142,20 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
         noOutputs = findViewById(R.id.no_outputs);
         noInputs = findViewById(R.id.no_inputs);
-        noFilter = findViewById(R.id.wiring_no_filters);
+        noFilters = findViewById(R.id.wiring_no_filters);
 
         addOutput = findViewById(R.id.add_output);
         addInput = findViewById(R.id.add_input);
         addFilter = findViewById(R.id.wiring_filter_add);
+
+        // FIXME Need to disable the filter stuff as long as the first component is null
+
+        addFilter.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.filter(first.getID(), -1);
+            }
+        });
 
         connections = new ArrayList<Point>();
 
@@ -246,6 +255,16 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 noOutputs.setVisibility(View.VISIBLE);
                 addOutput.setVisibility(View.INVISIBLE);
             }
+
+            // FIXME At this point we need to check the filters. Need to slightly tweak how this works...
+            if (first.hasFilters()) {
+                Log.d(TAG, first.getFilters().size() + " filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
+                filterList.setAdapter(new FilterAdapter(getContext(), first.getFilters()));
+                filterList.setVisibility(View.VISIBLE);
+                noFilters.setVisibility(View.GONE);
+            } else {
+                Log.d(TAG, "Nope, no filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
+            }
         } else {
             // There isn't a service here. Hide the list and the text that says NONE
             outputContainer.setVisibility(View.INVISIBLE);
@@ -283,8 +302,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             }
         }
-
-        // FIXME At this point we need to check the filters. Need to slightly tweak how this works...
 
         hueGeneration();
         this.wiringMode = mode;
@@ -527,15 +544,15 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 break;
         }
 
-        ExpandAnimation ia = new ExpandAnimation(inputFrame, ((LayoutParams) inputFrame.getLayoutParams()).weight, inputWeight);
+        WeightedExpandAnimation ia = new WeightedExpandAnimation(inputFrame, ((LayoutParams) inputFrame.getLayoutParams()).weight, inputWeight);
         ia.setDuration(500);
         inputFrame.startAnimation(ia);
 
-        ExpandAnimation oa = new ExpandAnimation(outputFrame, ((LayoutParams) outputFrame.getLayoutParams()).weight, outputWeight);
+        WeightedExpandAnimation oa = new WeightedExpandAnimation(outputFrame, ((LayoutParams) outputFrame.getLayoutParams()).weight, outputWeight);
         oa.setDuration(500);
         outputFrame.startAnimation(oa);
 
-        ExpandAnimation fa = new ExpandAnimation(filterFrame, ((LayoutParams) filterFrame.getLayoutParams()).weight, filterWeight);
+        WeightedExpandAnimation fa = new WeightedExpandAnimation(filterFrame, ((LayoutParams) filterFrame.getLayoutParams()).weight, filterWeight);
         fa.setDuration(500);
         filterFrame.startAnimation(fa);
 
@@ -690,12 +707,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 //    			else
 //    			{
 //    	    		// This is for a manual one
-//    	    		if (item.getFilterState() == ServiceIO.MANUAL_FILTER)
+//    	    		if (item.getFilterState() == ServiceIO.MANUAL)
 //    	    		{
 //    	    			String value = iod.getType().toString(item.getManualValue());
 //    	    			ioValue.setText(value);
 //    	    		}
-//    	    		else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER)
+//    	    		else if (item.getFilterState() == ServiceIO.SAMPLE)
 //    	    		{
 //    	    			// Need to look up what the value for this thing is, but return the friendly name not the other thing
 //    	    			ioValue.setText(item.getChosenSampleValue().name);
@@ -964,12 +981,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 //    				ioType.setText(iod.getType().getName() + ": " + fv.text + " ");
 //
 //    	    		// This is for a manual one
-//    	    		if (item.getFilterState() == ServiceIO.MANUAL_FILTER)
+//    	    		if (item.getFilterState() == ServiceIO.MANUAL)
 //    	    		{
 //    	    			String value = iod.getType().toString(item.getManualValue());
 //    	    			ioValue.setText(value);
 //    	    		}
-//    	    		else if (item.getFilterState() == ServiceIO.SAMPLE_FILTER)
+//    	    		else if (item.getFilterState() == ServiceIO.SAMPLE)
 //    	    		{
 //    	    			// Need to look up what the value for this thing is, but return the friendly name not the other thing
 //    	    			ioValue.setText(item.getChosenSampleValue().name);
@@ -1163,6 +1180,38 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         public abstract View getView(final int position, View convertView, final ViewGroup parent);
     }
 
+    private class FilterAdapter extends ArrayAdapter<IOFilter> {
+
+        private ArrayList<IOFilter> items;
+
+        public FilterAdapter(Context context, ArrayList<IOFilter> objects) {
+            super(context, R.layout.list_item_filter, objects);
+            this.items = objects;
+        }
+
+        @SuppressLint("InflateParams")
+        public View getView(final int position, View convertView, final ViewGroup parent) {
+            if (convertView == null) {
+                LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = vi.inflate(R.layout.list_item_filter, null);
+            }
+
+            final LinearLayout v = (LinearLayout) convertView;
+
+            final IOFilter item = items.get(position);
+
+            ArrayList<ServiceIO> ios = item.getIOs();
+            for (ServiceIO io : ios) {
+                TextView ioText = new TextView(getContext());
+                ioText.setText(io.getDescription().getFriendlyName());
+                v.addView(ioText);
+            }
+
+            return v;
+        }
+
+    }
+
     private class PathColour {
         private PointF start;
         private PointF end;
@@ -1175,28 +1224,4 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         }
     }
 
-    private class ExpandAnimation extends Animation {
-
-        private final float mStartWeight;
-        private final float mDeltaWeight;
-        private View mContent;
-
-        public ExpandAnimation(View v, float startWeight, float endWeight) {
-            mStartWeight = startWeight;
-            mDeltaWeight = endWeight - startWeight;
-            mContent = v;
-        }
-
-        @Override
-        protected void applyTransformation(float interpolatedTime, Transformation t) {
-            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mContent.getLayoutParams();
-            lp.weight = (mStartWeight + (mDeltaWeight * interpolatedTime));
-            mContent.setLayoutParams(lp);
-        }
-
-        @Override
-        public boolean willChangeBounds() {
-            return true;
-        }
-    }
 }

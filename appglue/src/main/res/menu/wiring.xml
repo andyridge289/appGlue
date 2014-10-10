@@ -16,7 +16,12 @@
             />
     </group>
     <group
-        android:id="@+id/menu_group_choose"
+        android:id="@+id/menu_group_filter"
         >
+        <item
+            android:id="@+id/filter_done"
+            android:title="@string/filter_done"
+            app:showAsAction="always"
+            />
     </group>
 </menu>

@@ -188,5 +188,9 @@
     <string name="wiring_filter_title">filters</string>
     <string name="wiring_filters_none">No Filters</string>
     <string name="wiring_filter_add">Add</string>
+    <string name="cd_filter_add">Add a value for the IO in this filter</string>
+    <string name="and">and</string>
+    <string name="or">or</string>
+    <string name="filter_done">Done</string>
 
 </resources>

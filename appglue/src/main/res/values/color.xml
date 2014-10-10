@@ -22,11 +22,14 @@
     <color name="colorPrimaryDark">#ff522385</color>
     <color name="colorPrimary">#ff862ecc</color>
 
+    <color name="colorPrimaryLight_trans">#4BA133F0</color>
     <color name="colorPrimary_trans_light">#22862ecc</color>
     <color name="colorPrimary_trans_mid">#88862ecc</color>
 
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
+
+    <color name="divider">#BBBBBBBB</color>
 
     <!-- Theme colours -->
     <color name="bg">#fff3f3f3</color>
