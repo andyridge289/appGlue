@@ -59,7 +59,6 @@ public class TestLib {
         components.add(notificationComponent);
 
         IODescription lineName = tubeComponent.getDescription().getOutput(TubeService.LINE_NAME);
-        IODescription lineIcon = tubeComponent.getDescription().getOutput(TubeService.LINE_ICON);
 
         SampleValue bakerlooSample = null;
         ArrayList<SampleValue> samples = lineName.getSampleValues();

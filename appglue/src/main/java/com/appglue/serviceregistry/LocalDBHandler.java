@@ -13,7 +13,6 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
-import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.IODescription;
 import com.appglue.TST;
@@ -68,6 +67,7 @@ import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE;
 import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.COLS_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.COLS_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.COLS_IOFILTER;
 import static com.appglue.library.AppGlueConstants.COLS_IOTYPE;
 import static com.appglue.library.AppGlueConstants.COLS_IOVALUE;
 import static com.appglue.library.AppGlueConstants.COLS_IO_DESCRIPTION;
@@ -75,56 +75,50 @@ import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.COLS_SD;
 import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.COLS_TAG;
-import static com.appglue.library.AppGlueConstants.COLS_IOFILTER;
 import static com.appglue.library.AppGlueConstants.COLS_VALUENODE;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.CONDITION;
 import static com.appglue.library.AppGlueConstants.DB_NAME;
 import static com.appglue.library.AppGlueConstants.DB_VERSION;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 import static com.appglue.library.AppGlueConstants.END_TIME;
 import static com.appglue.library.AppGlueConstants.EXECUTION_INSTANCE;
 import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
+import static com.appglue.library.AppGlueConstants.FILTER_ID;
 import static com.appglue.library.AppGlueConstants.FILTER_STATE;
-import static com.appglue.library.AppGlueConstants.HOURS;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.INDEX_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.INDEX_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.INDEX_IOFILTER;
 import static com.appglue.library.AppGlueConstants.INDEX_IOVALUE;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.INDEX_SERVICEIO;
-import static com.appglue.library.AppGlueConstants.INDEX_IOFILTER;
 import static com.appglue.library.AppGlueConstants.INDEX_VALUENODE;
-import static com.appglue.library.AppGlueConstants.IX_IOFILTER;
-import static com.appglue.library.AppGlueConstants.IX_VALUENODE;
 import static com.appglue.library.AppGlueConstants.INPUT_DATA;
 import static com.appglue.library.AppGlueConstants.INPUT_ID;
-import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.IO_DESCRIPTION_ID;
 import static com.appglue.library.AppGlueConstants.IO_ID;
 import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.IX_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.IX_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.IX_IOFILTER;
 import static com.appglue.library.AppGlueConstants.IX_IOVALUE;
 import static com.appglue.library.AppGlueConstants.IX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.IX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.IX_VALUENODE;
 import static com.appglue.library.AppGlueConstants.LOG_TYPE;
 import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
-import static com.appglue.library.AppGlueConstants.MINUTES;
-import static com.appglue.library.AppGlueConstants.NUMERAL;
 import static com.appglue.library.AppGlueConstants.OUTPUT_DATA;
 import static com.appglue.library.AppGlueConstants.OUTPUT_ID;
-import static com.appglue.library.AppGlueConstants.SCHEDULED;
 import static com.appglue.library.AppGlueConstants.SINK_IO;
 import static com.appglue.library.AppGlueConstants.SOURCE_IO;
 import static com.appglue.library.AppGlueConstants.START_TIME;
-import static com.appglue.library.AppGlueConstants.CONDITION;
-import static com.appglue.library.AppGlueConstants.FILTER_ID;
 import static com.appglue.library.AppGlueConstants.TAG_ID;
 import static com.appglue.library.AppGlueConstants.TBL_APP;
 import static com.appglue.library.AppGlueConstants.TBL_COMPONENT;
@@ -132,6 +126,7 @@ import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE;
 import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.TBL_EXECUTION_LOG;
 import static com.appglue.library.AppGlueConstants.TBL_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.TBL_IOFILTER;
 import static com.appglue.library.AppGlueConstants.TBL_IOTYPE;
 import static com.appglue.library.AppGlueConstants.TBL_IOVALUE;
 import static com.appglue.library.AppGlueConstants.TBL_IO_DESCRIPTION;
@@ -140,7 +135,6 @@ import static com.appglue.library.AppGlueConstants.TBL_SD;
 import static com.appglue.library.AppGlueConstants.TBL_SD_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.TBL_TAG;
-import static com.appglue.library.AppGlueConstants.TBL_IOFILTER;
 import static com.appglue.library.AppGlueConstants.TBL_VALUENODE;
 import static com.appglue.library.AppGlueConstants.TERMINATED;
 import static com.appglue.library.AppGlueConstants.TIME;
@@ -314,12 +308,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(ID, CompositeService.TEMP_ID);
         cv.put(NAME, CompositeService.TEMP_NAME);
         cv.put(DESCRIPTION, CompositeService.TEMP_DESCRIPTION);
-        cv.put(SCHEDULED, 0);
+//        cv.put(SCHEDULED, 0);
         cv.put(ENABLED, 1);
-        cv.put(NUMERAL, 0);
-        cv.put(HOURS, -1);
-        cv.put(MINUTES, -1);
-        cv.put(INTERVAL, Interval.NONE.index);
+//        cv.put(NUMERAL, 0);
+//        cv.put(HOURS, -1);
+//        cv.put(MINUTES, -1);
+//        cv.put(INTERVAL, Interval.NONE.index);
         long id = db.insertOrThrow(TBL_COMPOSITE, null, cv);
         if (id != 1) {
             Log.e(TAG, "The temp has been inserted somewhere that isn't 1. This is a problem");
@@ -332,12 +326,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(NAME, name);
         cv.put(DESCRIPTION, "");
-        cv.put(SCHEDULED, temp.getScheduleIndex());
-        cv.put(HOURS, temp.getHours());
-        cv.put(MINUTES, temp.getMinutes());
+//        cv.put(SCHEDULED, temp.getScheduleIndex());
+//        cv.put(HOURS, temp.getHours());
+//        cv.put(MINUTES, temp.getMinutes());
         cv.put(ENABLED, temp.isEnabled());
-        cv.put(NUMERAL, temp.getNumeral());
-        cv.put(INTERVAL, temp.getInterval().index);
+//        cv.put(NUMERAL, temp.getNumeral());
+//        cv.put(INTERVAL, temp.getInterval().index);
 
         long id = db.insertOrThrow(TBL_COMPOSITE, null, cv);
 
@@ -811,11 +805,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(NAME, cs.getName());
         values.put(DESCRIPTION, cs.getDescription());
         values.put(ENABLED, cs.isEnabled());
-        values.put(SCHEDULED, cs.getScheduleIndex());
-        values.put(HOURS, cs.getHours());
-        values.put(MINUTES, cs.getMinutes());
-        values.put(INTERVAL, cs.getInterval().index);
-        values.put(NUMERAL, cs.getNumeral());
+//        values.put(SCHEDULED, cs.getScheduleIndex());
+//        values.put(HOURS, cs.getHours());
+//        values.put(MINUTES, cs.getMinutes());
+//        values.put(INTERVAL, cs.getInterval().index);
+//        values.put(NUMERAL, cs.getNumeral());
 
         long compositeId = db.insertOrThrow(TBL_COMPOSITE, null, values);
         cs.setID(compositeId);
@@ -871,23 +865,20 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return success;
     }
 
-    public synchronized CompositeService updateComposite(CompositeService composite) {
+    public synchronized int updateComposite(CompositeService composite) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        int failureCount = 0;
 
         if (composite.getID() == -1) {
             // This is a new one and it needs to be added from scratch
-            return addComposite(composite);
+            addComposite(composite);
         } else {
 
             ContentValues values = new ContentValues();
             values.put(NAME, composite.getName());
             values.put(DESCRIPTION, composite.getDescription());
             values.put(ENABLED, composite.isEnabled());
-            values.put(NUMERAL, composite.getNumeral());
-            values.put(INTERVAL, composite.getInterval().index);
-            values.put(SCHEDULED, composite.getScheduleIndex());
-            values.put(HOURS, composite.getHours());
-            values.put(MINUTES, composite.getMinutes());
 
             int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{"" + composite.getID()});
             if (ret != 1) {
@@ -897,26 +888,23 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             SparseArray<ComponentService> components = composite.getComponents();
 
             for (int i = 0; i < components.size(); i++) {
-                ComponentService component = updateComponent(components.valueAt(i));
-                if (!component.equals(components.valueAt(i))) {
-                    Log.e(TAG, "Component " + components.valueAt(i).getID() + " update failed for " + composite.getID());
-                }
+                failureCount += updateComponent(components.valueAt(i));
             }
 
             updateWiring(composite);
-            return getComposite(composite.getID());
         }
+
+        return failureCount;
     }
 
-    private synchronized ComponentService updateComponent(ComponentService component) {
+    private synchronized int updateComponent(ComponentService component) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+        int failureCount = 0;
 
-        if (component.getID() == -1) {
-            // This is a new one and it needs to be added from scratch
-            return getComponent(addComponent(component), component.getComposite());
+        if (component.getID() == -1) { // This is a new one and it needs to be added from scratch
+            addComponent(component);
         } else {
-
             ContentValues values = new ContentValues();
             values.put(COMPOSITE_ID, component.getComposite().getID());
             values.put(CLASSNAME, component.getDescription().getClassName());
@@ -927,25 +915,70 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 Log.e(TAG, "Updated " + ret + " values for " + component.getID() + " (" + component.getDescription().getName() + ")");
             }
 
-            // FIXME Need to check this out, we really need the unit tests for updating too
             ArrayList<ServiceIO> inputs = component.getInputs();
             for (int i = 0; i < inputs.size(); i++) {
-                ServiceIO io = updateServiceIO(inputs.get(i));
-                if (!io.equals(inputs.get(i))) {
-                    Log.e(TAG, "IO " + inputs.get(i).getID() + " update failed for " + component.getID());
-                }
+                failureCount += updateServiceIO(inputs.get(i));
             }
 
             ArrayList<ServiceIO> outputs = component.getOutputs();
             for (int i = 0; i < outputs.size(); i++) {
-                ServiceIO io = updateServiceIO(outputs.get(i));
-                if (!io.equals(outputs.get(i))) {
-                    Log.e(TAG, "IO " + outputs.get(i).getID() + " update failed for " + component.getID());
-                }
+                failureCount += updateServiceIO(outputs.get(i));
+            }
+
+            // TODO This is probably where the filters need to be updated for the component
+            ArrayList<IOFilter> filters = component.getFilters();
+            for (int i = 0; i < filters.size(); i++) {
+                failureCount += updateFilter(filters.get(i));
             }
         }
 
-        return getComponent(component.getID(), component.getComposite());
+        return failureCount;
+    }
+
+    private synchronized int updateFilter(IOFilter filter) {
+
+        int failureCount = 0;
+
+        ContentValues cv = new ContentValues();
+        cv.put(COMPONENT_ID, filter.getComponent().getID());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int ret = db.update(TBL_IOFILTER, cv, ID + " = ?", new String[]{"" + filter.getID()});
+        if (ret == 1) {
+            failureCount++;
+        }
+
+        LongSparseArray<IOFilter.ValueNode> nodes = filter.getValues();
+        for (int i = 0; i < nodes.size(); i++) {
+            failureCount += updateValueNode(nodes.valueAt(i));
+        }
+
+        return failureCount;
+    }
+
+    private synchronized int updateValueNode(IOFilter.ValueNode valueNode) {
+
+        int failureCount = 0;
+
+        ContentValues cv = new ContentValues();
+        cv.put(FILTER_ID, valueNode.getFilter().getID());
+        cv.put(CONDITION, valueNode.getCondition() ? 1 : 0);
+        cv.put(IO_ID, valueNode.getIO().getID());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int ret = db.update(TBL_VALUENODE, cv, ID + " = ?", new String[]{"" + valueNode.getID()});
+        if (ret == 1) {
+            failureCount++;
+        }
+
+        ArrayList<IOValue> values = valueNode.getValues();
+        for (int i = 0; i < values.size(); i++) {
+            failureCount += updateIOValue(values.get(i), valueNode);
+        }
+
+        return failureCount;
     }
 
     private synchronized IOValue addIOValue(IOValue value, IOFilter.ValueNode valueNode) {
@@ -987,15 +1020,26 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return value;
     }
 
-    private synchronized IOValue updateIOValue(IOValue value) {
+    private synchronized int updateIOValue(IOValue value, IOFilter.ValueNode vn) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        int failureCount = 0;
 
         if (value.getID() == -1) {
             addIOValue(value, null);
-            return value;
+            return 0;
         }
 
         ContentValues values = new ContentValues();
+        values.put(IO_ID, value.getServiceIO().getID());
+        values.put(COMPOSITE_ID, value.getServiceIO().getComponent().getComposite().getID());
+
+        if (vn != null) {
+            values.put(VALUE_NODE_ID, vn.getID());
+        } else {
+            values.put(VALUE_NODE_ID, -1);
+        }
+
         values.put(FILTER_STATE, value.getFilterState());
         values.put(FILTER_CONDITION, value.getCondition().index);
         values.put(ENABLED, value.isEnabled() ? 1 : 0);
@@ -1013,21 +1057,21 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         int ret = db.update(TBL_IOVALUE, values, ID + " = ?", new String[]{"" + value.getID()});
 
-        if (ret != 1) {
-            Log.e(TAG, "Updated " + ret + " values for " + value.getID() + " (" + value.getServiceIO().getDescription().getName() + ")");
+        if (ret == 1) {
+            failureCount++;
         }
 
-        return value;
+        return failureCount;
     }
 
-    private synchronized ServiceIO updateServiceIO(ServiceIO io) {
+    private synchronized int updateServiceIO(ServiceIO io) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+        int failureCount = 0;
 
         if (io.getID() == -1) {
             // This is a new one and it needs to be added from scratch
             addServiceIO(io);
-            return io;
         } else {
 
             ContentValues values = new ContentValues();
@@ -1037,22 +1081,22 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             int ret = db.update(TBL_SERVICEIO, values, ID + " = ?", new String[]{"" + io.getID()});
 
-            if (ret != 1) {
-                Log.e(TAG, "Updated " + ret + " values for " + io.getID() + " (" + io.getDescription().getName() + ")");
+            if (ret == 1) {
+                failureCount++;
             }
 
             for (IOValue value : io.getValues()) {
-                updateIOValue(value);
+                updateIOValue(value, null);
             }
-
-            return io;
         }
+
+        return failureCount;
     }
 
     public synchronized void updateWiring(CompositeService cs) {
         // Just delete them all and then re-add them all again - this seems easiest?
         SQLiteDatabase db = this.getWritableDatabase();
-        int delCount = db.delete(TBL_IOCONNECTION, COMPOSITE_ID + "=" + cs.getID(), null);
+        int delCount = db.delete(TBL_IOCONNECTION, COMPOSITE_ID + " = " + cs.getID(), null);
 
         if (LOG) Log.d(TAG, "DBUPDATE: Deleted " + delCount + " rows for " + cs.getName());
 
@@ -1074,31 +1118,55 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return cStatus == -1 || chcStatus == -1 || cioStatus == -1 || fStatus == -1;
     }
 
+    public boolean isEnabled(CompositeService composite) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c = db.query(false, TBL_COMPOSITE, new String[]{ENABLED}, ID + " = ?",
+                new String[]{"" + composite.getID()}, null, null, null, null);
+
+        if (c == null) {
+            // TODO Do something
+            return false;
+        }
+
+        if (c.getCount() == 0) {
+            return false;
+        }
+
+        c.moveToFirst();
+
+        boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
+        c.close();
+
+        return enabled;
+    }
+
     /**
      * Returns whether it should be running, and then whether it is running
      *
      * @param id The getID of the composite to find out about the running status
      * @return The running status of the composite
      */
-    public synchronized Boolean compositeEnabled(long id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        if (id == -1) {
-            // ID not set, don't really know what to do here
-            return null;
-        }
-
-        Cursor c = db.query(TBL_COMPOSITE, new String[]{SCHEDULED}, ID + " = ?",
-                new String[]{"" + id}, null, null, null);
-        if (c == null)
-            return false;
-
-        c.moveToFirst();
-
-        long should = c.getLong(c.getColumnIndex(SCHEDULED));
-
-        return should == 1;
-    }
+//    public synchronized Boolean compositeEnabled(long id) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        if (id == -1) {
+//            // ID not set, don't really know what to do here
+//            return null;
+//        }
+//
+//        Cursor c = db.query(TBL_COMPOSITE, new String[]{SCHEDULED}, ID + " = ?",
+//                new String[]{"" + id}, null, null, null);
+//        if (c == null)
+//            return false;
+//
+//        c.moveToFirst();
+//
+//        long should = c.getLong(c.getColumnIndex(SCHEDULED));
+//
+//        return should == 1;
+//    }
 
     /**
      * ********************************************************************************
@@ -2752,41 +2820,42 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return num == 1;
     }
 
+    // TODO Re-implement this once we've got scheduling up and running
     public ArrayList<CompositeService> getScheduledComposites() {
 
         ArrayList<CompositeService> scheduledComposites = new ArrayList<CompositeService>();
 
-        String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
-                ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE.index);
-
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c = db.rawQuery(query, null);
-
-        if (c == null) {
-            Log.e(TAG, "Dead cursor: Scheduled composites");
-            return scheduledComposites;
-        }
-
-        if (c.getCount() == 0) {
-            return scheduledComposites;
-        }
-
-        ArrayList<Long> idList = new ArrayList<Long>();
-
-        do {
-
-            long compositeId = c.getLong(c.getColumnIndex(ID));
-            idList.add(compositeId);
-
-        } while (c.moveToNext());
-        c.close();
-
-        long[] ids = new long[idList.size()];
-        for (int i = 0; i < idList.size(); i++) {
-            ids[i] = idList.get(i);
-        }
-
-        scheduledComposites = getComposites(ids, false);
+//        String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
+//                ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE.index);
+//
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c = db.rawQuery(query, null);
+//
+//        if (c == null) {
+//            Log.e(TAG, "Dead cursor: Scheduled composites");
+//            return scheduledComposites;
+//        }
+//
+//        if (c.getCount() == 0) {
+//            return scheduledComposites;
+//        }
+//
+//        ArrayList<Long> idList = new ArrayList<Long>();
+//
+//        do {
+//
+//            long compositeId = c.getLong(c.getColumnIndex(ID));
+//            idList.add(compositeId);
+//
+//        } while (c.moveToNext());
+//        c.close();
+//
+//        long[] ids = new long[idList.size()];
+//        for (int i = 0; i < idList.size(); i++) {
+//            ids[i] = idList.get(i);
+//        }
+//
+//        scheduledComposites = getComposites(ids, false);
 
         return scheduledComposites;
     }

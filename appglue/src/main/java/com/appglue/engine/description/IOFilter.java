@@ -1,13 +1,14 @@
 package com.appglue.engine.description;
 
-import android.support.v4.util.LongSparseArray;
 import android.util.Log;
+
+import com.appglue.TST;
+
+import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.OR;
-
-import java.util.ArrayList;
 
 public class IOFilter {
 
@@ -15,12 +16,12 @@ public class IOFilter {
     private ComponentService component; // We need a reference to the component that has the description
 
     private ArrayList<ServiceIO> ios; // References to the IOs that are contained within the filter
-    private LongSparseArray<ValueNode> values; // References fo the value nodes
+    private TST<ValueNode> values; // References fo the value nodes
 
     public IOFilter(ComponentService component) {
         this.id = -1;
         this.component = component;
-        values = new LongSparseArray<ValueNode>();
+        values = new TST<ValueNode>();
         ios = new ArrayList<ServiceIO>();
     }
 
@@ -30,14 +31,16 @@ public class IOFilter {
     }
 
     public void addValue(ServiceIO io, IOValue value) {
-        if (values.get(io.getID()) == null) {
+
+        String key = io.getDescription().getName();
+        if (values.get(key) == null) {
             // Then we need to create a new one
             ValueNode vn = new ValueNode(io, this);
             vn.values.add(value);
             ios.add(io);
-            values.put(io.getID(), vn);
+            values.put(key, vn);
         } else {
-            values.get(io.getID()).values.add(value);
+            values.get(key).values.add(value);
         }
     }
 
@@ -46,17 +49,25 @@ public class IOFilter {
     }
 
     public ArrayList<IOValue> getValues(ServiceIO io) {
-        return values.get(io.getID()).values;
+
+        String key = io.getDescription().getName();
+        ValueNode vn = values.get(key);
+
+        if (vn == null) {
+            return new ArrayList<IOValue>();
+        }
+
+        return vn.values;
     }
 
     public boolean hasValues(ServiceIO io) {
-        ValueNode vn = values.get(io.getID());
-         return vn != null;
+        ValueNode vn = values.get(io.getDescription().getName());
+        return vn != null;
     }
 
     public boolean getCondition(ServiceIO io) {
 
-        ValueNode vn = values.get(io.getID());
+        ValueNode vn = values.get(io.getDescription().getName());
         if(vn != null) {
             return vn.condition;
         }
@@ -72,7 +83,7 @@ public class IOFilter {
         return component;
     }
 
-    public LongSparseArray<ValueNode> getValues() {
+    public TST<ValueNode> getValues() {
         return values;
     }
 
@@ -124,10 +135,11 @@ public class IOFilter {
             return false;
         }
 
-        for (int i = 0; i < getValues().size(); i++) {
-            ValueNode vn = getValues().valueAt(i);
-            if(!vn.equals(other.getValues().get(vn.getID()))) {
-                if (LOG) Log.d(TAG, "ComponentService->Equals: value node " + i);
+        ArrayList<String> keys = values.getKeys();
+        for (String key : keys) {
+            ValueNode vn = values.get(key);
+            if (!vn.equals(other.getValues().get(key))) {
+                if (LOG) Log.d(TAG, "ComponentService->Equals: value node " + key);
                 return false;
             }
         }
@@ -139,21 +151,22 @@ public class IOFilter {
         this.id = id;
     }
 
-    public ValueNode getNode(long id, boolean condition, ServiceIO io) {
-        if(this.values.get(id) == null) {
+    public ValueNode getNodeOrCreate(long id, boolean condition, ServiceIO io) {
+        String key = io.getDescription().getName();
+        if (values.get(key) == null) {
             ValueNode vn = new ValueNode(id, this, condition, io);
             if (!ios.contains(io)) {
                 ios.add(io);
             }
-            values.put(id, vn);
+            values.put(key, vn);
             return vn;
         } else {
-            return values.get(id);
+            return values.get(key);
         }
     }
 
     public void setCondition(ServiceIO io, boolean condition) {
-        ValueNode vn = values.get(io.getID());
+        ValueNode vn = values.get(io.getDescription().getName());
         if (vn != null) {
             vn.condition = condition;
         }

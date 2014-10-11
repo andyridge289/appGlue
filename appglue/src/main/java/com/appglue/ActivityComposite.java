@@ -132,9 +132,9 @@ public class ActivityComposite extends Activity
 		}
 		
 		// It doesn't matter what it is, just set the check or not
-		activeCheck.setChecked(registry.enabled(cs.getID()));
-		
-		ListView componentList = (ListView) findViewById(R.id.composite_component_list);
+        activeCheck.setChecked(registry.isEnabled(cs));
+
+        ListView componentList = (ListView) findViewById(R.id.composite_component_list);
 //		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponentsAL()));
 			
 		if(edit)

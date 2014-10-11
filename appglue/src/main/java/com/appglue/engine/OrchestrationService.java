@@ -12,13 +12,13 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.LOG;
+import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.TEST;
 
 public class OrchestrationService extends Service
@@ -89,7 +89,7 @@ public class OrchestrationService extends Service
                     return false;
                 }
 
-                boolean enabled = registry.enabled(cs.getID());
+                boolean enabled = registry.isEnabled(cs);
 
                 if (!test) {
                     if ((!enabled) && duration != 0) // Then it shouldn't be running

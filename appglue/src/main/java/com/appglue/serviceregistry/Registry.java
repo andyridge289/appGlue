@@ -185,8 +185,12 @@ public class Registry {
         return dbHandler.deleteComposite(cs);
     }
 
-    public CompositeService updateComposite(CompositeService composite) {
+    public int updateComposite(CompositeService composite) {
         return dbHandler.updateComposite(composite);
+    }
+
+    public boolean isEnabled(CompositeService composite) {
+        return dbHandler.isEnabled(composite);
     }
 
     public ArrayList<ComponentService> getComponents(String className, int position) {
@@ -195,23 +199,6 @@ public class Registry {
 
     public long addComponent(ComponentService component) {
         return dbHandler.addComponent(component);
-    }
-
-//	public boolean compositeExistsWithName(String name)
-//	{
-//		return dbHandler.compositeExistsWithName(name);
-//	}
-
-    /**
-     * Returns an indicator of:
-     * whether it should be running
-     * whether it is running
-     *
-     * @param id The getID of the service to check
-     * @return And indication of whether the thing is running or not
-     */
-    public boolean enabled(long id) {
-        return dbHandler.compositeEnabled(id);
     }
 
     public ArrayList<CompositeService> getExamples(String componentName) {

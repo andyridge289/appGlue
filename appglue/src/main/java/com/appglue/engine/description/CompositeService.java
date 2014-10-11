@@ -17,11 +17,6 @@ import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.ENABLED;
-import static com.appglue.library.AppGlueConstants.INTERVAL;
-import static com.appglue.library.AppGlueConstants.NUMERAL;
-import static com.appglue.library.AppGlueConstants.SCHEDULED;
-import static com.appglue.library.AppGlueConstants.MINUTES;
-import static com.appglue.library.AppGlueConstants.HOURS;
 
 public class CompositeService {
     private long id;
@@ -154,6 +149,18 @@ public class CompositeService {
 
     public ComponentService getComponent(long id) {
         return this.componentSearch.get(id);
+    }
+
+    public ComponentService getComponent(int position) {
+        if (this.components == null) {
+            return null;
+        }
+
+        if (components.size() < position) {
+            return null;
+        }
+
+        return components.get(position);
     }
 
     public String getName() {
@@ -303,16 +310,16 @@ public class CompositeService {
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
         this.enabled = c.getInt(c.getColumnIndex(prefix + ENABLED)) == 1;
-        this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
+//        this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
 
-        int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));
-        this.interval = Interval.values()[intervalValue];
+//        int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));
+//        this.interval = Interval.values()[intervalValue];
 
-        int scheduleValue = c.getInt(c.getColumnIndex(prefix + SCHEDULED));
-        this.scheduleMode = Schedule.values()[scheduleValue];
+//        int scheduleValue = c.getInt(c.getColumnIndex(prefix + SCHEDULED));
+//        this.scheduleMode = Schedule.values()[scheduleValue];
 
-        this.hours = c.getInt(c.getColumnIndex(prefix + HOURS));
-        this.minutes = c.getInt(c.getColumnIndex(prefix + MINUTES));
+//        this.hours = c.getInt(c.getColumnIndex(prefix + HOURS));
+//        this.minutes = c.getInt(c.getColumnIndex(prefix + MINUTES));
     }
 
     public int size() {

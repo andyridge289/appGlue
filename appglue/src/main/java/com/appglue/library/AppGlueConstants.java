@@ -186,11 +186,13 @@ public class AppGlueConstants {
 
     // Database - Composite
     public static final String ENABLED = "enabled";
-    public static final String SCHEDULED = "scheduled";
-    public static final String NUMERAL = "numeral";
-    public static final String INTERVAL = "interval";
-    public static final String HOURS = "hours";
-    public static final String MINUTES = "minutes";
+//    public static final String SCHEDULED = "scheduled";
+//    public static final String NUMERAL = "numeral";
+//    public static final String INTERVAL = "interval";
+//    public static final String HOURS = "hours";
+//    public static final String MINUTES = "minutes";
+
+    // TODO We also need a scheduling table
 
     // 'dynamic' database tables
     public static final String[][] COLS_COMPOSITE = new String[][]
@@ -198,12 +200,12 @@ public class AppGlueConstants {
         {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
         {NAME, "TEXT"},
         {DESCRIPTION, "TEXT"},
-        {SCHEDULED, "TINYINT"},
         {ENABLED, "TINYINT"},
-        {NUMERAL, "INTEGER"},
-        {INTERVAL, "INTEGER"},
-        {HOURS, "INTEGER"},
-        {MINUTES, "INTEGER"}
+//        {SCHEDULED, "TINYINT"},
+//        {NUMERAL, "INTEGER"},
+//        {INTERVAL, "INTEGER"},
+//        {HOURS, "INTEGER"},
+//        {MINUTES, "INTEGER"}
     };
 
     public static final String COMPOSITE_ID = "composite_id";
@@ -235,7 +237,7 @@ public class AppGlueConstants {
             {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
             {COMPONENT_ID, "INTEGER", TBL_COMPONENT, ID},
             {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID}, // Keep track of this to make life easier later
-            {IO_DESCRIPTION_ID, "INTEGER", TBL_IO_DESCRIPTION, ID},
+            {IO_DESCRIPTION_ID, "INTEGER", TBL_IO_DESCRIPTION, ID}
     };
 
     public static final String IX_SERVICEIO = "index_filter";
