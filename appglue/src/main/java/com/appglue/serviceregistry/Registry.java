@@ -117,7 +117,7 @@ public class Registry {
 
     public ServiceDescription addServiceFromBroadcast(ServiceDescription sd) {
         // Don't care what it says it is, it's lying.
-        sd.setServiceType(ServiceType.LOCAL);
+//        sd.setServiceType(ServiceType.LOCAL);
         return dbHandler.addServiceDescription(sd);
     }
 
@@ -129,7 +129,7 @@ public class Registry {
         }
 
         // Don't care what it says it is, it's lying.
-        sd.setServiceType(ServiceType.IN_APP);
+//        sd.setServiceType(ServiceType.IN_APP);
         return dbHandler.addServiceDescription(sd);
     }
 
@@ -351,5 +351,9 @@ public class Registry {
 
     public ArrayList<CompositeService> getScheduledComposites() {
         return dbHandler.getScheduledComposites();
+    }
+
+    public void setupIDs(ServiceDescription sd) {
+        dbHandler.setupIDs(sd);
     }
 }

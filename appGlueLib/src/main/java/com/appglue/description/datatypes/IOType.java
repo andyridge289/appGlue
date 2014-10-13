@@ -105,10 +105,11 @@ public abstract class IOType
 
         IOType other = (IOType) o;
 
-        if(id != other.getID()) {
-            if(LOG) Log.d(TAG, "IOType->Equals: id - [" + id + " :: " + other.getID() + "]");
-            return false;
-        }
+//      I'm not sure checking on the ID is worth it
+//        if(id != other.getID()) {
+//            if(LOG) Log.d(TAG, "IOType->Equals: id - [" + id + " :: " + other.getID() + "]");
+//            return false;
+//        }
 
         if(!name.equals(other.getName())) {
             if(LOG) Log.d(TAG, "IOType->Equals: name - [" + name + " :: " + other.getName() + "]");

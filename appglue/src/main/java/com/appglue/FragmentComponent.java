@@ -150,7 +150,7 @@ public class FragmentComponent extends Fragment {
 
 //        developerName.setText(service.app().getDeveloper());
 
-        if (sd.getServiceType() != Constants.ServiceType.REMOTE) {
+//        if (sd.getServiceType() != Constants.ServiceType.REMOTE) {
 
             if (sd.getApp() == null)
                 appName.setText("");
@@ -161,10 +161,10 @@ public class FragmentComponent extends Fragment {
                 appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
                 appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
             }
-        } else {
-            appName.setVisibility(View.GONE);
-            appIcon.setVisibility(View.GONE);
-        }
+//        } else {
+//            appName.setVisibility(View.GONE);
+//            appIcon.setVisibility(View.GONE);
+//        }
 
         ArrayList<IODescription> inputs = sd.getInputs();
         if (inputs == null || inputs.size() == 0) {

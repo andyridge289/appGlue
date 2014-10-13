@@ -251,9 +251,15 @@ public class IODescription {
     public ArrayList<SampleValue> getSampleValues() {
         return sampleValues;
     }
-
     public SampleValue getSampleValue(long id) {
         return this.sampleSearch.get(id);
+    }
+    public boolean hasSampleValues() {
+        if (sampleValues == null) {
+            return false;
+        }
+
+        return sampleValues.size() > 0;
     }
 
     public void setSampleValues(ArrayList<SampleValue> values) {
@@ -287,4 +293,7 @@ public class IODescription {
     }
 
 
+    public void setID(long id) {
+        this.id = id;
+    }
 }

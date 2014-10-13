@@ -2,8 +2,10 @@
 <pre-dex-items>
 
     <item
-        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-2e7834f100e4daf029f5c1e2e0dceb4b3ac998da.jar"
-        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
-        jumboMode="false" revision="20.0.0" sha1="e81b63eb88eb0423eb90adbef4cf4a2c34bf85e0" />
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-899cb823e7e9266af22bd6f05e25d29eba75356d.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\appGlue\appGlueLib\unspecified\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="99839cceddcc1988c6332b0582ae5adbfa2f7db7"/>
 
 </pre-dex-items>

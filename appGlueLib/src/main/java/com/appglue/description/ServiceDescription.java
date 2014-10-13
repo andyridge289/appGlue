@@ -52,7 +52,7 @@ public class ServiceDescription {
     private String name = "";
 
     // The type of the service - either local or remote
-    private ServiceType serviceType = ServiceType.LOCAL;
+//    private ServiceType serviceType = ServiceType.IN_APP;
 
     // The process type of the service
     private ProcessType processType = ProcessType.NORMAL;
@@ -92,7 +92,7 @@ public class ServiceDescription {
         this.setInputs(inputs);
         this.setOutputs(outputs);
 
-        this.serviceType = serviceType;
+//        this.serviceType = serviceType;
         this.processType = processType;
     }
 
@@ -105,7 +105,7 @@ public class ServiceDescription {
         this.inputs = new SparseArray<IODescription>();
         this.outputs = new SparseArray<IODescription>();
 
-        this.serviceType = ServiceType.ANY;
+//        this.serviceType = ServiceType.ANY;
         this.processType = ProcessType.NORMAL;
     }
 
@@ -121,13 +121,13 @@ public class ServiceDescription {
         return this.description;
     }
 
-    public ServiceType getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(ServiceType type) {
-        this.serviceType = type;
-    }
+//    public ServiceType getServiceType() {
+//        return serviceType;
+//    }
+//
+//    public void setServiceType(ServiceType type) {
+//        this.serviceType = type;
+//    }
 
     public ProcessType getProcessType() {
         return processType;
@@ -366,10 +366,10 @@ public class ServiceDescription {
             return false;
         }
 
-        if (!this.serviceType.equals(other.getServiceType())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: service type");
-            return false;
-        }
+//        if (!this.serviceType.equals(other.getServiceType())) {
+//            if (LOG) Log.d(TAG, "ServiceDescription->Equals: service type");
+//            return false;
+//        }
 
         if (!this.processType.equals(other.getProcessType())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
@@ -498,7 +498,7 @@ public class ServiceDescription {
         this.name = c.getString(c.getColumnIndex(prefix + NAME));
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
-        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
+//        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
         this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE)));
 
         this.app = new AppDescription();

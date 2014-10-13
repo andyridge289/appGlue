@@ -121,8 +121,9 @@ public class CompositeService {
 
         if(services != null) {
             for (int i = 0; i < services.size(); i++) {
-                ComponentService cs = services.valueAt(i);
-                componentSearch.put(cs.getID(), cs);
+                ComponentService component = services.valueAt(i);
+                componentSearch.put(component.getID(), component);
+                services.get(i).setComposite(this);
             }
         }
     }
@@ -137,11 +138,14 @@ public class CompositeService {
             this.components = new SparseArray<ComponentService>();
             for (int i = 0; i < services.size(); i++) {
                 components.put(i, services.get(i));
+                services.get(i).setComposite(this);
             }
 
             for (ComponentService cs : services) {
                 this.componentSearch.put(cs.getID(), cs);
             }
+
+            // TODO Why is this two loops instead of one?
         }
 
         this.enabled = false;
@@ -174,6 +178,7 @@ public class CompositeService {
     public void addAtEnd(ComponentService component) {
 
         this.components.put(components.size(), component);
+        component.setComposite(this);
         if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getDescription().getClassName(), name, components.size() - 1));
     }
 
@@ -181,6 +186,7 @@ public class CompositeService {
         ComponentService component = new ComponentService(sd, position);
         synchronized (lock) {
             components.put(position, component);
+            component.setComposite(this);
         }
     }
 
@@ -190,6 +196,7 @@ public class CompositeService {
             // If there isn't a component at that position, then add one
             synchronized(lock) {
                 components.put(position, component);
+                component.setComposite(this);
                 if (component.getID() != -1)
                     componentSearch.put(component.getID(), component);
             }
@@ -203,10 +210,6 @@ public class CompositeService {
 
     public boolean containsComponent(long componentId) {
         return this.getComponent(componentId) != null;
-    }
-
-    public void resetOrchestration() {
-        this.components.clear();
     }
 
     public String getDescription() {

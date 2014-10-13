@@ -149,6 +149,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     // These are the ones that get cached immediately for speed-ness.
     private LongSparseArray<IOType> typeMap;
+    private TST<IOType> typeClassMap;
     private LongSparseArray<Tag> tagMap;
 
     private ArrayList<String> queries = new ArrayList<String>();
@@ -166,13 +167,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         ioMap = new LongSparseArray<IODescription>();
         typeMap = new LongSparseArray<IOType>();
+        typeClassMap = new TST<IOType>();
         tagMap = new LongSparseArray<Tag>();
 
         cacheIOTypes();
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     @Override
@@ -390,7 +392,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(PACKAGENAME, sd.getPackageName());
         values.put(DESCRIPTION, sd.getDescription());
 
-        values.put(SERVICE_TYPE, sd.getServiceType().index);
+//        values.put(SERVICE_TYPE, sd.getServiceType().index);
         values.put(PROCESS_TYPE, sd.getProcessType().index);
 
         int inputSuccess = 0;
@@ -880,7 +882,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             values.put(DESCRIPTION, composite.getDescription());
             values.put(ENABLED, composite.isEnabled());
 
-            int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{"" + composite.getID()});
+            int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{ "" + composite.getID() });
             if (ret != 1) {
                 Log.e(TAG, "Updated " + ret + " values for " + composite.getID() + " (" + composite.getName() + ")");
             }
@@ -949,9 +951,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             failureCount++;
         }
 
-        LongSparseArray<IOFilter.ValueNode> nodes = filter.getValues();
-        for (int i = 0; i < nodes.size(); i++) {
-            failureCount += updateValueNode(nodes.valueAt(i));
+        TST<IOFilter.ValueNode> nodes = filter.getValues();
+        ArrayList<String> keys = nodes.getKeys();
+        for (int i = 0; i < keys.size(); i++) {
+            failureCount += updateValueNode(nodes.get(keys.get(i)));
         }
 
         return failureCount;
@@ -1077,11 +1080,22 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(COMPONENT_ID, io.getComponent().getID());
             values.put(COMPOSITE_ID, io.getComponent().getComposite().getID());
-            values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
 
-            int ret = db.update(TBL_SERVICEIO, values, ID + " = ?", new String[]{"" + io.getID()});
+            // This might just be needed to fix a quirk with the tests, but maybe not
+            if(io.getDescription().getID() != -1) {
+                values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
+                Log.d(TAG, "Putting not -1 (" + io.getDescription().getID() + ")");
+            } else {
+                Log.d(TAG, "It's -1");
+                // We need to look up the ID and set it first
+                IODescription desc = getIODescription(io.getDescription().getName(), io.getComponent().getDescription().getClassName());
+                values.put(IO_DESCRIPTION_ID, desc.getID());
+                io.getDescription().setID(desc.getID());
+            }
 
-            if (ret == 1) {
+            int ret = db.update(TBL_SERVICEIO, values, ID + " = ?", new String[]{ "" + io.getID() });
+
+            if (ret != 1) {
                 failureCount++;
             }
 
@@ -1098,7 +1112,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int delCount = db.delete(TBL_IOCONNECTION, COMPOSITE_ID + " = " + cs.getID(), null);
 
-        if (LOG) Log.d(TAG, "DBUPDATE: Deleted " + delCount + " rows for " + cs.getName());
+        if (LOG) Log.d(TAG, "DBUPDATE: [Wiring] Deleted " + delCount + " rows for " + cs.getName());
 
         // This could be zero to be fair
         addIOConnections(cs);
@@ -1141,32 +1155,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         return enabled;
     }
-
-    /**
-     * Returns whether it should be running, and then whether it is running
-     *
-     * @param id The getID of the composite to find out about the running status
-     * @return The running status of the composite
-     */
-//    public synchronized Boolean compositeEnabled(long id) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//
-//        if (id == -1) {
-//            // ID not set, don't really know what to do here
-//            return null;
-//        }
-//
-//        Cursor c = db.query(TBL_COMPOSITE, new String[]{SCHEDULED}, ID + " = ?",
-//                new String[]{"" + id}, null, null, null);
-//        if (c == null)
-//            return false;
-//
-//        c.moveToFirst();
-//
-//        long should = c.getLong(c.getColumnIndex(SCHEDULED));
-//
-//        return should == 1;
-//    }
 
     /**
      * ********************************************************************************
@@ -1252,8 +1240,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         long id = db.insertOrThrow(TBL_IOFILTER, null, cv);
         filter.setID(id);
 
-        for (int i = 0; i < filter.getValues().size(); i++) {
-            long valueId = addValueNode(filter.getValues().valueAt(i));
+        TST<IOFilter.ValueNode> nodes = filter.getValues();
+        ArrayList<String> keys = nodes.getKeys();
+        for (int i = 0; i < keys.size(); i++) {
+            long valueId = addValueNode(nodes.get(keys.get(i)));
+            // TODO Do something with the value ID
         }
 
         return id;
@@ -1286,7 +1277,19 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         values.put(COMPONENT_ID, io.getComponent().getID());
         values.put(COMPOSITE_ID, io.getComponent().getComposite().getID());
-        values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
+
+        if(io.getDescription().getID() != -1) {
+            values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
+            Log.d(TAG, "Putting not -1 (" + io.getDescription().getID() + ")");
+        } else {
+            Log.d(TAG, "It's -1");
+            // We need to look up the ID and set it first
+            IODescription desc = getIODescription(io.getDescription().getName(), io.getComponent().getDescription().getClassName());
+            values.put(IO_DESCRIPTION_ID, desc.getID());
+            io.getDescription().setID(desc.getID());
+        }
+
+//        values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
 
         long id = db.insertOrThrow(TBL_SERVICEIO, null, values);
         if (id == -1) {
@@ -2216,6 +2219,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             // This is where we set the ServiceIO stuff that has already been created for us
             IODescription iod = getIODescription(ioDescriptionId);
+
+            if (iod == null) {
+                Log.d(TAG, "Err");
+                Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
+            }
+
             ServiceIO io = iod.isInput() ? currentComponent.getInput(iod.getName()) :
                     currentComponent.getOutput(iod.getName());
             io.setID(ioId);
@@ -2294,7 +2303,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             ServiceIO io = component.getIO(ioId);
 
             // Associate the relevant value nodes
-            IOFilter.ValueNode vn = currentFilter.getNode(valueNodeId, condition, io);
+            IOFilter.ValueNode vn = currentFilter.getNodeOrCreate(valueNodeId, condition, io);
 
             // Then look up the iovalues that are associated with each of the valuenodes
             getIOValues(vn);
@@ -2712,6 +2721,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             String className = c.getString(c.getColumnIndex(CLASSNAME));
             IOType type = IOType.Factory.getType(className);
             typeMap.put(type.getID(), type);
+            typeClassMap.put(type.getClassName(), type);
         } while (c.moveToNext());
 
         c.close();
@@ -2858,5 +2868,135 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 //        scheduledComposites = getComposites(ids, false);
 
         return scheduledComposites;
+    }
+
+    // We need to go through all of the things in here and see what the IDs are
+    public void setupIDs(ServiceDescription sd) {
+
+
+
+        // Don't need to do the ServiceDescription because we just use the className
+        if (sd.hasInputs()) {
+            setupIDs(sd.getInputs(), sd);
+        }
+
+        if (sd.hasOutputs()) {
+           setupIDs(sd.getOutputs(), sd);
+        }
+    }
+
+    private void setupIDs(ArrayList<IODescription> iods, ServiceDescription sd) {
+
+        for (int i = 0; i < iods.size(); i++) {
+            IODescription input = iods.get(i);
+            IODescription iod = getIODescription(input.getName(), sd.getClassName());
+            input.setID(iod.getID());
+
+            IOType inputType = input.getType();
+            IOType type = getIOType(inputType.getClassName(), inputType.getName());
+            inputType.setID(type.getID());
+
+            if (input.hasSampleValues()) {
+                for (int j = 0; j < input.getSampleValues().size(); j++) {
+                    SampleValue inputSample = input.getSampleValues().get(j);
+                    SampleValue sample = getSampleValue(input, inputSample.getName());
+                    inputSample.setID(sample.getID());
+                }
+            }
+        }
+    }
+
+    private SampleValue getSampleValue(IODescription iod, String name) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = \"%s\" AND %s = %d",
+                TBL_IO_SAMPLE, NAME, name, IO_DESCRIPTION_ID, iod.getID()), null);
+
+        if (c == null) {
+            // tODO Complain
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            // TODO Probably also complain
+            return null;
+        }
+
+        c.moveToFirst();
+
+        long id = c.getLong(c.getColumnIndex(ID));
+        long iodID = c.getLong(c.getColumnIndex(IO_DESCRIPTION_ID));
+        String sampleName = c.getString(c.getColumnIndex(NAME));
+        String value = c.getString(c.getColumnIndex(VALUE));
+
+        c.close();
+
+        SampleValue sample = new SampleValue(id, sampleName, value);
+        return sample;
+    }
+
+    private IOType getIOType(String className, String name) {
+
+        if (typeClassMap.get(className) != null) {
+            return typeClassMap.get(className);
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = \"%s\" AND %s = \"%s\"",
+                TBL_IOTYPE, NAME, name, CLASSNAME, className), null);
+
+        if (c == null) {
+            // tODO Complain
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            // TODO Probably also complain
+            return null;
+        }
+
+        c.moveToFirst();
+
+        long id = c.getLong(c.getColumnIndex(ID));
+        String typeName = c.getString(c.getColumnIndex(NAME));
+
+        IOType type = IOType.Factory.getType(typeName);
+        type.setID(id);
+
+        c.close();
+
+        return type;
+    }
+
+    // FIXME Make an IODescription cache that keys on the name and the className too
+    // FIXME Looking up the ID for the IO Description
+    private IODescription getIODescription(String name, String className) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = \"%s\" AND %s = \"%s\"",
+                TBL_IO_DESCRIPTION, NAME, name, CLASSNAME, className), null);
+
+        if (c == null) {
+            // tODO Complain
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            // TODO Probably also complain
+            return null;
+        }
+
+        c.moveToFirst();
+
+        long id = c.getLong(c.getColumnIndex(ID));
+
+        // There shouldn't be more than one
+        IODescription io = new IODescription(id);
+        io.setInfo("", c);
+
+        c.close();
+
+        return io;
     }
 }

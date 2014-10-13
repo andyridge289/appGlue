@@ -154,7 +154,7 @@ public class ServiceIO {
 
         if (this.connection != null || other.getConnection() != null) {
             if ((this.connection == null && other.getConnection() != null) ||
-                    (this.connection != null && other.getConnection() == null)) {
+                (this.connection != null && other.getConnection() == null)) {
                 if (LOG)
                     Log.d(TAG, "ServiceIO->Equals: connection null " + this.connection + " -- " + other.getConnection());
                 return false;

@@ -78,18 +78,18 @@ public class ActivityApp extends Activity {
 
             ImageView icon = (ImageView) v.findViewById(R.id.simple_list_icon);
 
-            if (sd.getServiceType() == ServiceType.IN_APP)
+//            if (sd.getServiceType() == ServiceType.IN_APP)
                 icon.setImageResource(R.drawable.icon);
-            else if (sd.getServiceType() == ServiceType.LOCAL) {
-                if (sd.getApp() == null) {
+//            else if (sd.getServiceType() == ServiceType.LOCAL) {
+//                if (sd.getApp() == null) {
 //                    icon.setImageResource(R.drawable.ic_lock_silent_mode_vibrate);
-                } else {
-                    Drawable d = new BitmapDrawable(getResources(), localStorage.readIcon(sd.getApp().iconLocation()));
-                    icon.setImageDrawable(d);
-                }
-            } else {
+//                } else {
+//                    Drawable d = new BitmapDrawable(getResources(), localStorage.readIcon(sd.getApp().iconLocation()));
+//                    icon.setImageDrawable(d);
+//                }
+//            } else {
 //                icon.setImageResource(R.drawable.ic_menu_upload);
-            }
+//            }
 
             TextView serviceName = (TextView) v.findViewById(R.id.service_name);
             serviceName.setText(sd.getName());

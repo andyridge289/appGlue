@@ -61,14 +61,16 @@ public class DBTest extends AndroidTestCase {
         fred.setDescription("A description");
 
         // Add another component to fred
-        ServiceDescription notificationService = TestLib.getService(registry, getContext(), "setupNotificationService");
-        // notificationService = registry.addServiceDescription(notificationService); It should already be added
+        ServiceDescription notificationService2 = TestLib.getService(registry, getContext(), "setupNotificationService");
+        registry.setupIDs(notificationService2);
 
-        ComponentService notificationComponent = new ComponentService(notificationService, 2);
-        fred.addComponent(notificationComponent, 2);
+        ComponentService notificationComponent2 = new ComponentService(notificationService2, 2);
+        fred.addComponent(notificationComponent2, 2);
 
         // Put a filter in the first component
         ComponentService tubeComponent = fred.getComponent(0);
+        ComponentService notificationComponent = fred.getComponent(1);
+
         ArrayList<IOFilter> filters = tubeComponent.getFilters();
         IOFilter filter = filters.get(0);
 
@@ -99,8 +101,8 @@ public class DBTest extends AndroidTestCase {
         titleIO.setConnection(statusIO);
 
         // Set some manual values for the third component
-        ServiceIO titleIO2 = notificationComponent.getInput(NotificationService.NOTIFICATION_TITLE);
-        ServiceIO textIO2 = notificationComponent.getInput(NotificationService.NOTIFICATION_TEXT);
+        ServiceIO titleIO2 = notificationComponent2.getInput(NotificationService.NOTIFICATION_TITLE);
+        ServiceIO textIO2 = notificationComponent2.getInput(NotificationService.NOTIFICATION_TEXT);
 
         IOValue titleValue = new IOValue(FilterFactory.STR_EQUALS, "A title", titleIO2);
         titleIO2.setValue(titleValue);

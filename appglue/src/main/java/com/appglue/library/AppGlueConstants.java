@@ -123,17 +123,17 @@ public class AppGlueConstants {
             };
 
     public static final String[][] COLS_IO_DESCRIPTION = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {NAME, "TEXT"},
-                    {FRIENDLY_NAME, "TEXT"},
-                    {IO_INDEX, "INTEGER"},
-                    {IO_TYPE, "INTEGER"},
-                    {DESCRIPTION, "TEXT"},
-                    {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
-                    {MANDATORY, "TINYINT"},
-                    {I_OR_O, "TINYINT"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {NAME, "TEXT"},
+        {FRIENDLY_NAME, "TEXT"},
+        {IO_INDEX, "INTEGER"},
+        {IO_TYPE, "INTEGER"},
+        {DESCRIPTION, "TEXT"},
+        {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
+        {MANDATORY, "TINYINT"},
+        {I_OR_O, "TINYINT"}
+    };
 
     public static final String IX_IO_DESCRIPTION = "index_iodescription";
     public static final String[] INDEX_IO_DESCRIPTION = new String[]{
@@ -146,8 +146,7 @@ public class AppGlueConstants {
         { NAME, "TEXT" }
     };
 
-    public static final String[][] COLS_IOTYPE = new String[][]
-    {
+    public static final String[][] COLS_IOTYPE = new String[][] {
         { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
         { NAME, "TEXT" },
         { CLASSNAME, "TEXT" }
