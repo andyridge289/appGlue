@@ -73,7 +73,7 @@
 
     <color name="android_lightpurple">#CBA0E0</color>
 
-    <!--<color name="android_blue_half">#8833B5E5</color>-->
+    <color name="android_blue_half">#8833B5E5</color>
     <color name="android_blue_very">#4433B5E5</color>
 
     <!-- Component list -->

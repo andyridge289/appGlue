@@ -296,4 +296,8 @@ public class IODescription {
     public void setID(long id) {
         this.id = id;
     }
+
+    public ServiceDescription getParent() {
+        return parent;
+    }
 }

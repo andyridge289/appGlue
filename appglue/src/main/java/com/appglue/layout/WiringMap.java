@@ -34,6 +34,7 @@ import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.IOFilter;
+import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.animation.WeightedExpandAnimation;
 import com.appglue.layout.dialog.DialogApp;
@@ -1200,11 +1201,32 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             final IOFilter item = items.get(position);
 
+            v.removeAllViews();
             ArrayList<ServiceIO> ios = item.getIOs();
             for (ServiceIO io : ios) {
+
                 TextView ioText = new TextView(getContext());
                 ioText.setText(io.getDescription().getFriendlyName());
                 v.addView(ioText);
+
+                ArrayList<IOValue> values = item.getValues(io);
+
+                for (IOValue value : values) {
+
+                    TextView conditionText = new TextView(getContext());
+                    conditionText.setText(value.getCondition().text); // TODO Do we need a short text for this?
+                    v.addView(conditionText);
+
+                    TextView valueText = new TextView(getContext());
+
+                    if (value.getFilterState() == IOValue.MANUAL) {
+                        valueText.setText(io.getType().toString(value.getManualValue()));
+                    } else if (value.getFilterState() == IOValue.SAMPLE) {
+                        valueText.setText(io.getType().toString(value.getSampleValue().getValue()));
+                    }
+
+                    v.addView(valueText);
+                }
             }
 
             return v;

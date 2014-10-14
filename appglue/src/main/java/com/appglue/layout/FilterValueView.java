@@ -48,8 +48,8 @@ public class FilterValueView extends LinearLayout {
     private RadioButton sampleRadio;
     private RadioButton manualRadio;
 
-    private EditText filterValueText;
-    private Spinner filterValueSpinner;
+    private EditText manualText;
+    private Spinner sampleSpinner;
     private Spinner filterConditionSpinner;
 
     private TextView andor;
@@ -74,7 +74,6 @@ public class FilterValueView extends LinearLayout {
         }
 
         this.value = value;
-
         this.filter = filter;
         this.item = item;
 
@@ -109,8 +108,8 @@ public class FilterValueView extends LinearLayout {
         sampleRadio = (RadioButton) v.findViewById(R.id.filter_radio_sample);
         manualRadio = (RadioButton) v.findViewById(R.id.filter_radio_manual);
 
-        filterValueText = (EditText) v.findViewById(R.id.filter_value_text);
-        filterValueSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
+        manualText = (EditText) v.findViewById(R.id.filter_value_text);
+        sampleSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
         filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
 
         // Need to set up the and or button
@@ -201,6 +200,17 @@ public class FilterValueView extends LinearLayout {
         }
 
         redraw();
+
+        // At this point we need to set the values to be whatever the default things are
+        if (manualRadio.isChecked()) {
+            String value = manualText.getText().toString();
+            this.value.setManualValue(item.getType().fromString(value));
+        } else if (sampleRadio.isChecked()) {
+            SampleValue sample = (SampleValue) sampleSpinner.getSelectedItem();
+            this.value.setSampleValue(sample);
+        }
+
+        this.value.setCondition((FilterFactory.FilterValue) filterConditionSpinner.getSelectedItem());
     }
 
     private void setChildrenEnabled(boolean isChecked) {
@@ -208,25 +218,27 @@ public class FilterValueView extends LinearLayout {
         filterConditionSpinner.setEnabled(isChecked);
 
         if (!isChecked) {
-            filterValueText.setEnabled(false);
-            filterValueSpinner.setEnabled(false);
+            manualText.setEnabled(false);
+            sampleSpinner.setEnabled(false);
             manualRadio.setEnabled(false);
             sampleRadio.setEnabled(false);
         } else {
-            // We need to be a bit cleverer when we're re-enabling everything
-            if(value.getFilterState() == IOValue.MANUAL) {
-                filterValueText.setEnabled(true);
-            } else if(value.getFilterState() == IOValue.SAMPLE) {
-                filterValueSpinner.setEnabled(true);
-            }
 
-            // The radios need to be enabled or not based on what their types are
-            if (item.getDescription().getSampleValues() != null) {
-                sampleRadio.setEnabled(true);
-            }
+            // We need to enable everything based on the values.
+            // Then re-disable the things that don't have values
 
             if (item.getType().acceptsManualValues()) {
                 manualRadio.setEnabled(true);
+                if (manualRadio.isChecked()) {
+                    manualText.setEnabled(true);
+                }
+            }
+
+            if (item.getDescription().hasSampleValues()) {
+                sampleRadio.setEnabled(true);
+                if (sampleRadio.isChecked()) {
+                    sampleSpinner.setEnabled(true);
+                }
             }
         }
     }
@@ -246,26 +258,28 @@ public class FilterValueView extends LinearLayout {
         setChildrenEnabled(value.isEnabled());
 
         if (value.getManualValue() != null) {
-            filterValueText.setText(item.getType().toString(value.getManualValue()));
+            manualText.setText(item.getType().toString(value.getManualValue()));
             manualRadio.setChecked(true);
         }
 
         if (value.getSampleValue() != null) {
             SampleValue selected = value.getSampleValue();
-            for (int i = 0; i < filterValueSpinner.getAdapter().getCount(); i++) {
-                SampleValue sampleValue = (SampleValue) filterValueSpinner.getItemAtPosition(i);
+            for (int i = 0; i < sampleSpinner.getAdapter().getCount(); i++) {
+                SampleValue sampleValue = (SampleValue) sampleSpinner.getItemAtPosition(i);
                 if (sampleValue.equals(selected)) {
-                    filterValueSpinner.setSelection(i, true);
+                    sampleSpinner.setSelection(i, true);
                     break;
                 }
             }
         }
 
-        if (value.getFilterState() == IOValue.MANUAL) {
-            manualRadio.setChecked(true);
-        } else {
-            // If there are sample values then default to that one on UNFILTERED
-            sampleRadio.setChecked(true);
+        if (item.getDescription().hasSampleValues() && item.getType().acceptsManualValues()) {
+            if (value.getFilterState() == IOValue.MANUAL) {
+                manualRadio.setChecked(true);
+            } else {
+                // If there are sample values then default to that one on UNFILTERED
+                sampleRadio.setChecked(true);
+            }
         }
     }
 
@@ -275,41 +289,70 @@ public class FilterValueView extends LinearLayout {
         if (filterConditionSpinner != null)
             filterConditionSpinner.setAdapter(new WiringFilterAdapter(activity, conditions));
 
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                // enable or disable the relevant item
+                // Set the condition of the ValueNode
+                if (checkedId == R.id.filter_radio_manual) {
+                    sampleSpinner.setEnabled(false);
+                    manualText.setEnabled(true);
+
+                    if(value != null) {
+                        value.setFilterState(IOValue.MANUAL);
+                    }
+                } else { // It must be filter_radio_sample
+                    sampleSpinner.setEnabled(true);
+                    manualText.setEnabled(false);
+                    if (value != null) {
+                        value.setFilterState(IOValue.SAMPLE);
+                    }
+                }
+            }
+        });
+
         if (type != -1)
-            filterValueText.setInputType(type);
+            manualText.setInputType(type);
         else {
             // Hide the manual aspect
-            filterValueText.setEnabled(false);
-            sampleRadio.setSelected(true);
+            manualText.setEnabled(false);
+
+            sampleRadio.setChecked(true);
+            manualRadio.setChecked(false);
+
             sampleRadio.setEnabled(false);
             manualRadio.setEnabled(false);
         }
 
         if (hasSamples) {
-            filterValueSpinner.setAdapter(new FilterSampleAdapter(activity, values));
+            sampleSpinner.setAdapter(new FilterSampleAdapter(activity, values));
             sampleRadio.setChecked(true);
+            sampleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    SampleValue sample = (SampleValue) sampleSpinner.getSelectedItem();
+                    if (value != null) {
+                        value.setSampleValue(sample);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    // Don't think we need to do anything here, they should just remove the thing if they don't want it anymore
+                }
+            });
         } else {
-            filterValueSpinner.setAdapter(new FilterSampleAdapter(activity, values));
-            filterValueSpinner.setEnabled(false);
+            sampleSpinner.setEnabled(false);
+
             manualRadio.setChecked(true);
+            sampleRadio.setChecked(false);
+
             sampleRadio.setEnabled(false);
             manualRadio.setEnabled(false);
+
+            radioGroup.setEnabled(false);
         }
-
-        filterValueSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SampleValue sample = (SampleValue) filterValueSpinner.getSelectedItem();
-                if (value != null) {
-                    value.setSampleValue(sample);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Don't think we need to do anything here, they should just remove the thing if they don't want it anymore
-            }
-        });
 
         filterConditionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -327,36 +370,13 @@ public class FilterValueView extends LinearLayout {
         });
 
         // Just update the manual value every time they enter a key.
-        filterValueText.setOnKeyListener(new OnKeyListener() {
+        manualText.setOnKeyListener(new OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (value != null) {
-                    value.setManualValue(filterValueText.getText().toString());
+                    value.setManualValue(manualText.getText().toString());
                 }
                 return false; // I'm not sure if we need to consume the event or not
-            }
-        });
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                // enable or disable the relevant item
-                // Set the condition of the ValueNode
-                if (checkedId == R.id.filter_radio_manual) {
-                    filterValueSpinner.setEnabled(false);
-                    filterValueText.setEnabled(true);
-
-                    if(value != null) {
-                        value.setFilterState(IOValue.MANUAL);
-                    }
-                } else { // It must be filter_radio_sample
-                    filterValueSpinner.setEnabled(true);
-                    filterValueText.setEnabled(false);
-                    if (value != null) {
-                        value.setFilterState(IOValue.SAMPLE);
-                    }
-                }
             }
         });
     }

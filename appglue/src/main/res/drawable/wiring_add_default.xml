@@ -10,15 +10,15 @@
 		    android:shape="rectangle" 
 		    >
 		    <stroke
-		        android:color="@color/colorPrimary"
+		        android:color="@color/android_blue"
 		        android:width="5dip"
 		        />
 		    <solid 
 		        android:color="@color/white" 
 		        />
 		    <padding
-		        android:bottom="5dp"
-		        android:top="5dp"
+		        android:bottom="3dp"
+		        android:top="3dp"
 		    	/>
 		    
 		</shape>
@@ -45,7 +45,7 @@
                 android:top="5dp"
                 />
             <solid
-                android:color="@color/colorPrimary_trans_light"
+                android:color="@color/android_blue_very"
                 />
         </shape>
     </item>

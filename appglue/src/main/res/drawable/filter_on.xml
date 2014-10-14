@@ -9,7 +9,7 @@
             >
             <stroke
                 android:color="@color/colorPrimary"
-                android:width="5dip"
+                android:width="2dip"
                 />
             <solid
                 android:color="@color/white"
@@ -28,7 +28,7 @@
             android:shape="rectangle"
             >
             <solid
-                android:color="@color/white"
+                android:color="@color/colorPrimaryLight_trans"
                 />
         </shape>
     </item>

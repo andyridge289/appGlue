@@ -53,9 +53,19 @@ public class IOFilter {
         String key = io.getDescription().getName();
         ValueNode vn = values.get(key);
 
+        ArrayList<String> keys = values.getKeys();
+        String ks = "";
+        for(String s : keys)
+            ks += s + " ";
+
+        Log.d(TAG, ks);
+
         if (vn == null) {
+            Log.d(TAG, "Null for " + key);
             return new ArrayList<IOValue>();
         }
+
+        Log.d(TAG, vn.values.size() + " for " + key);
 
         return vn.values;
     }

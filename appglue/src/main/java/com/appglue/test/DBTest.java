@@ -83,8 +83,6 @@ public class DBTest extends AndroidTestCase {
             }
         }
 
-        // FIXME The filter is there, it just isn't being found by getValues for some reason? Probably not being updated in the sparse array when it's saved in the database
-
         ServiceIO lineIO = tubeComponent.getOutput(TubeService.LINE_NAME);
         ArrayList<IOValue> values = filter.getValues(lineIO);
         IOValue value = values.get(0);
@@ -109,7 +107,6 @@ public class DBTest extends AndroidTestCase {
         IOValue textValue = new IOValue(FilterFactory.STR_EQUALS, "A message", textIO2);
         textIO2.setValue(textValue);
 
-        // TODO Update composite needs to be changed
         registry.updateComposite(fred);
 
         fred2 = registry.getComposite(fred.getID());

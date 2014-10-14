@@ -53,6 +53,17 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/no_filters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_filters"
+        android:textAllCaps="true"
+        android:gravity="center_horizontal"
+        android:textColor="@color/aaa"
+        android:layout_margin="5dip"
+        />
+
     <LinearLayout
         android:id="@+id/filter_value_container"
         android:layout_width="match_parent"

@@ -116,7 +116,7 @@ public class FragmentFilter extends Fragment {
         // Loop through the components and create a container for each of the things
         for (final ServiceIO output : component.getOutputs()) {
 
-            View vv = inflater.inflate(R.layout.fragment_filter_item, null, false);
+            final View vv = inflater.inflate(R.layout.fragment_filter_item, null, false);
 
             TextView ioName = (TextView) vv.findViewById(R.id.filter_io_name);
             ioName.setText(output.getDescription().getFriendlyName());
@@ -127,10 +127,12 @@ public class FragmentFilter extends Fragment {
             final LinearLayout valueLayout = (LinearLayout) vv.findViewById(R.id.filter_value_container);
 
             // Set up the add button
-            View addButton = vv.findViewById(R.id.filter_add_button); // TODO Not sure if we care that this is a FAB
+            View addButton = vv.findViewById(R.id.filter_add_button);
             addButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    vv.findViewById(R.id.no_filters).setVisibility(View.GONE);
 
                     FilterValueView vvv = new FilterValueView(getActivity(), FragmentFilter.this, component, filter, null, output, valueLayout.getChildCount());
 
@@ -167,9 +169,6 @@ public class FragmentFilter extends Fragment {
 
         return v;
     }
-
-    // TODO The activity needs to have a menu for the filter
-        // Done - just finish, all of the data should be set throughout
 
     @Override
     public void onActivityCreated(Bundle icicle) {
@@ -223,7 +222,7 @@ public class FragmentFilter extends Fragment {
 
     }
 
-    // TODO Put in a "No filters" placeholder
+    // TODO Put in a "No filters" placeholder for each thing
 
     public void remove(ServiceIO io, FilterValueView v) {
         // Need to remove it from the list of values so that it doesn't get told to redraw

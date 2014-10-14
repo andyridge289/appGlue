@@ -57,7 +57,6 @@ import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLE_VALUE;
-import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.VALUE;
 import static com.appglue.library.AppGlueConstants.COLS_APP;
@@ -141,15 +140,17 @@ import static com.appglue.library.AppGlueConstants.TIME;
 import static com.appglue.library.AppGlueConstants.VALUE_NODE_ID;
 
 public class LocalDBHandler extends SQLiteOpenHelper {
-    private TST<AppDescription> appMap;
 
-    //    private LongSparseArray<CompositeService> compositeMap;
+    private TST<AppDescription> appMap;
     private TST<ServiceDescription> componentMap;
-    private LongSparseArray<IODescription> ioMap;
+
+    private LongSparseArray<IODescription> lIOMap;
+    private TST<IODescription> sIOMap;
 
     // These are the ones that get cached immediately for speed-ness.
-    private LongSparseArray<IOType> typeMap;
-    private TST<IOType> typeClassMap;
+    private LongSparseArray<IOType> lTypeMap;
+    private TST<IOType> sTypeMap;
+
     private LongSparseArray<Tag> tagMap;
 
     private ArrayList<String> queries = new ArrayList<String>();
@@ -159,22 +160,23 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      *
      * @param context The context we need to create the stuff
      */
-    public LocalDBHandler(Context context, Registry registry) {
+    public LocalDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
 
         appMap = new TST<AppDescription>();
         componentMap = new TST<ServiceDescription>();
 
-        ioMap = new LongSparseArray<IODescription>();
-        typeMap = new LongSparseArray<IOType>();
-        typeClassMap = new TST<IOType>();
+        lIOMap = new LongSparseArray<IODescription>();
+        sIOMap = new TST<IODescription>();
+        lTypeMap = new LongSparseArray<IOType>();
+        sTypeMap = new TST<IOType>();
         tagMap = new LongSparseArray<Tag>();
 
         cacheIOTypes();
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -722,8 +724,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      */
     public IOType getIOType(long ioId) {
         // Get it from the cache if it's in there
-        if (typeMap.get(ioId) != null)
-            return typeMap.get(ioId);
+        if (lTypeMap.get(ioId) != null)
+            return lTypeMap.get(ioId);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -939,6 +941,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private synchronized int updateFilter(IOFilter filter) {
 
+        if (filter.getID() == -1) {
+            long id = addFilter(filter);
+            return id == -1 ? 1 : 0;
+        }
+
         int failureCount = 0;
 
         ContentValues cv = new ContentValues();
@@ -947,7 +954,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         int ret = db.update(TBL_IOFILTER, cv, ID + " = ?", new String[]{"" + filter.getID()});
-        if (ret == 1) {
+        if (ret != 1) {
             failureCount++;
         }
 
@@ -1129,7 +1136,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int fStatus = db.delete(TBL_SERVICEIO, ID + "= ?", new String[]{"" + id});
         int iovStatus = db.delete(TBL_IOVALUE, ID + " = ?", new String[]{"" + id});
 
-        return cStatus == -1 || chcStatus == -1 || cioStatus == -1 || fStatus == -1;
+        return cStatus == -1 || chcStatus == -1 || cioStatus == -1 || fStatus == -1 || iovStatus == -1;
     }
 
     public boolean isEnabled(CompositeService composite) {
@@ -1140,7 +1147,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 new String[]{"" + composite.getID()}, null, null, null, null);
 
         if (c == null) {
-            // TODO Do something
+            Log.e(TAG, "Cursor dead for finding enabledness of " + composite.getName());
             return false;
         }
 
@@ -1340,8 +1347,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             for (ServiceIO o : inputs) {
 
                 ArrayList<IOValue> values = o.getValues();
-
-                // TODO There can only be one input value. Maybe just one iteration here rather than several
 
                 for (IOValue value : values) {
 
@@ -2218,7 +2223,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long ioDescriptionId = c.getLong(c.getColumnIndex(TBL_SERVICEIO + "_" + IO_DESCRIPTION_ID));
 
             // This is where we set the ServiceIO stuff that has already been created for us
-            IODescription iod = getIODescription(ioDescriptionId);
+            IODescription iod = getIODescription(ioDescriptionId, currentComponent.getDescription());
 
             if (iod == null) {
                 Log.d(TAG, "Err");
@@ -2416,10 +2421,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return values;
     }
 
-    private IODescription getIODescription(long id) {
+    private IODescription getIODescription(long id, ServiceDescription sd) {
 
-        if (ioMap.get(id) != null) {
-            return ioMap.get(id);
+        if (lIOMap.get(id) != null) {
+            return lIOMap.get(id);
         }
 
         if (id < 1) {
@@ -2461,15 +2466,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             if (ioTypeId != 0) {
 
-                if (ioMap.get(ioId) != null) {
-                    currentIO = ioMap.get(ioId);
+                if (lIOMap.get(ioId) != null) {
+                    currentIO = lIOMap.get(ioId);
                 } else if (currentIO == null || currentIO.getID() != ioId) {
 
                     // If it doesn't exist, then use the old one
                     currentIO = new IODescription(ioId);
                     currentIO.setInfo(TBL_IO_DESCRIPTION + "_", c);
                     currentIO.setType(getIOType(ioTypeId));
-                    ioMap.put(ioId, currentIO);
+                    lIOMap.put(ioId, currentIO);
+                    sIOMap.put(currentIO.getName() + sd.getClassName(), currentIO);
                 }
 
                 long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLE + "_" + ID));
@@ -2546,7 +2552,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             long ioId = c.getLong(c.getColumnIndex(TBL_IO_DESCRIPTION + "_" + ID));
-            IODescription io = getIODescription(ioId);
+            IODescription io = getIODescription(ioId, currentComponent);
 
             currentComponent.addIO(io, io.isInput(), io.getIndex());
 
@@ -2644,8 +2650,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             if (ioTypeId != 0) {
 
-                if (ioMap.get(ioId) != null) {
-                    currentIO = ioMap.get(ioId);
+                if (lIOMap.get(ioId) != null) {
+                    currentIO = lIOMap.get(ioId);
                     currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
                 } else if (currentIO == null || currentIO.getID() != ioId) {
 
@@ -2654,7 +2660,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                     currentIO.setInfo(TBL_IO_DESCRIPTION + "_", c);
                     currentIO.setType(getIOType(ioTypeId));
                     currentComponent.addIO(currentIO, currentIO.isInput(), currentIO.getIndex());
-                    ioMap.put(ioId, currentIO);
+                    lIOMap.put(ioId, currentIO);
+                    sIOMap.put(currentIO.getName() + currentIO.getParent().getClassName(), currentIO);
                 }
 
                 long sampleId = c.getLong(c.getColumnIndex(TBL_IO_SAMPLE + "_" + ID));
@@ -2720,8 +2727,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         do {
             String className = c.getString(c.getColumnIndex(CLASSNAME));
             IOType type = IOType.Factory.getType(className);
-            typeMap.put(type.getID(), type);
-            typeClassMap.put(type.getClassName(), type);
+            lTypeMap.put(type.getID(), type);
+            sTypeMap.put(type.getClassName(), type);
         } while (c.moveToNext());
 
         c.close();
@@ -2873,8 +2880,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     // We need to go through all of the things in here and see what the IDs are
     public void setupIDs(ServiceDescription sd) {
 
-
-
         // Don't need to do the ServiceDescription because we just use the className
         if (sd.hasInputs()) {
             setupIDs(sd.getInputs(), sd);
@@ -2913,19 +2918,17 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_IO_SAMPLE, NAME, name, IO_DESCRIPTION_ID, iod.getID()), null);
 
         if (c == null) {
-            // tODO Complain
+            Log.e(TAG, "Nothing found for getting SampleValue without ID: " + iod.getFriendlyName() + "(" + name + ")");
             return null;
         }
 
         if (c.getCount() == 0) {
-            // TODO Probably also complain
             return null;
         }
 
         c.moveToFirst();
 
         long id = c.getLong(c.getColumnIndex(ID));
-        long iodID = c.getLong(c.getColumnIndex(IO_DESCRIPTION_ID));
         String sampleName = c.getString(c.getColumnIndex(NAME));
         String value = c.getString(c.getColumnIndex(VALUE));
 
@@ -2937,8 +2940,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private IOType getIOType(String className, String name) {
 
-        if (typeClassMap.get(className) != null) {
-            return typeClassMap.get(className);
+        if (sTypeMap.get(className) != null) {
+            return sTypeMap.get(className);
         }
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -2946,12 +2949,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_IOTYPE, NAME, name, CLASSNAME, className), null);
 
         if (c == null) {
-            // tODO Complain
+            Log.e(TAG, "Nothing found for getting IOType without ID: " + className + "(" + name + ")");
             return null;
         }
 
         if (c.getCount() == 0) {
-            // TODO Probably also complain
             return null;
         }
 
@@ -2968,9 +2970,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return type;
     }
 
-    // FIXME Make an IODescription cache that keys on the name and the className too
-    // FIXME Looking up the ID for the IO Description
     private IODescription getIODescription(String name, String className) {
+        if (sIOMap.get(name + className) != null) {
+            return sIOMap.get(name + className);
+        }
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -2978,12 +2981,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_IO_DESCRIPTION, NAME, name, CLASSNAME, className), null);
 
         if (c == null) {
-            // tODO Complain
+            Log.e(TAG, "Nothing found for getting IODescription without ID: " + className + "(" + name + ")");
             return null;
         }
 
         if (c.getCount() == 0) {
-            // TODO Probably also complain
             return null;
         }
 

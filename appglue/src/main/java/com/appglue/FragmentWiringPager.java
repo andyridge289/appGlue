@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appglue.engine.description.ComponentService;
@@ -36,8 +37,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private TextView csNameText;
     private EditText csNameEdit;
     private Button csNameSet;
-    private TextView pageIndexText;
     private TextView status;
+
+    private ImageView pageLeft;
+    private ImageView pageRight;
 
     private Registry registry;
 
@@ -76,7 +79,9 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         csNameSet = (Button) root.findViewById(R.id.cs_name_edit_button);
 
         status = (TextView) root.findViewById(R.id.status);
-        pageIndexText = (TextView) root.findViewById(R.id.page_index);
+
+        pageLeft = (ImageView) root.findViewById(R.id.pager_left);
+        pageRight = (ImageView) root.findViewById(R.id.pager_right);
 
         registry = Registry.getInstance(getActivity());
 
@@ -188,14 +193,32 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         if (position != -1) {
-            wiringPager.setCurrentItem(position);
+            onPageSelected(position);
         } else {
-            wiringPager.setCurrentItem(0);
+            onPageSelected(0);
         }
 
         if (cs.getComponents().size() == 0) {
             ((ActivityWiring) getActivity()).chooseComponentFromList(0, 1);
         }
+
+        pageLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (position > 0) {
+                    wiringPager.setCurrentItem(position - 1);
+                }
+            }
+        });
+
+        pageRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (position < adapter.getCount() - 1) {
+                    wiringPager.setCurrentItem(position + 1);
+                }
+            }
+        });
     }
 
     public void redraw() {
@@ -247,8 +270,20 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     @Override
     public void onPageSelected(int position) {
-        pageIndexText.setText(position + " / " + adapter.getCount());
-        // TODO We need to change the action bar somewhere in here
+
+        this.position = position;
+
+        if (position > 0) {
+            pageLeft.setEnabled(true);
+        } else {
+            pageLeft.setEnabled(false);
+        }
+
+        if (position < adapter.getCount() - 1) {
+            pageRight.setEnabled(true);
+        } else {
+            pageRight.setEnabled(false);
+        }
     }
 
     @Override

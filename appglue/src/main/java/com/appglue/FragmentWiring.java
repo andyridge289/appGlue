@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
+import com.appglue.layout.FloatingActionButton;
 import com.appglue.layout.WiringMap;
 import com.appglue.library.LocalStorage;
 
@@ -79,13 +80,16 @@ public class FragmentWiring extends Fragment {
         RelativeLayout firstContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_first);
         RelativeLayout secondContainer = (RelativeLayout) rootView.findViewById(R.id.wiring_second);
 
+        FloatingActionButton firstAdd = (FloatingActionButton) rootView.findViewById(R.id.first_add);
+        FloatingActionButton secondAdd = (FloatingActionButton) rootView.findViewById(R.id.second_add);
+
         wiringButton = (Button) rootView.findViewById(R.id.wiring_button_all);
         filterButton = (Button) rootView.findViewById(R.id.filter_button_all);
         valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
         ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
 
-        if (components.size() == 0) { // TODO Work out if this is actually a problem
+        if (components.size() == 0) {
             first = null;
             second = null;
         } else {
@@ -101,7 +105,10 @@ public class FragmentWiring extends Fragment {
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (first != null) {
             firstName.setText(first.getDescription().getName());
-            firstName.setTextColor(Color.BLACK);
+
+            firstName.setVisibility(View.VISIBLE);
+            firstIcon.setVisibility(View.VISIBLE);
+            firstAdd.setVisibility(View.GONE);
 
             try {
                 AppDescription firstApp = first.getDescription().getApp();
@@ -131,26 +138,31 @@ public class FragmentWiring extends Fragment {
                 }
             });
         } else {
-            firstName.setText("Add");
-            firstName.setTextColor(getResources().getColor(R.color.colorPrimary));
-            firstIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
+            firstName.setVisibility(View.GONE);
+            firstIcon.setVisibility(View.GONE);
+            firstAdd.setVisibility(View.VISIBLE);
             firstContainer.setBackgroundResource(R.drawable.wiring_add_default);
 
-            // Make it add at this position when we click it
-            firstContainer.setOnClickListener(new OnClickListener() {
+            OnClickListener firstClick = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((FragmentWiringPager) getParentFragment()).chooseComponentFromList(position);
-
                 }
-            });
+            };
+
+            // Make it add at this position when we click it
+            firstContainer.setOnClickListener(firstClick);
+            firstAdd.setOnClickListener(firstClick);
         }
 
         // Make the right icon be the left half, Make the left icon be the right half
         if (second != null) {
             secondName.setText(second.getDescription().getName());
-            secondName.setTextColor(Color.BLACK);
             secondContainer.setBackgroundResource(R.drawable.wiring_component);
+
+            secondName.setVisibility(View.VISIBLE);
+            secondIcon.setVisibility(View.VISIBLE);
+            secondAdd.setVisibility(View.GONE);
 
             try {
                 AppDescription secondApp = second.getDescription().getApp();
@@ -178,18 +190,36 @@ public class FragmentWiring extends Fragment {
                 }
             });
         } else {
-            secondName.setText("Add");
-            secondName.setTextColor(getResources().getColor(R.color.colorPrimary));
             secondContainer.setBackgroundResource(R.drawable.wiring_add_default);
-            secondIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_new));
+
+            secondName.setVisibility(View.GONE);
+            secondIcon.setVisibility(View.GONE);
+            secondAdd.setVisibility(View.VISIBLE);
 
             // Make it add at this position when we click it
-            secondContainer.setOnClickListener(new OnClickListener() {
+            OnClickListener secondClick = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     ((ActivityWiring) getActivity()).chooseComponentFromList(position, position);
                 }
-            });
+            };
+
+            secondContainer.setOnClickListener(secondClick);
+            secondAdd.setOnClickListener(secondClick);
+        }
+
+        // TODO Need to visually distinguish between enabled and disabled
+
+        if (first == null) {
+            wiringButton.setEnabled(false);
+            filterButton.setEnabled(false);
+            setWiringMode(MODE_VALUE);
+        }
+
+        if (second == null) {
+            wiringButton.setEnabled(false);
+            valueButton.setEnabled(false);
+            setWiringMode(MODE_FILTER);
         }
 
         wiringButton.setOnClickListener(new OnClickListener() {

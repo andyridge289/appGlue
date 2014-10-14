@@ -231,8 +231,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
                 Log.d(TAG, removedText);
                 assertEquals(1, 2);
             }
-
-            break; // TODO Take this out
         }
 
         assertEquals(1, 1);

@@ -37,10 +37,8 @@ public class Registry {
     private Context context;
 
     private Registry(Context context) {
-        dbHandler = new LocalDBHandler(context, this);
-
+        dbHandler = new LocalDBHandler(context);
         remoteCache = new HashMap<String, ServiceDescription>();
-
         this.context = context;
     }
 
@@ -61,7 +59,6 @@ public class Registry {
 
     public CompositeService resetTemp() {
         temp = dbHandler.resetTemp();
-        // TODO Might need tio
         return temp;
     }
 
