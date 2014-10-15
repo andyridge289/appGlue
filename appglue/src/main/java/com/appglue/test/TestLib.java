@@ -93,9 +93,10 @@ public class TestLib {
     }
 
     public static ComponentService createComponentForFilterSample(ServiceDescription sd, IODescription[] filterOns,
-                                                                  String[] sampleValues, FilterFactory.FilterValue[] filterConditions) {
+                                                                  String[] sampleValues, FilterFactory.FilterValue[] filterConditions, boolean filterCombinator) {
 
         ComponentService component = new ComponentService(sd, -1);
+        IOFilter filter = new IOFilter(component); // One filter for now
 
         for (int i = 0; i < filterOns.length; i++) {
 
@@ -115,9 +116,9 @@ public class TestLib {
             }
 
             ServiceIO filterOnIO = component.getIO(filterOn.getName());
-            IOFilter filter = new IOFilter(component);
             IOValue value = new IOValue(filterCondition, chosenSample, filterOnIO);
             filter.addValue(filterOnIO, value);
+            filter.setCondition(filterOnIO, filterCombinator);
             component.addFilter(filter);
         }
 

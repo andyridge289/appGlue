@@ -902,7 +902,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             ServiceIO io = getServiceIO(ioId);
-            Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
 
             ArrayList<IOValue> values = filter.getValues(io);
             boolean found = false;
@@ -915,7 +914,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             if (!found) {
                 int count = deleteIOValue(valueId);
-                Log.d(TAG, "DBUPDATE [removeDeadFilterValues] Deleted " + count + " from filter " +
+                if (LOG) Log.d(TAG, "DBUPDATE [removeDeadFilterValues] Deleted " + count + " from filter " +
                             filter.getID() + "(" + filter.getComponent().getDescription().getName() + ")");
             }
 
@@ -956,7 +955,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             if (!found) {
-                Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
                 int count = deleteIOValue(valueId);
                 Log.d(TAG, "DBUPDATE [removeDeadIOValues] Deleted " + count + " from IO " +
                         io.getID() + "(" + io.getComponent().getDescription().getName() + ")");
@@ -1201,20 +1199,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (value.getSampleValue() != null) {
             values.put(SAMPLE_VALUE, value.getSampleValue().getID());
-        }
-
-        Cursor c = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = %d", TBL_IOVALUE, ID, value.getID()), null);
-        Log.d(TAG, "" + c.getCount());
-        c.close();
-
-        c = db.rawQuery("SELECT * FROM " + TBL_IOVALUE, null);
-        Log.d(TAG, "" + c.getCount());
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            do {
-                Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
-            } while (c.moveToNext());
-            c.close();
         }
 
         int ret = db.update(TBL_IOVALUE, values, ID + " = ?", new String[]{ "" + value.getID() });
@@ -2232,10 +2216,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             ServiceIO source = composite.getOutput(sourceId);
             ServiceIO sink = composite.getInput(sinkId);
-
-            if (source == null || sink == null) {
-                Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
-            }
 
             source.setConnection(sink);
             sink.setConnection(source);
