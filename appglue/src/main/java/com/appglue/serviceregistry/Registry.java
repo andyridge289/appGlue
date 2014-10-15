@@ -179,7 +179,7 @@ public class Registry {
     }
 
     public boolean deleteComposite(CompositeService cs) {
-        return dbHandler.deleteComposite(cs);
+        return dbHandler.deleteComposite(cs) > 0;
     }
 
     public int updateComposite(CompositeService composite) {

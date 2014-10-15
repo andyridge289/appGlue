@@ -181,7 +181,6 @@
     <string name="composite_components">Components</string>
     <string name="cd_composite_icon">Composite icon</string>
 
-    <string name="bullet">\u2022</string>
     <string name="wiring_tab">Wiring</string>
     <string name="filter_tab">Filters</string>
     <string name="value_tab">Values</string>
@@ -193,5 +192,10 @@
     <string name="or">or</string>
     <string name="filter_done">Done</string>
     <string name="no_filters">No filters</string>
+
+    <!-- Special characters -->
+    <string name="bullet">\u2022</string>
+    <string name="not_equals">\u2260</string>
+    <string name="contains_backwards">\u220b</string>
 
 </resources>

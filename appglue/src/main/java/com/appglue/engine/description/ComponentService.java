@@ -93,6 +93,10 @@ public class ComponentService {
     }
     public void setID(long id) {
         this.id = id;
+
+        if (this.composite != null) {
+            this.composite.rebuildSearch();
+        }
     }
 
     public int getPosition() {
@@ -122,11 +126,6 @@ public class ComponentService {
         this.inputSearch.put(input.getID(), input);
 
     }
-    public void removeInputSearch(long id) {
-        if (this.inputSearch.get(id) != null) {
-            this.inputSearch.delete(id);
-        }
-    }
 
     public ArrayList<ServiceIO> getOutputs() {
         return outputs;
@@ -146,11 +145,7 @@ public class ComponentService {
     public void addOutputSearch(ServiceIO output) {
         this.outputSearch.put(output.getID(), output);
     }
-    public void removeOutputSearch(long id) {
-        if(this.outputSearch.get(id) != null) {
-            this.outputSearch.delete(id);
-        }
-    }
+
 
     public ServiceIO getIO(long id) {
         ServiceIO io = getInput(id);
@@ -190,29 +185,14 @@ public class ComponentService {
 
         return filters.size() > 0;
     }
+    public void removeFilter(IOFilter filter) {
+        this.filters.remove(filter);
+        this.filterSearch.remove(filter.getID());
+    }
 
     public boolean getFilterCondition() {
         return and;
     }
-
-    public boolean hasIncomingLinks() {
-        for (int i = 0; i < inputs.size(); i++) {
-            if (inputs.get(i).getConnection() != null)
-                return true;
-        }
-
-        return false;
-    }
-
-    public boolean hasOutgoingLinks() {
-        for (int i = 0; i < outputs.size(); i++) {
-            if (outputs.get(i).getConnection() != null)
-                return true;
-        }
-
-        return false;
-    }
-
     public boolean equals(Object o) {
 
         if(o == null) {
@@ -297,6 +277,37 @@ public class ComponentService {
         this.filterSearch.clear();
         for (int i = 0; i < filters.size(); i++) {
             filterSearch.put(filters.get(i).getID(), filters.get(i));
+        }
+    }
+
+    public void rebuildSearch() {
+
+        inputNameSearch = new TST<ServiceIO>();
+        outputNameSearch = new TST<ServiceIO>();
+
+        inputSearch.clear();
+        outputSearch.clear();
+
+        filterSearch.clear();
+
+        for (ServiceIO io : inputs) {
+            if (io.getID() != -1) {
+                inputSearch.put(io.getID(), io);
+            }
+            inputNameSearch.put(io.getDescription().getName(), io);
+        }
+
+        for (ServiceIO io : outputs) {
+            if (io.getID() != -1) {
+                outputSearch.put(io.getID(), io);
+            }
+            outputNameSearch.put(io.getDescription().getName(), io);
+        }
+
+        for (IOFilter filter : filters) {
+            if (filter.getID() != -1) {
+                filterSearch.put(filter.getID(), filter);
+            }
         }
     }
 }

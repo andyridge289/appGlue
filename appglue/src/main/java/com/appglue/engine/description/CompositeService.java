@@ -99,6 +99,19 @@ public class CompositeService {
         }
     }
 
+    /**
+     * When the ID of a component changes, we need to rebuild the search array
+     */
+    public void rebuildSearch() {
+        this.componentSearch.clear();
+        for (int i = 0; i < components.size(); i++) {
+            ComponentService component = components.valueAt(i);
+            if (component.getID() != -1) {
+                componentSearch.put(component.getID(), component);
+            }
+        }
+    }
+
     public static CompositeService makePlaceholder() {
         return new CompositeService("Nothing", "Nothing", null, false);
     }
@@ -165,6 +178,29 @@ public class CompositeService {
         }
 
         return components.get(position);
+    }
+
+    public void removeComponent(ComponentService component) {
+        this.components.remove(component.getPosition());
+        this.componentSearch.remove(component.getID());
+
+        // Remove all of the connections for this and others
+        for (ServiceIO input : component.getInputs()) {
+            if (input.hasConnection()) {
+                ServiceIO other = input.getConnection();
+                other.setConnection(null);
+                input.setConnection(null);
+            }
+        }
+
+        // Remove all of the connections for this and others
+        for (ServiceIO output : component.getOutputs()) {
+            if (output.hasConnection()) {
+                ServiceIO other = output.getConnection();
+                other.setConnection(null);
+                output.setConnection(null);
+            }
+        }
     }
 
     public String getName() {

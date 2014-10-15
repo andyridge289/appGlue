@@ -94,148 +94,149 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         assertEquals(-1, firstFail);
     }
 
+    // FIXME Below
 //    @LargeTest
 //    public void testManualFilter() throws Exception {
 //        assertEquals(1, 2);
 //    }
 
     @LargeTest
-    public void testSampleFilter() throws Exception {
-
-        // Run it and assert that a new entry has been added to the Log to account for it running properly
-        Registry registry = Registry.getInstance(getContext());
-        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
-        registry.addComposite(fred);
-
-        OrchestrationServiceConnection osc = new OrchestrationServiceConnection(getContext(), fred, false);
-        Method filterMethod = OrchestrationServiceConnection.class.getDeclaredMethod("filter2", ArrayList.class, ComponentService.class);
-        filterMethod.setAccessible(true);
-
-        TubeService ts = new TubeService();
-        Method invokeMethod = TubeService.class.getDeclaredMethod("processOutput", String.class);
-        invokeMethod.setAccessible(true);
-        ArrayList<Bundle> tubeData = (ArrayList<Bundle>) invokeMethod.invoke(ts, out2);
-
-        ArrayList<ComponentService> components = fred.getComponents("com.appglue.services.TubeService");
-        ServiceDescription sd = components.get(0).getDescription();
-
-        IODescription lineName = sd.getOutput(TubeService.LINE_NAME);
-        IODescription lineStatus = sd.getOutput(TubeService.LINE_STATUS);
-
-        FilterFactory.FilterValue strEquals = FilterFactory.STR_EQUALS;
-        FilterFactory.FilterValue strNEquals = FilterFactory.STR_NOTEQUALS;
-
-//        Bundle { line_icon => 2130837606; line_name => Bakerloo; line_status => minor delays; line_url => http://www.google.co.uk; }
-//        Bundle { line_icon => 2130837606; line_name => DLR; line_status => severe delays; line_url => http://www.google.co.uk; }
-//        Bundle { line_icon => 2130837606; line_name => Metropolitan; line_status => minor delays; line_url => http://www.google.co.uk; }
-//        Bundle { line_icon => 2130837606; line_name => Piccadilly; line_status => part closure; line_url => http://www.google.co.uk; }
-
-        // First filter on Bakerloo and check what's in the thing
-        ComponentService isBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
-                new String[]{TubeService.BAKERLOO}, new FilterFactory.FilterValue[]{strEquals});
-
-        // Test whether it isn't the bakerloo line
-        ComponentService isntBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
-                new String[]{TubeService.BAKERLOO}, new FilterFactory.FilterValue[]{strNEquals});
-
-        // Get the ones with minor delays
-        ComponentService minorDelaysComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
-                new String[]{TubeService.MINOR_DELAYS}, new FilterFactory.FilterValue[]{strEquals});
-
-        // Get one where the it's the Bakerloo line with not minor delays
-        ComponentService bakerlooMinorDelays = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName, lineStatus },
-                                                new String[]{ TubeService.BAKERLOO, TubeService.MINOR_DELAYS },
-                new FilterFactory.FilterValue[]{strEquals, strNEquals});
-
-        // Get one where isn't not part closed
-        ComponentService notPartClosed = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
-                new String[]{TubeService.PART_CLOSURE}, new FilterFactory.FilterValue[]{strNEquals});
-
-        ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new FilterFactory.FilterValue[]{});
-
-        ArrayList<ComponentService> testComponents = new ArrayList<ComponentService>();
-        testComponents.add(isBakerlooComponent);
-        testComponents.add(isntBakerlooComponent);
-        testComponents.add(minorDelaysComponent);
-        testComponents.add(bakerlooMinorDelays);
-        testComponents.add(notPartClosed);
-        testComponents.add(none);
-
-        String[] keptNames = new String[]{ TubeService.BAKERLOO };
-        String[] removedNames = new String[]{ TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
-
-        String[] mdKept = new String[]{ TubeService.BAKERLOO, TubeService.METROPOLITAN };
-        String[] mdRemoved = new String[]{ TubeService.DLR, TubeService.PICCADILLY };
-
-        String[] bmdKept = new String[]{ };
-        String[] bmdRemoved = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
-
-        String[] npcKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN };
-        String[] npcRemoved = new String[] { TubeService.PICCADILLY };
-
-        String[] noneKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
-        String[] noneRemoved = new String[]{ };
-
-        ArrayList<String[]> testKept = new ArrayList<String[]>();
-        testKept.add(keptNames);
-        testKept.add(removedNames);
-        testKept.add(mdKept);
-        testKept.add(bmdKept);
-        testKept.add(npcKept);
-        testKept.add(noneKept);
-
-        ArrayList<String[]> testRemoved = new ArrayList<String[]>();
-        testRemoved.add(removedNames);
-        testRemoved.add(keptNames);
-        testRemoved.add(mdRemoved);
-        testRemoved.add(bmdRemoved);
-        testRemoved.add(npcRemoved);
-        testRemoved.add(noneRemoved);
-
-        ArrayList<String> filterParameters = new ArrayList<String>();
-        filterParameters.add(TubeService.LINE_NAME);
-        filterParameters.add(TubeService.LINE_NAME);
-        filterParameters.add(TubeService.LINE_NAME);
-        filterParameters.add(TubeService.LINE_NAME);
-        filterParameters.add(TubeService.LINE_NAME);
-        filterParameters.add(TubeService.LINE_NAME);
-
-        for(int i = 0; i < testComponents.size(); i++) {
-
-            Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterResults = (Pair<ArrayList<Bundle>, ArrayList<Bundle>>) filterMethod.invoke(osc, tubeData, testComponents.get(i));
-            ArrayList<Bundle> kept = filterResults.first;
-            ArrayList<Bundle> removed = filterResults.second;
-
-            String originalText = "";
-            for (Bundle b : tubeData) {
-                originalText += b.getString(filterParameters.get(i)) + " ";
-            }
-            Log.d(TAG, originalText);
-
-            if (!keptCheck(testKept.get(i), kept, filterParameters.get(i))) {
-                Log.d(TAG, "Kept fail " + i);
-                String keptText = "Kept: ";
-                for (Bundle b : kept) {
-                    keptText += b.getString(filterParameters.get(i)) + " ";
-                }
-                Log.d(TAG, keptText);
-                assertEquals(1, 2);
-            }
-
-            if (!keptCheck(testRemoved.get(i), removed, filterParameters.get(i))) {
-                Log.d(TAG, "Removed fail" + i);
-                String removedText = "Removed: ";
-                for (Bundle b : removed) {
-                    removedText += b.getString(filterParameters.get(i)) + " ";
-                }
-                Log.d(TAG, removedText);
-                assertEquals(1, 2);
-            }
-        }
-
-        assertEquals(1, 1);
-
-    }
+//    public void testSampleFilter() throws Exception {
+//
+//        // Run it and assert that a new entry has been added to the Log to account for it running properly
+//        Registry registry = Registry.getInstance(getContext());
+//        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
+//        registry.addComposite(fred);
+//
+//        OrchestrationServiceConnection osc = new OrchestrationServiceConnection(getContext(), fred, false);
+//        Method filterMethod = OrchestrationServiceConnection.class.getDeclaredMethod("filter2", ArrayList.class, ComponentService.class);
+//        filterMethod.setAccessible(true);
+//
+//        TubeService ts = new TubeService();
+//        Method invokeMethod = TubeService.class.getDeclaredMethod("processOutput", String.class);
+//        invokeMethod.setAccessible(true);
+//        ArrayList<Bundle> tubeData = (ArrayList<Bundle>) invokeMethod.invoke(ts, out2);
+//
+//        ArrayList<ComponentService> components = fred.getComponents("com.appglue.services.TubeService");
+//        ServiceDescription sd = components.get(0).getDescription();
+//
+//        IODescription lineName = sd.getOutput(TubeService.LINE_NAME);
+//        IODescription lineStatus = sd.getOutput(TubeService.LINE_STATUS);
+//
+//        FilterFactory.FilterValue strEquals = FilterFactory.STR_EQUALS;
+//        FilterFactory.FilterValue strNEquals = FilterFactory.STR_NOTEQUALS;
+//
+////        Bundle { line_icon => 2130837606; line_name => Bakerloo; line_status => minor delays; line_url => http://www.google.co.uk; }
+////        Bundle { line_icon => 2130837606; line_name => DLR; line_status => severe delays; line_url => http://www.google.co.uk; }
+////        Bundle { line_icon => 2130837606; line_name => Metropolitan; line_status => minor delays; line_url => http://www.google.co.uk; }
+////        Bundle { line_icon => 2130837606; line_name => Piccadilly; line_status => part closure; line_url => http://www.google.co.uk; }
+//
+//        // First filter on Bakerloo and check what's in the thing
+//        ComponentService isBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
+//                new String[]{TubeService.BAKERLOO}, new FilterFactory.FilterValue[]{strEquals});
+//
+//        // Test whether it isn't the bakerloo line
+//        ComponentService isntBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
+//                new String[]{TubeService.BAKERLOO}, new FilterFactory.FilterValue[]{strNEquals});
+//
+//        // Get the ones with minor delays
+//        ComponentService minorDelaysComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
+//                new String[]{TubeService.MINOR_DELAYS}, new FilterFactory.FilterValue[]{strEquals});
+//
+//        // Get one where the it's the Bakerloo line with not minor delays
+//        ComponentService bakerlooMinorDelays = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName, lineStatus },
+//                                                new String[]{ TubeService.BAKERLOO, TubeService.MINOR_DELAYS },
+//                new FilterFactory.FilterValue[]{strEquals, strNEquals});
+//
+//        // Get one where isn't not part closed
+//        ComponentService notPartClosed = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
+//                new String[]{TubeService.PART_CLOSURE}, new FilterFactory.FilterValue[]{strNEquals});
+//
+//        ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new FilterFactory.FilterValue[]{});
+//
+//        ArrayList<ComponentService> testComponents = new ArrayList<ComponentService>();
+//        testComponents.add(isBakerlooComponent);
+//        testComponents.add(isntBakerlooComponent);
+//        testComponents.add(minorDelaysComponent);
+//        testComponents.add(bakerlooMinorDelays);
+//        testComponents.add(notPartClosed);
+//        testComponents.add(none);
+//
+//        String[] keptNames = new String[]{ TubeService.BAKERLOO };
+//        String[] removedNames = new String[]{ TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
+//
+//        String[] mdKept = new String[]{ TubeService.BAKERLOO, TubeService.METROPOLITAN };
+//        String[] mdRemoved = new String[]{ TubeService.DLR, TubeService.PICCADILLY };
+//
+//        String[] bmdKept = new String[]{ };
+//        String[] bmdRemoved = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
+//
+//        String[] npcKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN };
+//        String[] npcRemoved = new String[] { TubeService.PICCADILLY };
+//
+//        String[] noneKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
+//        String[] noneRemoved = new String[]{ };
+//
+//        ArrayList<String[]> testKept = new ArrayList<String[]>();
+//        testKept.add(keptNames);
+//        testKept.add(removedNames);
+//        testKept.add(mdKept);
+//        testKept.add(bmdKept);
+//        testKept.add(npcKept);
+//        testKept.add(noneKept);
+//
+//        ArrayList<String[]> testRemoved = new ArrayList<String[]>();
+//        testRemoved.add(removedNames);
+//        testRemoved.add(keptNames);
+//        testRemoved.add(mdRemoved);
+//        testRemoved.add(bmdRemoved);
+//        testRemoved.add(npcRemoved);
+//        testRemoved.add(noneRemoved);
+//
+//        ArrayList<String> filterParameters = new ArrayList<String>();
+//        filterParameters.add(TubeService.LINE_NAME);
+//        filterParameters.add(TubeService.LINE_NAME);
+//        filterParameters.add(TubeService.LINE_NAME);
+//        filterParameters.add(TubeService.LINE_NAME);
+//        filterParameters.add(TubeService.LINE_NAME);
+//        filterParameters.add(TubeService.LINE_NAME);
+//
+//        for(int i = 0; i < testComponents.size(); i++) {
+//
+//            Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterResults = (Pair<ArrayList<Bundle>, ArrayList<Bundle>>) filterMethod.invoke(osc, tubeData, testComponents.get(i));
+//            ArrayList<Bundle> kept = filterResults.first;
+//            ArrayList<Bundle> removed = filterResults.second;
+//
+//            String originalText = "";
+//            for (Bundle b : tubeData) {
+//                originalText += b.getString(filterParameters.get(i)) + " ";
+//            }
+//            Log.d(TAG, originalText);
+//
+//            if (!keptCheck(testKept.get(i), kept, filterParameters.get(i))) {
+//                Log.d(TAG, "Kept fail " + i);
+//                String keptText = "Kept: ";
+//                for (Bundle b : kept) {
+//                    keptText += b.getString(filterParameters.get(i)) + " ";
+//                }
+//                Log.d(TAG, keptText);
+//                assertEquals(1, 2);
+//            }
+//
+//            if (!keptCheck(testRemoved.get(i), removed, filterParameters.get(i))) {
+//                Log.d(TAG, "Removed fail" + i);
+//                String removedText = "Removed: ";
+//                for (Bundle b : removed) {
+//                    removedText += b.getString(filterParameters.get(i)) + " ";
+//                }
+//                Log.d(TAG, removedText);
+//                assertEquals(1, 2);
+//            }
+//        }
+//
+//        assertEquals(1, 1);
+//
+//    }
 
     private boolean keptCheck(String[] names, ArrayList<Bundle> things, String key) {
         if (names.length != things.size()) {

@@ -210,12 +210,16 @@ public class AppGlueConstants {
     public static final String COMPOSITE_ID = "composite_id";
 
     public static final String[][] COLS_COMPONENT = new String[][]
-            {
-                    {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-                    {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID,},
-                    {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
-                    {POSITION, "INT"}
-            };
+    {
+        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+        {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID,},
+        {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
+        {POSITION, "INT"}
+    };
+
+    public static final String[][] FK_COMPONENT = new String[][] {
+        { COMPOSITE_ID, TBL_COMPOSITE, ID }
+    };
 
     public static final String IX_COMPOSITE_HAS_COMPONENT = "index_composite_component";
     public static final String[] INDEX_COMPOSITE_HAS_COMPONENT = new String[]{
@@ -239,6 +243,11 @@ public class AppGlueConstants {
             {IO_DESCRIPTION_ID, "INTEGER", TBL_IO_DESCRIPTION, ID}
     };
 
+    public static final String[][] FK_SERVICEIO = new String[][] {
+        { COMPONENT_ID, TBL_COMPONENT, ID },
+        { COMPOSITE_ID, TBL_COMPOSITE, ID }
+    };
+
     public static final String IX_SERVICEIO = "index_filter";
     public static final String[] INDEX_SERVICEIO = new String[]{
             COMPONENT_ID, COMPOSITE_ID, IO_DESCRIPTION_ID
@@ -259,6 +268,12 @@ public class AppGlueConstants {
             {SAMPLE_VALUE, "INTEGER DEFAULT '-1'", TBL_IO_SAMPLE, ID},
     };
 
+    public static final String[][] FK_IOVALUE = new String[][] {
+        { IO_ID, TBL_SERVICEIO, ID },
+        { COMPOSITE_ID, TBL_COMPOSITE, ID },
+        { VALUE_NODE_ID, TBL_VALUENODE, ID }
+    };
+
     public static final String IX_IOVALUE = "index_iovalue";
     public static final String[] INDEX_IOVALUE = new String[]{
             IO_ID, COMPOSITE_ID, SAMPLE_VALUE
@@ -267,6 +282,10 @@ public class AppGlueConstants {
     public static final String[][] COLS_IOFILTER = new String[][] {
         { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
         { COMPONENT_ID, "INTEGER" }
+    };
+
+    public static final String[][] FK_IOFILTER = new String[][] {
+        { COMPONENT_ID, TBL_COMPONENT, ID }
     };
 
     public static final String IX_IOFILTER = "index_iofilter";
@@ -284,6 +303,11 @@ public class AppGlueConstants {
         { IO_ID, "INTEGER" }
     };
 
+    public static final String[][] FK_VALUENODE = new String[][] {
+        { IO_ID, TBL_SERVICEIO, ID },
+        { FILTER_ID, TBL_IOFILTER, ID }
+    };
+
     public static final String IX_VALUENODE = "index_valuenode";
     public static final String[] INDEX_VALUENODE = new String[] {
         IO_ID, FILTER_ID
@@ -297,6 +321,12 @@ public class AppGlueConstants {
         { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID },
         { SOURCE_IO, "INTEGER", TBL_SERVICEIO, ID },
         { SINK_IO, "INTEGER", TBL_SERVICEIO, ID }
+    };
+
+    public static final String[][] FK_IOCONNECTION = new String[][] {
+        { COMPOSITE_ID, TBL_COMPOSITE, ID },
+        { SOURCE_IO, TBL_SERVICEIO, ID },
+        { SINK_IO, TBL_SERVICEIO, ID }
     };
 
     public static final String IX_IOCONNECTION = "index_composite_ioconnection";
@@ -321,6 +351,10 @@ public class AppGlueConstants {
         {MESSAGE, "TEXT"}
     };
 
+    public static final String[][] FK_COMPOSITE_EXECUTION_LOG = new String[][] {
+        { COMPOSITE_ID, TBL_COMPOSITE, ID }
+    };
+
     public static final String TIME = "time";
 
     public static final String OUTPUT_DATA = "output_data";
@@ -338,6 +372,12 @@ public class AppGlueConstants {
         {OUTPUT_DATA, "BLOB"},
         {LOG_TYPE, "INTEGER"},
         {TIME, "INTEGER"}
+    };
+
+    public static final String[][] FK_EXECUTION_LOG = new String[][] {
+        { COMPOSITE_ID, TBL_COMPOSITE, ID },
+        { EXECUTION_INSTANCE, TBL_COMPOSITE_EXECUTION_LOG, ID },
+        { COMPONENT_ID, TBL_COMPONENT, ID }
     };
 
     public static final String IX_EXECUTION_LOG = "index_execution_log";

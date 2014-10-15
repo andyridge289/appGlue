@@ -265,7 +265,7 @@ public class ActivityWiring extends ActionBarActivity {
 			wiringFragment.saveDialog();
         } else if(item.getItemId() == R.id.filter_done) {
             setMode(MODE_CREATE);
-//            registry.updateComposite(composite); TODO put this back in
+            registry.updateComposite(composite);
             redraw();
         }
 

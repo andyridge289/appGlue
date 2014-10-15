@@ -222,8 +222,6 @@ public class FragmentFilter extends Fragment {
 
     }
 
-    // TODO Put in a "No filters" placeholder for each thing
-
     public void remove(ServiceIO io, FilterValueView v) {
         // Need to remove it from the list of values so that it doesn't get told to redraw
         filterViews.get(io.getID()).remove(v);

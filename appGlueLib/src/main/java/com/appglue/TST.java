@@ -124,6 +124,5 @@ public class TST<E> {
         private Node(E thing) {
             this.v = thing;
         }
-
     }
 }

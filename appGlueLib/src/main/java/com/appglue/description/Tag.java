@@ -82,7 +82,7 @@ public class Tag
         Tag other = (Tag) o;
 
         if(this.id != other.id()) {
-            if (LOG) Log.d(TAG, "Tag->Equals: id: [" + this.id + " - " + other.id() + "]");
+//            if (LOG) Log.d(TAG, "Tag->Equals: id: [" + this.id + " - " + other.id() + "]");
             return false;
         }
 

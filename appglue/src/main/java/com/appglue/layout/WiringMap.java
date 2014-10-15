@@ -1,7 +1,10 @@
 package com.appglue.layout;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,6 +12,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -22,7 +26,10 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.appglue.ActivityWiring;
@@ -1197,35 +1204,86 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 convertView = vi.inflate(R.layout.list_item_filter, null);
             }
 
-            final LinearLayout v = (LinearLayout) convertView;
-
             final IOFilter item = items.get(position);
+
+            final TableLayout v = (TableLayout) convertView;
+            v.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View vv) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                    alertDialogBuilder.setTitle("Your Title");
+
+                    String enableText = item.isEnabled() ? "Disable" : "Enable";
+
+                    alertDialogBuilder.setItems(new CharSequence[] { "Edit", enableText, "Delete" }, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch(which) {
+                                case 0:
+                                    // Edit the filter
+                                    activity.filter(first.getID(), item.getID());
+                                    break;
+
+                                case 1:
+                                    // Disable or enable the filter
+                                    if (item.isEnabled())
+                                        v.setEnabled(false);
+                                    else
+                                        v.setEnabled(true);
+                                    break;
+
+                                case 2:
+                                    // Delete the filter
+                                    // TODO Check first?
+                                    // TODO Need to remove it from the actual thing
+                                    // TODO Or maybe just update it in the database
+                                    items.remove(item);
+                                    FilterAdapter.this.notifyDataSetChanged();
+                                    registry.updateComposite(registry.getCurrent());
+                                    break;
+                            }
+                        }
+                    });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+            });
 
             v.removeAllViews();
             ArrayList<ServiceIO> ios = item.getIOs();
             for (ServiceIO io : ios) {
 
+                TableRow row = new TableRow(getContext());
+                v.addView(row);
+
                 TextView ioText = new TextView(getContext());
                 ioText.setText(io.getDescription().getFriendlyName());
-                v.addView(ioText);
+                ioText.setTypeface(null, Typeface.BOLD);
+                TableRow.LayoutParams params = new TableRow.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.span = 2;
+                ioText.setLayoutParams(params);
+                row.addView(ioText);
 
                 ArrayList<IOValue> values = item.getValues(io);
 
                 for (IOValue value : values) {
 
+                    TableRow subRow = new TableRow(getContext());
+                    v.addView(subRow);
+
                     TextView conditionText = new TextView(getContext());
-                    conditionText.setText(value.getCondition().text); // TODO Do we need a short text for this?
-                    v.addView(conditionText);
+                    conditionText.setText(value.getCondition().shortText);
+                    subRow.addView(conditionText);
 
                     TextView valueText = new TextView(getContext());
 
                     if (value.getFilterState() == IOValue.MANUAL) {
-                        valueText.setText(io.getType().toString(value.getManualValue()));
+                        valueText.setText(io.getType().toString("\"" + value.getManualValue()) + "\"");
                     } else if (value.getFilterState() == IOValue.SAMPLE) {
-                        valueText.setText(io.getType().toString(value.getSampleValue().getValue()));
+                        valueText.setText(io.getType().toString("\"" + value.getSampleValue().getValue() + "\""));
                     }
 
-                    v.addView(valueText);
+                    subRow.addView(valueText);
                 }
             }
 

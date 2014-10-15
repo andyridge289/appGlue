@@ -18,11 +18,14 @@ public class IOFilter {
     private ArrayList<ServiceIO> ios; // References to the IOs that are contained within the filter
     private TST<ValueNode> values; // References fo the value nodes
 
+    private boolean enabled;
+
     public IOFilter(ComponentService component) {
         this.id = -1;
         this.component = component;
         values = new TST<ValueNode>();
         ios = new ArrayList<ServiceIO>();
+        this.enabled = true;
     }
 
     public IOFilter(long id, ComponentService component) {
@@ -42,6 +45,14 @@ public class IOFilter {
         } else {
             values.get(key).values.add(value);
         }
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public ArrayList<ServiceIO> getIOs() {
@@ -64,8 +75,6 @@ public class IOFilter {
             Log.d(TAG, "Null for " + key);
             return new ArrayList<IOValue>();
         }
-
-        Log.d(TAG, vn.values.size() + " for " + key);
 
         return vn.values;
     }
@@ -238,7 +247,7 @@ public class IOFilter {
             }
 
             if (this.values.size() != other.getValues().size()) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: value size " + values.size() + " -- " + other.getValues().size());
+                if (LOG) Log.d(TAG, "ValueNode[" + id + "]->Equals: value size " + values.size() + " -- " + other.getValues().size());
                 return false;
             }
 
@@ -267,6 +276,10 @@ public class IOFilter {
 
         public void setID(long id) {
             this.id = id;
+
+            if (component != null) {
+                component.rebuildSearch();
+            }
         }
 
         public void add(IOValue value) {

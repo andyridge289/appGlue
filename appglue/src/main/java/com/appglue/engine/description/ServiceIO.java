@@ -44,12 +44,8 @@ public class ServiceIO {
         this.id = id;
 
         // IF we are setting the ID we also need to update where it is in the component, if it was there at all
-        if (ioDescription.isInput()) {
-            component.removeInputSearch(id);
-            component.addInputSearch(this);
-        } else {
-            component.removeOutputSearch(id);
-            component.addOutputSearch(this);
+        if (component != null) {
+            component.rebuildSearch();
         }
     }
 

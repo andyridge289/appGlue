@@ -208,8 +208,6 @@ public class FragmentWiring extends Fragment {
             secondAdd.setOnClickListener(secondClick);
         }
 
-        // TODO Need to visually distinguish between enabled and disabled
-
         if (first == null) {
             wiringButton.setEnabled(false);
             filterButton.setEnabled(false);

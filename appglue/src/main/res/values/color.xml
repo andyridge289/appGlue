@@ -23,6 +23,8 @@
     <color name="colorPrimary">#ff862ecc</color>
 
     <color name="colorPrimaryLight_trans">#4BA133F0</color>
+    <color name="colorPrimaryLight_lesstrans">#8BA133F0</color>
+
     <color name="colorPrimary_trans_light">#22862ecc</color>
     <color name="colorPrimary_trans_mid">#88862ecc</color>
 

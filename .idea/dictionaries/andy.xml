@@ -50,6 +50,7 @@
       <w>inputoutputtype</w>
       <w>iodescription</w>
       <w>iods</w>
+      <w>ioid</w>
       <w>iosamples</w>
       <w>jadzia</w>
       <w>javacmd</w>
@@ -79,6 +80,7 @@
       <w>ulimit</w>
       <w>uname</w>
       <w>userguide</w>
+      <w>valueid</w>
       <w>waterloocity</w>
       <w>windowz</w>
       <w>worf</w>

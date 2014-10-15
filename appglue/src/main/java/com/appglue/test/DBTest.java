@@ -111,6 +111,19 @@ public class DBTest extends AndroidTestCase {
 
         fred2 = registry.getComposite(fred.getID());
         assertEquals(fred, fred2);
+
+        // Remove the filter
+        tubeComponent.removeFilter(filter);
+
+        // Remove the last component we added
+        fred.removeComponent(tubeComponent);
+
+        // Update
+        registry.updateComposite(fred);
+
+        // Check
+        fred2 = registry.getComposite(fred.getID());
+        assertEquals(fred, fred2);
     }
 
     @MediumTest
@@ -148,7 +161,7 @@ public class DBTest extends AndroidTestCase {
         registry.addComponent(notificationComponent);
 
         origTemp.addComponent(helloComponent, helloComponent.getPosition());
-        origTemp.addComponent(notificationComponent, helloComponent.getPosition());
+        origTemp.addComponent(notificationComponent, notificationComponent.getPosition());
 
         assertEquals(2, origTemp.size());
 
@@ -171,6 +184,4 @@ public class DBTest extends AndroidTestCase {
         origTemp = registry.getComposite(CompositeService.TEMP_ID);
         assertEquals(origTemp, testTemp);
     }
-
-
 }

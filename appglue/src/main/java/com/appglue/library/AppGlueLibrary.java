@@ -22,14 +22,25 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
 public class AppGlueLibrary {
-    public static String createTableString(String tableName, String[][] cols) {
+    public static String createTableString(String tableName, String[][] cols, String[][] fk) {
         StringBuilder createTable = new StringBuilder(String.format("CREATE TABLE %s (", tableName));
 
         int length = cols.length - 1;
         for (int i = 0; i < length; i++) {
             createTable.append(String.format("%s %s,", cols[i][0], cols[i][1]));
         }
-        createTable.append(String.format("%s %s)", cols[length][0], cols[length][1]));
+        createTable.append(String.format("%s %s", cols[length][0], cols[length][1]));
+
+        if (fk != null) {
+
+            for (int i = 0; i < fk.length; i++) {
+
+                createTable.append(String.format(", FOREIGN KEY(%s) REFERENCES %s(%s) ON DELETE CASCADE",
+                    fk[i][0], fk[i][1], fk[i][2]));
+            }
+        }
+
+        createTable.append(")");
 
         return createTable.toString();
     }
