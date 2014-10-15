@@ -4,11 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -16,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ActionMode;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,15 +21,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appglue.Constants.Interval;
 import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
 import com.appglue.engine.OrchestrationService;
@@ -283,6 +275,7 @@ public class ActivityCompositeList extends Activity {
 //		}
     }
 
+    @Override
     protected void onSaveInstanceState(Bundle icicle) {
         icicle.describeContents();
         // Not sure we need to save anything here

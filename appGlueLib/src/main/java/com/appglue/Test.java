@@ -42,18 +42,18 @@ public class Test
             if(LOG) Log.d(TAG, "The index is zero");
 			// Do nothing?
 		}
-		if(className.equals(Bundle.class))
+		if (className.equals(Bundle.class))
 		{
 			// If input is a bundle, then it should have a TEXT
 			
-//			Bundle input = (Bundle) obj;
+			Bundle input = (Bundle) obj;
 			
 		}
-		else if(className.equals(ArrayList.class))
+		else if (className.equals(ArrayList.class))
 		{
 			// If input is an ArrayList, each element should have a TEXT
 			
-//			ArrayList<Bundle> getInputs = (ArrayList<Bundle>) obj;
+			ArrayList<Bundle> getInputs = (ArrayList<Bundle>) obj;
 			 
 //			for(int i = 0; i < getInputs.size(); i++)
 //			{

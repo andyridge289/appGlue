@@ -34,7 +34,6 @@ public class FragmentComposite extends Fragment {
     private TextView compositeDescription;
 
     private CheckBox activeCheck;
-    private CheckBox runningCheck;
 
     private ListView componentList;
 
@@ -81,7 +80,7 @@ public class FragmentComposite extends Fragment {
         compositeDescription = (TextView) root.findViewById(R.id.composite_description);
 
         activeCheck = (CheckBox) root.findViewById(R.id.composite_active);
-        runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
+        CheckBox runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
 
         componentList = (ListView) root.findViewById(R.id.composite_component_list);
 

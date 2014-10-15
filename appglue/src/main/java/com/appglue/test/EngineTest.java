@@ -45,7 +45,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
     String out2 = "{\"update\":\"Kept old\",\"lines\":[{\"name\":\"Bakerloo\",\"id\":\"bakerloo\",\"status\":\"minor delays\",\"messages\":[]},{\"name\":\"Central\",\"id\":\"central\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Circle\",\"id\":\"circle\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"District\",\"id\":\"district\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"DLR\",\"id\":\"docklands\",\"status\":\"severe delays\",\"messages\":[]},{\"name\":\"H'smith & City\",\"id\":\"hammersmithcity\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Jubilee\",\"id\":\"jubilee\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Metropolitan\",\"id\":\"metropolitan\",\"status\":\"minor delays\",\"messages\":[]},{\"name\":\"Northern\",\"id\":\"northern\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Overground\",\"id\":\"overground\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Piccadilly\",\"id\":\"piccadilly\",\"status\":\"part closure\",\"messages\":[]},{\"name\":\"Victoria\",\"id\":\"victoria\",\"status\":\"good service\",\"messages\":[]},{\"name\":\"Waterloo & City\",\"id\":\"waterloocity\",\"status\":\"good service\",\"messages\":[]}]}";
 
     @LargeTest
-
+    @SuppressWarnings("unchecked")
     public void testMapOutputs() throws Exception {
 
         Registry registry = Registry.getInstance(getContext());
@@ -101,6 +101,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 //    }
 
     @LargeTest
+    @SuppressWarnings("unchecked")
     public void testSampleFilter() throws Exception {
 
         // Run it and assert that a new entry has been added to the Log to account for it running properly
@@ -162,14 +163,14 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         testComponents.add(notPartClosed);
         testComponents.add(none);
 
-        String[] names = new String[] {
-                "Equals bakerloo",
-                "Doesn't equal Bakerloo",
-                "is Minor delays",
-                "is Bakerloo minor delays",
-                "isn't part closed",
-                "No filter"
-        };
+//        String[] names = new String[] {
+//                "Equals bakerloo",
+//                "Doesn't equal Bakerloo",
+//                "is Minor delays",
+//                "is Bakerloo minor delays",
+//                "isn't part closed",
+//                "No filter"
+//        };
 
         String[] keptNames = new String[]{ TubeService.BAKERLOO };
         String[] removedNames = new String[]{ TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
@@ -212,11 +213,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         for(int i = 0; i < testComponents.size(); i++) {
 
-            Log.d(TAG, names[i]);
-
-            if(i == 3)
-                Log.d(TAG, "Break");
-
             Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterResults = (Pair<ArrayList<Bundle>, ArrayList<Bundle>>) filterMethod.invoke(osc, tubeData, testComponents.get(i));
             ArrayList<Bundle> kept = filterResults.first;
             ArrayList<Bundle> removed = filterResults.second;
@@ -255,8 +251,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         boolean foundAll = true;
         for (String s : names) {
             boolean found = false;
-            for (int i = 0; i < things.size(); i++) {
-                if (s.equals(things.get(i).getString(key))) {
+            for (Bundle thing : things) {
+                if (s.equals(thing.getString(key))) {
                     found = true;
                     break;
                 }

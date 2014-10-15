@@ -64,7 +64,7 @@ public class ServiceIO {
     /**
      * This is because there can only be one input at the moment.
      *
-     * @param value
+     * @param value the value to set
      */
     public void setValue(IOValue value) {
         this.values.clear();

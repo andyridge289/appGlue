@@ -33,10 +33,10 @@ public class AppGlueLibrary {
 
         if (fk != null) {
 
-            for (int i = 0; i < fk.length; i++) {
+            for (String[] aFk : fk) {
 
                 createTable.append(String.format(", FOREIGN KEY(%s) REFERENCES %s(%s) ON DELETE CASCADE",
-                    fk[i][0], fk[i][1], fk[i][2]));
+                        aFk[0], aFk[1], aFk[2]));
             }
         }
 

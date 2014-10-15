@@ -431,8 +431,8 @@ public class ServiceDescription {
         for (int i = 0; i < tags.size(); i++) {
 
             boolean found = false;
-            for (int j = 0; j < otherTags.size(); j++) {
-                if (!tags.get(i).equals(otherTags.get(j))) {
+            for (Tag otherTag : otherTags) {
+                if (!tags.get(i).equals(otherTag)) {
                     found = true;
                     break;
                 }

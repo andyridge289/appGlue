@@ -3,8 +3,6 @@ package com.appglue;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appglue.Constants.ProcessType;
-import com.appglue.Constants.ServiceType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 
@@ -25,7 +22,6 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     private ArrayList<ServiceDescription> items;
 
     private Activity parent;
-    private LocalStorage localStorage;
 
     private FragmentComponentListPager parentFragment;
 
@@ -34,7 +30,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     public AdapterComponentList(Context context, ArrayList<ServiceDescription> items, FragmentComponentListPager parentFragment) {
         super(context, R.layout.component_list_item, items);
 
-        localStorage = LocalStorage.getInstance();
+        LocalStorage localStorage = LocalStorage.getInstance();
 
         this.parent = (Activity) context;
         this.parentFragment = parentFragment;

@@ -44,7 +44,6 @@ import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ICON;
 import static com.appglue.Constants.ID;
-import static com.appglue.Constants.INPUT_IO_ID;
 import static com.appglue.Constants.INSTALLED;
 import static com.appglue.Constants.IO_INDEX;
 import static com.appglue.Constants.IO_TYPE;
@@ -52,14 +51,97 @@ import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.OUTPUT_IO_ID;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.PROCESS_TYPE;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.VALUE;
-import static com.appglue.library.AppGlueConstants.*;
+import static com.appglue.library.AppGlueConstants.COLS_APP;
+import static com.appglue.library.AppGlueConstants.COLS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.COLS_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE;
+import static com.appglue.library.AppGlueConstants.COLS_COMPOSITE_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.COLS_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.COLS_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.COLS_IOFILTER;
+import static com.appglue.library.AppGlueConstants.COLS_IOTYPE;
+import static com.appglue.library.AppGlueConstants.COLS_IOVALUE;
+import static com.appglue.library.AppGlueConstants.COLS_IO_DESCRIPTION;
+import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.COLS_SD;
+import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.COLS_TAG;
+import static com.appglue.library.AppGlueConstants.COLS_VALUENODE;
+import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.CONDITION;
+import static com.appglue.library.AppGlueConstants.DB_NAME;
+import static com.appglue.library.AppGlueConstants.DB_VERSION;
+import static com.appglue.library.AppGlueConstants.ENABLED;
+import static com.appglue.library.AppGlueConstants.END_TIME;
+import static com.appglue.library.AppGlueConstants.EXECUTION_INSTANCE;
+import static com.appglue.library.AppGlueConstants.FILTER_CONDITION;
+import static com.appglue.library.AppGlueConstants.FILTER_ID;
+import static com.appglue.library.AppGlueConstants.FILTER_STATE;
+import static com.appglue.library.AppGlueConstants.FK_COMPONENT;
+import static com.appglue.library.AppGlueConstants.FK_COMPOSITE_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.FK_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.FK_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.FK_IOFILTER;
+import static com.appglue.library.AppGlueConstants.FK_IOVALUE;
+import static com.appglue.library.AppGlueConstants.FK_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.FK_VALUENODE;
+import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_HAS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.INDEX_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.INDEX_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.INDEX_IOFILTER;
+import static com.appglue.library.AppGlueConstants.INDEX_IOVALUE;
+import static com.appglue.library.AppGlueConstants.INDEX_IO_DESCRIPTION;
+import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.INDEX_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.INDEX_VALUENODE;
+import static com.appglue.library.AppGlueConstants.INPUT_DATA;
+import static com.appglue.library.AppGlueConstants.IO_DESCRIPTION_ID;
+import static com.appglue.library.AppGlueConstants.IO_ID;
+import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_HAS_COMPONENT;
+import static com.appglue.library.AppGlueConstants.IX_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.IX_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.IX_IOFILTER;
+import static com.appglue.library.AppGlueConstants.IX_IOVALUE;
+import static com.appglue.library.AppGlueConstants.IX_IO_DESCRIPTION;
+import static com.appglue.library.AppGlueConstants.IX_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.IX_VALUENODE;
+import static com.appglue.library.AppGlueConstants.LOG_TYPE;
+import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
+import static com.appglue.library.AppGlueConstants.MESSAGE;
+import static com.appglue.library.AppGlueConstants.OUTPUT_DATA;
+import static com.appglue.library.AppGlueConstants.SINK_IO;
+import static com.appglue.library.AppGlueConstants.SOURCE_IO;
+import static com.appglue.library.AppGlueConstants.START_TIME;
+import static com.appglue.library.AppGlueConstants.TAG_ID;
+import static com.appglue.library.AppGlueConstants.TBL_APP;
+import static com.appglue.library.AppGlueConstants.TBL_COMPONENT;
+import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE;
+import static com.appglue.library.AppGlueConstants.TBL_COMPOSITE_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.TBL_EXECUTION_LOG;
+import static com.appglue.library.AppGlueConstants.TBL_IOCONNECTION;
+import static com.appglue.library.AppGlueConstants.TBL_IOFILTER;
+import static com.appglue.library.AppGlueConstants.TBL_IOTYPE;
+import static com.appglue.library.AppGlueConstants.TBL_IOVALUE;
+import static com.appglue.library.AppGlueConstants.TBL_IO_DESCRIPTION;
+import static com.appglue.library.AppGlueConstants.TBL_IO_SAMPLE;
+import static com.appglue.library.AppGlueConstants.TBL_SD;
+import static com.appglue.library.AppGlueConstants.TBL_SD_HAS_TAG;
+import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
+import static com.appglue.library.AppGlueConstants.TBL_TAG;
+import static com.appglue.library.AppGlueConstants.TBL_VALUENODE;
+import static com.appglue.library.AppGlueConstants.TERMINATED;
+import static com.appglue.library.AppGlueConstants.TIME;
+import static com.appglue.library.AppGlueConstants.VALUE_NODE_ID;
 
 public class LocalDBHandler extends SQLiteOpenHelper {
 
@@ -905,8 +987,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             ArrayList<IOValue> values = filter.getValues(io);
             boolean found = false;
-            for (int i = 0; i < values.size(); i++) {
-                if (values.get(i).getID() == valueId) {
+            for (IOValue value : values) {
+                if (value.getID() == valueId) {
                     found = true;
                     break;
                 }
@@ -925,8 +1007,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     private synchronized void removeDeadValuesForIO(ServiceIO io) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // FIXME We need to not delete those who have a live valuenode I think?
-
+        // We need to not delete those who have a live value node I think?
         Cursor c = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = %d AND %s = %d",
                                ID, TBL_IOVALUE, IO_ID, io.getID(), VALUE_NODE_ID, -1), null);
 
@@ -947,8 +1028,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             ArrayList<IOValue> values = io.getValues();
             boolean found = false;
-            for (int i = 0; i < values.size(); i++) {
-                if (values.get(i).getID() == valueId) {
+            for (IOValue value : values) {
+                if (value.getID() == valueId) {
                     found = true;
                     break;
                 }
@@ -1039,18 +1120,18 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             ArrayList<ServiceIO> inputs = component.getInputs();
-            for (int i = 0; i < inputs.size(); i++) {
-                failureCount += updateServiceIO(inputs.get(i));
+            for (ServiceIO input : inputs) {
+                failureCount += updateServiceIO(input);
             }
 
             ArrayList<ServiceIO> outputs = component.getOutputs();
-            for (int i = 0; i < outputs.size(); i++) {
-                failureCount += updateServiceIO(outputs.get(i));
+            for (ServiceIO output : outputs) {
+                failureCount += updateServiceIO(output);
             }
 
             ArrayList<IOFilter> filters = component.getFilters();
-            for (int i = 0; i < filters.size(); i++) {
-                failureCount += updateFilter(filters.get(i));
+            for (IOFilter filter : filters) {
+                failureCount += updateFilter(filter);
             }
 
             // Again, needs to be done afterwards
@@ -1085,8 +1166,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         TST<IOFilter.ValueNode> nodes = filter.getValues();
         ArrayList<String> keys = nodes.getKeys();
-        for (int i = 0; i < keys.size(); i++) {
-            failureCount += updateValueNode(nodes.get(keys.get(i)));
+        for (String key : keys) {
+            failureCount += updateValueNode(nodes.get(key));
         }
 
         // Do this afterwards so everything has IDs
@@ -1119,8 +1200,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         ArrayList<IOValue> values = valueNode.getValues();
-        for (int i = 0; i < values.size(); i++) {
-            failureCount += updateIOValue(values.get(i), valueNode);
+        for (IOValue value : values) {
+            failureCount += updateIOValue(value, valueNode);
         }
 
         return failureCount;
@@ -1172,7 +1253,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (value.getID() == -1) {
             addIOValue(value, null);
-            if(LOG) Log.d(TAG, "DBUPDATE [updateIOValue] Added " + value.getID() + " (" + vn + ")");
+            if(LOG) Log.d(TAG, "DBUPDATE [updateIOValue] Added " + value.getID() + " (" + (vn == null) + ")");
             return 0;
         }
 
@@ -1351,8 +1432,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         int successCount = 0;
         ArrayList<ServiceIO> inputs = component.getInputs();
-        for (int i = 0; i < inputs.size(); i++) {
-            long ioId = addServiceIO(inputs.get(i));
+        for (ServiceIO input : inputs) {
+            long ioId = addServiceIO(input);
             if (ioId != -1)
                 successCount++;
         }
@@ -1362,8 +1443,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         successCount = 0;
         ArrayList<ServiceIO> outputs = component.getOutputs();
-        for (int i = 0; i < outputs.size(); i++) {
-            long ioId = addServiceIO(outputs.get(i));
+        for (ServiceIO output : outputs) {
+            long ioId = addServiceIO(output);
             if (ioId != -1)
                 successCount++;
         }
@@ -1373,8 +1454,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         successCount = 0;
         ArrayList<IOFilter> filters = component.getFilters();
-        for (int i = 0; i < filters.size(); i++) {
-            long filterId = addFilter(filters.get(i));
+        for (IOFilter filter : filters) {
+            long filterId = addFilter(filter);
             if (filterId != -1)
                 successCount++;
         }
@@ -1399,8 +1480,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int successCount = 0;
         TST<IOFilter.ValueNode> nodes = filter.getValues();
         ArrayList<String> keys = nodes.getKeys();
-        for (int i = 0; i < keys.size(); i++) {
-            long valueId = addValueNode(nodes.get(keys.get(i)));
+        for (String key : keys) {
+            long valueId = addValueNode(nodes.get(key));
             if (valueId != -1)
                 successCount++;
         }
@@ -1425,8 +1506,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         int successCount = 0;
         ArrayList<IOValue> values = valueNode.getValues();
-        for (int i = 0; i < values.size(); i++) {
-            long valueId = addIOValue(values.get(i), valueNode);
+        for (IOValue value : values) {
+            long valueId = addIOValue(value, valueNode);
             if (valueId != -1)
                 successCount++;
         }
@@ -2422,7 +2503,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             // Associate the relevant value nodes
             IOFilter.ValueNode vn = currentFilter.getNodeOrCreate(valueNodeId, condition, io);
 
-            // Then look up the iovalues that are associated with each of the valuenodes
+            // Then look up the io values that are associated with each of the value nodes
             getIOValues(vn);
 
         } while (c.moveToNext());
@@ -2951,9 +3032,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     // TODO Re-implement this once we've got scheduling up and running
     public ArrayList<CompositeService> getScheduledComposites() {
 
-        ArrayList<CompositeService> scheduledComposites = new ArrayList<CompositeService>();
-
-//        String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
+        //        String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
 //                ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE.index);
 //
 //        SQLiteDatabase db = this.getReadableDatabase();
@@ -2985,7 +3064,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 //
 //        scheduledComposites = getComposites(ids, false);
 
-        return scheduledComposites;
+        return new ArrayList<CompositeService>();
     }
 
     // We need to go through all of the things in here and see what the IDs are
@@ -3003,8 +3082,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private void setupIDs(ArrayList<IODescription> iods, ServiceDescription sd) {
 
-        for (int i = 0; i < iods.size(); i++) {
-            IODescription input = iods.get(i);
+        for (IODescription input : iods) {
             IODescription iod = getIODescription(input.getName(), sd.getClassName());
             input.setID(iod.getID());
 
@@ -3045,8 +3123,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         c.close();
 
-        SampleValue sample = new SampleValue(id, sampleName, value);
-        return sample;
+        return new SampleValue(id, sampleName, value);
     }
 
     private IOType getIOType(String className, String name) {

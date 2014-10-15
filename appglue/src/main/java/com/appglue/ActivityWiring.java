@@ -30,12 +30,8 @@ public class ActivityWiring extends ActionBarActivity {
 	private CompositeService composite;
 
     private FragmentWiringPager wiringFragment;
-    private FragmentComponentListPager componentListFragment;
-    private FragmentFilter filterFragment;
 
     private CharSequence mTitle;
-
-    private Menu menu;
 
     private ServiceIO io;
     private long componentId = -1;
@@ -84,13 +80,13 @@ public class ActivityWiring extends ActionBarActivity {
 
             case MODE_CHOOSE:
                 mTitle = "Choose a component";
-                componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
+                FragmentComponentListPager componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
                 attach = componentListFragment;
                 break;
 
             case MODE_FILTER:
                 mTitle = "Choose filter values";
-                filterFragment = (FragmentFilter) FragmentFilter.create(componentId, filterId);
+                FragmentFilter filterFragment = (FragmentFilter) FragmentFilter.create(componentId, filterId);
                 attach = filterFragment;
                 break;
         }
@@ -226,7 +222,7 @@ public class ActivityWiring extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-        this.menu = menu;
+        Menu menu1 = menu;
 
 		MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.wiring, menu);

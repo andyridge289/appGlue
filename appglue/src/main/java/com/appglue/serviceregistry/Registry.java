@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appglue.Constants.ServiceType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
@@ -327,7 +326,7 @@ public class Registry {
                           Bundle inputData) {
 
         // When we stop at a filter, say what the data was at that point
-        ServiceDescription sd = component.getDescription();
+//        ServiceDescription sd = component.getDescription();
         String message = "Stopped execution at filter: expected and got \"" + AppGlueLibrary.bundleToString(inputData) + "\"";
 
         boolean logComponent = dbHandler.addToLog(cs, executionInstance, component, message, inputData, null, LogItem.FILTER);

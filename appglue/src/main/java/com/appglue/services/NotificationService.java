@@ -40,8 +40,8 @@ public class NotificationService extends ComposableService {
                 .setVibrate(null)
                 .setTicker(title + ": " + text);
 
-        int smallIcon = -1;
-        int largeIcon = -1;
+        int smallIcon;
+        int largeIcon;
 
         if(iconResource == -1) {
             largeIcon = R.drawable.icon; // Use the icon of this application by default.

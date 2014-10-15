@@ -27,8 +27,6 @@ import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class FragmentWiringPager extends Fragment implements ViewPager.OnPageChangeListener {
 
-    private static FragmentWiringPager instance;
-
     private CompositeService cs;
 
     private ViewPager wiringPager;
@@ -48,7 +46,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     public static Fragment create(long compositeId, int position) {
 
-        instance = new FragmentWiringPager();
+        FragmentWiringPager instance = new FragmentWiringPager();
 
         Bundle args = new Bundle();
         args.putLong(COMPOSITE_ID, compositeId);
@@ -225,7 +223,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         // Tell all the fragments to redraw...
         if (adapter != null) {
             for (int i = 0; i < adapter.getCount(); i++) {
-                FragmentWiring f = (FragmentWiring) adapter.getItem(i);
+                FragmentWiring f = adapter.getItem(i);
                 f.redraw();
             }
         }
@@ -339,7 +337,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             if (fragments[position] == null)
                 fragments[position] = FragmentWiring.create(position);
 
-            FragmentWiring f = (FragmentWiring) fragments[position];
+            FragmentWiring f = fragments[position];
             f.redraw();
 
             return fragments[position];

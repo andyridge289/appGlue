@@ -2,7 +2,10 @@
   <dictionary name="andy">
     <words>
       <w>abbfb</w>
+      <w>abfee</w>
+      <w>acff</w>
       <w>andor</w>
+      <w>andors</w>
       <w>app's</w>
       <w>appgluedb</w>
       <w>appname</w>
@@ -11,8 +14,10 @@
       <w>bafc</w>
       <w>bdab</w>
       <w>cbfe</w>
+      <w>cdfe</w>
       <w>ceba</w>
       <w>chakotay</w>
+      <w>combinator</w>
       <w>compositeexecutionlog</w>
       <w>cygpath</w>
       <w>cygpattern</w>
@@ -50,11 +55,14 @@
       <w>inputoutputtype</w>
       <w>iodescription</w>
       <w>iods</w>
+      <w>iofilter</w>
       <w>ioid</w>
       <w>iosamples</w>
+      <w>iovalues</w>
       <w>jadzia</w>
       <w>javacmd</w>
       <w>jvmargs</w>
+      <w>lesstrans</w>
       <w>maxdepth</w>
       <w>mindepth</w>
       <w>mingw</w>
@@ -66,6 +74,8 @@
       <w>nooutput</w>
       <w>orch</w>
       <w>ourcygpattern</w>
+      <w>preferencecompat</w>
+      <w>ranim</w>
       <w>replacee</w>
       <w>resized</w>
       <w>rootdirs</w>
@@ -75,16 +85,19 @@
       <w>serviceregistry</w>
       <w>setlocal</w>
       <w>sqls</w>
+      <w>subbar</w>
       <w>teal'c</w>
       <w>tuvok</w>
       <w>ulimit</w>
       <w>uname</w>
       <w>userguide</w>
       <w>valueid</w>
+      <w>valuenode</w>
       <w>waterloocity</w>
       <w>windowz</w>
       <w>worf</w>
       <w>xdock</w>
+      <w>xmlns</w>
     </words>
   </dictionary>
 </component>

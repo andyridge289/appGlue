@@ -24,8 +24,6 @@ import static com.appglue.Constants.CLASSNAME;
 
 public class FragmentComponent extends Fragment {
 
-    private ImageView componentIcon;
-
     private TextView componentName;
     private TextView componentDescription;
 
@@ -68,7 +66,7 @@ public class FragmentComponent extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View root = inflater.inflate(R.layout.fragment_component, container, false);
 
-        componentIcon = (ImageView) root.findViewById(R.id.component_icon);
+        ImageView componentIcon = (ImageView) root.findViewById(R.id.component_icon);
 
         componentName = (TextView) root.findViewById(R.id.component_name);
         componentDescription = (TextView) root.findViewById(R.id.component_description);

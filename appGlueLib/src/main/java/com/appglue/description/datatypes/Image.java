@@ -47,14 +47,14 @@ public class Image extends IOType
 
     public void loadFile()
     {
-        File f = new File(this.location);
-        Bitmap value = null;
+//        File f = new File(this.location);
+//        Bitmap value = null;
 
-        try {
-            value = BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            value = BitmapFactory.decodeStream(new FileInputStream(f));
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
 //	@Override

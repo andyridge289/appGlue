@@ -3,7 +3,6 @@ package com.appglue;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -84,7 +83,7 @@ public class ActivityComponent extends ActionBarActivity {
     }
 
     @Override
-    public void onRestoreInstanceState(@NonNull Bundle icicle) {
+    public void onRestoreInstanceState(Bundle icicle) {
         super.onRestoreInstanceState(icicle);
 
         if (!icicle.containsKey(CLASSNAME))
@@ -112,7 +111,7 @@ public class ActivityComponent extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.simple_service_menu, menu);
+        inflater.inflate(R.menu.story_components, menu); // TODO Not sure we need this, might need to put the component fragment in the right place
 //
 //        MenuItem useItem = menu.findItem(R.id.simple_use_button);
 //        MenuItem getItem = menu.findItem(R.id.simple_get_button);

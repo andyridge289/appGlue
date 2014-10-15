@@ -17,9 +17,6 @@ import java.util.ArrayList;
 public class FragmentSchedule extends Fragment {
     private Registry registry;
 
-    private ListView scheduleList;
-    private TextView noSchedule;
-
     public static Fragment create() {
         return new FragmentSchedule();
     }
@@ -40,8 +37,8 @@ public class FragmentSchedule extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View root = inflater.inflate(R.layout.fragment_schedule, container, false);
 
-        scheduleList = (ListView) root.findViewById(R.id.schedule_list);
-        noSchedule = (TextView) root.findViewById(R.id.no_schedule);
+        ListView scheduleList = (ListView) root.findViewById(R.id.schedule_list);
+        TextView noSchedule = (TextView) root.findViewById(R.id.no_schedule);
 
         ArrayList<CompositeService> composites = registry.getScheduledComposites();
 

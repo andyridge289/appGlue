@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -26,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -84,7 +82,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     private LinearLayout filterFrame;
     private View noFilters;
     private ListView filterList;
-    private View addFilter;
 
     private static final int LOWLIGHT_ALPHA = 10;
     private static final int HIGHLIGHT_ALPHA = 5;
@@ -154,7 +151,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
         addOutput = findViewById(R.id.add_output);
         addInput = findViewById(R.id.add_input);
-        addFilter = findViewById(R.id.wiring_filter_add);
+        View addFilter = findViewById(R.id.wiring_filter_add);
 
         // FIXME Need to disable the filter stuff as long as the first component is null
 

@@ -3,8 +3,6 @@ package com.appglue;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +14,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.appglue.Constants.ProcessType;
-import com.appglue.Constants.ServiceType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
@@ -30,15 +27,13 @@ import static com.appglue.Constants.TAG;
 
 public class ActivityApp extends Activity {
 
-    private LocalStorage localStorage;
-
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
         setContentView(R.layout.activity_app);
 
         Registry registry = Registry.getInstance(this);
-        localStorage = LocalStorage.getInstance();
+        LocalStorage localStorage = LocalStorage.getInstance();
 
         Intent intent = this.getIntent();
         String packageName = intent.getStringExtra(PACKAGENAME);

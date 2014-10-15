@@ -32,7 +32,6 @@ import android.widget.Toast;
 
 import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
-import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.LocalStorage;
@@ -44,15 +43,10 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.DATA;
-import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
-import static com.appglue.library.AppGlueConstants.TEST;
 
 public class FragmentCompositeList extends Fragment {
 
@@ -67,7 +61,6 @@ public class FragmentCompositeList extends Fragment {
     private ArrayList<CompositeService> composites;
 
     private CompositeGridAdapter gridAdapter;
-    private CompositeListAdapter listAdapter;
 
     private ArrayList<Integer> selected = new ArrayList<Integer>();
 
@@ -505,8 +498,6 @@ public class FragmentCompositeList extends Fragment {
                         }
 
                         actionMode = getActivity().startActionMode(actionCallback);
-                    } else {
-
                     }
 
                     return true;
@@ -632,7 +623,7 @@ public class FragmentCompositeList extends Fragment {
             gridAdapter = new CompositeGridAdapter(getActivity(), R.layout.grid_item_app_selector, composites);
             compositeGrid.setAdapter(gridAdapter);
 
-            listAdapter = new CompositeListAdapter(getActivity(), R.layout.list_item_app_selector, composites);
+            CompositeListAdapter listAdapter = new CompositeListAdapter(getActivity(), R.layout.list_item_app_selector, composites);
             compositeList.setAdapter(listAdapter);
 
             loader.setVisibility(View.GONE);

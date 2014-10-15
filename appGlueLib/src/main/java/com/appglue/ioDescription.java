@@ -255,11 +255,7 @@ public class IODescription {
         return this.sampleSearch.get(id);
     }
     public boolean hasSampleValues() {
-        if (sampleValues == null) {
-            return false;
-        }
-
-        return sampleValues.size() > 0;
+        return sampleValues != null && sampleValues.size() > 0;
     }
 
     public void setSampleValues(ArrayList<SampleValue> values) {

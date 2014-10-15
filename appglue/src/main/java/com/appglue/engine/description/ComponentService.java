@@ -180,16 +180,17 @@ public class ComponentService {
         return filterSearch.get(id);
     }
     public boolean hasFilters() {
-        if (filters == null)
-            return false;
+        return filters != null && filters.size() > 0;
 
-        return filters.size() > 0;
     }
     public void removeFilter(IOFilter filter) {
         this.filters.remove(filter);
         this.filterSearch.remove(filter.getID());
     }
 
+    public void setFilterCondition(boolean and) {
+        this.and = and;
+    }
     public boolean getFilterCondition() {
         return and;
     }
@@ -275,8 +276,8 @@ public class ComponentService {
     public void setFilters(ArrayList<IOFilter> filters) {
         this.filters = filters;
         this.filterSearch.clear();
-        for (int i = 0; i < filters.size(); i++) {
-            filterSearch.put(filters.get(i).getID(), filters.get(i));
+        for (IOFilter filter : filters) {
+            filterSearch.put(filter.getID(), filter);
         }
     }
 

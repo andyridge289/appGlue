@@ -79,7 +79,7 @@ public class TubeService extends ComposableService {
     }
 
     public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {
-        String output = "";
+        String output;
 
         try {
             String url = "http://people.bath.ac.uk/ar289/services/tube/tube_status.php";

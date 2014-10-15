@@ -33,14 +33,14 @@ public class ActivityComposite extends Activity
 	private boolean edit;
 
     private Registry registry;
-	
+
+    // FIXME Can I delete this?
+
 	public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);
 		
 		Intent intent = getIntent();
-
-        LocalStorage localStorage = LocalStorage.getInstance();
 		registry = Registry.getInstance(this);
 		
 		long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
@@ -134,11 +134,7 @@ public class ActivityComposite extends Activity
 		// It doesn't matter what it is, just set the check or not
         activeCheck.setChecked(registry.isEnabled(cs));
 
-        ListView componentList = (ListView) findViewById(R.id.composite_component_list);
-//		componentList.setAdapter(new CompositeComponentAdapter(this, cs.getComponentsAL()));
-			
-		if(edit)
-		{
+		if(edit)		{
 			activeCheck.setEnabled(true);
 		}
 		else

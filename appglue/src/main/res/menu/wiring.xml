@@ -6,7 +6,7 @@
         >
         <item
             android:id="@+id/wiring_auto"
-            android:title="@string/witing_auto"
+            android:title="@string/wiring_auto"
             app:showAsAction="never"
             />
         <item

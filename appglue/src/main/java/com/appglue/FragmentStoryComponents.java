@@ -80,8 +80,6 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 		if(requestCode == STORY_MODE && resultCode == Activity.RESULT_OK)
 		{
 			// Then we need to go to add services
-			CompositeService cs = registry.getCurrent();
-			
 			String className = intent.getStringExtra(CLASSNAME);
 			final int position = intent.getIntExtra(INDEX, -1);
 
@@ -159,8 +157,6 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			{
 				for(int i = 0; i < component.getInputs().size(); i++)
 				{
-					IODescription sio = component.getInputs().get(i);
-					
 					ImageView iv = new ImageView(this.getContext());
     				iv.setImageResource(R.drawable.empty_input);
 					in.addView(iv);
@@ -185,8 +181,6 @@ public class FragmentStoryComponents extends Fragment implements OnClickListener
 			{   
 				for(int i = 0; i < component.getOutputs().size(); i++)
 				{
-					IODescription sio = component.getOutputs().get(i);
-					
 					ImageView iv = new ImageView(this.getContext());
                     iv.setImageResource(R.drawable.empty_input);
 					out.addView(iv);

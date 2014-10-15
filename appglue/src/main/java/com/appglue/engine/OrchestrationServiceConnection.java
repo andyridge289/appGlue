@@ -21,7 +21,6 @@ import android.os.RemoteException;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
-import android.util.SparseArray;
 
 import com.appglue.ActivityLog;
 import com.appglue.ComposableService;
@@ -64,13 +63,6 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
     private Registry registry;
 
-    public static final String FILTER_REMOVED = "filter_removed";
-    public static final String FILTER_RETAINED = "filter_retained";
-
-    private static final String FILTER_OUTPUTID = "filter_name";
-    private static final String FILTER_CONDITION = "filter_condition";
-    private static final String FILTER_VALUE = "filter_value";
-
     private Bundle[] sent;
     private Bundle[] received;
 
@@ -102,9 +94,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         try {
             Test.isValidBundle(index, cs.getComponents().size(), message.getData(), true);
 
-            if (registry.isTerminated(cs, executionInstance)) {
-
-            } else {
+            if (!registry.isTerminated(cs, executionInstance)) {
                 sent[index] = message.getData();
                 messageSender.send(message);
             }
@@ -188,7 +178,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             } else if (outputs.size() > 0) {
 
                 // Then we need to check for filtering
-                Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterValues = null;
+                Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterValues;
                 try {
                     filterValues = this.filter2(outputs, cs.getComponents().get(index - 1));
                 } catch (OrchestrationException e) {
@@ -250,14 +240,12 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         isBound = true;
     }
 
-
-    // FIXME I need to re-work the logic for this
         // Test each filter separately
            // Combine them together with the condition applied to the component
         // Test each of the value nodes
             // Combine with AND
         // Test each value within the value node
-            // Combine with condition applied to the vlauenode
+            // Combine with condition applied to the value node
     private Pair<ArrayList<Bundle>, ArrayList<Bundle>> filter2(ArrayList<Bundle> messageData, ComponentService component) throws OrchestrationException {
 
         ArrayList<Bundle> retained = new ArrayList<Bundle>();
@@ -333,19 +321,15 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         }
 
         // And then combine them all with an AND
-        if (fail) {
-            return false;
-        } else {
-            return true;
-        }
+        return !fail;
     }
 
     private boolean filterTestValues(Object actualValue, boolean condition, ArrayList<IOValue> filterValues) throws OrchestrationException {
 
         ArrayList<Boolean> results = new ArrayList<Boolean>();
 
-        for(int i = 0 ; i < filterValues.size(); i++) {
-            results.add(filterTestValue(actualValue, filterValues.get(i)));
+        for (IOValue filterValue : filterValues) {
+            results.add(filterTestValue(actualValue, filterValue));
         }
 
         String s = "";
@@ -445,10 +429,6 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
                 inputList.add(inputBundle);
             }
-        }
-
-        if (inputList.size() == 0) {
-
         }
 
         // Go through the getInputs and input any manual values that are there

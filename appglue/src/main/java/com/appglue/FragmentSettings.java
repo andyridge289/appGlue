@@ -28,7 +28,7 @@ public class FragmentSettings extends Fragment implements SharedPreferences.OnSh
         super.onCreate(icicle);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        Map<String, ?> prefs = sharedPreferences.getAll();
+//        Map<String, ?> prefs = sharedPreferences.getAll();
 
         // This needs to show a clear database button
 

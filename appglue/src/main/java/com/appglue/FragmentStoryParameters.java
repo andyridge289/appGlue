@@ -223,13 +223,13 @@ public class FragmentStoryParameters extends Fragment {
                 // 3 See what the value of the corresponding text box/spinner is
                 if (tabs.getCurrentTab() == 0) {
                     // It's the sample one
-                    SampleValue value = (SampleValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
+//                    SampleValue value = (SampleValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
 //					item.setChosenSampleValue(value);
 //					item.setFilterState(IODescription.SAMPLE); ServiceIO not IODescription
                 } else if (tabs.getCurrentTab() == 1) {
                     // It's the custom one
                     String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
-                    Object value = item.getType().fromString(sValue);
+//                    Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
 //					item.setFilterState(IODescription.MANUAL); ServiceIO not IODescription
                 } else if (tabs.getCurrentTab() == 2) {
@@ -239,7 +239,7 @@ public class FragmentStoryParameters extends Fragment {
 
 
                     // get previous output from the last component and then match them up
-                    IODescription previousOut = previous.getOutput(value.getID());
+//                    IODescription previousOut = previous.getOutput(value.getID());
 //					item.setConnection(previousOut);
 //					previousOut.setConnection(item); ServiceIO not IODescription
                 }
@@ -308,7 +308,7 @@ public class FragmentStoryParameters extends Fragment {
         final EditText valueText = (EditText) v.findViewById(R.id.param_value_text);
         final Spinner valueSpinner = (Spinner) v.findViewById(R.id.param_value_spinner);
         final Spinner previousSpinner = (Spinner) v.findViewById(R.id.param_previous_spinner);
-        final Spinner conditionSpinner = (Spinner) v.findViewById(R.id.param_condition_spinner);
+//        final Spinner conditionSpinner = (Spinner) v.findViewById(R.id.param_condition_spinner);
 
         ArrayList<IODescription> matching = new ArrayList<IODescription>();
 
@@ -474,13 +474,13 @@ public class FragmentStoryParameters extends Fragment {
                 // 3 See what the value of the corresponding text box/spinner is
                 if (tabs.getCurrentTab() == 0) {
                     // It's the sample one
-                    SampleValue value = (SampleValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
+//                    SampleValue value = (SampleValue) ((Spinner) container.findViewById(R.id.param_value_spinner)).getSelectedItem();
 //					item.setChosenSampleValue(value);
 //					item.setFilterState(IODescription.SAMPLE); ServiceIO not IODescription
                 } else if (tabs.getCurrentTab() == 1) {
                     // It's the custom one
                     String sValue = ((EditText) container.findViewById(R.id.param_value_text)).getText().toString();
-                    Object value = item.getType().fromString(sValue);
+//                    Object value = item.getType().fromString(sValue);
 //					item.setManualValue(value);
 //					item.setFilterState(IODescription.MANUAL); ServiceIO not IODescription
                 }

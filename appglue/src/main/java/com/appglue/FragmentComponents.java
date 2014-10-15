@@ -17,7 +17,6 @@ public class FragmentComponents extends Fragment {
     public static final int MODE_LIST = 0;
     public static final int MODE_COMPONENT = 1;
 
-    private FragmentComponentListPager listFragment;
     private FragmentComponent componentFragment;
 
     private String className = "";
@@ -119,7 +118,7 @@ public class FragmentComponents extends Fragment {
 
             case MODE_LIST:
             default:
-                listFragment = (FragmentComponentListPager) FragmentComponentListPager.create(justList);
+                FragmentComponentListPager listFragment = (FragmentComponentListPager) FragmentComponentListPager.create(justList);
                 active = listFragment;
                 break;
         }

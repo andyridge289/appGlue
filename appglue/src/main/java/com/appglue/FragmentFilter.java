@@ -1,64 +1,33 @@
 package com.appglue;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.support.v4.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.LongSparseArray;
-import android.util.SparseArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.widget.TabHost;
-import android.widget.TabWidget;
 import android.widget.TextView;
 
-import com.appglue.description.SampleValue;
-import com.appglue.description.ServiceDescription;
-import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.FilterValueView;
-import com.appglue.layout.adapter.FilterSampleAdapter;
-import com.appglue.layout.adapter.WiringFilterAdapter;
-import com.appglue.library.FilterFactory;
-import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.AND;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.FILTER_ID;
-import static com.appglue.library.AppGlueConstants.FILTER_BOOL_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_SET_VALUES;
-import static com.appglue.library.AppGlueConstants.FILTER_STRING_VALUES;
-import static com.appglue.library.AppGlueConstants.OR;
 
 public class FragmentFilter extends Fragment {
 
-    private Registry registry;
-
     private ComponentService component;
-    private LinearLayout outputList;
 
     private IOFilter filter;
 
@@ -82,7 +51,7 @@ public class FragmentFilter extends Fragment {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        registry = Registry.getInstance(getActivity());
+        Registry registry = Registry.getInstance(getActivity());
         filterViews = new LongSparseArray<ArrayList<FilterValueView>>();
 
         if(getArguments() != null) {
@@ -106,7 +75,7 @@ public class FragmentFilter extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_filter, container, false);
-        outputList = (LinearLayout) v.findViewById(R.id.filter_output_list);
+        LinearLayout outputList = (LinearLayout) v.findViewById(R.id.filter_output_list);
 
         if (component == null) {
             // Back out and hope that someone will redraw it
