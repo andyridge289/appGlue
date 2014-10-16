@@ -43,8 +43,6 @@ import static com.appglue.Constants.TAG;
 
 public class ServiceFactory {
 
-    // FIXME Put a character limit on IO friendly names: "Notification mess"?
-
     private static ServiceFactory factory;
     private AppDescription appDescription;
     private Context context;

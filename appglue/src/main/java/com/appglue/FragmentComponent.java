@@ -223,7 +223,7 @@ public class FragmentComponent extends Fragment {
 //                v.setOnClickListener(new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View v) {
-//                        Intent intent = new Intent(ActivityComponent.this, ActivityComposite.class);
+//                        Intent intent = new Intent(ActivityComponent.this, AdctivityComposite.class);
 //                        intent.putExtra(ID, examples.get(index).getID());
 //                        startActivity(intent);
 //                    }

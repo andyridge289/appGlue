@@ -3,6 +3,7 @@ package com.appglue;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,11 +26,14 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 
 public class ActivityWiring extends ActionBarActivity {
 	private CompositeService composite;
 
     private FragmentWiringPager wiringFragment;
+    private FragmentComponentListPager componentListFragment;
+    private FragmentFilter filterFragment;
 
     private CharSequence mTitle;
 
@@ -37,15 +41,13 @@ public class ActivityWiring extends ActionBarActivity {
     private long componentId = -1;
     private long filterId = -1;
 
-    private boolean makingNew = false;
+    private boolean createNew = false;
 
     private int pagerPosition = 0;
     private int componentPosition = 0;
 
     public ActivityWiring() {
     }
-
-    private TextView status;
 
 	private Registry registry;
 
@@ -58,6 +60,9 @@ public class ActivityWiring extends ActionBarActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		setContentView(R.layout.activity_wiring);
+
+        Intent intent = this.getIntent();
+        createNew = intent.getBooleanExtra(CREATE_NEW, false);
     }
 
     public void setMode(int mode) {
@@ -72,7 +77,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         switch(mode) {
             case MODE_CREATE:
-                makingNew = false;
+                createNew = false;
                 mTitle = "Create glued app";
                 wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(composite.getID(), pagerPosition);
                 attach = wiringFragment;
@@ -80,13 +85,13 @@ public class ActivityWiring extends ActionBarActivity {
 
             case MODE_CHOOSE:
                 mTitle = "Choose a component";
-                FragmentComponentListPager componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
+                componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
                 attach = componentListFragment;
                 break;
 
             case MODE_FILTER:
                 mTitle = "Choose filter values";
-                FragmentFilter filterFragment = (FragmentFilter) FragmentFilter.create(componentId, filterId);
+                filterFragment = (FragmentFilter) FragmentFilter.create(componentId, filterId);
                 attach = filterFragment;
                 break;
         }
@@ -108,7 +113,7 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void onBackPressed() {
-        if (mode == MODE_CHOOSE && !makingNew) {
+        if (mode == MODE_CHOOSE && !createNew) {
             setMode(MODE_CREATE);
             redraw();
             return;
@@ -133,7 +138,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         AlertDialog.Builder keepTemp = null;
 
-        if(composite == null && compositeId == -1) {
+        if(createNew) {
             // They are DEFINITELY creating a new one
             if(registry.tempExists())
             {
@@ -155,7 +160,7 @@ public class ActivityWiring extends ActionBarActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 composite = registry.resetTemp();
                                 setMode(MODE_CREATE);
-                                makingNew = true;
+                                createNew = true;
                                 redraw();
                             }
                         });
@@ -165,7 +170,7 @@ public class ActivityWiring extends ActionBarActivity {
                 // There isn't stuff in the temp, just use that
                 composite = registry.resetTemp();
                 setMode(MODE_CREATE);
-                makingNew = true;
+                createNew = true;
                 redraw();
             }
         } else { // They might not be creating a new one
@@ -183,7 +188,7 @@ public class ActivityWiring extends ActionBarActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.saveTempAsComposite("Saved draft");
                                 setMode(MODE_CREATE);
-                                makingNew = true;
+                                createNew = true;
                                 redraw();
                             }
                         });
@@ -193,7 +198,7 @@ public class ActivityWiring extends ActionBarActivity {
                                 registry.resetTemp();
                                 composite = registry.getComposite(composite.getID());
                                 setMode(MODE_CREATE);
-                                makingNew = true;
+                                createNew = true;
                                 redraw();
                             }
                         });
@@ -222,34 +227,37 @@ public class ActivityWiring extends ActionBarActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-        Menu menu1 = menu;
-
 		MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.wiring, menu);
-
-        // TODO Orientation change needs to not trigger the  keep draft dialog
 
         switch(mode) {
             case MODE_CREATE:
-                if (wiringFragment != null && wiringFragment.getCurrentWiringMode() == FragmentWiring.MODE_WIRING) {
-                    menu.setGroupVisible(R.id.menu_group_create_wiring, true);
-                } else {
-                    menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+                if(wiringFragment == null) {
+                    return true;
                 }
-                menu.setGroupVisible(R.id.menu_group_filter, false);
+
+                inflater.inflate(R.menu.wiring, menu);
+                switch(wiringFragment.getCurrentWiringMode()) {
+                    case FragmentWiring.MODE_WIRING:
+                        menu.setGroupVisible(R.id.menu_group_create_wiring, true);
+                        break;
+
+                    default:
+                        menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+                        break;
+                }
                 break;
 
             case MODE_FILTER:
-                menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-                menu.setGroupVisible(R.id.menu_group_filter, true);
+                if(wiringFragment == null) {
+                    return true;
+                }
+                inflater.inflate(R.menu.wiring_filter, menu);
                 break;
 
             default:
-                menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-                menu.setGroupVisible(R.id.menu_group_filter, false);
+                // We dont need no stinkin' menu
                 break;
         }
-
 
         return true;
     }

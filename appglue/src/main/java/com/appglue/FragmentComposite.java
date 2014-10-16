@@ -241,7 +241,7 @@ public class FragmentComposite extends Fragment {
 //                @Override
 //                public void onClick(View v)
 //                {
-//                    Intent intent = new Intent(ActivityComposite.this, ActivityComponent.class);
+//                    Intent intent = new Intent(ActivityComposite.this, ActividtyComponent.class);
 //                    intent.putExtra(CLASSNAME, item.getClassName());
 //                    startActivity(intent);
 //                }

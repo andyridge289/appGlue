@@ -58,8 +58,6 @@ public class ActivityCompositeList extends Activity {
     private GridView loadGrid;
     private ImageView loader;
 
-    // FIXME Delete says it failed when it seems to have worked.
-
     private ArrayList<CompositeService> composites;
 
     private Registry registry;

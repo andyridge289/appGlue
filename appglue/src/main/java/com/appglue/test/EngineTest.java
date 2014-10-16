@@ -94,12 +94,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         assertEquals(-1, firstFail);
     }
 
-//    @LargeTest
-//    public void testManualFilter() throws Exception {
-//        // TODO This
-//        assertEquals(1, 2);
-//    }
-
     @LargeTest
     @SuppressWarnings("unchecked")
     public void testSampleFilter() throws Exception {

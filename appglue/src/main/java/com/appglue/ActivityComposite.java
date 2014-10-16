@@ -34,8 +34,6 @@ public class ActivityComposite extends Activity
 
     private Registry registry;
 
-    // FIXME Can I delete this?
-
 	public void onCreate(Bundle icicle)
 	{
 		super.onCreate(icicle);

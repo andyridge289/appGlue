@@ -108,29 +108,6 @@ public class ActivityComponent extends ActionBarActivity {
         super.onStart();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.story_components, menu); // TODO Not sure we need this, might need to put the component fragment in the right place
-//
-//        MenuItem useItem = menu.findItem(R.id.simple_use_button);
-//        MenuItem getItem = menu.findItem(R.id.simple_get_button);
-//
-//        if (useItem == null || getItem == null)
-//            return false;
-//
-//        if (atomicList)
-//            useItem.setVisible(false);
-//
-//        if (this.type == ServiceType.REMOTE.index) {
-//            useItem.setVisible(false);
-//        } else {
-//            getItem.setVisible(false);
-//        }
-
-        return true;
-    }
-
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == MARKET_LOOKUP) {
             Intent i = new Intent();
