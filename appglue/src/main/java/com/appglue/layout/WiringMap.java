@@ -153,8 +153,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         addInput = findViewById(R.id.add_input);
         View addFilter = findViewById(R.id.wiring_filter_add);
 
-        // FIXME Need to disable the filter stuff as long as the first component is null
-
         addFilter.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,7 +259,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 addOutput.setVisibility(View.INVISIBLE);
             }
 
-            // FIXME At this point we need to check the filters. Need to slightly tweak how this works...
             if (first.hasFilters()) {
                 Log.d(TAG, first.getFilters().size() + " filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
                 filterList.setAdapter(new FilterAdapter(getContext(), first.getFilters()));
@@ -635,6 +632,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
      * @param item The item for the dialog to show.
      */
     private void showIODialog(final ServiceIO item) {
+
+        //FIXME Work out the best way to do this. Maybe override the constructor?
         // Apps are different
         if(item.getType().typeEquals(IOType.Factory.getType(IOType.Factory.APP))) {
             DialogApp da = new DialogApp(activity, item);
@@ -1232,8 +1231,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                                 case 2:
                                     // Delete the filter
                                     // TODO Check first?
-                                    // TODO Need to remove it from the actual thing
-                                    // TODO Or maybe just update it in the database
                                     items.remove(item);
                                     FilterAdapter.this.notifyDataSetChanged();
                                     registry.updateComposite(registry.getCurrent());

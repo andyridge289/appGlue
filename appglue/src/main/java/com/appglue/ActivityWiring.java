@@ -3,7 +3,6 @@ package com.appglue;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appglue.description.ServiceDescription;
@@ -210,8 +208,8 @@ public class ActivityWiring extends ActionBarActivity {
         }
 
         if(keepTemp != null)
-            keepTemp.create().show();
-	}
+            keepTemp.create().show(); // TODO This has leaked something
+    }
 
 	public ArrayList<ComponentService> getComponents() {
         if(composite != null)

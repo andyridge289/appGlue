@@ -91,6 +91,10 @@ public abstract class IOType
         return className.equals(t.getClassName());
     }
 
+    public boolean typeExtends(IOType t) {
+        return false; // TODO
+    }
+
 	public boolean equals(Object o) {
 
         if(o == null)  {
