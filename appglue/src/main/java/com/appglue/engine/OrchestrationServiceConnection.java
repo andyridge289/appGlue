@@ -433,11 +433,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         // Go through the getInputs and input any manual values that are there
         for (ServiceIO input : inputs) {
-            if (input.hasValues()) {
+            if (input.hasValue()) {
                 // Then add it to the input list
                 String name = input.getDescription().getName();
                 IOType type = input.getDescription().getType();
-                IOValue inputValue = input.getValues().get(0);
+                IOValue inputValue = input.getValue();
                 Object value = null;
 
                 if (inputValue.getFilterState() == IOValue.MANUAL)

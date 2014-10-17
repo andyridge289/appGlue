@@ -1004,46 +1004,47 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
     }
 
-    private synchronized void removeDeadValuesForIO(ServiceIO io) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // We need to not delete those who have a live value node I think?
-        Cursor c = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = %d AND %s = %d",
-                               ID, TBL_IOVALUE, IO_ID, io.getID(), VALUE_NODE_ID, -1), null);
-
-        if (c == null) {
-            Log.e(TAG, "Dead cursor for removing dead values for serviceIO " + io.getID());
-            return;
-        }
-
-        if (c.getCount() == 0) {
-            return;
-        }
-
-        c.moveToFirst();
-
-        do {
-
-            long valueId = c.getLong(c.getColumnIndex(ID));
-
-            ArrayList<IOValue> values = io.getValues();
-            boolean found = false;
-            for (IOValue value : values) {
-                if (value.getID() == valueId) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                int count = deleteIOValue(valueId);
-                Log.d(TAG, "DBUPDATE [removeDeadIOValues] Deleted " + count + " from IO " +
-                        io.getID() + "(" + io.getComponent().getDescription().getName() + ")");
-            }
-
-        } while (c.moveToNext());
-        c.close();
-    }
+    // Not sure I even need this
+//    private synchronized void removeDeadValuesForIO(ServiceIO io) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//
+//        // We need to not delete those who have a live value node I think?
+//        Cursor c = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = %d AND %s = %d",
+//                               ID, TBL_IOVALUE, IO_ID, io.getID(), VALUE_NODE_ID, -1), null);
+//
+//        if (c == null) {
+//            Log.e(TAG, "Dead cursor for removing dead values for serviceIO " + io.getID());
+//            return;
+//        }
+//
+//        if (c.getCount() == 0) {
+//            return;
+//        }
+//
+//        c.moveToFirst();
+//
+//        do {
+//
+//            long valueId = c.getLong(c.getColumnIndex(ID));
+//
+//            ArrayList<IOValue> values = io.getValues();
+//            boolean found = false;
+//            for (IOValue value : values) {
+//                if (value.getID() == valueId) {
+//                    found = true;
+//                    break;
+//                }
+//            }
+//
+//            if (!found) {
+//                int count = deleteIOValue(valueId);
+//                Log.d(TAG, "DBUPDATE [removeDeadIOValues] Deleted " + count + " from IO " +
+//                        io.getID() + "(" + io.getComponent().getDescription().getName() + ")");
+//            }
+//
+//        } while (c.moveToNext());
+//        c.close();
+//    }
 
     private synchronized int deleteComponent(long id) {
        return delete(TBL_COMPONENT, id);
@@ -1327,12 +1328,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                         io.getComponent().getDescription().getName());
             }
 
-            for (IOValue value : io.getValues()) {
-                updateIOValue(value, null);
-            }
-
+            updateIOValue(io.getValue(), null);
             // Updating values needs to happen afterwards
-            removeDeadValuesForIO(io);
+//            removeDeadValuesForIO(io);
         }
 
         return failureCount;
@@ -1545,8 +1543,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         io.setID(id);
 
-        for (IOValue value : io.getValues()) {
-            addIOValue(value, null);
+        if (io.hasValue()) {
+            addIOValue(io.getValue(), null);
         }
 
         return id;
@@ -1567,81 +1565,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         return c.getCount() != 0;
 
-    }
-
-    public synchronized boolean updateFiltersAndValues(CompositeService cs) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        SparseArray<ComponentService> components = cs.getComponents();
-        int runningFailures = 0;
-
-        // Delete all of the filters for that particular composite
-        int numRemoved = db.delete(TBL_SERVICEIO, COMPOSITE_ID + " = ?", new String[]{"" + cs.getID()});
-        if (LOG) Log.d(TAG, "Removed " + numRemoved + " from Filter for " + cs.getID() + "(" + cs.getName() + ")");
-
-        for (int i = 0; i < components.size(); i++) {
-            // Do the filter conditions on the getOutputs first
-            ComponentService c = components.valueAt(i);
-            ArrayList<ServiceIO> inputs = c.getInputs();
-            for (ServiceIO o : inputs) {
-
-                ArrayList<IOValue> values = o.getValues();
-
-                for (IOValue value : values) {
-
-                    if (value.getFilterState() != IOValue.UNFILTERED) {
-
-                        ContentValues cv = new ContentValues();
-
-                        cv.put(COMPOSITE_ID, cs.getID());
-                        cv.put(IO_ID, o.getID());
-
-                        // Set the filter state
-                        cv.put(FILTER_STATE, value.getFilterState());
-                        cv.put(MANUAL_VALUE, o.getType().toString(value.getManualValue()));
-                        cv.put(SAMPLE_VALUE, value.getSampleValue().getID());
-                        cv.put(FILTER_CONDITION, value.getCondition().index);
-
-                        long ret = db.insertOrThrow(TBL_IOVALUE, null, cv);
-                        if (ret == -1) {
-                            runningFailures++;
-                        }
-
-                    }
-                }
-
-            }
-
-
-            // Do the filter conditions on the getOutputs first
-            ArrayList<ServiceIO> outputs = c.getOutputs();
-            for (ServiceIO o : outputs) {
-
-                ArrayList<IOValue> values = o.getValues();
-                for (IOValue value : values) {
-                    if (value.getFilterState() != IOValue.UNFILTERED) {
-                        ContentValues cv = new ContentValues();
-
-                        // Set the filter state
-                        cv.put(FILTER_STATE, value.getFilterState());
-                        cv.put(COMPOSITE_ID, cs.getID());
-                        cv.put(IO_ID, o.getID());
-
-                        cv.put(MANUAL_VALUE, o.getDescription().getType().toString(value.getManualValue()));
-                        cv.put(SAMPLE_VALUE, value.getSampleValue().getID());
-
-                        cv.put(FILTER_CONDITION, value.getCondition().index);
-
-                        long ret = db.insertOrThrow(TBL_IOVALUE, null, cv);
-
-                        if (ret == -1) {
-                            runningFailures++;
-                        }
-                    }
-                }
-            }
-        }
-
-        return runningFailures == 0;
     }
 
     public synchronized ArrayList<CompositeService> getExamples(String componentName) {
@@ -2427,8 +2350,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             io.setID(ioId);
 
             if(iod.isInput()) {
-                ArrayList<IOValue> values = getIOValues(io);
-                io.setValues(values);
+                io.setValue(getIOValues(io));
             }
 
         } while (c.moveToNext());
@@ -2556,38 +2478,37 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
     }
 
-    private ArrayList<IOValue> getIOValues(ServiceIO io) {
+    private IOValue getIOValues(ServiceIO io) {
         String query = String.format("SELECT %s FROM %s WHERE %s = %d",
                 "*", TBL_IOVALUE, IO_ID, io.getID());
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
-        ArrayList<IOValue> values = new ArrayList<IOValue>();
 
         if (c == null) {
             Log.e(TAG, "Cursor dead " + query);
-            return values;
+            return null;
         }
 
         if (c.getCount() == 0) {
-            return values;
+            return null;
         }
 
         c.moveToFirst();
 
-        do {
+
 
             long ioId = c.getLong(c.getColumnIndex(IO_ID));
 
             if (io.getID() != ioId) {
                 Log.e(TAG, "IO ids don't match, something has gone very very wrong");
-                continue;
+                return null;
             }
 
             long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
             if (compositeId != io.getComponent().getComposite().getID()) {
                 Log.e(TAG, "composite ids don't match, something has gone slightly very wrong");
-                continue;
+                return null;
             }
 
             long id = c.getLong(c.getColumnIndex(ID));
@@ -2605,12 +2526,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
 
             IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
-            values.add(value);
 
-        } while (c.moveToNext());
         c.close();
 
-        return values;
+        return value;
     }
 
     private IODescription getIODescription(long id, ServiceDescription sd) {

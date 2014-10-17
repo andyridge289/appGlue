@@ -150,15 +150,11 @@ public class CompositeService {
         if(services != null) {
             this.components = new SparseArray<ComponentService>();
             for (int i = 0; i < services.size(); i++) {
-                components.put(i, services.get(i));
-                services.get(i).setComposite(this);
-            }
-
-            for (ComponentService cs : services) {
+                ComponentService cs = services.get(i);
+                components.put(i, cs);
+                cs.setComposite(this);
                 this.componentSearch.put(cs.getID(), cs);
             }
-
-            // TODO Why is this two loops instead of one?
         }
 
         this.enabled = false;

@@ -85,6 +85,8 @@ public class FilterValueView extends LinearLayout {
         create(context, 0);
     }
 
+    // TODO Need to do pickers for the filters too
+
     public FilterValueView(Context context, AttributeSet attrs) {
         super(context, attrs);
         create(context, 0);

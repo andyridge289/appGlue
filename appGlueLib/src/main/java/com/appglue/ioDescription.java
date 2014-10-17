@@ -72,6 +72,7 @@ public class IODescription {
         this(id);
 
         this.name = name;
+
         this.friendlyName = friendlyName;
         this.type = type;
         this.description = description;

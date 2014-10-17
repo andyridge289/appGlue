@@ -221,12 +221,6 @@ public class Registry {
         return dbHandler.isInstanceRunning(compositeId, executionInstance);
     }
 
-    public boolean updateWiring(CompositeService cs) {
-        dbHandler.updateWiring(cs);
-        return dbHandler.updateFiltersAndValues(cs);
-
-    }
-
     public boolean isTerminated(CompositeService composite, long executionInstance) {
         return dbHandler.isTerminated(composite, executionInstance);
     }

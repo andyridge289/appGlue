@@ -42,7 +42,6 @@ import com.appglue.engine.description.IOFilter;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.animation.WeightedExpandAnimation;
-import com.appglue.layout.dialog.DialogApp;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.serviceregistry.Registry;
 
@@ -632,16 +631,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
      * @param item The item for the dialog to show.
      */
     private void showIODialog(final ServiceIO item) {
-
-        //FIXME Work out the best way to do this. Maybe override the constructor?
-        // Apps are different
-        if(item.getType().typeEquals(IOType.Factory.getType(IOType.Factory.APP))) {
-            DialogApp da = new DialogApp(activity, item);
-            da.show();
-        } else {
-            DialogIO di = new DialogIO(activity, item);
-            di.show();
-        }
+        DialogIO di = new DialogIO(activity, item);
+        di.show();
     }
 
     public void setWiringMode(int wiringMode) {
@@ -694,12 +685,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             v.findViewById(R.id.mandatory_bar).setVisibility(visibility);
 
             if (item != null) {
-                if (!item.hasValues()) {
+                if (!item.hasValue()) {
                     ioType.setText(iod.getType().getName());
                     ioValue.setText("");
                 } else {
                     ioType.setText(iod.getType().getName() + ": ");
-                    String valueName = item.getType().toString(item.getValues().get(0).getManualValue());
+                    String valueName = item.getType().toString(item.getValue().getManualValue());
                     ioValue.setText(valueName);
                 }
 
@@ -749,7 +740,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                         iSelected = item;
                         iIndex = position;
-                        activity.setStatus("Selected " + iod.getName());
+//                        activity.setStatus("Selected " + iod.getName());
                     } else if (oSelected != null && oSelected.getDescription().getType().equals(iod.getType()) && iSelected == null) {
                         if (LOG) Log.d(TAG, "Input " + position + " We have a match");
 
@@ -761,7 +752,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                         iSelected = item;
                         iIndex = position;
-                        activity.setStatus("Selected " + iod.getName());
+//                        activity.setStatus("Selected " + iod.getName());
 
                         // This one
                         b.setBackgroundColor(
@@ -831,14 +822,14 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                         iSelected = item;
                         iIndex = position;
-                        activity.setStatus("Selected " + iod.getName());
+//                        activity.setStatus("Selected " + iod.getName());
                         oSelected = null;
                         oIndex = -1;
                     }
                 }
             });
 
-            if (item.hasValues()) {
+            if (item.hasValue()) {
                 // TODO This needs to look more like an edit button
                 setButton.setBackgroundResource(R.drawable.ic_add_on);
             } else {
@@ -964,12 +955,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             ioValue = (TextView) v.findViewById(R.id.io_value);
 
             if (item != null) {
-                if (!item.hasValues()) {
+                if (!item.hasValue()) {
                     ioType.setText(iod.getType().getName());
                     ioValue.setText("");
                 } else {
                     ioType.setText(iod.getType().getName() + ": ");
-                    String valueName = item.getType().toString(item.getValues().get(0).getManualValue());
+                    String valueName = item.getType().toString(item.getValue().getManualValue());
                     ioValue.setText(valueName);
                 }
 

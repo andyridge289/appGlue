@@ -252,9 +252,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             if (LOG) Log.d(TAG, "the CS is -1, this might be bad.");
         } else {
             // We're just updating one that already exists
-            boolean success = registry.updateWiring(cs);
-            if (success)
-                Log.d(TAG, "Updated " + cs.getName());
+//       TODO     boolean success =
+            registry.updateComposite(cs);
+//            if (success)
+//                Log.d(TAG, "Updated " + cs.getName());
         }
 
         getActivity().finish();

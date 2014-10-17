@@ -170,8 +170,6 @@ public class ComponentService {
         if(filter.getID() != -1) {
             filterSearch.put(filter.getID(), filter);
         }
-
-        // TODO What about adding them from the database.
     }
     public ArrayList<IOFilter> getFilters() {
         return filters;

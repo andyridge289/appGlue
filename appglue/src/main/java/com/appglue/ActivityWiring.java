@@ -95,7 +95,7 @@ public class ActivityWiring extends ActionBarActivity {
         }
 
         FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.container, attach).commit();
+        fm.beginTransaction().replace(R.id.container, attach).commit(); // TODO Unable to resume, can't do this after on save instance state
 
         setActionBar();
         invalidateOptionsMenu();
@@ -218,10 +218,6 @@ public class ActivityWiring extends ActionBarActivity {
             return new ArrayList<ComponentService>();
 	}
 
-	public void setStatus(String statusString) {
-
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -273,6 +269,10 @@ public class ActivityWiring extends ActionBarActivity {
 
         return true;
 	}
+
+    public void setStatus(String status) {
+
+    }
 
     public void chooseComponentFromList(int componentPosition, int pagerPosition) {
         this.pagerPosition = pagerPosition;

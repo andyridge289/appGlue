@@ -19,15 +19,11 @@ public class ServiceIO {
 
     private ServiceIO connection;
 
-    public static final int COMBO_OR = 1;
-    public static final int COMBO_AND = 2;
-
-    private ArrayList<IOValue> values;
+    private IOValue value;
 
     public ServiceIO(ComponentService component, IODescription ioDescription) {
         this.component = component;
         this.ioDescription = ioDescription;
-        this.values = new ArrayList<IOValue>();
     }
 
     public ServiceIO(long id, ComponentService component, IODescription ioDescription) {
@@ -57,8 +53,8 @@ public class ServiceIO {
         return component;
     }
 
-    public boolean hasValues() {
-        return this.values.size() != 0;
+    public boolean hasValue() {
+        return this.value != null;
     }
 
     /**
@@ -67,16 +63,15 @@ public class ServiceIO {
      * @param value the value to set
      */
     public void setValue(IOValue value) {
-        this.values.clear();
-        this.values.add(value);
+        this.value = value;
     }
 
     public FilterFactory.FilterValue getCondition() {
-        if (this.values.isEmpty()) {
+        if (this.value == null) {
             return FilterFactory.NONE;
         }
 
-        return values.get(0).getCondition();
+        return value.getCondition();
     }
 
     public ServiceIO getConnection() {
@@ -99,12 +94,8 @@ public class ServiceIO {
         return getType().getClassName();
     }
 
-    public ArrayList<IOValue> getValues() {
-        return values;
-    }
-
-    public void setValues(ArrayList<IOValue> values) {
-        this.values = values;
+    public IOValue getValue() {
+        return value;
     }
 
     public boolean equals(Object o) {
@@ -134,19 +125,11 @@ public class ServiceIO {
             return false;
         }
 
-        if (this.values.size() != other.getValues().size()) {
-            if (LOG)
-                Log.d(TAG, "ServiceIO->Equals: value size: " + this.values.size() + " -- " + other.getValues().size());
+        if (!other.getValue().equals(value)) {
+            if (LOG) Log.d(TAG, "ServiceIO->Equals: value");
             return false;
         }
 
-        for (int i = 0; i < values.size(); i++) {
-            IOValue value = values.get(i);
-            if (!other.getValues().contains(value)) {
-                if (LOG) Log.d(TAG, "ServiceIO->Equals: value: " + i);
-                return false;
-            }
-        }
 
         if (this.connection != null || other.getConnection() != null) {
             if ((this.connection == null && other.getConnection() != null) ||
@@ -167,5 +150,9 @@ public class ServiceIO {
 
     public String toString() {
         return this.getID() + ": " + this.getDescription().getName();
+    }
+
+    public void clearValue() {
+        this.value = null;
     }
 }
