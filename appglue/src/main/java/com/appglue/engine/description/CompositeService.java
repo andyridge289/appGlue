@@ -5,6 +5,7 @@ import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.appglue.ComposableService;
 import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import static com.appglue.Constants.ID;
 import static com.appglue.Constants.Interval;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 
@@ -315,7 +315,7 @@ public class CompositeService {
     }
 
     public boolean containsTrigger() {
-        return this.components.get(0).getDescription().getProcessType() == ProcessType.TRIGGER;
+        return this.components.get(0).getDescription().hasFlag(ComposableService.FLAG_TRIGGER);
     }
 
     public ServiceIO getInput(long id) {

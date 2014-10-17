@@ -3,20 +3,17 @@ package com.appglue.services;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.appglue.ComposableService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.location.LocationClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
 
 public class LocationService extends ComposableService implements GooglePlayServicesClient.ConnectionCallbacks,
 																  GooglePlayServicesClient.OnConnectionFailedListener
@@ -24,14 +21,14 @@ public class LocationService extends ComposableService implements GooglePlayServ
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	public static final String COUNTRY_NAME = "country_name";
-    public static final String COUNTRY_CODE = "country_code"; // TODO Add country code to service description
+    public static final String COUNTRY_CODE = "country_code";
 	public static final String LOCALITY_NAME = "locality_name";
     public static final String ROAD_NAME = "road_name";
 	
 	private LocationClient lc;
 	
 	@Override
-	public ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performService(Bundle o)
 	{
 		lc = new LocationClient(this, this, this);
 		lc.connect();
@@ -44,7 +41,7 @@ public class LocationService extends ComposableService implements GooglePlayServ
     // TODO This needs to fail with grace a bit better
 	
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performList(ArrayList<Bundle> os)
 	{
 		// This doesn't need to be performed for a list
 

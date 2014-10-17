@@ -12,10 +12,8 @@ import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.library.LogItem;
@@ -120,31 +118,25 @@ public class ActivityComposite extends Activity
 		runningCheck.setChecked(instanceId != -1);
 
         CheckBox activeCheck = (CheckBox) findViewById(R.id.composite_active);
-		if(cs.getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER)
-		{
+		if(cs.getComponents().get(0).getDescription().hasFlag(ComposableService.FLAG_TRIGGER)) {
 			activeCheck.setText("Active");
-		}
-		else
-		{
+		} else {
 			activeCheck.setText("On timer");
 		}
 		
 		// It doesn't matter what it is, just set the check or not
         activeCheck.setChecked(registry.isEnabled(cs));
 
-		if(edit)		{
+		if(edit) {
 			activeCheck.setEnabled(true);
-		}
-		else
-		{
+		} else {
 			activeCheck.setEnabled(false);
 		}
 		
 		// Probably need some way of killing ones that are running
 	}
 	
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
+	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		
 		if(!edit)

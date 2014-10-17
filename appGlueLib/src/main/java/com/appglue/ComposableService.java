@@ -12,18 +12,12 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.appglue.Constants.ProcessType;
-
 import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
 
 public abstract class ComposableService extends Service 
-{		
-	// Register and unregister a single service
-	public static final int MSG_REGISTER = 0;
-	public static final int MSG_UNREGISTER = 1;
-	
+{
 	public static final int MSG_NOTHING = 2;
 	public static final int MSG_OBJECT = 3;
 	public static final int MSG_LIST = 4;
@@ -35,6 +29,12 @@ public abstract class ComposableService extends Service
 	public static final String WAIT = "wait";
 	public static final String DESCRIPTION = "description";
 	public static final String ERROR = "error";
+
+    public static final int FLAG_TRIGGER = 0x1;
+    public static final int FLAG_MONEY = 0x2;
+    public static final int FLAG_NETWORK = 0x4;
+    public static final int FLAG_DELAY = 0x8;
+    public static final int FLAG_LOCATION = 0x10;
 	
 	protected String toastMessage = "";
 	
@@ -48,8 +48,6 @@ public abstract class ComposableService extends Service
     private Bundle failureBundle = null;
 
     private static final boolean LOG = false;
-    
-    public static ProcessType processType = ProcessType.NORMAL;
 
     @Override
     public void onCreate() 
@@ -76,8 +74,8 @@ public abstract class ComposableService extends Service
     }
     
     // Both of these always return a list, which we then package up into a bundle and send back to the orchestrator
-    public abstract ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters);
-    public abstract ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters);
+    public abstract ArrayList<Bundle> performService(Bundle o);
+    public abstract ArrayList<Bundle> performList(ArrayList<Bundle> os);
 
     protected void fail(String message)
     {
@@ -129,8 +127,7 @@ public abstract class ComposableService extends Service
                 {
                 	// Call the thing, return whatever it gives back
                 	// There's no input, so we don't need to get that
-                	ArrayList<Bundle> params = new ArrayList<Bundle>();
-                	o = performService(null, params);
+                	o = performService(null);
                 	break;
                 }
                 	
@@ -143,11 +140,7 @@ public abstract class ComposableService extends Service
                 	Bundle input = inputs == null || inputs.size() == 0 ? new Bundle() : inputs.get(0); // Either get the first thing, or if there aren't any things, just make a new thing so that shit doesn't go down
                 	
                 	// It should only be the first one that is set if only one thing has been sent
-                	// Get the parameters
-                	ArrayList<Bundle> params = new ArrayList<Bundle>();
-                	
-                	
-                	o = performService(input, params);
+                	o = performService(input);
                 	break;
                 }
                 	
@@ -155,11 +148,7 @@ public abstract class ComposableService extends Service
                 {
                 	// Get the getInputs
                 	ArrayList<Bundle> inputs = messageData.getParcelableArrayList(INPUT);
-                	
-                	// Get the parameters
-//                	Bundle paramBundle = messageData.getBundle(PARAMS);
-                	ArrayList<Bundle> params = new ArrayList<Bundle>(); //paramBundle.getParcelableArrayList(PARAMS);
-                	o = performList(inputs, params);
+                	o = performList(inputs);
                 	break;
                 }
                 

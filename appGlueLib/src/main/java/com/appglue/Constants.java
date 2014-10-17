@@ -52,24 +52,6 @@ public class Constants
 		}
 	}
 	
-	public static enum ProcessType
-	{
-		NORMAL(0, "Normal"),
-		CONVERTER(1, "Converter"),
-		FILTER(2, "Filter"),
-		REST(3, "Rest"),
-		TRIGGER(4, "Trigger");
-		
-		public int index;
-		public String name;
-		
-		ProcessType(int index, String name)
-		{
-			this.index = index;
-			this.name = name;
-		}
-	}
-	
 	public static enum Interval
 	{
         NONE(0, 0, "None"),
@@ -125,7 +107,7 @@ public class Constants
 	public static final String DEVELOPER = "developer";
 
 	public static final String SERVICE_TYPE = "service_type";
-	public static final String PROCESS_TYPE = "process_type";
+	public static final String FLAGS = "flags";
 	
 	public static final String IO_TYPE = "io_type";
 	public static final String FRIENDLY_NAME = "friendly_name";

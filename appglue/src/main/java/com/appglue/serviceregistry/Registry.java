@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.appglue.ComposableService;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.ProcessType;
 import static com.appglue.Constants.TAG;
 
 //import com.appglue.test.EngineTest;
@@ -134,7 +134,7 @@ public class Registry {
     }
 
     public ArrayList<ServiceDescription> getInputOnlyComponents() {
-        ArrayList<ServiceDescription> components = dbHandler.getServiceDescriptions(null);
+        ArrayList<ServiceDescription> components = dbHandler.getServiceDescriptions(0);
 
         for (int i = 0; i < components.size(); ) {
             if (components.get(i).getOutputs().size() > 0)
@@ -147,7 +147,7 @@ public class Registry {
     }
 
     public ArrayList<ServiceDescription> getOutputOnlyComponents() {
-        ArrayList<ServiceDescription> components = dbHandler.getServiceDescriptions(null);
+        ArrayList<ServiceDescription> components = dbHandler.getServiceDescriptions(0);
 
         for (int i = 0; i < components.size(); ) {
             if (components.get(i).getInputs().size() > 0)
@@ -210,7 +210,7 @@ public class Registry {
     }
 
     public ArrayList<ServiceDescription> getTriggers() {
-        return dbHandler.getServiceDescriptions(ProcessType.TRIGGER);
+        return dbHandler.getServiceDescriptions(ComposableService.FLAG_TRIGGER);
     }
 
     public long isCompositeRunning(long compositeId) {
@@ -336,7 +336,7 @@ public class Registry {
     }
 
     public ArrayList<ServiceDescription> getAllServiceDescriptions() {
-        return dbHandler.getServiceDescriptions(null);
+        return dbHandler.getServiceDescriptions(0);
     }
 
     public ArrayList<CompositeService> getScheduledComposites() {

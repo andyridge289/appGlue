@@ -2,9 +2,11 @@ package com.appglue.layout.dialog;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -76,6 +78,9 @@ public class DialogIO extends AlertDialog {
         } else if (io.getType().typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
             DialogImageResourceView div = new DialogImageResourceView(context);
             container.addView(div);
+        } else if (io.getType().typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
+            DialogContactView dcv = new DialogContactView(context);
+            container.addView(dcv);
         } else {
             // Use the generic one
             DialogIOView div = new DialogIOView(context, io);
@@ -102,6 +107,115 @@ public class DialogIO extends AlertDialog {
         });
     }
 
+    private class DialogContactView extends LinearLayout {
+
+        private RadioGroup radioGroup;
+        private RadioButton sampleRadio;
+        private RadioButton manualRadio;
+
+        private Button sampleButton;
+        private EditText manualText;
+
+        public DialogContactView(Context context, ServiceIO io) {
+            super(context);
+            create(context);
+        }
+        public DialogContactView(Context context) {
+            super(context);
+            create(context);
+        }
+        public DialogContactView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            create(context);
+        }
+        public DialogContactView(Context context, AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
+            create(context);
+        }
+
+        private void create(Context context) {
+            View v = View.inflate(context, R.layout.dialog_io_generic, null);
+            this.addView(v);
+
+            radioGroup = (RadioGroup) v.findViewById(R.id.io_radio);
+            manualRadio = (RadioButton) v.findViewById(R.id.io_radio_text);
+            sampleRadio = (RadioButton) v.findViewById(R.id.io_radio_spinner);
+            manualText = (EditText) v.findViewById(R.id.io_value_text);
+            sampleButton = (Button) v.findViewById(R.id.io_value_button);
+
+            final IOType type = description.getType();
+            manualText.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+            positiveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get the value they entered - not sure what happens
+//                    if (manualRadio.isChecked()) {
+//                        // Then look up the text value
+//                        Object objectValue = description.getType().fromString(manualText.getText().toString());
+//                        IOValue value = new IOValue(FilterFactory.NONE, objectValue, io);
+//                        item.setValue(value);
+//                    } else if (sampleRadio.isChecked()) {
+//                        // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
+//                        SampleValue sampleValue = (SampleValue) sampleSpinner.getSelectedItem();
+//                        IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
+//                        item.setValue(value);
+//                    }
+
+                    // The setting of the list values needs to move to the creating of the list. Do an invalidate
+                    registry.updateComposite(activity.getComposite());
+                    DialogIO.this.activity.redraw();
+                    dismiss();
+                }
+            });
+
+            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                    // enable or disable the relevant item
+                    // Set the condition of the ValueNode
+                    if (checkedId == R.id.filter_radio_manual) {
+                        sampleButton.setEnabled(false);
+                        manualText.setEnabled(true);
+                    } else { // It must be filter_radio_sample
+                        sampleButton.setEnabled(true);
+                        manualText.setEnabled(false);
+                    }
+                }
+            });
+
+            sampleButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO Look up the contacts
+                    Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                                ContactsContract.Contacts.CONTENT_URI);
+                    activity.startActivityForResult(contactPickerIntent, ActivityWiring.CONTACT_PICKER_RESULT);
+                }
+            });
+
+//            // Loading saved values
+//            if (item.hasValue()) {
+//
+//                IOValue value = item.getValue();
+//
+//                if (value.getFilterState() == IOValue.MANUAL) {
+//
+//                    // Load the value from the item and Set the manual one to be checked
+//                    manualText.setText(type.toString(value.getManualValue()));
+//                    manualRadio.setChecked(true);
+//
+//                } else if (value.getFilterState() == IOValue.SAMPLE) {
+//
+//                    ((FilterSampleAdapter) sampleSpinner.getAdapter()).getPosition(value.getSampleValue());
+//                    sampleRadio.setChecked(true);
+//                    // Set the sameple one to be checked
+//                }
+//            }
+        }
+    }
+
     private class DialogImageResourceView extends LinearLayout {
 
         private GridImageAdapter adapter;
@@ -125,7 +239,6 @@ public class DialogIO extends AlertDialog {
             super(context, attrs, defStyleAttr);
             create(context);
         }
-
 
         private void create(Context context) {
 

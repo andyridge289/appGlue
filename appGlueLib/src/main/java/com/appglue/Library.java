@@ -30,7 +30,7 @@ import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
 import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PROCESS_TYPE;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
@@ -38,9 +38,9 @@ import static com.appglue.Constants.TAGS;
 
 public class Library {
     public static String makeJSON(int id, String packageName, String className, String name, String description,
-                                  int processType, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags) {
+                                  int flags, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags) {
         String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", \"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %d, ",
-                ID, id, PACKAGENAME, packageName, CLASSNAME, className, NAME, name, DESCRIPTION, description, PROCESS_TYPE, processType);
+                ID, id, PACKAGENAME, packageName, CLASSNAME, className, NAME, name, DESCRIPTION, description, FLAGS, flags);
 
         inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
         outputList = outputList == null ? new ArrayList<IODescription>() : outputList;

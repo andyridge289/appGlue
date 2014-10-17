@@ -65,7 +65,7 @@ public class NotificationService extends ComposableService {
     }
 
     @Override
-    public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {
+    public ArrayList<Bundle> performService(Bundle input) {
         String title = (String) textType.getFromBundle(input, NOTIFICATION_TITLE, "");
         String text = (String) textType.getFromBundle(input, NOTIFICATION_TEXT, "");
         int iconResource = (Integer) imageDrawable.getFromBundle(input, NOTIFICATION_IMAGE, -1);
@@ -77,7 +77,7 @@ public class NotificationService extends ComposableService {
 	}
 
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) {
+	public ArrayList<Bundle> performList(ArrayList<Bundle> os) {
 
 		for (int i = 0; i < os.size(); i++) {
 			Bundle b = os.get(i);

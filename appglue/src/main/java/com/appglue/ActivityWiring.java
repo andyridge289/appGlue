@@ -33,6 +33,8 @@ public class ActivityWiring extends ActionBarActivity {
     private FragmentComponentListPager componentListFragment;
     private FragmentFilter filterFragment;
 
+    public static final int CONTACT_PICKER_RESULT = 1001;
+
     private CharSequence mTitle;
 
     private ServiceIO io;

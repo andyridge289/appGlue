@@ -30,7 +30,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
@@ -81,7 +80,7 @@ public class FragmentCompositeList extends Fragment {
             if (selected.size() > 1) {
                 menu.setGroupVisible(R.id.comp_context_rungroup, false);
                 menu.setGroupVisible(R.id.comp_context_singlegroup, false);
-            } else if (composites.get(selected.get(0)).getComponents().get(0).getDescription().getProcessType() == ProcessType.TRIGGER) {
+            } else if (composites.get(selected.get(0)).getComponents().get(0).getDescription().hasFlag(ComposableService.FLAG_TRIGGER)) {
                 menu.setGroupVisible(R.id.comp_context_rungroup, false);
                 menu.setGroupVisible(R.id.comp_context_singlegroup, true);
             } else {

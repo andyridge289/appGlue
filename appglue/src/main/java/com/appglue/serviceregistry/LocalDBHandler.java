@@ -13,7 +13,6 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
-import com.appglue.Constants.ProcessType;
 import com.appglue.IODescription;
 import com.appglue.TST;
 import com.appglue.description.AppDescription;
@@ -53,7 +52,7 @@ import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.PROCESS_TYPE;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.VALUE;
@@ -180,7 +179,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     @Override
@@ -385,9 +384,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(CLASSNAME, sd.getClassName());
         values.put(PACKAGENAME, sd.getPackageName());
         values.put(DESCRIPTION, sd.getDescription());
-
-//        values.put(SERVICE_TYPE, sd.getServiceType().index);
-        values.put(PROCESS_TYPE, sd.getProcessType().index);
+        values.put(FLAGS, sd.getFlags());
 
         int inputSuccess = 0;
         int outputSuccess = 0;
@@ -2696,15 +2693,15 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return currentComponent;
     }
 
-    public ArrayList<ServiceDescription> getServiceDescriptions(ProcessType processType) {
+    public ArrayList<ServiceDescription> getServiceDescriptions(int flags) {
         String componentCols = AppGlueLibrary.buildGetAllString(TBL_SD, COLS_SD);
         String ioCols = AppGlueLibrary.buildGetAllString(TBL_IO_DESCRIPTION, COLS_IO_DESCRIPTION);
         String ioSamples = AppGlueLibrary.buildGetAllString(TBL_IO_SAMPLE, COLS_IO_SAMPLES);
 
         String args = "";
 
-        if (processType != null)
-            args = " WHERE " + TBL_SD + "_" + PROCESS_TYPE + " = " + processType;
+        if (flags != 0)
+            args = " WHERE " + TBL_SD + "_" + FLAGS + " = " + flags;
 
 
         String query = String.format("SELECT %s FROM %s " +

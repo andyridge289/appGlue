@@ -16,7 +16,7 @@ public class BluetoothService extends ComposableService
 	public static final String BLUETOOTH_STATE = "bluetooth_state";
 	
 	@Override
-	public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performService(Bundle input)
 	{
 		BluetoothAdapter bt = BluetoothAdapter.getDefaultAdapter();
 		
@@ -51,10 +51,10 @@ public class BluetoothService extends ComposableService
 	}
 
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> inputs, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performList(ArrayList<Bundle> inputs)
 	{
 		if(inputs.size() > 0)
-			return performService(inputs.get(0), parameters);
+			return performService(inputs.get(0));
 		else
 			return null;
 	}

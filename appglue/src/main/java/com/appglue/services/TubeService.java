@@ -57,33 +57,35 @@ public class TubeService extends ComposableService {
     public static final String VICTORIA = "Victoria";
     public static final String WATERLOO_CITY = "Waterloo & City";
 
-    private String getFromURL(String url, ArrayList<Bundle> parameters) throws IOException {
-        if (parameters == null) {
+    private String getFromURL(String url) throws IOException {
+//        if (parameters == null) {
+        // TODO This probably needs to connect
             return Network.httpGet(url);
-        } else {
-            ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
+//        } else {
+//            ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
+//
+//            for (Bundle b : parameters) {
+//                String name = b.getString(NAME);
+//                String[] values = b.getStringArray(VALUE);
+//                String value = "";
+//                for (String value1 : values) {
+//                    value += value1;
+//                }
+//
+//                postData.add(new BasicNameValuePair(name, value));
+//            }
 
-            for (Bundle b : parameters) {
-                String name = b.getString(NAME);
-                String[] values = b.getStringArray(VALUE);
-                String value = "";
-                for (String value1 : values) {
-                    value += value1;
-                }
-
-                postData.add(new BasicNameValuePair(name, value));
-            }
-
-            return Network.httpPost(url, postData);
-        }
+//            return Network.httpPost(url, postData);
+//        }
     }
 
-    public ArrayList<Bundle> performService(Bundle input, ArrayList<Bundle> parameters) {
+    @Override
+    public ArrayList<Bundle> performService(Bundle input) {
         String output;
 
         try {
             String url = "http://people.bath.ac.uk/ar289/services/tube/tube_status.php";
-            output = getFromURL(url, parameters);
+            output = getFromURL(url);
         } catch (ClientProtocolException e) {
             fail("Network fail: " + e.getMessage());
             return null;
@@ -151,9 +153,9 @@ public class TubeService extends ComposableService {
     }
 
     @Override
-    public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) {
+    public ArrayList<Bundle> performList(ArrayList<Bundle> os) {
         if (os.size() > 0)
-            return performService(os.get(0), parameters);
+            return performService(os.get(0));
         else
             return null;
     }

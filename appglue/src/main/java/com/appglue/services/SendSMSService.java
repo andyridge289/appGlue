@@ -11,35 +11,8 @@ import com.appglue.ComposableService;
 
 public class SendSMSService extends ComposableService
 {
-//	private TextMessage getTextMessageFromParam(ArrayList<Bundle> parameters)
-//	{
-//		if(parameters == null)
-//		{
-//			// This shouldn't happen because the thing should be mandatory
-//			toastMessage = "You haven't sent a phone number!";
-//			return null;
-//		}
-//		
-//		String numberParam = null;
-//		String messageParam = null;
-//		
-//		for(int i = 0; i < parameters.size(); i++)
-//		{
-//			Bundle param = parameters.get(i);
-//			String name = param.getString(NAME);
-//			
-//			if(name.equals(TextMessage.NUMBER))
-//			{
-//				numberParam = param.getString(VALUE);
-//			}
-//			else if(name.equals(TextMessage.MESSAGE))
-//			{
-//				messageParam = param.getString(VALUE);
-//			}
-//		}
-//		
-//		return new TextMessage(numberParam, messageParam);
-//	}
+    public static final String SMS_NUMBER = "sms_number";
+    public static final String SMS_MESSAGE = "sms_message";
 	
 	private void sendMessage(String number, String message)
 	{
@@ -51,12 +24,6 @@ public class SendSMSService extends ComposableService
 	
 	private boolean validatePhoneNumber(String number)
 	{
-		if (number.charAt(0) == '0')
-		{
-			number = number.substring(1);
-			number = "+44" + number;
-		}
-		
 		for(int i = 0; i < number.length(); i++)
 		{
 			char c = number.charAt(i);
@@ -68,13 +35,15 @@ public class SendSMSService extends ComposableService
 		
 		return true;
 	}
+
+    // TODO This needs to have some serious checks in it
 	
 	@Override
-	public ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performService(Bundle o)
 	{
 //		TextMessage message = getTextMessageFromParam(parameters);
-		String number = ""; //message.getNumber();
-		String message = "";
+		String number = o.getString(SMS_NUMBER);
+		String message = o.getString(SMS_MESSAGE);
 		
 		if(number == null || number.equals(""))
 		{
@@ -87,25 +56,27 @@ public class SendSMSService extends ComposableService
 			
 			return null; 
 		}
+
+        if(message.length() > 160)
+        {
+            message = message.substring(0, 159);
+        }
 		
-		String text = o.getString(ComposableService.TEXT);
-		
-		if(message != null)
-		{
-			text = message;
-		}
-		
-		sendMessage(number, text);
+		sendMessage(number, message);
 		
 		return null;
 	}
 
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performList(ArrayList<Bundle> os)
 	{
+        if (os.size() < 1) {
+            return null;
+        }
+
 //		TextMessage message = getTextMessageFromParam(parameters);
-		String number = ""; //message.getNumber();
-		String message = "";
+		String number = os.get(0).getString(SMS_NUMBER); //message.getNumber();
+		String msg = os.get(0).getString(SMS_MESSAGE);
 		
 		if(number == null || number.equals(""))
 		{
@@ -118,24 +89,12 @@ public class SendSMSService extends ComposableService
 			
 			return null; 
 		}
-		
-		StringBuilder text = new StringBuilder();
 
-        for (Bundle o : os) {
-            text.append(o.getString(ComposableService.TEXT)).append("; ");
-        }
-		
-		String msg = text.toString();
 		if(msg.length() > 160)
 		{
-			msg = msg.substring(0, 160);
+			msg = msg.substring(0, 159);
 		}
-		
-		if(message != null)
-		{
-			msg = message;
-		}
-		
+
 		sendMessage(number, msg);
 		
 		return null;

@@ -21,7 +21,7 @@ public class PebbleNotification extends ComposableService
 	public static final String PEBBLE_NOTIFICATION = "pebble_notification";
 	
 	@Override
-	public ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performService(Bundle o)
 	{
 		if(LOG) Log.d(TAG, "Performing Pebble!!!!");
 		final Intent i = new Intent("com.getpebble.action.SEND_NOTIFICATION");
@@ -45,10 +45,10 @@ public class PebbleNotification extends ComposableService
 	}
 
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performList(ArrayList<Bundle> os)
 	{
         for (Bundle o : os) {
-            performService(o, parameters);
+            performService(o);
         }
 		
 		return null;

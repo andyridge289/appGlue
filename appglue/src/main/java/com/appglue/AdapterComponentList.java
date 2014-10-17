@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 
@@ -97,7 +96,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         TextView serviceName = (TextView) v.findViewById(R.id.service_name);
         serviceName.setText(sd.getName());
 
-        if (sd.getProcessType() == ProcessType.TRIGGER) {
+        if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
             v.findViewById(R.id.comp_item_trigger).setVisibility(View.VISIBLE);
             v.findViewById(R.id.comp_item_trigger_text).setVisibility(View.VISIBLE);
         } else {
@@ -105,13 +104,14 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
             v.findViewById(R.id.comp_item_trigger_text).setVisibility(View.GONE);
         }
 
-        if (sd.getProcessType() == ProcessType.FILTER) {
-            v.findViewById(R.id.comp_item_filter).setVisibility(View.VISIBLE);
-            v.findViewById(R.id.comp_item_filter_text).setVisibility(View.VISIBLE);
-        } else {
-            v.findViewById(R.id.comp_item_filter).setVisibility(View.GONE);
-            v.findViewById(R.id.comp_item_filter_text).setVisibility(View.GONE);
-        }
+//        if (sd.getProcessType() == ProcessType.FILTER) {
+//            v.findViewById(R.id.comp_item_filter).setVisibility(View.VISIBLE);
+//            v.findViewById(R.id.comp_item_filter_text).setVisibility(View.VISIBLE);
+//        } else {
+        // TODO Remove this and add icons for the other flags
+        v.findViewById(R.id.comp_item_filter).setVisibility(View.GONE);
+        v.findViewById(R.id.comp_item_filter_text).setVisibility(View.GONE);
+//        }
 
         if (sd.hasInputs()) {
             v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);

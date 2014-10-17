@@ -7,15 +7,10 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
-import com.appglue.Constants.ProcessType;
-
-
 public class ReceiveSMSTrigger extends GenericTrigger
 {
 	public static final String SMS_NUMBER = "sms_number";
 	public static final String SMS_MESSAGE = "sms_message";
-	
-	public static ProcessType processType = ProcessType.TRIGGER;
 	
 	@Override
 	public void onReceive(Context context, Intent intent) 

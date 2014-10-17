@@ -17,7 +17,7 @@ public class AlarmService extends ComposableService
     public static final String SECOND = "second";
 
     @Override
-    public ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters) {
+    public ArrayList<Bundle> performService(Bundle o) {
 
         IOType number = IOType.Factory.getType(IOType.Factory.NUMBER);
 
@@ -38,7 +38,7 @@ public class AlarmService extends ComposableService
     }
 
     @Override
-    public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) {
+    public ArrayList<Bundle> performList(ArrayList<Bundle> os) {
         return null;
     }
 }

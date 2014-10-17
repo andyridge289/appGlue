@@ -7,7 +7,6 @@ import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.Constants.ServiceType;
 import com.appglue.IODescription;
 import com.appglue.TST;
@@ -38,7 +37,7 @@ import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
 import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.PROCESS_TYPE;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
@@ -53,9 +52,7 @@ public class ServiceDescription {
 
     // The type of the service - either local or remote
 //    private ServiceType serviceType = ServiceType.IN_APP;
-
-    // The process type of the service
-    private ProcessType processType = ProcessType.NORMAL;
+    private int flags;
 
     // The classname of the service itself
     protected String className = "";
@@ -83,7 +80,7 @@ public class ServiceDescription {
             String packageName, String className, String name,
             String description,
             ArrayList<IODescription> inputs, ArrayList<IODescription> outputs,
-            ServiceType serviceType, ProcessType processType) {
+            ServiceType serviceType, int flags) {
         this.name = name;
         this.className = className;
         this.packageName = packageName;
@@ -93,7 +90,7 @@ public class ServiceDescription {
         this.setOutputs(outputs);
 
 //        this.serviceType = serviceType;
-        this.processType = processType;
+        this.flags = flags;
     }
 
     public ServiceDescription() {
@@ -106,7 +103,7 @@ public class ServiceDescription {
         this.outputs = new SparseArray<IODescription>();
 
 //        this.serviceType = ServiceType.ANY;
-        this.processType = ProcessType.NORMAL;
+        this.flags = 0;
     }
 
     public String getClassName() {
@@ -129,12 +126,15 @@ public class ServiceDescription {
 //        this.serviceType = type;
 //    }
 
-    public ProcessType getProcessType() {
-        return processType;
+    public boolean hasFlag(int flag) {
+        return (this.flags & flag) == flag;
     }
 
-    public void setProcessType(ProcessType processType) {
-        this.processType = processType;
+    public int getFlags() {
+        return flags;
+    }
+    public void setFlags(int flags) {
+        this.flags = flags;
     }
 
     public String getPackageName() {
@@ -143,14 +143,6 @@ public class ServiceDescription {
 
     public void setLocation(String location) {
         this.packageName = location;
-    }
-
-    protected void setIsNormal() {
-        this.processType = ProcessType.NORMAL;
-    }
-
-    public boolean isConverter() {
-        return this.processType == ProcessType.CONVERTER;
     }
 
     public boolean hasInputs() {
@@ -334,20 +326,6 @@ public class ServiceDescription {
             return ServiceType.ANY;
     }
 
-    public static ProcessType getProcessType(int type) {
-        if (type == ProcessType.NORMAL.index)
-            return ProcessType.NORMAL;
-        else if (type == ProcessType.CONVERTER.index)
-            return ProcessType.CONVERTER;
-        else if (type == ProcessType.FILTER.index)
-            return ProcessType.FILTER;
-        else if (type == ProcessType.REST.index)
-            return ProcessType.REST;
-        else
-            return ProcessType.TRIGGER;
-
-    }
-
     @Override
     public boolean equals(Object o) {
 
@@ -366,12 +344,7 @@ public class ServiceDescription {
             return false;
         }
 
-//        if (!this.serviceType.equals(other.getServiceType())) {
-//            if (LOG) Log.d(TAG, "ServiceDescription->Equals: service type");
-//            return false;
-//        }
-
-        if (!this.processType.equals(other.getProcessType())) {
+        if (this.flags != other.getFlags()) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
             return false;
         }
@@ -499,7 +472,7 @@ public class ServiceDescription {
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
 //        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
-        this.processType = ServiceDescription.getProcessType(c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE)));
+        this.flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
 
         this.app = new AppDescription();
     }
@@ -527,10 +500,10 @@ public class ServiceDescription {
         String description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
         int serviceType = c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE));
-        int processType = c.getInt(c.getColumnIndex(prefix + PROCESS_TYPE));
+        int flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
 
         return new ServiceDescription(packageName, className, name, description, null, null,
-                ServiceDescription.getServiceType(serviceType), ServiceDescription.getProcessType(processType));
+                ServiceDescription.getServiceType(serviceType), flags);
     }
 
     // New JSON parsings methods
@@ -572,10 +545,10 @@ public class ServiceDescription {
         String className = json.getString(CLASSNAME);
         String name = json.getString(NAME);
         String description = json.getString(DESCRIPTION);
-        ProcessType processType = ServiceDescription.getProcessType(json.getInt(PROCESS_TYPE));
+        int flags = json.getInt(FLAGS);
         ServiceType serviceType = ServiceType.LOCAL;
 
-        ServiceDescription sd = new ServiceDescription(packageName, className, name, description, null, null, serviceType, processType);
+        ServiceDescription sd = new ServiceDescription(packageName, className, name, description, null, null, serviceType, flags);
 
         ArrayList<IODescription> inputs = parseIOFromNewJSON(json.getJSONArray(INPUTS), true, sd);
         ArrayList<IODescription> outputs = parseIOFromNewJSON(json.getJSONArray(OUTPUTS), false, sd);

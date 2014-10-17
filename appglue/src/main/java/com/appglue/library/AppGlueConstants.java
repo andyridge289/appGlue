@@ -16,7 +16,7 @@ import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.PROCESS_TYPE;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.VALUE;
@@ -119,7 +119,7 @@ public class AppGlueConstants {
                     {PACKAGENAME, "TEXT"},
                     {DESCRIPTION, "TEXT"},
                     {SERVICE_TYPE, "INTEGER"},
-                    {PROCESS_TYPE, "INTEGER"}
+                    {FLAGS, "INTEGER"}
             };
 
     public static final String[][] COLS_IO_DESCRIPTION = new String[][]

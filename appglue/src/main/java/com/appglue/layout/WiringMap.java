@@ -964,6 +964,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     ioValue.setText(valueName);
                 }
 
+                // TODO Needs to have some form of mandatory check in it
+                // TODO Link this with the enabled state of the component
+                // TODO Greyscale icon for disabled
+
                 // If it's not unfiltered, then it's either manual or not
 //    			if (item.getFilterState() == ServiceIO.UNFILTERED)
 //    			{

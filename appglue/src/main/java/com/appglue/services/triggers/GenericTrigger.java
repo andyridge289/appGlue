@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.OrchestrationService;
@@ -23,8 +22,6 @@ import static com.appglue.Constants.TAG;
 
 public abstract class GenericTrigger extends BroadcastReceiver 
 {
-	public static ProcessType processType = ProcessType.TRIGGER;
-
     private boolean fail = false;
     private String error = "";
 

@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.Constants.ProcessType;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
@@ -89,7 +88,7 @@ public class ActivityApp extends Activity {
             TextView serviceName = (TextView) v.findViewById(R.id.service_name);
             serviceName.setText(sd.getName());
 
-            if (sd.getProcessType() == ProcessType.TRIGGER) {
+            if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
                 v.findViewById(R.id.comp_item_trigger).setVisibility(View.VISIBLE);
                 v.findViewById(R.id.comp_item_trigger_text).setVisibility(View.VISIBLE);
             } else {
@@ -97,13 +96,15 @@ public class ActivityApp extends Activity {
                 v.findViewById(R.id.comp_item_trigger_text).setVisibility(View.GONE);
             }
 
-            if (sd.getProcessType() == ProcessType.FILTER) {
-                v.findViewById(R.id.comp_item_filter).setVisibility(View.VISIBLE);
-                v.findViewById(R.id.comp_item_filter_text).setVisibility(View.VISIBLE);
-            } else {
-                v.findViewById(R.id.comp_item_filter).setVisibility(View.GONE);
-                v.findViewById(R.id.comp_item_filter_text).setVisibility(View.GONE);
-            }
+            // TODO Make icons for the other flags and put things in
+
+//            if (sd.getProcessType() == ProcessType.FILTER) {
+//                v.findViewById(R.id.comp_item_filter).setVisibility(View.VISIBLE);
+//                v.findViewById(R.id.comp_item_filter_text).setVisibility(View.VISIBLE);
+//            } else {
+//                v.findViewById(R.id.comp_item_filter).setVisibility(View.GONE);
+//                v.findViewById(R.id.comp_item_filter_text).setVisibility(View.GONE);
+//            }
 
             if (sd.hasInputs()) {
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);

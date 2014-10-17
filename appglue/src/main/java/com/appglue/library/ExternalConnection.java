@@ -113,7 +113,7 @@ public class ExternalConnection {
 //			
 //			postData.add(new BasicNameValuePair(DESCRIPTION, description.description()));
 //			postData.add(new BasicNameValuePair(DEVELOPER, description.getDeveloper()));
-//			postData.add(new BasicNameValuePair(PROCESS_TYPE, "" + description.getProcessType().index));
+//			postData.add(new BasicNameValuePair(FLAGS, "" + description.getProcessType().index));
 //			
 //			if(description.hasInput())
 //			{

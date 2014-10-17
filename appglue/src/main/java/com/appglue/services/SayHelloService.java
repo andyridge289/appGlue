@@ -11,7 +11,7 @@ public class SayHelloService  extends ComposableService
 	public static final String TAG_HELLO = "hello_text";
 	
 	@Override
-	public ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performService(Bundle o)
 	{
 		Bundle data = new Bundle();
 		data.putString(TAG_HELLO, "Why hello there...");
@@ -23,12 +23,12 @@ public class SayHelloService  extends ComposableService
 	}
 
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performList(ArrayList<Bundle> os)
 	{
 		ArrayList<Bundle> stuff = new ArrayList<Bundle>();
 
         for (Bundle o : os) {
-            stuff.addAll(performService(o, parameters));
+            stuff.addAll(performService(o));
         }
 		
 		return stuff;

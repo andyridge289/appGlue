@@ -16,7 +16,7 @@ public class LaunchAppService extends ComposableService
 	public static final String APP_PACKAGE = "app_package";
 	
 	@Override
-	public ArrayList<Bundle> performService(Bundle o, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performService(Bundle o)
 	{
 		if(LOG) Log.d(TAG, "Launching app");
 		 
@@ -36,10 +36,10 @@ public class LaunchAppService extends ComposableService
 	}
 
 	@Override
-	public ArrayList<Bundle> performList(ArrayList<Bundle> os, ArrayList<Bundle> parameters) 
+	public ArrayList<Bundle> performList(ArrayList<Bundle> os)
 	{
 		// You're only getting the first one...
-		performService(os.get(0), parameters);
+		performService(os.get(0));
 		return null;
 	}
 
