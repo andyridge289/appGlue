@@ -27,6 +27,7 @@ import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.RESULT;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
 import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
@@ -126,16 +127,18 @@ public class ActivityComponentList extends ActionBarActivity {
         viewPager.setCurrentItem(1);
 
         ActionBar actionBar = getSupportActionBar();
+        boolean editExisting = intent.getBooleanExtra(EDIT_EXISTING, false);
         boolean createNew = intent.getBooleanExtra(CREATE_NEW, false);
 
-        if (actionBar != null) {
-            if (!createNew)
-                actionBar.setTitle("Available components");
-            else
-                actionBar.setTitle("Choose first component");
+        // TODO Work out what to put here
+//        if (actionBar != null) {
+//            if (!createNew)
+//                actionBar.setTitle("Available components");
+//            else
+//                actionBar.setTitle("Choose first component");
 
-            actionBar.setHomeButtonEnabled(true);
-        }
+//            actionBar.setHomeButtonEnabled(true);
+//        }
     }
 
     public void onBackPressed() {

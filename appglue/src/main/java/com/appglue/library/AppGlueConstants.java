@@ -27,6 +27,7 @@ public class AppGlueConstants {
     public static final boolean OR = false;
 
     public static final String CREATE_NEW = "create_new";
+    public static final String EDIT_EXISTING = "edit_existing";
     public static final String MATCHING = "matching";
     public static final String TEST = "test";
     public static final String MODE = "mode";

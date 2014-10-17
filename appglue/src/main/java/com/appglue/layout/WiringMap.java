@@ -632,6 +632,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
      */
     private void showIODialog(final ServiceIO item) {
         DialogIO di = new DialogIO(activity, item);
+        activity.setIODialog(di);
         di.show();
     }
 

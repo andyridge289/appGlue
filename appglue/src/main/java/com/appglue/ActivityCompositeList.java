@@ -47,6 +47,7 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.RUN_NOW;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_PARAMS;
 import static com.appglue.library.AppGlueConstants.PLAY_SERVICES;
@@ -448,6 +449,7 @@ public class ActivityCompositeList extends Activity {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(ActivityCompositeList.this, ActivityWiring.class);
+                            intent.putExtra(EDIT_EXISTING, false);
                             intent.putExtra(CREATE_NEW, true);
                             startActivity(intent);
                         }

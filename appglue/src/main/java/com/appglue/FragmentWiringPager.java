@@ -316,6 +316,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
     }
 
+    public FragmentWiring getCurrentFragment() {
+        return adapter.getItem(position);
+    }
+
     private class WiringPagerAdapter extends FragmentStatePagerAdapter {
         private FragmentWiring[] fragments;
         private boolean wiring;

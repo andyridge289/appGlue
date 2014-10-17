@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 
 public class FragmentCompositeList extends Fragment {
@@ -413,6 +414,7 @@ public class FragmentCompositeList extends Fragment {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(getActivity(), ActivityWiring.class);
+                            intent.putExtra(EDIT_EXISTING, false);
                             intent.putExtra(CREATE_NEW, true);
                             startActivity(intent);
                         }
@@ -533,6 +535,7 @@ public class FragmentCompositeList extends Fragment {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(getActivity(), ActivityWiring.class);
+                            intent.putExtra(EDIT_EXISTING, false);
                             intent.putExtra(CREATE_NEW, true);
                             startActivity(intent);
                         }

@@ -3,7 +3,10 @@ package com.appglue;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -18,12 +21,16 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.dialog.DialogIO;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 
 public class ActivityWiring extends ActionBarActivity {
@@ -42,9 +49,12 @@ public class ActivityWiring extends ActionBarActivity {
     private long filterId = -1;
 
     private boolean createNew = false;
+    private boolean editExisting = false;
 
     private int pagerPosition = 0;
     private int componentPosition = 0;
+
+    private DialogIO ioDialog;
 
     public ActivityWiring() {
     }
@@ -62,7 +72,11 @@ public class ActivityWiring extends ActionBarActivity {
 		setContentView(R.layout.activity_wiring);
 
         Intent intent = this.getIntent();
+        editExisting = intent.getBooleanExtra(EDIT_EXISTING, false);
         createNew = intent.getBooleanExtra(CREATE_NEW, false);
+
+        intent.putExtra(EDIT_EXISTING, false);
+        intent.putExtra(CREATE_NEW, false);
     }
 
     public void setMode(int mode) {
@@ -77,7 +91,6 @@ public class ActivityWiring extends ActionBarActivity {
 
         switch(mode) {
             case MODE_CREATE:
-                createNew = false;
                 mTitle = "Create glued app";
                 wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(composite.getID(), pagerPosition);
                 attach = wiringFragment;
@@ -113,7 +126,7 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void onBackPressed() {
-        if (mode == MODE_CHOOSE && !createNew) {
+        if (mode == MODE_CHOOSE && !editExisting) {
             setMode(MODE_CREATE);
             redraw();
             return;
@@ -133,9 +146,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         Intent intent = this.getIntent();
         long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
-
         registry = Registry.getInstance(this);
-
         AlertDialog.Builder keepTemp = null;
 
         if(createNew) {
@@ -159,8 +170,7 @@ public class ActivityWiring extends ActionBarActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 composite = registry.resetTemp();
-                                setMode(MODE_CREATE);
-                                createNew = true;
+                                setMode(MODE_CHOOSE);
                                 redraw();
                             }
                         });
@@ -169,11 +179,10 @@ public class ActivityWiring extends ActionBarActivity {
             {
                 // There isn't stuff in the temp, just use that
                 composite = registry.resetTemp();
-                setMode(MODE_CREATE);
-                createNew = true;
+                setMode(MODE_CHOOSE);
                 redraw();
             }
-        } else { // They might not be creating a new one
+        } else if (editExisting) { // They might not be creating a new one
             if(composite == null) {
                 // If they've come in from the composite list then CS might not have been set yet, so set it.
                 composite = registry.getComposite(compositeId);
@@ -188,7 +197,6 @@ public class ActivityWiring extends ActionBarActivity {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.saveTempAsComposite("Saved draft");
                                 setMode(MODE_CREATE);
-                                createNew = true;
                                 redraw();
                             }
                         });
@@ -198,7 +206,6 @@ public class ActivityWiring extends ActionBarActivity {
                                 registry.resetTemp();
                                 composite = registry.getComposite(composite.getID());
                                 setMode(MODE_CREATE);
-                                createNew = true;
                                 redraw();
                             }
                         });
@@ -207,10 +214,36 @@ public class ActivityWiring extends ActionBarActivity {
                 setMode(MODE_CREATE);
                 redraw();
             }
+        } else {
+            Log.d(TAG, "They aren't creating a new one or editing, we shouldn't need the dialog");
         }
+
+        createNew = false;
+        editExisting = false;
 
         if(keepTemp != null)
             keepTemp.create().show(); // TODO This has leaked something
+    }
+
+    public void setIODialog(DialogIO ioDialog) {
+        this.ioDialog = ioDialog;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case CONTACT_PICKER_RESULT:
+                    if (ioDialog != null) {
+                        Log.d(TAG, "We're okay!");
+                        ioDialog.setContact(data);
+                    }
+                    break;
+            }
+
+        } else {
+            // gracefully handle failure
+            Log.w(TAG, "Warning: activity result not ok");
+        }
     }
 
 	public ArrayList<ComponentService> getComponents() {

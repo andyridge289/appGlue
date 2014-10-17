@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -38,7 +42,9 @@ import com.appglue.serviceregistry.Registry;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -53,6 +59,8 @@ public class DialogIO extends AlertDialog {
     private Button positiveButton;
     private Button negativeButton;
     private Button neutralButton;
+
+    private DialogContactView dcv;
 
     public DialogIO(ActivityWiring context, final ServiceIO io) {
         super(context);
@@ -79,7 +87,7 @@ public class DialogIO extends AlertDialog {
             DialogImageResourceView div = new DialogImageResourceView(context);
             container.addView(div);
         } else if (io.getType().typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
-            DialogContactView dcv = new DialogContactView(context);
+            dcv = new DialogContactView(context);
             container.addView(dcv);
         } else {
             // Use the generic one
@@ -105,6 +113,28 @@ public class DialogIO extends AlertDialog {
                 cancel();
             }
         });
+    }
+
+    //  http://code.tutsplus.com/tutorials/android-essentials-using-the-contact-picker--mobile-2017
+    public void setContact(Intent data) {
+
+        if (dcv == null)
+            return;
+
+        Uri result = data.getData();
+        Log.v(TAG, "Got a result: "
+                + result.toString());
+        String id = result.getLastPathSegment();
+
+        String whereName = ContactsContract.Data.CONTACT_ID + " = ?";
+        String[] whereNameParams = new String[] { "" + id };
+        Cursor c = activity.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams,
+                                                       ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        c.moveToFirst();
+        String name = c.getString(c.getColumnIndex("display_name"));
+
+        dcv.sampleButton.setText(name);
+        dcv.sampleRadio.setChecked(true);
     }
 
     private class DialogContactView extends LinearLayout {
@@ -134,7 +164,7 @@ public class DialogIO extends AlertDialog {
         }
 
         private void create(Context context) {
-            View v = View.inflate(context, R.layout.dialog_io_generic, null);
+            View v = View.inflate(context, R.layout.dialog_io_contact, null);
             this.addView(v);
 
             radioGroup = (RadioGroup) v.findViewById(R.id.io_radio);
@@ -165,6 +195,7 @@ public class DialogIO extends AlertDialog {
                     // The setting of the list values needs to move to the creating of the list. Do an invalidate
                     registry.updateComposite(activity.getComposite());
                     DialogIO.this.activity.redraw();
+                    DialogIO.this.activity.setIODialog(null);
                     dismiss();
                 }
             });
