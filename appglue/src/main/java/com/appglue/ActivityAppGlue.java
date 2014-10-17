@@ -1,10 +1,12 @@
 package com.appglue;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +22,9 @@ import android.widget.Toast;
 
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.CompositeService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.ErrorDialogFragment;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
 
@@ -40,7 +45,7 @@ public class ActivityAppGlue extends ActionBarActivity
         COMPONENTS(1, "Component List"),
         SCHEDULE(2, "Schedule"),
         LOG(3, "Log"),
-        GPLUS(4, "Google+ Login"),
+        ACCOUNTS(4, "Connect accounts"),
         SETTINGS(5, "Settings"),
         PRIVACY(6, "Privacy");
 
@@ -53,6 +58,9 @@ public class ActivityAppGlue extends ActionBarActivity
             this.name = name;
         }
     }
+
+    // Result code for the google plus stuff
+    private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private static final String PAGE = "page";
     private static final String COMPOSITE_PAGE_VIEW = "composite_page_view";
@@ -158,8 +166,8 @@ public class ActivityAppGlue extends ActionBarActivity
             f = FragmentSettings.create();
         } else if (position == Page.PRIVACY.index) {
             f = FragmentPrivacy.create();
-        } else if (position == Page.GPLUS.index) {
-            googlePlusLogin();
+        } else if (position == Page.ACCOUNTS.index) {
+            f = FragmentAccounts.create();
         }
 
         currentPage = position;
@@ -193,8 +201,81 @@ public class ActivityAppGlue extends ActionBarActivity
         super.onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(
+            int requestCode, int resultCode, Intent data) {
+        // Decide what to do based on the original request code
+        switch (requestCode) {
+            case CONNECTION_FAILURE_RESOLUTION_REQUEST :
+            /*
+             * If the result code is Activity.RESULT_OK, try
+             * to connect again
+             */
+                switch (resultCode) {
+                    case Activity.RESULT_OK :
+                    /*
+                     * Try the request again
+                     */
+                       break;
+                }
+        }
+    }
+
+    /**
+     * From https://developer.android.com/training/location/retrieve-current.html
+     */
     private void googlePlusLogin() {
-        Toast.makeText(this, "Google+ log in", Toast.LENGTH_SHORT).show();
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        // If Google Play services is available
+        if (ConnectionResult.SUCCESS == resultCode) {
+            // In debug mode, log the status
+            Log.d("Location Updates", "Google Play services is available.");
+            // Continue
+            // Google Play services was not available for some reason.
+            // resultCode holds the error code.
+        } else {
+            // Get the error dialog from Google Play services
+            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+                    resultCode,
+                    this,
+                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+            // If Google Play services can provide an error dialog
+            if (errorDialog != null) {
+                // Create a new DialogFragment for the error dialog
+                ErrorDialogFragment errorFragment =
+                        new ErrorDialogFragment();
+                // Set the dialog in the DialogFragment
+                errorFragment.setDialog(errorDialog);
+                // Show the error dialog in the DialogFragment
+                errorFragment.show(getSupportFragmentManager(),
+                        "Location Updates");
+            }
+        }
+    }
+
+    /**
+     * From https://developer.android.com/training/location/retrieve-current.html
+     * TODO Replace this with something else?
+     */
+    public static class ErrorDialogFragment extends DialogFragment {
+        // Global field to contain the error dialog
+        private Dialog mDialog;
+        // Default constructor. Sets the dialog field to null
+        public ErrorDialogFragment() {
+            super();
+            mDialog = null;
+        }
+        // Set the dialog to display
+        public void setDialog(Dialog dialog) {
+            mDialog = dialog;
+        }
+        // Return a Dialog to the DialogFragment.
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return mDialog;
+        }
     }
 
     public void onSectionAttached(Page page) {
@@ -248,6 +329,10 @@ public class ActivityAppGlue extends ActionBarActivity
 
             case R.id.change_view_list:
                 setViewMode(VIEW_LIST);
+                break;
+
+            case R.id.google_plus:
+                googlePlusLogin();
                 break;
 
             case R.id.comp_context_run:

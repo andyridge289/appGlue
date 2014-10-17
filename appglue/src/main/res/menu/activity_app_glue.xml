@@ -19,4 +19,9 @@
             app:showAsAction="never"
             />
     </group>
+    <item
+        android:id="@+id/google_plus"
+        android:title="Google+ Login"
+        app:showAsAction="never"
+        />
 </menu>

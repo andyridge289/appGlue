@@ -7,5 +7,11 @@
         jumboMode="false"
         revision="20.0.0"
         sha1="1ac8600ca3e3ac960b7b274395fdb32f0a3d490d"/>
+    <item
+        dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-3e4d5f47e9885a1729558bcc3e3ae8e1024adc4b.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.11\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="0f700f6802ba1a1f1fa7ac26d5db0666a89d75a6"/>
 
 </pre-dex-items>

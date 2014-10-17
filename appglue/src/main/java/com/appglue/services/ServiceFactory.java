@@ -90,7 +90,7 @@ public class ServiceFactory {
 
         services.add(setupBluetoothService());
         services.add(setupLaunchAppService());
-//		services.add(setupLocationService());
+		services.add(setupLocationService());
 
         // Triggers
         services.add(setupReceiveSMSTrigger());
@@ -335,63 +335,30 @@ public class ServiceFactory {
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, toastJSON);
     }
 
-//	private String setupLocationService()
-//	{
-//		ArrayList<ServiceIO> getOutputs = new ArrayList<ServiceIO>();
-//		IOType text = IOType.Factory.type(IOType.Factory.TEXT);
-//		IOType number = IOType.Factory.type(IOType.Factory.NUMBER);
-//		
-//		getOutputs.add(new ServiceIO(LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false));
-//		getOutputs.add(new ServiceIO(LocationService.REGION_NAME, "Region", text, "The state/county you're in.", false));
-////		getOutputs.add(new ServiceIO(LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near"));
-//		getOutputs.add(new ServiceIO(LocationService.LATITUDE, "Latitude", number, "The rough latitude of where you are", false));
-//		getOutputs.add(new ServiceIO(LocationService.LONGITUDE, "Longitude", number, "The rough longitude of where you are", false));
-//		
-//		String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(), 
-//				"Location lookup", 
-//				"Returns your location",
-//				TubeService.processType.index,
-//				0, 
-//				new ArrayList<ServiceIO>(), getOutputs);
-//		
-//		return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, locationJSON);
-//		return "";
-//	}
+	private String setupLocationService()
+	{
+		ArrayList<IODescription> getOutputs = new ArrayList<IODescription>();
+		IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
+		IOType number = IOType.Factory.getType(IOType.Factory.NUMBER);
 
-//		String[][] serviceData = new String[][]
-//      	{
-//  			{ ID, "-1" },
-//  			{ PACKAGENAME, "com.appglue" },
-//  			{ CLASSNAME, TubeService.class.getCanonicalName() },
-//  			{ NAME, "Tube Status Lookup" },
-//  			{ DESCRIPTION, "This service returns information about problems that occur on the tube. It is accurate to within 10 minutes. It will return information about the line that is affected as well as the problem that is affecting it." },
-//  			{ DEVELOPER, "Andy Ridge" },
-//  			{ PROCESS_TYPE, "" + TubeService.processType.index},
-//  			{ PRICE, "0" },
-//  			{ INPUT_NAME, "None" },
-//  			{ INPUT_TYPE, "void" },
-//  			{ INPUT_DESCRIPTION, "Nothing" },
-//  			{ OUTPUT_NAME, "Tube Status" },
-//			{ OUTPUT_TYPE, ""}, // TubeStatus.class.getCanonicalName() },
-//			{ OUTPUT_DESCRIPTION, "A tube status" },
-//      	};
-//		
-//		
-//		
-//		String[][][] paramData = new String[][][]
-//        {
-//			{
-//				{ NAME, "lines" },
-//				{ DESCRIPTION, "Choose the tube lines that you are interested in" },
-//				{ PARAM_TYPE, "" + Param.MANY_SET.index },
-//				{ PARAM_REQUIREDNESS, "" + Requiredness.OPTIONAL.index },
-//				{ POSS_USER, Library.implode(userNames, ",", true) },
-//				{ POSS_SYSTEM, Library.implode(systemNames, ",", true) }
-//			}
-//        };
-//  		
-//  		return setupService(serviceData, paramData);
-//	}
+		getOutputs.add(new IODescription(-1, LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false, null));
+//		getOutputs.add(new IODescription(-1, LocationService.REGION_NAME, "Region", text, "The state/county you're in.", false, null));
+        getOutputs.add(new IODescription(-1, LocationService.COUNTRY_CODE, "Country code", text, "The code of the country you're in", false, null));
+		getOutputs.add(new IODescription(-1, LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near", false, null));
+        getOutputs.add(new IODescription(-1, LocationService.ROAD_NAME, "Road name", text, "The name of the road you're on", false, null));
+		getOutputs.add(new IODescription(-1, LocationService.LATITUDE, "Latitude", number, "The rough latitude of where you are", false, null));
+		getOutputs.add(new IODescription(-1, LocationService.LONGITUDE, "Longitude", number, "The rough longitude of where you are", false, null));
+
+        String[] tags = new String[] { "Location", "GPS" };
+
+		String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(),
+				"Location lookup",
+				"Returns your location",
+				TubeService.processType.index,
+				0, null, getOutputs, tags);
+
+		return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, locationJSON);
+	}
 
     protected String setupServiceList(String appData, ArrayList<String> services) {
         StringBuilder json = new StringBuilder(String.format(

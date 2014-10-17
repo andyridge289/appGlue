@@ -180,7 +180,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -1328,7 +1328,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                         io.getComponent().getDescription().getName());
             }
 
-            updateIOValue(io.getValue(), null);
+            if (io.hasValue()) {
+                updateIOValue(io.getValue(), null);
+            }
             // Updating values needs to happen afterwards
 //            removeDeadValuesForIO(io);
         }

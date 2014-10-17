@@ -592,6 +592,11 @@ public class FragmentCompositeList extends Fragment {
                 Log.e(TAG, "JSONException - Failed to create services (CompositeListActivity) " + e.getMessage());
             }
 
+            if (getActivity() == null) {
+                return new ArrayList<CompositeService>();
+                // TODO Probably should schedule the thing to have another look. Don't know why the activity would be null
+            }
+
             ActivityManager manager = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
 
             if (manager != null) {
