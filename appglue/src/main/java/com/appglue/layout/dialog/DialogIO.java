@@ -11,6 +11,7 @@ import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,30 +127,24 @@ public class DialogIO extends AlertDialog {
     }
 
     //  http://code.tutsplus.com/tutorials/android-essentials-using-the-contact-picker--mobile-2017
-    public void setContact(Intent data) {
+    public void setContact(Pair<String, ArrayList<String>> data) {
 
         if (dcv == null)
             return;
 
-        Uri result = data.getData();
-        Log.v(TAG, "Got a result: "
-                + result.toString());
-        String id = result.getLastPathSegment();
+        dcv.sampleButton.setText(data.first);
 
-        String whereName = ContactsContract.Data.CONTACT_ID + " = ?";
-        String[] whereNameParams = new String[] { "" + id };
-        Cursor c = activity.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams,
-                                                       ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
-        c.moveToFirst();
-        String name = c.getString(c.getColumnIndex("display_name"));
+        if (data.second.size() == 0) {
+            Toast.makeText(getContext(), "You don't have the phone number for the contact you chose", Toast.LENGTH_SHORT).show();
+        } else {
+            dcv.manualText.setText(data.second.get(0));
+        }
 
-        dcv.sampleButton.setText(name);
-        dcv.sampleRadio.setChecked(true);
+        dcv.manualRadio.setChecked(true);
     }
 
     private class DialogContactView extends LinearLayout {
 
-        private RadioGroup radioGroup;
         private RadioButton sampleRadio;
         private RadioButton manualRadio;
 
@@ -202,9 +197,8 @@ public class DialogIO extends AlertDialog {
 //                    }
 
                     // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                    registry.updateComposite(activity.getComposite());
+                    registry.updateComposite(registry.getCurrent());
                     DialogIO.this.activity.redraw();
-                    DialogIO.this.activity.setIODialog(null);
                     dismiss();
                 }
             });
@@ -237,7 +231,7 @@ public class DialogIO extends AlertDialog {
                     // Look up the contact
                     Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
                             ContactsContract.Contacts.CONTENT_URI);
-                    activity.startActivityForResult(contactPickerIntent, ActivityWiring.CONTACT_PICKER_RESULT);
+                    activity.startActivityForResult(DialogIO.this, contactPickerIntent, ActivityWiring.CONTACT_PICKER_VALUE);
                 }
             });
 
@@ -458,7 +452,7 @@ public class DialogIO extends AlertDialog {
                     IOValue value = new IOValue(FilterFactory.NONE, selected.packageName, item);
                     item.setValue(value);
 
-                    registry.updateComposite(activity.getComposite());
+                    registry.updateComposite(registry.getCurrent());
                     activity.redraw();
                     dismiss();
                 }
@@ -643,7 +637,7 @@ public class DialogIO extends AlertDialog {
                     }
 
                     // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                    registry.updateComposite(activity.getComposite());
+                    registry.updateComposite(registry.getCurrent());
                     DialogIO.this.activity.redraw();
                     dismiss();
                 }

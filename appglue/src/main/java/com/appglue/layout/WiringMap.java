@@ -632,12 +632,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
      */
     private void showIODialog(final ServiceIO item) {
         DialogIO di = new DialogIO(activity, item);
-        activity.setIODialog(di);
         di.show();
     }
 
-    // TODO If there are no outputs, default to values
-    // TODO IF there are no inputs, default to filters
+    // TODO Return to the right page
 
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
@@ -909,7 +907,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             out.setConnection(in);
             in.setConnection(out);
 
-            registry.updateComposite(activity.getComposite());
+            registry.updateComposite(registry.getCurrent());
             redraw(true);
         }
 

@@ -9,6 +9,7 @@ import com.appglue.ComposableService;
 import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.ID;
@@ -277,14 +278,14 @@ public class CompositeService {
     }
 
     public ArrayList<ComponentService> getComponentsAL() {
-        ArrayList<ComponentService> comps = new ArrayList<ComponentService>();
+        ComponentService[] comps = new ComponentService[components.size()];
         for(int i = 0 ; i < components.size(); i++) {
             int k = components.keyAt(i);
             ComponentService v = components.get(k);
-            comps.add(k, v);
+            comps[k] =v;
         }
 
-        return comps;
+        return new ArrayList<ComponentService>(Arrays.asList(comps));
     }
 
     public SparseArray<ComponentService> getComponents() {

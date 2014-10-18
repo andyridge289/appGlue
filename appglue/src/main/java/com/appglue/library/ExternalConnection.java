@@ -25,16 +25,8 @@ public class ExternalConnection {
 
 //		private String keyword;
 //		private ServiceDescription description;
-//		private ActivityComponentListOld list;
 //		private int type;
 //		
-//		public Async(String keyword, ActivityComponentListOld list)
-//		{
-////			this.keyword = keyword;
-//			this.list = list;
-//			this.type = TYPE_SEARCH;
-//		}
-
         public Async(ServiceDescription description) {
 //	/		this.description = description;
 //			this.keyword = description.getClassName();

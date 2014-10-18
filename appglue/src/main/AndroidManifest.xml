@@ -28,7 +28,7 @@
         android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/application_name"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
+        android:theme="@style/Theme.AppGlue" >
 
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -36,7 +36,7 @@
         <activity
             android:name="com.appglue.ActivityAppGlue"
             android:label="@string/application_name"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
+            android:theme="@style/Theme.AppGlue"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,52 +46,23 @@
         </activity>
 
         <activity
-            android:name="com.appglue.ActivityCompositeList"
-            android:label="@string/application_name"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" >
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        </activity>
-
-        <!--<activity-->
-            <!--android:name="com.appglue.ActivityComponentList"-->
-            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
-        <activity
-            android:name="com.appglue.ActivityStory"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <!--<activity-->
-            <!--android:name="com.appglue.ActivityStoryParameters"-->
-            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
-        <!--<activity-->
-            <!--android:name="com.appglue.ActivityStoryComponents"-->
-            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
-        <activity
             android:name="com.appglue.ActivityComponent"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+            android:theme="@style/Theme.AppGlue" />
         <activity
             android:name="com.appglue.ActivityApp"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <!--<activity-->
-            <!--android:name="com.appglue.ActivityLog"-->
-            <!--android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />-->
+            android:theme="@style/Theme.AppGlue" />
         <activity
             android:name="com.appglue.ActivityComposite"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+            android:theme="@style/Theme.AppGlue" />
         <activity
             android:name="com.appglue.ActivityWiring"
             android:label="@string/application_name"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+            android:theme="@style/Theme.AppGlue" />
         <activity
             android:name="com.appglue.ActivitySettings"
             android:label="appGlue"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
-        <activity android:name="com.appglue.ActivityComponentList" />
+            android:theme="@style/Theme.AppGlue" />
         <activity android:name="com.appglue.ActivityLog" />
-        <activity android:name="com.appglue.ActivityStoryComponents" />
-        <activity android:name="com.appglue.ActivityStoryParameters" />
         <activity android:name="com.appglue.ShortcutActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
@@ -154,12 +125,12 @@
             Not sure what A2DP is...
                 android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED
                 android.bluetooth.a2dp.profile.action.PLAYING_STATE_CHANGED
-                
+
                 Device connected/disconnected
                 android.bluetooth.device.action.ACL_CONNECTED
                 android.bluetooth.device.action.ACL_DISCONNECTED
                 android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED
-            
+
             //  android.bluetooth.adapter.action.LOCAL_NAME_CHANGED
             //  android.bluetooth.device.action.BOND_STATE_CHANGED
             //  android.bluetooth.device.action.CLASS_CHANGED

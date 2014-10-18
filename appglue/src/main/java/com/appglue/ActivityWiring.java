@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -12,21 +13,24 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.util.Pair;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.FilterValueView;
 import com.appglue.layout.dialog.DialogIO;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
 
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
@@ -34,17 +38,16 @@ import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 
 public class ActivityWiring extends ActionBarActivity {
-	private CompositeService composite;
 
     private FragmentWiringPager wiringFragment;
     private FragmentComponentListPager componentListFragment;
     private FragmentFilter filterFragment;
 
-    public static final int CONTACT_PICKER_RESULT = 1001;
+    public static final int CONTACT_PICKER_VALUE = 1001;
+    public static final int CONTACT_PICKER_FILTER = 1002;
 
     private CharSequence mTitle;
 
-    private ServiceIO io;
     private long componentId = -1;
     private long filterId = -1;
 
@@ -53,8 +56,7 @@ public class ActivityWiring extends ActionBarActivity {
 
     private int pagerPosition = 0;
     private int componentPosition = 0;
-
-    private DialogIO ioDialog;
+    private Object callbackView;
 
     public ActivityWiring() {
     }
@@ -89,10 +91,14 @@ public class ActivityWiring extends ActionBarActivity {
     public void redraw() {
         Fragment attach = null;
 
+        CompositeService composite = registry.getCurrent();
+
         switch(mode) {
             case MODE_CREATE:
                 mTitle = "Create glued app";
-                wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(composite.getID(), pagerPosition);
+
+                if (wiringFragment == null)
+                    wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(composite.getID(), pagerPosition);
                 attach = wiringFragment;
                 break;
 
@@ -115,8 +121,9 @@ public class ActivityWiring extends ActionBarActivity {
         setActionBar();
         invalidateOptionsMenu();
 
-        if(wiringFragment != null)
-            wiringFragment.redraw();
+        if(wiringFragment != null) {
+            wiringFragment.redraw(pagerPosition);
+        }
     }
 
     public void setActionBar() {
@@ -145,7 +152,7 @@ public class ActivityWiring extends ActionBarActivity {
 		super.onResume();
 
         Intent intent = this.getIntent();
-        long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
+        final long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
         registry = Registry.getInstance(this);
         AlertDialog.Builder keepTemp = null;
 
@@ -160,7 +167,7 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setPositiveButton("Keep draft",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                composite = registry.getTemp();
+                                registry.setCurrent(registry.getTemp());
                                 setMode(MODE_CREATE);
                                 redraw();
                             }
@@ -169,7 +176,7 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setNegativeButton("Start new",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                composite = registry.resetTemp();
+                                registry.setCurrent(registry.resetTemp());
                                 setMode(MODE_CHOOSE);
                                 redraw();
                             }
@@ -178,14 +185,14 @@ public class ActivityWiring extends ActionBarActivity {
             else
             {
                 // There isn't stuff in the temp, just use that
-                composite = registry.resetTemp();
+                registry.setCurrent(registry.resetTemp());
                 setMode(MODE_CHOOSE);
                 redraw();
             }
         } else if (editExisting) { // They might not be creating a new one
-            if(composite == null) {
+            if(registry.getCurrent() == null) {
                 // If they've come in from the composite list then CS might not have been set yet, so set it.
-                composite = registry.getComposite(compositeId);
+                registry.setCurrent(registry.getComposite(compositeId));
             }
 
             if(registry.tempExists()) {
@@ -196,6 +203,8 @@ public class ActivityWiring extends ActionBarActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.saveTempAsComposite("Saved draft");
+                                registry.resetTemp();
+                                registry.setCurrent(compositeId);
                                 setMode(MODE_CREATE);
                                 redraw();
                             }
@@ -204,13 +213,13 @@ public class ActivityWiring extends ActionBarActivity {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 registry.resetTemp();
-                                composite = registry.getComposite(composite.getID());
+                                registry.setCurrent(compositeId);
                                 setMode(MODE_CREATE);
                                 redraw();
                             }
                         });
             } else {
-                composite = registry.getComposite(composite.getID());
+                registry.setCurrent(compositeId);
                 setMode(MODE_CREATE);
                 redraw();
             }
@@ -221,21 +230,34 @@ public class ActivityWiring extends ActionBarActivity {
         createNew = false;
         editExisting = false;
 
-        if(keepTemp != null)
+        if(keepTemp != null) {
             keepTemp.create().show(); // TODO This has leaked something
+        }
     }
 
-    public void setIODialog(DialogIO ioDialog) {
-        this.ioDialog = ioDialog;
+    public void startActivityForResult(Object v, Intent intent, int code) {
+        this.callbackView = v;
+        startActivityForResult(intent, code);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+
+            if (callbackView == null) {
+                Log.e(TAG, "Tried to do lookup callback on dead reference");
+                return;
+            }
+
             switch (requestCode) {
-                case CONTACT_PICKER_RESULT:
-                    if (ioDialog != null) {
-                        Log.d(TAG, "We're okay!");
-                        ioDialog.setContact(data);
+                case CONTACT_PICKER_VALUE:
+                    if (callbackView instanceof DialogIO) {
+                        ((DialogIO) callbackView).setContact(AppGlueLibrary.getContact(this, data));
+                    }
+                    break;
+
+                case CONTACT_PICKER_FILTER:
+                    if (callbackView instanceof FilterValueView) {
+                        ((FilterValueView) callbackView).setContact(AppGlueLibrary.getContact(this, data));
                     }
                     break;
             }
@@ -246,7 +268,16 @@ public class ActivityWiring extends ActionBarActivity {
         }
     }
 
-	public ArrayList<ComponentService> getComponents() {
+    public SparseArray<ComponentService> getComponents() {
+        CompositeService composite = registry.getCurrent();
+        if(registry != null)
+            return composite.getComponents();
+        else
+            return new SparseArray<ComponentService>();
+    }
+
+	public ArrayList<ComponentService> getComponentsAL() {
+        CompositeService composite = registry.getCurrent();
         if(composite != null)
 		    return composite.getComponentsAL();
         else
@@ -298,7 +329,7 @@ public class ActivityWiring extends ActionBarActivity {
 			wiringFragment.saveDialog();
         } else if(item.getItemId() == R.id.filter_done) {
             setMode(MODE_CREATE);
-            registry.updateComposite(composite);
+            registry.updateComposite(registry.getCurrent());
             redraw();
         }
 
@@ -309,21 +340,30 @@ public class ActivityWiring extends ActionBarActivity {
 
     }
 
-    public void chooseComponentFromList(int componentPosition, int pagerPosition) {
-        this.pagerPosition = pagerPosition;
-        this.componentPosition = componentPosition;
+    public void chooseComponentFromList(boolean first, int currentPagerPosition) {
+
+        if (first) {
+            // To look at the same thing we were looking at we need to go along one
+            this.pagerPosition = currentPagerPosition + 1;
+            this.componentPosition = currentPagerPosition;
+        } else {
+            // TO look at the same thing we can just stay where we were
+            this.pagerPosition = currentPagerPosition;
+            this.componentPosition = currentPagerPosition;
+        }
+
         setMode(MODE_CHOOSE);
         redraw();
     }
 
     public void chooseItem(String className) {
         ServiceDescription sd = registry.getServiceDescription(className);
-        ComponentService component = new ComponentService(composite, sd, componentPosition);
+        ComponentService component = new ComponentService(registry.getCurrent(), sd, componentPosition);
         long id = registry.addComponent(component);
 
         if (id != -1) {
             component.setID(id);
-            composite.addComponent(component, componentPosition);
+            registry.getCurrent().addComponent(component, componentPosition);
         } else {
             Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Failed to add component");
@@ -331,10 +371,6 @@ public class ActivityWiring extends ActionBarActivity {
 
         setMode(MODE_CREATE);
         redraw();
-    }
-
-    public CompositeService getComposite() {
-        return composite;
     }
 
     public void filter(long componentId, long filterId) {

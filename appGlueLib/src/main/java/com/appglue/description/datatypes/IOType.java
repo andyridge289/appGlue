@@ -15,6 +15,7 @@ public abstract class IOType
 
     protected Sensitivity sensitivity;
     protected boolean acceptsManual;
+    protected boolean manualLookup;
 
     enum Sensitivity {
         NORMAL,
@@ -28,19 +29,21 @@ public abstract class IOType
 		this.name = "";
         this.sensitivity = Sensitivity.NORMAL;
         this.acceptsManual = false;
+        this.manualLookup = false;
 	}
 	
-	public IOType(String name, String className, boolean acceptsManual)
+	public IOType(String name, String className, boolean acceptsManual, boolean manualLookup)
 	{
         this();
 		this.name = name;
         this.className = className;
         this.acceptsManual = acceptsManual;
+        this.manualLookup = manualLookup;
 	}
 	
-	public IOType(long id, String name, String className, boolean acceptsManual)
+	public IOType(long id, String name, String className, boolean acceptsManual, boolean manualLookup)
 	{
-		this(name, className, acceptsManual);
+		this(name, className, acceptsManual, manualLookup);
         this.id = id;
 	}
 
@@ -87,12 +90,20 @@ public abstract class IOType
         this.acceptsManual = acceptsManual;
     }
 
+    public boolean supportsManualLookup() {
+        return manualLookup;
+    }
+
+    public void setManualLookupSupport(boolean manualLookup) {
+        this.manualLookup = manualLookup;
+    }
+
     public boolean typeEquals(IOType t) {
         return className.equals(t.getClassName());
     }
 
     public boolean typeExtends(IOType t) {
-        return false; // TODO
+        return this.getClass().isAssignableFrom(t.getClass());
     }
 
 	public boolean equals(Object o) {
@@ -108,12 +119,6 @@ public abstract class IOType
         }
 
         IOType other = (IOType) o;
-
-//      I'm not sure checking on the ID is worth it
-//        if(id != other.getID()) {
-//            if(LOG) Log.d(TAG, "IOType->Equals: id - [" + id + " :: " + other.getID() + "]");
-//            return false;
-//        }
 
         if(!name.equals(other.getName())) {
             if(LOG) Log.d(TAG, "IOType->Equals: name - [" + name + " :: " + other.getName() + "]");

@@ -1,9 +1,14 @@
 package com.appglue.library;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.util.TypedValue;
 
@@ -17,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -251,5 +258,77 @@ public class AppGlueLibrary {
 
         return Bitmap.createScaledBitmap(bmp, (int) newWidth, (int) newHeight, false);
 
+    }
+
+    public static Pair<String, ArrayList<String>> getContact(Context context, Intent data) {
+        Uri result = data.getData();
+        String id = result.getLastPathSegment();
+
+        String whereName = ContactsContract.Data.CONTACT_ID + " = ?";
+        String[] whereNameParams = new String[] { "" + id };
+        Cursor c = context.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams,
+                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        c.moveToFirst();
+
+        String name = null;
+        ArrayList<String> numbers = new ArrayList<String>();
+
+        do {
+            if(name == null) {
+                name = c.getString(c.getColumnIndex("display_name"));
+            }
+
+
+            String num = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            if (num != null && !num.equals("") && !numbers.contains(num)) {
+                numbers.add(num);
+
+            }
+        } while (c.moveToNext());
+
+        numbers = AppGlueLibrary.validatePhoneNumbers(numbers);
+
+        for(String number : numbers)
+            Log.d(TAG, name + ", " + number);
+
+        return new Pair<String, ArrayList<String>>(name, numbers);
+    }
+
+    public static ArrayList<String> validatePhoneNumbers(ArrayList<String> numbers) {
+        for (int i = 0; i < numbers.size(); ) {
+
+            if(validPhoneNumber(numbers.get(i)))
+                i++;
+            else
+                numbers.remove(i);
+        }
+
+        return numbers;
+    }
+
+    // http://blog.stevenlevithan.com/archives/validate-phone-number#r4-3
+    private static boolean validPhoneNumber(String number) {
+        String expression = "^\\+(?:[0-9] ?){6,14}[0-9]$";
+        Pattern pattern = Pattern.compile(expression);
+        Matcher matcher = pattern.matcher(number);
+        return matcher.matches();
+    }
+
+    public static String getContactName(Context context, String phoneNumber) {
+        String whereName = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
+        String[] whereNameParams = new String[] { phoneNumber };
+        Cursor c = context.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams,
+                ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+        c.moveToFirst();
+
+        String name = null;
+
+        do {
+            if (name == null) {
+                name = c.getString(c.getColumnIndex("display_name"));
+            }
+        } while (c.moveToNext());
+
+        return name;
     }
 }

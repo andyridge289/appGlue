@@ -9,5 +9,6 @@ public class PhoneNumber extends Text
 		this.className = PhoneNumber.class.getCanonicalName();
         this.sensitivity = Sensitivity.SENSITIVE;
         this.acceptsManual = true;
+        this.manualLookup = true;
 	}
 }

@@ -107,6 +107,11 @@ public class ComponentService {
         return description;
     }
 
+    public boolean hasInputs() {
+        if (inputs == null)
+            return false;
+        return inputs.size() > 0;
+    }
     public ArrayList<ServiceIO> getInputs() {
         return inputs;
     }
@@ -127,6 +132,11 @@ public class ComponentService {
 
     }
 
+    public boolean hasOutputs() {
+        if (outputs == null)
+            return false;
+        return outputs.size() > 0;
+    }
     public ArrayList<ServiceIO> getOutputs() {
         return outputs;
     }

@@ -3,6 +3,8 @@ package com.appglue;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,15 +17,18 @@ import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.FloatingActionButton;
 import com.appglue.layout.WiringMap;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.LocalStorage;
+import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.INDEX;
+import static com.appglue.Constants.TAG;
 
 public class FragmentWiring extends Fragment {
     private int position;
@@ -36,6 +41,8 @@ public class FragmentWiring extends Fragment {
     private Button wiringButton;
     private Button filterButton;
     private Button valueButton;
+
+    private Registry registry;
 
     private int wiringMode;
     public static final int MODE_DEAD = -1;
@@ -56,7 +63,12 @@ public class FragmentWiring extends Fragment {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        position = getArguments().getInt(INDEX);
+
+        if (getArguments() != null) {
+            position = getArguments().getInt(INDEX);
+        }
+
+        registry = Registry.getInstance(getActivity());
     }
 
     public int getPosition() {
@@ -86,7 +98,8 @@ public class FragmentWiring extends Fragment {
         filterButton = (Button) rootView.findViewById(R.id.filter_button_all);
         valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
-        ArrayList<ComponentService> components = ((ActivityWiring) getActivity()).getComponents();
+        CompositeService composite = registry.getCurrent();
+        ArrayList<ComponentService> components = composite.getComponentsAL();
 
         if (components.size() == 0) {
             first = null;
@@ -145,7 +158,13 @@ public class FragmentWiring extends Fragment {
             OnClickListener firstClick = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((FragmentWiringPager) getParentFragment()).chooseComponentFromList(position);
+                    ActivityWiring a = (ActivityWiring) getActivity();
+                    if(a != null) {
+                        a.chooseComponentFromList(true, position);
+                    } else {
+                        Log.d(TAG, "ActivityWiring is dead for choosing component");
+                    }
+
                 }
             };
 
@@ -199,7 +218,12 @@ public class FragmentWiring extends Fragment {
             OnClickListener secondClick = new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ((ActivityWiring) getActivity()).chooseComponentFromList(position, position);
+                    ActivityWiring a = (ActivityWiring) getActivity();
+                    if(a != null) {
+                        a.chooseComponentFromList(false, position);
+                    } else {
+                        Log.d(TAG, "ActivityWiring is dead for choosing component");
+                    }
                 }
             };
 
@@ -211,11 +235,15 @@ public class FragmentWiring extends Fragment {
             wiringButton.setEnabled(false);
             filterButton.setEnabled(false);
             setWiringMode(MODE_VALUE);
+        } else if (!first.hasOutputs()) {
+            setWiringMode(MODE_VALUE);
         }
 
         if (second == null) {
             wiringButton.setEnabled(false);
             valueButton.setEnabled(false);
+            setWiringMode(MODE_FILTER);
+        } else if (!second.hasInputs()) {
             setWiringMode(MODE_FILTER);
         }
 

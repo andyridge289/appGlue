@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
@@ -96,22 +97,23 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         TextView serviceName = (TextView) v.findViewById(R.id.service_name);
         serviceName.setText(sd.getName());
 
+        LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
+
         if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
-            v.findViewById(R.id.comp_item_trigger).setVisibility(View.VISIBLE);
-            v.findViewById(R.id.comp_item_trigger_text).setVisibility(View.VISIBLE);
-        } else {
-            v.findViewById(R.id.comp_item_trigger).setVisibility(View.GONE);
-            v.findViewById(R.id.comp_item_trigger_text).setVisibility(View.GONE);
+
+            ImageView iv = new ImageView(getContext());
+            iv.setBackgroundResource(R.drawable.ic_trigger);
+            flagContainer.addView(iv);
+
+            TextView tv = new TextView(getContext());
+            tv.setText(getContext().getResources().getString(R.string.trigger));
+            flagContainer.addView(tv);
         }
 
-//        if (sd.getProcessType() == ProcessType.FILTER) {
-//            v.findViewById(R.id.comp_item_filter).setVisibility(View.VISIBLE);
-//            v.findViewById(R.id.comp_item_filter_text).setVisibility(View.VISIBLE);
-//        } else {
-        // TODO Remove this and add icons for the other flags
-        v.findViewById(R.id.comp_item_filter).setVisibility(View.GONE);
-        v.findViewById(R.id.comp_item_filter_text).setVisibility(View.GONE);
-//        }
+        // TODO public static final int FLAG_MONEY = 0x2;
+        // TODO public static final int FLAG_NETWORK = 0x4;
+        // TODO public static final int FLAG_DELAY = 0x8;
+        // TODO public static final int FLAG_LOCATION = 0x10;
 
         if (sd.hasInputs()) {
             v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);

@@ -48,11 +48,10 @@ public class Registry {
         return registry;
     }
 
-    public void setComposite(CompositeService service) {
+    public void setCurrent(CompositeService service) {
         this.composite = service;
     }
-
-    public void setComposite(long id) {
+    public void setCurrent(long id) {
         this.composite = this.getComposite(id);
     }
 

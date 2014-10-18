@@ -27,8 +27,6 @@ import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class FragmentWiringPager extends Fragment implements ViewPager.OnPageChangeListener {
 
-    private CompositeService cs;
-
     private ViewPager wiringPager;
     private WiringPagerAdapter adapter;
 
@@ -42,7 +40,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     private Registry registry;
 
-    private int position;
+    private int position = -1;
 
     public static Fragment create(long compositeId, int position) {
 
@@ -64,6 +62,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        registry = Registry.getInstance(getActivity());
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
@@ -80,8 +79,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         pageLeft = (ImageView) root.findViewById(R.id.pager_left);
         pageRight = (ImageView) root.findViewById(R.id.pager_right);
-
-        registry = Registry.getInstance(getActivity());
 
         return root;
     }
@@ -101,10 +98,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         super.onResume();
 
         if (getArguments() != null) {
-            position = getArguments().getInt(POSITION, -1);
+            if (position == -1) {
+                position = getArguments().getInt(POSITION, -1);
+                Log.d(TAG, "Setting position " + position);
+            }
             long compositeId = getArguments().getLong(COMPOSITE_ID);
             if (compositeId != -1) {
-                cs = registry.getComposite(compositeId);
+                registry.setCurrent(compositeId);
             }
         } else {
             Log.e(TAG, "Arguments null");
@@ -144,6 +144,12 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     }
 
     private void finishWiringSetup() {
+
+        Log.d(TAG, "FinishWiringSetup " + position + "(" + wiringPager + ")");
+        if (position == 1) {
+            Log.d(TAG, "1");
+        }
+
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -151,6 +157,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
         });
 
+        final CompositeService cs = registry.getCurrent();
         if (cs.getName().equals("")) {
             csNameText.setText("Temp name");
             csNameEdit.setText("Temp name");
@@ -182,7 +189,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
         });
 
-        adapter = new WiringPagerAdapter(getFragmentManager(), true);
+        adapter = new WiringPagerAdapter(getFragmentManager(), true, cs);
         adapter.notifyDataSetChanged();
 
         if (wiringPager.getAdapter() == null) {
@@ -191,13 +198,19 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         if (position != -1) {
+            if (position == 0 && cs.getComponents().size() == 1 && !cs.getComponents().get(0).hasInputs()) {
+                position = 1;
+            }
+
             onPageSelected(position);
+            wiringPager.setCurrentItem(position);
         } else {
             onPageSelected(0);
+            wiringPager.setCurrentItem(0);
         }
 
         if (cs.getComponents().size() == 0) {
-            ((ActivityWiring) getActivity()).chooseComponentFromList(0, 1);
+            ((ActivityWiring) getActivity()).chooseComponentFromList(true, 1);
         }
 
         pageLeft.setOnClickListener(new View.OnClickListener() {
@@ -219,17 +232,37 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         });
     }
 
-    public void redraw() {
+    public void redraw(int position) {
+
+        if (registry == null) {
+            // It hasn't called create yet. There's no point trying to do anything at all.
+            return;
+        }
+
+        CompositeService cs = registry.getCurrent();
+
+        Log.d(TAG, "Redraw: " + position + "(" + wiringPager + ")");
+
         // Tell all the fragments to redraw...
-        if (adapter != null) {
-            for (int i = 0; i < adapter.getCount(); i++) {
-                FragmentWiring f = adapter.getItem(i);
-                f.redraw();
+        if (wiringPager != null) {
+            adapter = new WiringPagerAdapter(getFragmentManager(), true, cs);
+            adapter.notifyDataSetChanged();
+            wiringPager.setAdapter(adapter);
+
+            if (position != -1 && wiringPager != null) {
+
+                if (position == 0 && cs.getComponents().size() == 1 && !cs.getComponents().get(0).hasInputs()) {
+                    position = 1;
+                }
+
+                wiringPager.setCurrentItem(position);
+                this.position = position;
             }
         }
     }
 
     public void saveDialog() {
+        CompositeService cs = registry.getCurrent();
         if (cs.getID() == 1) {
             // Then it's the temp, we should save it
             String name = csNameEdit.getText().toString();
@@ -252,10 +285,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             if (LOG) Log.d(TAG, "the CS is -1, this might be bad.");
         } else {
             // We're just updating one that already exists
-//       TODO     boolean success =
             registry.updateComposite(cs);
-//            if (success)
-//                Log.d(TAG, "Updated " + cs.getName());
         }
 
         getActivity().finish();
@@ -290,11 +320,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     }
 
-    public void chooseComponentFromList(int position) {
-        Log.d(TAG, "Choose component from list " + position);
-        ((ActivityWiring) getActivity()).chooseComponentFromList(position, position);
-    }
-
     public void setWiringMode(int wiringMode) {
         FragmentWiring fw = adapter.getItem(wiringPager.getCurrentItem());
         if (fw == null) {
@@ -305,8 +330,9 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     }
 
     public int getCurrentWiringMode() {
-        if (adapter == null)
+        if (adapter == null) {
             return FragmentWiring.MODE_DEAD;
+        }
 
         FragmentWiring fw = adapter.getItem(wiringPager.getCurrentItem());
         if (fw == null) {
@@ -320,13 +346,20 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         return adapter.getItem(position);
     }
 
+    public void setPageIndex(int pagerPosition) {
+        wiringPager.setCurrentItem(pagerPosition);
+    }
+
     private class WiringPagerAdapter extends FragmentStatePagerAdapter {
+
+        private CompositeService cs;
         private FragmentWiring[] fragments;
         private boolean wiring;
 
-        public WiringPagerAdapter(FragmentManager fragmentManager, boolean wiring) {
+        public WiringPagerAdapter(FragmentManager fragmentManager, boolean wiring, CompositeService cs) {
             super(fragmentManager);
             this.wiring = wiring;
+            this.cs = cs;
 
             fragments = wiring ?
                     new FragmentWiring[cs.getComponents().size() + 1] :

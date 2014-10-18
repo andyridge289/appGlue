@@ -1,12 +1,16 @@
 package com.appglue.layout;
 
 import android.content.Context;
+import android.content.Intent;
+import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -15,6 +19,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.ActivityWiring;
 import com.appglue.FragmentFilter;
@@ -27,6 +32,7 @@ import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.FilterFactory;
 
 import java.util.ArrayList;
@@ -51,6 +57,8 @@ public class FilterValueView extends LinearLayout {
     private EditText manualText;
     private Spinner sampleSpinner;
     private Spinner filterConditionSpinner;
+
+    private Button manualButton;
 
     private TextView andor;
     private Switch enableSwitch;
@@ -85,8 +93,6 @@ public class FilterValueView extends LinearLayout {
         create(context, 0);
     }
 
-    // TODO Need to do pickers for the filters too
-
     public FilterValueView(Context context, AttributeSet attrs) {
         super(context, attrs);
         create(context, 0);
@@ -113,6 +119,7 @@ public class FilterValueView extends LinearLayout {
         manualText = (EditText) v.findViewById(R.id.filter_value_text);
         sampleSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
         filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
+        manualButton = (Button) v.findViewById(R.id.choose_button);
 
         // Need to set up the and or button
         andor = (TextView) v.findViewById(R.id.filter_value_andor);
@@ -190,7 +197,19 @@ public class FilterValueView extends LinearLayout {
             }
             setup(FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
                     hasValues, values);
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
+            // TODO Do drawable, need a dialog
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
+            manualButton.setText("Choose contact");
+            manualButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Look up the contact
+                    Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                            ContactsContract.Contacts.CONTENT_URI);
+                    activity.startActivityForResult(FilterValueView.this, contactPickerIntent, ActivityWiring.CONTACT_PICKER_FILTER);
+                }
+            });
             setup(FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
                     hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.URL))) {
@@ -205,11 +224,15 @@ public class FilterValueView extends LinearLayout {
 
         // At this point we need to set the values to be whatever the default things are
         if (manualRadio.isChecked()) {
+            // Set the name of the contact to be on the button, and the phone number of the contact to be in the manual text box
             String value = manualText.getText().toString();
             this.value.setManualValue(item.getType().fromString(value));
+
         } else if (sampleRadio.isChecked()) {
-            SampleValue sample = (SampleValue) sampleSpinner.getSelectedItem();
-            this.value.setSampleValue(sample);
+            if (!type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
+                SampleValue sample = (SampleValue) sampleSpinner.getSelectedItem();
+                this.value.setSampleValue(sample);
+            }
         }
 
         this.value.setCondition((FilterFactory.FilterValue) filterConditionSpinner.getSelectedItem());
@@ -222,12 +245,19 @@ public class FilterValueView extends LinearLayout {
         if (!isChecked) {
             manualText.setEnabled(false);
             sampleSpinner.setEnabled(false);
+            manualButton.setEnabled(false);
             manualRadio.setEnabled(false);
             sampleRadio.setEnabled(false);
         } else {
 
             // We need to enable everything based on the values.
             // Then re-disable the things that don't have values
+
+            if (item.getType().supportsManualLookup()) {
+                manualButton.setEnabled(true);
+            } else {
+                manualButton.setEnabled(false);
+            }
 
             if (item.getType().acceptsManualValues()) {
                 manualRadio.setEnabled(true);
@@ -260,8 +290,16 @@ public class FilterValueView extends LinearLayout {
         setChildrenEnabled(value.isEnabled());
 
         if (value.getManualValue() != null) {
-            manualText.setText(item.getType().toString(value.getManualValue()));
+            // Set the name of the contact to be on the button, and the phone number of the contact to be in the manual text box
+            String mV = item.getType().toString(value.getManualValue());
+            manualText.setText(mV);
             manualRadio.setChecked(true);
+
+            // Set the name of the contact to be on the button, and the phone number of the contact to be in the manual text box
+            if (item.getType().typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
+                String contactName = AppGlueLibrary.getContactName(getContext(), mV);
+                manualButton.setText(contactName);
+            }
         }
 
         if (value.getSampleValue() != null) {
@@ -301,12 +339,18 @@ public class FilterValueView extends LinearLayout {
                     sampleSpinner.setEnabled(false);
                     manualText.setEnabled(true);
 
+                    if (item.getType().supportsManualLookup()) {
+                        manualButton.setEnabled(true);
+                    }
+
                     if(value != null) {
                         value.setFilterState(IOValue.MANUAL);
                     }
                 } else { // It must be filter_radio_sample
                     sampleSpinner.setEnabled(true);
+                    manualButton.setEnabled(true);
                     manualText.setEnabled(false);
+
                     if (value != null) {
                         value.setFilterState(IOValue.SAMPLE);
                     }
@@ -347,6 +391,10 @@ public class FilterValueView extends LinearLayout {
         } else {
             sampleSpinner.setEnabled(false);
 
+            if (item.getType().supportsManualLookup()) {
+                manualButton.setEnabled(true);
+            }
+
             manualRadio.setChecked(true);
             sampleRadio.setChecked(false);
 
@@ -381,5 +429,18 @@ public class FilterValueView extends LinearLayout {
                 return false; // I'm not sure if we need to consume the event or not
             }
         });
+    }
+
+    public void setContact(Pair<String, ArrayList<String>> data) {
+        manualButton.setText(data.first);
+
+        if (data.second.size() == 0) {
+            Toast.makeText(getContext(), "You don't have the phone number for the contact you chose", Toast.LENGTH_SHORT).show();
+        } else {
+            manualText.setText(data.second.get(0));
+            value.setManualValue(data.second.get(0));
+        }
+
+        manualRadio.setChecked(true);
     }
 }
