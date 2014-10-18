@@ -22,9 +22,9 @@ import android.widget.Toast;
 
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.CompositeService;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
-import com.google.android.gms.common.GooglePlayServicesUtil;
+//import com.google.android.gms.common.ConnectionResult;
+//import com.google.android.gms.common.ErrorDialogFragment;
+//import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
 
@@ -225,34 +225,34 @@ public class ActivityAppGlue extends ActionBarActivity
      * From https://developer.android.com/training/location/retrieve-current.html
      */
     private void googlePlusLogin() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            // In debug mode, log the status
-            Log.d("Location Updates", "Google Play services is available.");
-            // Continue
-            // Google Play services was not available for some reason.
-            // resultCode holds the error code.
-        } else {
-            // Get the error dialog from Google Play services
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-                    resultCode,
-                    this,
-                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-            // If Google Play services can provide an error dialog
-            if (errorDialog != null) {
-                // Create a new DialogFragment for the error dialog
-                ErrorDialogFragment errorFragment =
-                        new ErrorDialogFragment();
-                // Set the dialog in the DialogFragment
-                errorFragment.setDialog(errorDialog);
-                // Show the error dialog in the DialogFragment
-                errorFragment.show(getSupportFragmentManager(),
-                        "Location Updates");
-            }
-        }
+//        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+//
+//        // If Google Play services is available
+//        if (ConnectionResult.SUCCESS == resultCode) {
+//            // In debug mode, log the status
+//            Log.d("Location Updates", "Google Play services is available.");
+//            // Continue
+//            // Google Play services was not available for some reason.
+//            // resultCode holds the error code.
+//        } else {
+//            // Get the error dialog from Google Play services
+//            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+//                    resultCode,
+//                    this,
+//                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
+//
+//            // If Google Play services can provide an error dialog
+//            if (errorDialog != null) {
+//                // Create a new DialogFragment for the error dialog
+//                ErrorDialogFragment errorFragment =
+//                        new ErrorDialogFragment();
+//                // Set the dialog in the DialogFragment
+//                errorFragment.setDialog(errorDialog);
+//                // Show the error dialog in the DialogFragment
+//                errorFragment.show(getSupportFragmentManager(),
+//                        "Location Updates");
+//            }
+//        }
     }
 
     /**

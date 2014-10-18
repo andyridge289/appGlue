@@ -5,11 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -17,8 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -42,9 +41,7 @@ import com.appglue.serviceregistry.Registry;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -71,7 +68,16 @@ public class DialogIO extends AlertDialog {
         this.registry = Registry.getInstance(context);
 
         LayoutInflater inflater = activity.getLayoutInflater();
-        final View v = inflater.inflate(R.layout.dialog_io, null);
+
+        // We need to have a different base depending on what's going in the dialog, for resizing and showing of buttons
+        IOType type = io.getType();
+        int layout = R.layout.dialog_io_linear;
+        if (type.typeEquals(IOType.Factory.getType(IOType.Factory.APP)) ||
+            type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
+            layout = R.layout.dialog_io_relative;
+        }
+
+        final View v = inflater.inflate(layout, null);
 
         LinearLayout container = (LinearLayout) v.findViewById(R.id.ioview_container);
 
@@ -79,15 +85,17 @@ public class DialogIO extends AlertDialog {
         neutralButton = (Button) v.findViewById(R.id.dialog_io_neutral);
         negativeButton = (Button) v.findViewById(R.id.dialog_io_negative);
 
-        if (io.getType().typeEquals(IOType.Factory.getType(IOType.Factory.APP))) {
+        if (type.typeEquals(IOType.Factory.getType(IOType.Factory.APP))) {
             // We need to show the app one
             DialogAppView dav = new DialogAppView(context);
             container.addView(dav);
-        } else if (io.getType().typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
             DialogImageResourceView div = new DialogImageResourceView(context);
             container.addView(div);
         } else if (io.getType().typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
             dcv = new DialogContactView(context);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dcv.setLayoutParams(lp);
             container.addView(dcv);
         } else {
             // Use the generic one
@@ -113,6 +121,8 @@ public class DialogIO extends AlertDialog {
                 cancel();
             }
         });
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
     }
 
     //  http://code.tutsplus.com/tutorials/android-essentials-using-the-contact-picker--mobile-2017
@@ -167,7 +177,6 @@ public class DialogIO extends AlertDialog {
             View v = View.inflate(context, R.layout.dialog_io_contact, null);
             this.addView(v);
 
-            radioGroup = (RadioGroup) v.findViewById(R.id.io_radio);
             manualRadio = (RadioButton) v.findViewById(R.id.io_radio_text);
             sampleRadio = (RadioButton) v.findViewById(R.id.io_radio_spinner);
             manualText = (EditText) v.findViewById(R.id.io_value_text);
@@ -200,18 +209,24 @@ public class DialogIO extends AlertDialog {
                 }
             });
 
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            sampleRadio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                    // enable or disable the relevant item
-                    // Set the condition of the ValueNode
-                    if (checkedId == R.id.filter_radio_manual) {
-                        sampleButton.setEnabled(false);
-                        manualText.setEnabled(true);
-                    } else { // It must be filter_radio_sample
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
                         sampleButton.setEnabled(true);
                         manualText.setEnabled(false);
+                        manualRadio.setChecked(false);
+                    }
+                }
+            });
+
+            manualRadio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        sampleButton.setEnabled(false);
+                        manualText.setEnabled(true);
+                        sampleRadio.setChecked(false);
                     }
                 }
             });
@@ -219,14 +234,14 @@ public class DialogIO extends AlertDialog {
             sampleButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO Look up the contacts
+                    // Look up the contact
                     Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
-                                ContactsContract.Contacts.CONTENT_URI);
+                            ContactsContract.Contacts.CONTENT_URI);
                     activity.startActivityForResult(contactPickerIntent, ActivityWiring.CONTACT_PICKER_RESULT);
                 }
             });
 
-//            // Loading saved values
+//            // TODO Loading saved values
 //            if (item.hasValue()) {
 //
 //                IOValue value = item.getValue();
@@ -246,6 +261,9 @@ public class DialogIO extends AlertDialog {
 //            }
         }
     }
+
+
+    // TODO Need to set an initial checked radio button
 
     private class DialogImageResourceView extends LinearLayout {
 

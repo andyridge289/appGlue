@@ -636,6 +636,9 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         di.show();
     }
 
+    // TODO If there are no outputs, default to values
+    // TODO IF there are no inputs, default to filters
+
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
         redraw(true);

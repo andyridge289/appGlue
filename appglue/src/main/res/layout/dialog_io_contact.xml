@@ -25,18 +25,11 @@
 
     </RadioGroup>
 
-    <!-- TODO Fix this layout -->
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="0dip"
         android:layout_weight="4.5"
         android:layout_height="wrap_content">
-
-        <!--<TextView-->
-            <!--android:id="@+id/contact_name"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="40dip"-->
-            <!--/>-->
 
         <Button
             android:id="@+id/io_value_button"
@@ -46,8 +39,6 @@
             android:layout_height="40dip"
             android:text="Choose contact"
             />
-
-
 
         <EditText
             android:id="@+id/io_value_text"

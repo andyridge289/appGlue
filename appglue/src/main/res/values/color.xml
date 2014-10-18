@@ -21,7 +21,7 @@
 
     <color name="colorPrimaryDark">#ff522385</color>
     <color name="colorPrimary">#ff862ecc</color>
-
+    <color name="colorAccent">#ffa837ff</color>
     <color name="colorPrimaryLight_trans">#4BA133F0</color>
     <color name="colorPrimaryLight_lesstrans">#8BA133F0</color>
 
