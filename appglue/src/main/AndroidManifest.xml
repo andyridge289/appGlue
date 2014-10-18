@@ -111,6 +111,19 @@
                 <action android:name="android.hardware.action.NEW_PICTURE" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".services.triggers.AirplaneTrigger"
+            android:exported="true">
+            <intent-filter android:priority="999" >
+                <action android:name="android.intent.action.AIRPLANE_MODE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".services.triggers.BatteryTrigger" android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.BATTERY_LOW" />
+                <action android:name="android.intent.action.BATTERY_OKAY" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name="com.appglue.services.triggers.BluetoothTrigger"
             android:exported="true" >

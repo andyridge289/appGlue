@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -173,6 +174,12 @@ public class FragmentComposite extends Fragment {
         compositeDescription.setText(composite.getDescription());
 
         activeCheck.setChecked(composite.isEnabled());
+        activeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // FIXME Enable or disabled it, but check whether we can enabled it first - mandatory inputs
+            }
+        });
 
 //        runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
 

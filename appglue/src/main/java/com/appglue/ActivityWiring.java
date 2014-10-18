@@ -3,28 +3,21 @@ package com.appglue;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.util.Pair;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.FilterValueView;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.AppGlueLibrary;
@@ -34,8 +27,8 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
-import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
 public class ActivityWiring extends ActionBarActivity {
 
@@ -133,7 +126,11 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void onBackPressed() {
-        if (mode == MODE_CHOOSE && !editExisting) {
+        if (mode == MODE_CHOOSE && registry.getCurrent().size() == 0) {
+
+            super.onBackPressed();
+            return;
+        } else if (mode == MODE_CHOOSE || mode == MODE_FILTER) {
             setMode(MODE_CREATE);
             redraw();
             return;
@@ -321,6 +318,8 @@ public class ActivityWiring extends ActionBarActivity {
 
         return true;
     }
+
+    // FIXME Back on the component list doesn't work
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId() == android.R.id.home) {

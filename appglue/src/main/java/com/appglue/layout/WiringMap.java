@@ -635,8 +635,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         di.show();
     }
 
-    // TODO Return to the right page
-
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
         redraw(true);
@@ -695,26 +693,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     String valueName = item.getType().toString(item.getValue().getManualValue());
                     ioValue.setText(valueName);
                 }
-
-                // TODO If it's not unfiltered, then it's either manual or not. This probably needs to go back in
-//    			if (item.getFilterState() == ServiceIO.UNFILTERED)
-//    			{
-//    				ioType.setText(iod.getType().getName());
-//    			}
-//    			else
-//    			{
-//    	    		// This is for a manual one
-//    	    		if (item.getFilterState() == ServiceIO.MANUAL)
-//    	    		{
-//    	    			String value = iod.getType().toString(item.getManualValue());
-//    	    			ioValue.setText(value);
-//    	    		}
-//    	    		else if (item.getFilterState() == ServiceIO.SAMPLE)
-//    	    		{
-//    	    			// Need to look up what the value for this thing is, but return the friendly name not the other thing
-//    	    			ioValue.setText(item.getChosenSampleValue().name);
-//    	    		}
-//    			}
             }
 
             endpoint.setVisibility(View.VISIBLE);
@@ -846,7 +824,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             });
 
             if (this.isExpanded()) {
-                // TODO Need to do something different with the endpoint depending on whether the thing is set or not
                 if(item.getConnection() == null) {
                     endpoint.setVisibility(View.GONE);
                     setButton.setVisibility(View.VISIBLE);
@@ -966,8 +943,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     ioValue.setText(valueName);
                 }
 
-                // TODO Needs to have some form of mandatory check in it
-                // TODO Link this with the enabled state of the component
                 // TODO Greyscale icon for disabled
 
                 // If it's not unfiltered, then it's either manual or not
@@ -1129,7 +1104,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 ioType.setVisibility(View.GONE);
                 ioValue.setVisibility(View.GONE);
             } else if (this.isExpanded()) {
-                // TODO Work out how to expand stuff
+                // XXX Might need this
             } else {
                 ioName.setVisibility(View.VISIBLE);
                 ioType.setVisibility(View.VISIBLE);
@@ -1227,7 +1202,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                                 case 2:
                                     // Delete the filter
-                                    // TODO Check first?
                                     items.remove(item);
                                     FilterAdapter.this.notifyDataSetChanged();
                                     registry.updateComposite(registry.getCurrent());

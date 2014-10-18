@@ -34,8 +34,6 @@ public class CompositeService {
 
     private boolean enabled;
 
-    public static final int NEW_COMPOSITE_PLACEHOLDER = Integer.MIN_VALUE;
-
     public static final int TEMP_ID = 1;
     public static final String TEMP_NAME = "temp";
     public static final String TEMP_DESCRIPTION = "This is the temporary composite";
@@ -113,10 +111,6 @@ public class CompositeService {
         }
     }
 
-    public static CompositeService makePlaceholder() {
-        return new CompositeService("Nothing", "Nothing", null, false);
-    }
-
     public CompositeService(long id, String name, String description, boolean enabled) {
         this(false);
         this.id = id;
@@ -127,7 +121,7 @@ public class CompositeService {
 
     public CompositeService(String name, String description, SparseArray<ComponentService> services, boolean enabled) {
         this(false);
-        this.id = (long) CompositeService.NEW_COMPOSITE_PLACEHOLDER;
+        this.id = -1;
         this.name = name;
         this.components = services;
         this.description = description;
@@ -290,6 +284,23 @@ public class CompositeService {
 
     public SparseArray<ComponentService> getComponents() {
         return components;
+    }
+
+    public ArrayList<ServiceIO> getMandatoryInputs() {
+
+        ArrayList<ServiceIO> mandatories = new ArrayList<ServiceIO>();
+
+        for (int i = 0; i < components.size(); i++) {
+            ComponentService component = components.valueAt(i);
+
+            for (ServiceIO io : component.getInputs()) {
+                if (io.getDescription().isMandatory()) {
+                    mandatories.add(io);
+                }
+            }
+        }
+
+        return mandatories;
     }
 
     public ArrayList<ComponentService> getComponents(String className) {

@@ -1,5 +1,6 @@
 package com.appglue;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -10,12 +11,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.ActionMode;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,9 +27,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +40,8 @@ import android.widget.Toast;
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.layout.FloatingActionButton;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
@@ -48,12 +57,22 @@ import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 
+// FIXME The selectionMode thing
+
 public class FragmentCompositeList extends Fragment {
 
     private GridView compositeGrid;
     private ListView compositeList;
 
+    private boolean listMode = true;
+
     private ImageView loader;
+    private View noComposites;
+    private FloatingActionButton addFab;
+
+    private Toolbar contextToolbar;
+    private float toolbarY = -1;
+    private float toolbarYHidden = -1;
 
     private Registry registry;
     private LocalStorage localStorage;
@@ -171,10 +190,26 @@ public class FragmentCompositeList extends Fragment {
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
-        View root = inflater.inflate(R.layout.activity_composite_list, container, false);
+        View root = inflater.inflate(R.layout.fragment_composite_list, container, false);
 
         compositeGrid = (GridView) root.findViewById(R.id.load_grid);
         compositeList = (ListView) root.findViewById(R.id.load_list);
+
+        noComposites = root.findViewById(R.id.no_composites);
+        contextToolbar = (Toolbar) root.findViewById(R.id.context_toolbar);
+
+        addFab = (FloatingActionButton) root.findViewById(R.id.fab_add);
+        if (addFab != null) {
+            addFab.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(getActivity(), ActivityWiring.class);
+                    intent.putExtra(EDIT_EXISTING, false);
+                    intent.putExtra(CREATE_NEW, true);
+                    startActivity(intent);
+                }
+            });
+        }
 
         loader = (ImageView) root.findViewById(R.id.loading_spinner);
 
@@ -196,29 +231,10 @@ public class FragmentCompositeList extends Fragment {
         super.onResume();
         BackgroundCompositeLoader bcl = new BackgroundCompositeLoader();
         bcl.execute();
-
-////		int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-////
-////		switch(result)
-////		{
-////			case ConnectionResult.SUCCESS:
-////				// This is fine
-////				break;
-////
-////			case ConnectionResult.SERVICE_MISSING:
-////			case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-////			case ConnectionResult.SERVICE_DISABLED:
-////				Dialog dialog = GooglePlayServicesUtil.getErrorDialog(result, this, PLAY_SERVICES);
-////				dialog.show();
-////				break;
-////		}
-//    }
     }
 
     public void onSaveInstanceState(Bundle icicle) {
         super.onSaveInstanceState(icicle);
-
-
     }
 
     @Override
@@ -284,7 +300,6 @@ public class FragmentCompositeList extends Fragment {
 
                         // This only works when you click on something else?
                         composites = registry.getComposites();
-                        composites.add(CompositeService.makePlaceholder());
 
                         if (gridAdapter != null) {
                             // This might need to be sorted?
@@ -397,32 +412,12 @@ public class FragmentCompositeList extends Fragment {
         public View getView(final int position, View convertView, final ViewGroup parent) {
             View v = convertView;
 
-
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.grid_item_app_selector, null);
             }
 
             final CompositeService cs = composites.get(position);
-
-            if (cs.getID() == CompositeService.NEW_COMPOSITE_PLACEHOLDER) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.composite_grid_item_new, null);
-
-                if (v != null) {
-                    v.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getActivity(), ActivityWiring.class);
-                            intent.putExtra(EDIT_EXISTING, false);
-                            intent.putExtra(CREATE_NEW, true);
-                            startActivity(intent);
-                        }
-                    });
-                }
-
-                return v;
-            }
 
             if (v == null)
                 return null;
@@ -459,12 +454,7 @@ public class FragmentCompositeList extends Fragment {
                 public void onClick(View v) {
 
                     if (actionMode == null) {
-                        if (getParentFragment() != null) {
-                            ((FragmentComposites) getParentFragment()).viewComposite(cs.getID());
-                        } else {
-                            // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
-                            Log.e(TAG, "Parent fragment is null");
-                        }
+
                     } else {
                         // Add and remove things from the action mode
                         if (selected.contains(position)) {
@@ -511,6 +501,8 @@ public class FragmentCompositeList extends Fragment {
 
     private class CompositeListAdapter extends ArrayAdapter<CompositeService> {
 
+        int selectedIndex = -1;
+
         public CompositeListAdapter(Context context, int textViewResourceId, ArrayList<CompositeService> items) {
             super(context, textViewResourceId, items);
         }
@@ -525,25 +517,6 @@ public class FragmentCompositeList extends Fragment {
             }
 
             final CompositeService cs = composites.get(position);
-
-            if (cs.getID() == CompositeService.NEW_COMPOSITE_PLACEHOLDER) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.composite_list_item_new, null);
-
-                if (v != null) {
-                    v.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getActivity(), ActivityWiring.class);
-                            intent.putExtra(EDIT_EXISTING, false);
-                            intent.putExtra(CREATE_NEW, true);
-                            startActivity(intent);
-                        }
-                    });
-                }
-
-                return v;
-            }
 
             if (v == null)
                 return null;
@@ -566,17 +539,49 @@ public class FragmentCompositeList extends Fragment {
             } else {
                 String iconLocation = app.iconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);
-                icon.setImageBitmap(b);
+                if (b != null) {
+                    icon.setImageBitmap(b);
+                } else {
+                    icon.setBackgroundResource(R.drawable.icon);
+                }
             }
 
-            TextView componentList = (TextView) v.findViewById(R.id.composite_components);
-            String componentText = "";
+            v.findViewById(R.id.info_button).setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getParentFragment() != null) {
+                        ((FragmentComposites) getParentFragment()).viewComposite(cs.getID());
+                    } else {
+                        // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
+                        Log.e(TAG, "Parent fragment is null");
+                    }
+                }
+            });
+
+            v.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (selectedIndex == -1) {
+                        addFab.hide(true);
+                        selectedIndex = position;
+                        contextToolbar.setVisibility(View.VISIBLE);
+                    } else if(selectedIndex == position) {
+                        addFab.hide(false);
+                        contextToolbar.setVisibility(View.GONE);
+                        selectedIndex = -1;
+                    } else {
+                        selectedIndex = position;
+                    }
+                }
+            });
+
+            LinearLayout componentContainer = (LinearLayout) v.findViewById(R.id.composite_components);
             for (int i = 0; i < cs.getComponents().size(); i++) {
-                if (i > 0)
-                    componentText += " > ";
-                componentText += cs.getComponents().valueAt(i).getDescription().getName();
+                ComponentService component = cs.getComponents().get(i);
+                TextView tv = new TextView(getContext());
+                tv.setText(component.getDescription().getName());
+                componentContainer.addView(tv);
             }
-            componentList.setText(componentText);
 
             return v;
         }
@@ -617,8 +622,6 @@ public class FragmentCompositeList extends Fragment {
             }
 
             ArrayList<CompositeService> composites = registry.getComposites();
-            composites.add(CompositeService.makePlaceholder());
-
             return composites;
         }
 
@@ -634,7 +637,22 @@ public class FragmentCompositeList extends Fragment {
             compositeList.setAdapter(listAdapter);
 
             loader.setVisibility(View.GONE);
-            compositeGrid.setVisibility(View.VISIBLE);
+
+            if (composites.size() > 0) {
+                if (listMode) {
+                    compositeList.setVisibility(View.VISIBLE);
+                    compositeGrid.setVisibility(View.GONE);
+                } else {
+                    compositeGrid.setVisibility(View.VISIBLE);
+                    compositeList.setVisibility(View.GONE);
+                }
+
+                noComposites.setVisibility(View.GONE);
+            } else {
+                noComposites.setVisibility(View.VISIBLE);
+            }
+
+
         }
     }
 }

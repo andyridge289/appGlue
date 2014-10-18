@@ -56,6 +56,15 @@ public class ServiceIO {
     public boolean hasValue() {
         return this.value != null;
     }
+    public boolean hasValueOrConnection() {
+
+        if(this.value == null && this.connection == null) {
+            return false;
+        } else {
+            // One of them is set
+            return true;
+        }
+    }
 
     /**
      * This is because there can only be one input at the moment.

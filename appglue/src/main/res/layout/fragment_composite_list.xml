@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:gravity="center">
+    
+	<GridView
+		android:visibility="gone"
+	   	android:id="@+id/load_grid"
+	   	android:layout_width="fill_parent"
+	  	android:layout_height="fill_parent"
+	   	android:numColumns="4"
+	   	android:verticalSpacing="10dp"
+	   	android:horizontalSpacing="10dp"
+	   	android:stretchMode="columnWidth"
+	   	android:layout_marginTop="5dip"
+	    />
+
+    <ListView
+        android:visibility="gone"
+        android:id="@+id/load_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:divider="#00000000"
+        android:layout_marginTop="5dip"
+        />
+
+    <TextView
+        android:id="@+id/no_composites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textSize="14sp"
+        android:text="No composites"
+        android:layout_gravity="center"
+        />
+	
+	<ImageView
+        android:id="@+id/loading_spinner"
+        android:contentDescription="@string/loading_spinner"
+        android:layout_gravity="center"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/loader"
+        />
+
+    <com.appglue.layout.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="72dip"
+        android:layout_height="72dip"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dip"
+        android:layout_marginRight="16dip"
+        android:layout_marginEnd="16dip"
+        app:fabcolor="@color/colorAccent"
+        app:fabdrawable="@drawable/ic_add_white"
+        />
+
+    <!-- TODO MAke this animate up and down like the button -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/context_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="@android:dimen/app_icon_size"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        android:background="@color/black"
+        android:visibility="gone"
+        android:layout_gravity="bottom"
+        />
+	
+</FrameLayout>

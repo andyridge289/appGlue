@@ -97,8 +97,7 @@ public class FloatingActionButton extends View {
         super.onLayout(changed, left, top, right, bottom);
 
         // Store the FAB button's displayed Y position if we are not already aware of it
-        if (mYDisplayed == -1)
-        {
+        if (mYDisplayed == -1) {
             mYDisplayed = this.getY();
         }
     }

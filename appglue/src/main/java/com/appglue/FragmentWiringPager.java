@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.ServiceIO;
 import com.appglue.serviceregistry.Registry;
 
 import static com.appglue.Constants.LOG;
@@ -145,11 +147,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     private void finishWiringSetup() {
 
-        Log.d(TAG, "FinishWiringSetup " + position + "(" + wiringPager + ")");
-        if (position == 1) {
-            Log.d(TAG, "1");
-        }
-
         status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,8 +238,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         CompositeService cs = registry.getCurrent();
 
-        Log.d(TAG, "Redraw: " + position + "(" + wiringPager + ")");
-
         // Tell all the fragments to redraw...
         if (wiringPager != null) {
             adapter = new WiringPagerAdapter(getFragmentManager(), true, cs);
@@ -263,6 +258,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     public void saveDialog() {
         CompositeService cs = registry.getCurrent();
+
         if (cs.getID() == 1) {
             // Then it's the temp, we should save it
             String name = csNameEdit.getText().toString();
@@ -286,6 +282,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         } else {
             // We're just updating one that already exists
             registry.updateComposite(cs);
+        }
+
+        for (ServiceIO io : cs.getMandatoryInputs()) {
+            if (!io.hasValueOrConnection()) {
+                cs.setEnabled(false);
+                Toast.makeText(getActivity(), "You've missed some of the mandatory values, so your composite has been disabled for now", Toast.LENGTH_LONG).show();
+            }
         }
 
         getActivity().finish();

@@ -2,6 +2,7 @@ package com.appglue.services;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -15,6 +16,8 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+import com.appglue.services.triggers.AirplaneTrigger;
+import com.appglue.services.triggers.BatteryTrigger;
 import com.appglue.services.triggers.BluetoothTrigger;
 import com.appglue.services.triggers.HeadphoneTrigger;
 import com.appglue.services.triggers.PowerTrigger;
@@ -98,6 +101,8 @@ public class ServiceFactory {
         services.add(setupPowerConnectedTrigger());
         services.add(setupBluetoothTrigger());
         services.add(setupHeadphoneTrigger());
+        services.add(setupAirplaneTrigger());
+        services.add(setupBatteryTrigger());
 
         String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
@@ -409,6 +414,29 @@ public class ServiceFactory {
     // Triggers
     ///////////////////
 
+    private String setupAirplaneTrigger() {
+
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
+
+        ArrayList<SampleValue> sample = new ArrayList<SampleValue>();
+        sample.add(new SampleValue("On", true));
+        sample.add(new SampleValue("Off", false));
+
+        outputs.add(new IODescription(-1, AirplaneTrigger.STATE, "State", bool, "The state that airplane mode has been set to", true, sample));
+
+        String[] tags = { "Airplane", "On", "Off" };
+        int flags = ComposableService.FLAG_TRIGGER;
+
+        String airplaneJSON = Library.makeJSON(-1, "com.appglue", AirplaneTrigger.class.getCanonicalName(),
+                "Airplane mode Trigger",
+                "Fires when airplane mode is turned on or off",
+                flags, 0,
+                null, outputs, tags);
+
+        return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, airplaneJSON);
+    }
+
     private String setupPowerConnectedTrigger() {
         ArrayList<IODescription> outputs = new ArrayList<IODescription>();
         IOType bool = IOType.Factory.getType(IOType.Factory.BOOLEAN);
@@ -429,6 +457,31 @@ public class ServiceFactory {
                 null, outputs, tags);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, powerJSON);
+    }
+
+    private String setupBatteryTrigger() {
+
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Battery Low", Intent.ACTION_BATTERY_LOW));
+        samples.add(new SampleValue("Battery Okay", Intent.ACTION_BATTERY_OKAY));
+        samples.add(new SampleValue("Battery Changed", Intent.ACTION_BATTERY_CHANGED));
+
+        outputs.add(new IODescription(-1, BatteryTrigger.STATE, "Battery state", set, "The new state of the battery", true, samples));
+
+        String[] tags = {"Battery", "Low" };
+
+        String batteryTriggerJSON = Library.makeJSON(-1, "com.appglue", BatteryTrigger.class.getCanonicalName(),
+                "Battery Trigger",
+                "Signals that the state of the battery has changed",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags);
+
+        // TODO It's going to take something special to test this one
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, batteryTriggerJSON);
     }
 
     private String setupBluetoothTrigger() {
@@ -514,9 +567,6 @@ public class ServiceFactory {
     //	android.intent.action.BOOT_COMPLETED
     //	android.intent.action.REBOOT
 
-    // Airplane mode
-    //	android.intent.action.AIRPLANE_MODE
-
     // Battery
     //	android.intent.action.BATTERY_CHANGED
     //	android.intent.action.BATTERY_LOW
@@ -528,8 +578,6 @@ public class ServiceFactory {
 
     // Docked/Dreaming
     //	android.intent.action.DOCK_EVENT
-    //	android.intent.action.DREAMING_STARTED
-    //	android.intent.action.DREAMING_STOPPED
 
     // Google Talk
     //	android.intent.action.GTALK_CONNECTED

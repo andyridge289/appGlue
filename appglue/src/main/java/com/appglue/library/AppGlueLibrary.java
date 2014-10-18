@@ -2,6 +2,7 @@ package com.appglue.library;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -29,6 +30,13 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
 public class AppGlueLibrary {
+
+    // TODO Work out how we're going to test the services
+
+    public static float dpToPx(Resources r, int dp){
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+    }
+
     public static String createTableString(String tableName, String[][] cols, String[][] fk) {
         StringBuilder createTable = new StringBuilder(String.format("CREATE TABLE %s (", tableName));
 

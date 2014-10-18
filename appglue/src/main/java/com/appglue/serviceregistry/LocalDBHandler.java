@@ -182,6 +182,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         recreate();
     }
 
+    // FIXME Setting values doesn't appear to work
+    // TODO Look here for some animations - http://antonioleiva.com/material-design-everywhere/
+
     @Override
     /**
      * Automagically called when the database needs to be created, usually on an upgrade
@@ -274,8 +277,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_VALUENODE));
         db.execSQL(AppGlueLibrary.createTableString(TBL_VALUENODE, COLS_VALUENODE, FK_VALUENODE));
 
-
-
         db.execSQL(AppGlueLibrary.createIndexString(TBL_SERVICEIO, IX_SERVICEIO, INDEX_SERVICEIO));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IOCONNECTION, IX_IOCONNECTION, INDEX_IOCONNECTION));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IO_DESCRIPTION, IX_IO_DESCRIPTION, INDEX_IO_DESCRIPTION));
@@ -366,6 +367,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // Deleting components *should* delete everything
         int num = db.delete(TBL_COMPONENT, COMPOSITE_ID + " = ?", new String[]{"" + CompositeService.TEMP_ID});
         if (LOG) Log.d(TAG, "Reset temp: " + num + " deleted from component");
+
+        // FIXME Reset
 
         return getComposite(CompositeService.TEMP_ID);
     }
