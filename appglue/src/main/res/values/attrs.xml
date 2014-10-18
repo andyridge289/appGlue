@@ -5,8 +5,8 @@
     </declare-styleable>
 
     <declare-styleable name="FloatingActionButton">
-        <attr name="drawable" format="integer"/>
-        <attr name="color" format="color"/>
+        <attr name="fabdrawable" format="integer"/>
+        <attr name="fabcolor" format="color"/>
         <attr name="shadowRadius" format="float"/>
         <attr name="shadowDx" format="float"/>
         <attr name="shadowDy" format="float"/>

@@ -18,8 +18,8 @@
             android:id="@+id/filter_add_button"
             android:layout_width="48dip"
             android:layout_height="48dip"
-            app:color="@color/colorPrimary"
-            app:drawable="@drawable/ic_add_white"
+            app:fabcolor="@color/colorPrimary"
+            app:fabdrawable="@drawable/ic_add_white"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             />
