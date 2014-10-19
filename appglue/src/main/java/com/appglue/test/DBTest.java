@@ -174,7 +174,7 @@ public class DBTest extends AndroidTestCase {
         assertEquals(origTemp, newTemp);
 
         // Save it to another composite, see what happens
-        CompositeService fred = registry.saveTempAsComposite("fred");
+        CompositeService fred = registry.saveTempAsComposite("fred", true);
         origTemp.setID(fred.getID());
         origTemp.setName(fred.getName());
         origTemp.setDescription(fred.getDescription());

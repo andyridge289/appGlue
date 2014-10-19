@@ -1,7 +1,10 @@
 package com.appglue;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.serviceregistry.Registry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -35,6 +39,7 @@ import static com.appglue.Constants.IS_LIST;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.TEST;
 
 public class ActivityAppGlue extends ActionBarActivity
@@ -67,11 +72,6 @@ public class ActivityAppGlue extends ActionBarActivity
     private static final String COMPOSITE_MODE = "composite_mode";
     private static final String COMPONENT_MODE = "component_mode";
 
-
-    private int view;
-    public static final int VIEW_GRID = 0;
-    public static final int VIEW_LIST = 1;
-
     private FragmentComposites homeFragment;
     private FragmentComponents componentFragment;
 
@@ -97,9 +97,6 @@ public class ActivityAppGlue extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        this.view = prefs.getInt(COMPOSITE_PAGE_VIEW, VIEW_GRID);
 
         if(savedInstanceState == null) {
 
@@ -132,17 +129,40 @@ public class ActivityAppGlue extends ActionBarActivity
 
     }
 
+    public void onResume() {
+        // From https://developer.android.com/training/location/retrieve-current.html
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
+        // If Google Play services is available
+        if (ConnectionResult.SUCCESS != resultCode) {
+            // Get the error dialog from Google Play services
+            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
+                    resultCode,
+                    this,
+                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
+
+            // If Google Play services can provide an error dialog
+            if (errorDialog != null) {
+                // Create a new DialogFragment for the error dialog
+                ErrorDialogFragment errorFragment =
+                        new ErrorDialogFragment();
+                // Set the dialog in the DialogFragment
+                errorFragment.setDialog(errorDialog);
+                // Show the error dialog in the DialogFragment
+                errorFragment.show(getSupportFragmentManager(),
+                        "Location Updates");
+            }
+        }
+
+        super.onResume();
+    }
+
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
 
         out.putInt(PAGE, this.currentPage);
-        out.putInt(COMPOSITE_PAGE_VIEW, this.view);
         out.putInt(COMPOSITE_MODE, homeFragment == null ? -1 : homeFragment.getMode());
         out.putInt(COMPONENT_MODE, componentFragment == null ? -1 : componentFragment.getMode());
-
-        // This mode
-        // This view
-        // Components mode
     }
 
     @Override
@@ -207,51 +227,11 @@ public class ActivityAppGlue extends ActionBarActivity
         // Decide what to do based on the original request code
         switch (requestCode) {
             case CONNECTION_FAILURE_RESOLUTION_REQUEST :
-            /*
-             * If the result code is Activity.RESULT_OK, try
-             * to connect again
-             */
+
                 switch (resultCode) {
                     case Activity.RESULT_OK :
-                    /*
-                     * Try the request again
-                     */
                        break;
                 }
-        }
-    }
-
-    /**
-     * From https://developer.android.com/training/location/retrieve-current.html
-     */
-    private void googlePlusLogin() {
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-
-        // If Google Play services is available
-        if (ConnectionResult.SUCCESS == resultCode) {
-            // In debug mode, log the status
-            Log.d("Location Updates", "Google Play services is available.");
-            // Continue
-            // Google Play services was not available for some reason.
-            // resultCode holds the error code.
-        } else {
-            // Get the error dialog from Google Play services
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-                    resultCode,
-                    this,
-                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
-
-            // If Google Play services can provide an error dialog
-            if (errorDialog != null) {
-                // Create a new DialogFragment for the error dialog
-                ErrorDialogFragment errorFragment =
-                        new ErrorDialogFragment();
-                // Set the dialog in the DialogFragment
-                errorFragment.setDialog(errorDialog);
-                // Show the error dialog in the DialogFragment
-                errorFragment.show(getSupportFragmentManager(),
-                        "Location Updates");
-            }
         }
     }
 
@@ -303,83 +283,12 @@ public class ActivityAppGlue extends ActionBarActivity
 
             if (homeFragment.getMode() == FragmentComposites.MODE_LIST) {
                 getMenuInflater().inflate(R.menu.activity_app_glue, menu);
-                if (view == VIEW_LIST) {
-                    menu.setGroupVisible(R.id.group_grid, false);
-                    menu.setGroupVisible(R.id.group_list, true);
-                } else {
-                    menu.setGroupVisible(R.id.group_grid, true);
-                    menu.setGroupVisible(R.id.group_list, false);
-                }
             } else {
                 getMenuInflater().inflate(R.menu.composite_menu, menu);
             }
         }
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch(item.getItemId()) {
-            case R.id.change_view_grid:
-                setViewMode(VIEW_GRID);
-                break;
-
-            case R.id.change_view_list:
-                setViewMode(VIEW_LIST);
-                break;
-
-            case R.id.google_plus:
-                googlePlusLogin();
-                break;
-
-            case R.id.comp_context_run:
-                run(homeFragment.getComposite()); //composites.get(selected.get(0)));
-                break;
-
-            case R.id.comp_context_timer:
-//        schedule(composites.get((selected.get(0))));
-                break;
-
-            case R.id.comp_context_view:
-//        view(composites.get((selected.get(0))));
-                break;
-
-            case R.id.comp_context_edit:
-//        edit(composites.get((selected.get(0))));
-                break;
-
-            case R.id.comp_context_shortcut:
-//        createShortcut(composites.get((selected.get(0))));
-                break;
-
-        case R.id.comp_context_delete:
-//        ArrayList<CompositeService> killList = new ArrayList<CompositeService>();
-//        for (Integer aSelected : selected) {
-//            killList.add(composites.get(aSelected));
-//        }
-//        delete(killList);
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public int getViewMode() {
-        return view;
-    }
-    public void setViewMode(int view) {
-        this.view = view;
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        prefs.edit().putInt(COMPOSITE_PAGE_VIEW, view).apply();
-
-        if (homeFragment != null) {
-            homeFragment.setViewMode();
-        }
-
-        invalidateOptionsMenu();
     }
 
     /**
@@ -421,7 +330,7 @@ public class ActivityAppGlue extends ActionBarActivity
         }
     }
 
-    public void run(CompositeService cs) {
+    void run(CompositeService cs) {
         if(cs == null) {
             Toast.makeText(this, "Error when trying to run composite", Toast.LENGTH_SHORT).show();
             return;
@@ -442,6 +351,120 @@ public class ActivityAppGlue extends ActionBarActivity
         intentData.add(b);
         serviceIntent.putParcelableArrayListExtra(DATA, intentData);
         this.startService(serviceIntent);
+    }
+
+    void schedule(final CompositeService cs) {
+        // TODO Go to the schedule fragment and indicate that we want to create a new one
+        onNavigationDrawerItemSelected(Page.SCHEDULE.index);
+
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
+//        builder.setTitle("Set timer duration");
+//
+//        LayoutInflater inflater = getLayoutInflater();
+//        View layout = inflater.inflate(R.layout.dialog_timer, null);
+//        builder.setView(layout);
+//
+//        if (layout == null)
+//            return;
+//
+//        final EditText numeralEdit = (EditText) layout.findViewById(R.id.timer_edit_numerals);
+//        final CheckBox runNowCheck = (CheckBox) layout.findViewById(R.id.timer_run_now);
+//
+//        if (numeralEdit == null || runNowCheck == null)
+//            return;
+//
+//        final Spinner intervalSpinner = (Spinner) layout.findViewById(R.id.timer_spinner_intervals);
+//        ArrayAdapter<CharSequence> intervalAdapter = ArrayAdapter.createFromResource(this, R.array.time_array, R.layout.dialog_spinner_dropdown);
+//        intervalAdapter.setDropDownViewResource(R.layout.dialog_spinner_dropdown);
+//        intervalSpinner.setAdapter(intervalAdapter);
+//
+//        Dialog.OnClickListener okayClick = new Dialog.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                // Get the things of each of the spinners and work out the duration
+//                long numeral = Integer.parseInt(numeralEdit.getText().toString());
+//                int intervalIndex = intervalSpinner.getSelectedItemPosition();
+//                Interval interval;
+//
+//                if (intervalIndex == Interval.SECONDS.index) {
+//                    interval = Interval.SECONDS;
+//                } else if (intervalIndex == Interval.MINUTES.index) {
+//                    interval = Interval.MINUTES;
+//                } else if (intervalIndex == Interval.HOURS.index) {
+//                    interval = Interval.HOURS;
+//                } else {
+//                    interval = Interval.DAYS;
+//                }
+//
+//                runOnTimer(cs, numeral * interval.value, runNowCheck.isChecked());
+//            }
+//        };
+//
+//        builder.setPositiveButton("Okay", okayClick);
+//        builder.setNegativeButton("Cancel", null);
+//
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
+    }
+
+    void edit(CompositeService cs) {
+        Intent intent = new Intent(this, ActivityWiring.class);
+        intent.putExtra(COMPOSITE_ID, cs.getID());
+        intent.putExtra(EDIT_EXISTING, true);
+        startActivity(intent);
+    }
+
+    void createShortcut(CompositeService cs) {
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setComponent(new ComponentName(getPackageName(), ShortcutActivity.class.getName()));
+
+        Bundle b = new Bundle();
+        b.putLong(COMPOSITE_ID, cs.getID());
+        shortcutIntent.putExtras(b);
+
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        shortcutIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        final Intent putShortCutIntent = new Intent();
+        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,
+                shortcutIntent);
+
+        // Sets the custom shortcut's title
+        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, cs.getName());
+        putShortCutIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(this, R.drawable.icon));
+        putShortCutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        sendBroadcast(putShortCutIntent);
+    }
+
+    void delete(final CompositeService cs) {
+
+        final Registry registry = Registry.getInstance(this);
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Delete")
+                .setMessage(String.format("Are you sure you want to delete %s?", cs.getName()))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (registry.deleteComposite(cs)) {
+                            Toast.makeText(ActivityAppGlue.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ActivityAppGlue.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
+                        }
+
+                        // Tell the page to refresh
+                        if (homeFragment == null) {
+                            onNavigationDrawerItemSelected(Page.HOME.index);
+                        } else {
+                            homeFragment.setMode(FragmentComposites.MODE_LIST);
+                            homeFragment.redraw();
+                        }
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
 }

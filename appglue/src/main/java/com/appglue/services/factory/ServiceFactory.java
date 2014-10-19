@@ -1,8 +1,7 @@
-package com.appglue.services;
+package com.appglue.services.factory;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -16,6 +15,14 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+import com.appglue.services.LaunchAppService;
+import com.appglue.services.LocationService;
+import com.appglue.services.NotificationService;
+import com.appglue.services.PebbleNotification;
+import com.appglue.services.SayHelloService;
+import com.appglue.services.SendSMSService;
+import com.appglue.services.ToastService;
+import com.appglue.services.TubeService;
 import com.appglue.services.triggers.AirplaneTrigger;
 import com.appglue.services.triggers.BatteryTrigger;
 import com.appglue.services.triggers.BluetoothTrigger;
@@ -372,7 +379,6 @@ public class ServiceFactory {
 		IOType number = IOType.Factory.getType(IOType.Factory.NUMBER);
 
 		getOutputs.add(new IODescription(-1, LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false, null));
-//		getOutputs.add(new IODescription(-1, LocationService.REGION_NAME, "Region", text, "The state/county you're in.", false, null));
         getOutputs.add(new IODescription(-1, LocationService.COUNTRY_CODE, "Country code", text, "The code of the country you're in", false, null));
 		getOutputs.add(new IODescription(-1, LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near", false, null));
         getOutputs.add(new IODescription(-1, LocationService.ROAD_NAME, "Road name", text, "The name of the road you're on", false, null));
@@ -491,12 +497,8 @@ public class ServiceFactory {
         ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
         samples.add(new SampleValue("On", BluetoothAdapter.STATE_OFF));
         samples.add(new SampleValue("Off", BluetoothAdapter.STATE_ON));
-//		samples.add(new IOValue("Turning on", BluetoothAdapter.STATE_TURNING_ON));
-//		samples.add(new IOValue("Turning off", BluetoothAdapter.STATE_TURNING_OFF));
         samples.add(new SampleValue("Connected", BluetoothAdapter.STATE_CONNECTED));
         samples.add(new SampleValue("Disconnected", BluetoothAdapter.STATE_DISCONNECTED));
-//		samples.add(new IOValue("Connecting", BluetoothAdapter.STATE_CONNECTING));
-//		samples.add(new IOValue("Disconnecting", BluetoothAdapter.STATE_DISCONNECTING));
 
         outputs.add(new IODescription(-1, BluetoothTrigger.STATE, "Bluetooth State", set, "The new state of the bluetooth connection", true, samples));
 

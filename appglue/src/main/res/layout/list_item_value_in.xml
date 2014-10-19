@@ -56,7 +56,7 @@
             android:text="@string/bullet"
             android:paddingRight="2dip"
             android:paddingEnd="2dip"
-            android:textColor="@color/dim_text"
+            android:textColor="@color/textColor_dim"
             />
 
         <TextView
@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sample value"
-            android:textColor="@color/dim_text"
+            android:textColor="@color/textColor_dim"
             android:textStyle="italic"
             />
 

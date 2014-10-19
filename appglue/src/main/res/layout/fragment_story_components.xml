@@ -40,7 +40,7 @@
         android:layout_above="@id/choice_done"
         android:layout_marginLeft="5dip"
         android:layout_marginRight="5dip"
-        android:background="@color/dim_text" />
+        android:background="@color/textColor_dim" />
 
     <LinearLayout
         android:id="@+id/choice_carry_on"

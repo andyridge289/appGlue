@@ -15,7 +15,7 @@ import com.appglue.engine.description.ServiceIO;
 import com.appglue.library.FilterFactory;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.NotificationService;
-import com.appglue.services.ServiceFactory;
+import com.appglue.services.factory.ServiceFactory;
 import com.appglue.services.TubeService;
 
 import org.json.JSONObject;

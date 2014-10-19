@@ -110,11 +110,6 @@ public class FragmentComposites extends Fragment {
     }
 
     void redraw() {
-        if (mode == MODE_LIST) {
-            Log.d(TAG, "Set mode LIST");
-        } else if (mode == MODE_COMPOSITE) {
-            Log.d(TAG, "Set mode COMPOSITE");
-        }
 
         Fragment active;
         int slideOut;
@@ -142,6 +137,7 @@ public class FragmentComposites extends Fragment {
             case MODE_LIST:
             default:
                 active = listFragment;
+                listFragment.redraw();
                 slideOut = R.anim.slide_out_right;
                 slideIn = R.anim.slide_in_left;
                 break;
@@ -152,12 +148,6 @@ public class FragmentComposites extends Fragment {
                 .replace(R.id.container, active).commit();
 
         getActivity().invalidateOptionsMenu();
-    }
-
-    public void setViewMode() {
-        if (listFragment != null) {
-            listFragment.setViewMode();
-        }
     }
 
     public String getName() {

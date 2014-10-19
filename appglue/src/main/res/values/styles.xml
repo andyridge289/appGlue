@@ -6,7 +6,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/textColor</item>
-        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:textColorPrimary">@color/textColorInverse</item>
     </style>
 
 	<style name="Fill">
@@ -91,16 +91,20 @@
 	    <item name="android:gravity">center</item>
 	    <item name="android:lines">2</item>
 	    <item name="android:singleLine">false</item>
-	    <item name="android:textColor">@color/dim_text</item>
+	    <item name="android:textColor">@color/textColor_dim</item>
 	</style>
 	
 	<style name="Simple.Title" parent="@style/FillWrap">
 	    <item name="android:background">@drawable/title_bg</item>
-	    <item name="android:textColor">@color/dim_text</item>
+	    <item name="android:textColor">@color/textColor_dim</item>
 	    <item name="android:gravity">center</item>
 	    <item name="android:layout_gravity">center</item>
 	    <item name="android:paddingTop">5dip</item>
 	    <item name="android:paddingBottom">5dip</item>
 	</style>
+
+    <style name="SelectableItem">
+        <item name="android:background">@drawable/textview_button</item>
+    </style>
 	
 </resources>

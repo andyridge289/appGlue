@@ -318,30 +318,20 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(ID, CompositeService.TEMP_ID);
         cv.put(NAME, CompositeService.TEMP_NAME);
         cv.put(DESCRIPTION, CompositeService.TEMP_DESCRIPTION);
-//        cv.put(SCHEDULED, 0);
         cv.put(ENABLED, 1);
-//        cv.put(NUMERAL, 0);
-//        cv.put(HOURS, -1);
-//        cv.put(MINUTES, -1);
-//        cv.put(INTERVAL, Interval.NONE.index);
         long id = db.insertOrThrow(TBL_COMPOSITE, null, cv);
         if (id != 1) {
             Log.e(TAG, "The temp has been inserted somewhere that isn't 1. This is a problem");
         }
     }
 
-    public synchronized CompositeService saveTempAsComposite(String name, CompositeService temp) {
+    public synchronized CompositeService saveTempAsComposite(String name, CompositeService temp, boolean enabled) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
         cv.put(NAME, name);
         cv.put(DESCRIPTION, "");
-//        cv.put(SCHEDULED, temp.getScheduleIndex());
-//        cv.put(HOURS, temp.getHours());
-//        cv.put(MINUTES, temp.getMinutes());
-        cv.put(ENABLED, temp.isEnabled());
-//        cv.put(NUMERAL, temp.getNumeral());
-//        cv.put(INTERVAL, temp.getInterval().index);
+        cv.put(ENABLED, enabled);
 
         long id = db.insertOrThrow(TBL_COMPOSITE, null, cv);
 
@@ -351,8 +341,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         String[] tables = new String[]{TBL_COMPONENT, TBL_EXECUTION_LOG, TBL_IOCONNECTION, TBL_SERVICEIO
         };
 
-        for (String table : tables)
+        for (String table : tables) {
             db.update(table, cv, COMPOSITE_ID + " = ?", new String[]{"" + CompositeService.TEMP_ID});
+        }
 
         return getComposite(id);
     }
@@ -368,7 +359,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int num = db.delete(TBL_COMPONENT, COMPOSITE_ID + " = ?", new String[]{"" + CompositeService.TEMP_ID});
         if (LOG) Log.d(TAG, "Reset temp: " + num + " deleted from component");
 
-        // FIXME Reset
+        if (LOG) Log.d(TAG, "DBUPDATE[resetTemp] deleted " + num + " from other tables");
+
+        // Reset the composite table too in case we disabled it
+        ContentValues cv = new ContentValues();
+        cv.put(ENABLED, 1);
+        num = db.update(TBL_COMPOSITE, cv, ID + " = ?", new String[] { "" + CompositeService.TEMP_ID});
+        if (LOG) Log.d(TAG, "DBUPDATE[resetTemp] updated " + num + " in composite table");
 
         return getComposite(CompositeService.TEMP_ID);
     }

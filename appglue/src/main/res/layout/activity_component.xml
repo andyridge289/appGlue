@@ -88,7 +88,7 @@
                 android:gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 android:text="@string/dev_name"
-                android:textColor="@color/dim_text"
+                android:textColor="@color/textColor_dim"
                 android:paddingLeft="5dip"
                 android:paddingStart="5dip"
                 android:textSize="12sp"
@@ -116,7 +116,7 @@
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="1dip"
-                android:background="@color/dim_text"
+                android:background="@color/textColor_dim"
                 android:layout_marginLeft="5dip"
                 android:layout_marginRight="5dip" />
 
@@ -146,7 +146,7 @@
         android:layout_height="wrap_content"
         android:text="@string/no_examples"
         android:id="@+id/eg_none"
-        android:textColor="@color/dimmer_text"
+        android:textColor="@color/textColor_dimmer"
         android:layout_margin="5dip"
         android:gravity="center"
         android:visibility="gone" />
@@ -204,7 +204,7 @@
                     android:id="@+id/no_inputs"
                     android:text="@string/no_inputs"
                     android:visibility="gone"
-                    android:textColor="@color/dimmer_text" />
+                    android:textColor="@color/textColor_dimmer" />
             </LinearLayout>
 
             <LinearLayout
@@ -230,7 +230,7 @@
                     android:gravity="center_horizontal"
                     android:text="@string/no_outputs"
                     android:id="@+id/no_outputs"
-                    android:textColor="@color/dimmer_text" />
+                    android:textColor="@color/textColor_dimmer" />
 
 
             </LinearLayout>

@@ -257,41 +257,22 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     }
 
     public void saveDialog() {
+        // Then it's the temp, we should save it
+        String name = csNameEdit.getText().toString();
         CompositeService cs = registry.getCurrent();
+        SparseArray<ComponentService> comps = cs.getComponents();
 
-        if (cs.getID() == 1) {
-            // Then it's the temp, we should save it
-            String name = csNameEdit.getText().toString();
-
-            SparseArray<ComponentService> comps = cs.getComponents();
-
-            if (name.equals("Temp name")) {
-                String tempName = "";
-                for (int i = 0; i < comps.size(); i++) {
-                    if (i > 0) tempName += " ->  ";
-                    tempName += comps.valueAt(i).getDescription().getName();
-                }
-
-                name = tempName;
+        if (name.equals("Temp name")) {
+            String tempName = "";
+            for (int i = 0; i < comps.size(); i++) {
+                if (i > 0) tempName += " ->  ";
+                tempName += comps.valueAt(i).getDescription().getName();
             }
 
-            registry.saveTempAsComposite(name);
-        } else if (cs.getID() == -1) {
-            // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
-            if (LOG) Log.d(TAG, "the CS is -1, this might be bad.");
-        } else {
-            // We're just updating one that already exists
-            registry.updateComposite(cs);
+            name = tempName;
         }
 
-        for (ServiceIO io : cs.getMandatoryInputs()) {
-            if (!io.hasValueOrConnection()) {
-                cs.setEnabled(false);
-                Toast.makeText(getActivity(), "You've missed some of the mandatory values, so your composite has been disabled for now", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        getActivity().finish();
+        ((ActivityWiring) getActivity()).saveDialog(name, false);
     }
 
 

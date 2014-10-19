@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="24sp"
                 android:id="@+id/cs_name"
-                android:textColor="@color/dim_text"
+                android:textColor="@color/textColor_dim"
                 android:background="@drawable/unfocused_edittext"
                 />
 

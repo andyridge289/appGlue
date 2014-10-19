@@ -17,11 +17,11 @@
 	   	android:horizontalSpacing="10dp"
 	   	android:stretchMode="columnWidth"
 	   	android:layout_marginTop="5dip"
-	    />
+	    /> <!-- Bottom margin tto make sure the scroll kicks in at the right time -->
 
     <ListView
         android:visibility="gone"
-        android:id="@+id/load_list"
+        android:id="@+id/composite_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="#00000000"
@@ -60,16 +60,69 @@
         />
 
     <!-- TODO MAke this animate up and down like the button -->
-    <android.support.v7.widget.Toolbar
+    <LinearLayout
         android:id="@+id/context_toolbar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:minHeight="@android:dimen/app_icon_size"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        android:background="@color/black"
-        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="@android:dimen/app_icon_size"
         android:layout_gravity="bottom"
-        />
-	
+        android:orientation="horizontal"
+        android:background="@color/colorAccent"
+        >
+        <ImageButton
+            android:id="@+id/composite_run"
+            style="@style/SelectableItem"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_action_play"
+            android:clickable="true"
+            android:contentDescription="@string/run"
+            android:layout_gravity="center"
+            />
+        <ImageButton
+            android:id="@+id/composite_schedule"
+            style="@style/SelectableItem"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_action_time"
+            android:clickable="true"
+            android:contentDescription="@string/schedule"
+            android:layout_gravity="center"
+            />
+        <ImageButton
+            android:id="@+id/composite_edit"
+            style="@style/SelectableItem"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_action_edit"
+            android:clickable="true"
+            android:contentDescription="@string/edit"
+            android:layout_gravity="center"
+            />
+        <ImageButton
+            android:id="@+id/composite_shortcut"
+            style="@style/SelectableItem"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_action_pin"
+            android:clickable="true"
+            android:contentDescription="@string/create_shortcut"
+            android:layout_gravity="center"
+            />
+        <ImageButton
+            android:id="@+id/composite_delete"
+            style="@style/SelectableItem"
+            android:layout_width="0dip"
+            android:layout_weight="1"
+            android:layout_height="fill_parent"
+            android:src="@drawable/ic_action_discard"
+            android:clickable="true"
+            android:contentDescription="@string/delete"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
 </FrameLayout>

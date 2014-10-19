@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.FilterValueView;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.AppGlueLibrary;
@@ -25,6 +26,7 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
+import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
@@ -199,7 +201,7 @@ public class ActivityWiring extends ActionBarActivity {
                 keepTemp.setPositiveButton("Save draft",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                registry.saveTempAsComposite("Saved draft");
+                                saveDialog("Saved draft", true);
                                 registry.resetTemp();
                                 registry.setCurrent(compositeId);
                                 setMode(MODE_CREATE);
@@ -230,6 +232,34 @@ public class ActivityWiring extends ActionBarActivity {
         if(keepTemp != null) {
             keepTemp.create().show(); // TODO This has leaked something
         }
+    }
+
+    public void saveDialog(String name, boolean autoSave) {
+        boolean enabled = true;
+        CompositeService cs = registry.getCurrent();
+        for (ServiceIO io : cs.getMandatoryInputs()) {
+            if (!io.hasValueOrConnection()) {
+                enabled = false;
+                Toast.makeText(this, "You've missed some of the mandatory values, so your composite has been disabled for now", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if (autoSave) {
+            registry.saveTempAsComposite(name, enabled);
+            return;
+        } else if (cs.getID() == 1) {
+
+
+            registry.saveTempAsComposite(name, enabled);
+        } else if (cs.getID() == -1) {
+            // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
+            if (LOG) Log.d(TAG, "the CS is -1, this might be bad.");
+        } else {
+            // We're just updating one that already exists
+            registry.updateComposite(cs);
+        }
+
+        finish();
     }
 
     public void startActivityForResult(Object v, Intent intent, int code) {

@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:text="@string/empty_log"
         android:gravity="center"
-        android:textColor="@color/dim_text"
+        android:textColor="@color/textColor_dim"
         android:visibility="gone"
         />
 

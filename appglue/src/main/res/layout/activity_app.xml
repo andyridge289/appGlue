@@ -45,7 +45,7 @@
              android:layout_toEndOf="@id/app_icon"
 		     android:layout_below="@id/app_name"
 		     android:text="@string/dev_name"
-		     android:textColor="@color/dim_text"
+		     android:textColor="@color/textColor_dim"
 		     android:paddingLeft="5dip"
 
 		     android:textSize="12sp"
