@@ -220,6 +220,11 @@ public class AppGlueConstants {
     public static final String LAST_EXECUTED = "last_executed";
     public static final String SCHEDULE_TYPE = "schedule_type";
 
+    public static final String TIME_PERIOD = "time_period";
+    public static final String DAY = "day";
+    public static final String MINUTE = "minute";
+    public static final String HOUR = "hour";
+
     public static final String[][] COLS_SCHEDULE = new String[][] {
         { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
         { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID },
@@ -227,7 +232,11 @@ public class AppGlueConstants {
         { SCHEDULE_TYPE, "INTEGER" },
         { NUMERAL, "INTEGER" },
         { INTERVAL, "INTEGER" },
-        { LAST_EXECUTED, "INTEGER" }
+        { LAST_EXECUTED, "INTEGER" },
+        { TIME_PERIOD, "INTEGER" },
+        { DAY, "INTEGER" },
+        { HOUR, "INTEGER" },
+        { MINUTE, "INTEGER" }
     };
 
     public static final String COMPONENT_ID = "component_id";

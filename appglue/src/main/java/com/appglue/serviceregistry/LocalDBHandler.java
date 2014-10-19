@@ -77,6 +77,7 @@ import static com.appglue.library.AppGlueConstants.COLS_VALUENODE;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CONDITION;
+import static com.appglue.library.AppGlueConstants.DAY;
 import static com.appglue.library.AppGlueConstants.DB_NAME;
 import static com.appglue.library.AppGlueConstants.DB_VERSION;
 import static com.appglue.library.AppGlueConstants.ENABLED;
@@ -93,6 +94,7 @@ import static com.appglue.library.AppGlueConstants.FK_IOFILTER;
 import static com.appglue.library.AppGlueConstants.FK_IOVALUE;
 import static com.appglue.library.AppGlueConstants.FK_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.FK_VALUENODE;
+import static com.appglue.library.AppGlueConstants.HOUR;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.INDEX_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.INDEX_EXECUTION_LOG;
@@ -121,6 +123,7 @@ import static com.appglue.library.AppGlueConstants.LAST_EXECUTED;
 import static com.appglue.library.AppGlueConstants.LOG_TYPE;
 import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
+import static com.appglue.library.AppGlueConstants.MINUTE;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
 import static com.appglue.library.AppGlueConstants.OUTPUT_DATA;
 import static com.appglue.library.AppGlueConstants.SCHEDULE_TYPE;
@@ -147,6 +150,7 @@ import static com.appglue.library.AppGlueConstants.TBL_TAG;
 import static com.appglue.library.AppGlueConstants.TBL_VALUENODE;
 import static com.appglue.library.AppGlueConstants.TERMINATED;
 import static com.appglue.library.AppGlueConstants.TIME;
+import static com.appglue.library.AppGlueConstants.TIME_PERIOD;
 import static com.appglue.library.AppGlueConstants.VALUE_NODE_ID;
 
 public class LocalDBHandler extends SQLiteOpenHelper {
@@ -2965,6 +2969,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(SCHEDULE_TYPE, s.getScheduleType().index);
         cv.put(NUMERAL, s.getNumeral());
         cv.put(INTERVAL, s.getInterval().index);
+        cv.put(TIME_PERIOD, s.getTimePeriod().index);
+        cv.put(DAY, s.getDay());
+        cv.put(HOUR, s.getHour());
+        cv.put(MINUTE, s.getMinute());
 
         long insertTime = System.currentTimeMillis();
         cv.put(LAST_EXECUTED, insertTime); // We need to seed it with this to see when we might next need to go
@@ -2991,6 +2999,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(NUMERAL, s.getNumeral());
         cv.put(INTERVAL, s.getInterval().index);
         cv.put(LAST_EXECUTED, s.getLastExecuted());
+        cv.put(TIME_PERIOD, s.getTimePeriod().index);
+        cv.put(DAY, s.getDay());
+        cv.put(HOUR, s.getHour());
+        cv.put(MINUTE, s.getMinute());
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -3050,7 +3062,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             int intervalIndex = c.getInt(c.getColumnIndex(INTERVAL));
             long lastExecuted = c.getLong(c.getColumnIndex(LAST_EXECUTED));
 
-            Schedule s = new Schedule(id, cs, enabled, scheduleType, numeral, intervalIndex, lastExecuted);
+            int periodIndex = c.getInt(c.getColumnIndex(TIME_PERIOD));
+            int day = c.getInt(c.getColumnIndex(DAY));
+            int hour = c.getInt(c.getColumnIndex(HOUR));
+            int minute = c.getInt(c.getColumnIndex(MINUTE));
+
+            Schedule s = new Schedule(id, cs, enabled,
+                                      scheduleType, numeral, intervalIndex, lastExecuted,
+                                      periodIndex, day, hour, minute);
             scheduledComposites.add(s);
 
         } while (c.moveToNext());

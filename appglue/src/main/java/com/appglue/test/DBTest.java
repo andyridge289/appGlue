@@ -59,8 +59,9 @@ public class DBTest extends AndroidTestCase {
         CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
         registry.addComposite(fred);
 
-        Schedule s = new Schedule(-1, fred, true, Schedule.ScheduleType.INTERVAL.index, 1,
-                                  Schedule.Interval.HOURS.index, -1);
+        Schedule s = new Schedule(-1, fred, true,
+                                  Schedule.ScheduleType.INTERVAL.index, 1, Schedule.Interval.HOURS.index, -1,
+                                  Schedule.TimePeriod.DAY.index, 0, 7, 0);
 
         registry.addSchedule(s);
         Schedule t = registry.getSchedule(s.getID());

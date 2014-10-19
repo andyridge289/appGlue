@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.AlertDialog;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
@@ -26,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
@@ -41,7 +37,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
@@ -221,7 +216,7 @@ public class FragmentCompositeList extends Fragment {
         private Boolean[] expanded;
 
         public CompositeListAdapter(Context context, ArrayList<CompositeService> items) {
-            super(context, R.layout.list_item_app_selector, items);
+            super(context, R.layout.list_item_composite, items);
 
             expanded = new Boolean[items.size()];
             for (int i = 0; i < expanded.length; i++) {
@@ -235,7 +230,7 @@ public class FragmentCompositeList extends Fragment {
 
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.list_item_app_selector, null);
+                v = vi.inflate(R.layout.list_item_composite, null);
             }
 
             final CompositeService item = composites.get(position);
