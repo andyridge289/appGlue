@@ -179,7 +179,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     // FIXME Setting values doesn't appear to work

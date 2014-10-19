@@ -15,9 +15,9 @@
             android:layout_height="fill_parent">
 
             <View
+                android:id="@+id/composite_item_bg"
                 android:layout_width="fill_parent"
                 android:layout_height="28dip"
-                android:background="@color/colorPrimary_trans_light"
                 />
 
         </LinearLayout>

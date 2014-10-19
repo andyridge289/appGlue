@@ -24,11 +24,13 @@
     <color name="colorAccent">#ffa837ff</color>
     <color name="colorPrimaryLight_trans">#4BA133F0</color>
     <color name="colorPrimaryLight_lesstrans">#8BA133F0</color>
+    <color name="textColor">#444444</color>
+    <color name="textColorPrimary">#FFFFFF</color>
 
     <color name="colorPrimary_trans_light">#22862ecc</color>
     <color name="colorPrimary_trans_mid">#88862ecc</color>
 
-    <color name="textColorPrimary">#FFFFFF</color>
+
     <color name="windowBackground">#FFFFFF</color>
 
     <color name="divider">#BBBBBBBB</color>
@@ -47,7 +49,43 @@
 
     <!--<color name="warning">#FCCA3D</color>-->
     <!--<color name="not_compatible">#A44</color>-->
-    <color name="red">#F00</color>
+    <!-- http://www.google.co.uk/design/spec/style/color.html#color-ui-color-palette -->
+    <color name="material_red">#e51c23</color>
+    <color name="material_red200">#f9bdbb</color>
+    <color name="material_pink">#e91e63</color>
+    <color name="material_pink200">#f48fb1</color>
+    <color name="material_purple">#9c27b0</color>
+    <color name="material_purple200">#ce93d8</color>
+    <color name="material_deeppurple">#673ab7</color>
+    <color name="material_deeppurple200">#b39ddb</color>
+    <color name="material_indigo">#3f51b5</color>
+    <color name="material_indigo200">#9fa8da</color>
+    <color name="material_blue">#5677fc</color>
+    <color name="material_blue200">#afbfff</color>
+    <color name="material_lightblue">#03a9f4</color>
+    <color name="material_lightblue200">#81d4fa</color>
+    <color name="material_cyan">#00bcd4</color>
+    <color name="material_cyan200">#80deea</color>
+    <color name="material_teal">#009688</color>
+    <color name="material_teal200">#80cbc4</color>
+    <color name="material_green">#259b24</color>
+    <color name="material_green200">#72d572</color>
+    <color name="material_lightgreen">#8bc34a</color>
+    <color name="material_lightgreen200">#c5e1a5</color>
+    <color name="material_lime">#cddc39</color>
+    <color name="material_lime200">#e6ee9c</color>
+    <color name="material_yellow">#ffeb3b</color>
+    <color name="material_yellow200">#fff59d</color>
+    <color name="material_amber">#ffc107</color>
+    <color name="material_amber200">#ffe082</color>
+    <color name="material_orange">#ff9800</color>
+    <color name="material_orange200">#ffcc80</color>
+    <color name="material_deeporange">#ff5722</color>
+    <color name="material_deeporange200">#ffab91</color>
+
+    <color name="card_disabled">#eeeeee</color>
+
+
 
     <color name="sab_title">#EEE</color>
 
@@ -56,9 +94,10 @@
     <color name="dimmer_text">#AAA</color>
     <color name="dim_on_dark">#555</color>
 
+
     <color name="black">#000</color>
 
-    <!-- Android colours -->
+    <!-- Holo colours -->
 
     <color name="android_blue">#33B5E5</color>
     <color name="android_green">#99CC00</color>

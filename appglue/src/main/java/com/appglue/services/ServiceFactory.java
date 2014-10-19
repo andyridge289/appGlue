@@ -465,9 +465,9 @@ public class ServiceFactory {
         IOType set = IOType.Factory.getType(IOType.Factory.SET);
 
         ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
-        samples.add(new SampleValue("Battery Low", Intent.ACTION_BATTERY_LOW));
-        samples.add(new SampleValue("Battery Okay", Intent.ACTION_BATTERY_OKAY));
-        samples.add(new SampleValue("Battery Changed", Intent.ACTION_BATTERY_CHANGED));
+        samples.add(new SampleValue("Battery Low", BatteryTrigger.STATE_LOW));
+        samples.add(new SampleValue("Battery Okay", BatteryTrigger.STATE_OKAY));
+        samples.add(new SampleValue("Battery Changed", BatteryTrigger.STATE_CHANGED));
 
         outputs.add(new IODescription(-1, BatteryTrigger.STATE, "Battery state", set, "The new state of the battery", true, samples));
 
@@ -566,11 +566,6 @@ public class ServiceFactory {
     // android.intent.action.ACTION_SHUTDOWN
     //	android.intent.action.BOOT_COMPLETED
     //	android.intent.action.REBOOT
-
-    // Battery
-    //	android.intent.action.BATTERY_CHANGED
-    //	android.intent.action.BATTERY_LOW
-    //	android.intent.action.BATTERY_OKAY
 
     // Storage
     //	android.intent.action.DEVICE_STORAGE_LOW

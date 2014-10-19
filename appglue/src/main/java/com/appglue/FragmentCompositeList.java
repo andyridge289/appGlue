@@ -53,6 +53,8 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_COLOURS;
+import static com.appglue.library.AppGlueConstants.COMPOSITE_COLOURS_LIGHT;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
@@ -516,7 +518,7 @@ public class FragmentCompositeList extends Fragment {
                 v = vi.inflate(R.layout.list_item_app_selector, null);
             }
 
-            final CompositeService cs = composites.get(position);
+            final CompositeService item = composites.get(position);
 
             if (v == null)
                 return null;
@@ -525,13 +527,13 @@ public class FragmentCompositeList extends Fragment {
             if (nameText == null) // This way it doesn't die, but this way of fixing it doesn't seem to be a problem...
                 return v;
 
-            if (cs.getName().equals(""))
+            if (item.getName().equals(""))
                 nameText.setText("Temp ");
             else
-                nameText.setText(cs.getName());
+                nameText.setText(item.getName());
 
             ImageView icon = (ImageView) v.findViewById(R.id.composite_icon);
-            SparseArray<ComponentService> components = cs.getComponents();
+            SparseArray<ComponentService> components = item.getComponents();
 
             AppDescription app = components.get(0).getDescription().getApp();
             if (app == null || app.iconLocation() == null) {
@@ -550,7 +552,7 @@ public class FragmentCompositeList extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (getParentFragment() != null) {
-                        ((FragmentComposites) getParentFragment()).viewComposite(cs.getID());
+                        ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
                     } else {
                         // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
                         Log.e(TAG, "Parent fragment is null");
@@ -561,26 +563,55 @@ public class FragmentCompositeList extends Fragment {
             v.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (selectedIndex == -1) {
-                        addFab.hide(true);
-                        selectedIndex = position;
-                        contextToolbar.setVisibility(View.VISIBLE);
-                    } else if(selectedIndex == position) {
-                        addFab.hide(false);
-                        contextToolbar.setVisibility(View.GONE);
-                        selectedIndex = -1;
+                    if (item.isEnabled()) {
+                        if (selectedIndex == -1) {
+                            addFab.hide(true);
+                            selectedIndex = position;
+                            contextToolbar.setVisibility(View.VISIBLE);
+                        } else if (selectedIndex == position) {
+                            addFab.hide(false);
+                            contextToolbar.setVisibility(View.GONE);
+                            selectedIndex = -1;
+                        } else {
+                            selectedIndex = position;
+                        }
+                        notifyDataSetChanged();
                     } else {
-                        selectedIndex = position;
+                        // If they click an unselected one then take everything back
+                        selectedIndex = -1;
+                        addFab.hide(false);
                     }
                 }
             });
 
             LinearLayout componentContainer = (LinearLayout) v.findViewById(R.id.composite_components);
-            for (int i = 0; i < cs.getComponents().size(); i++) {
-                ComponentService component = cs.getComponents().get(i);
+            componentContainer.removeAllViews();
+            for (int i = 0; i < item.getComponents().size(); i++) {
+                ComponentService component = item.getComponents().get(i);
                 TextView tv = new TextView(getContext());
                 tv.setText(component.getDescription().getName());
                 componentContainer.addView(tv);
+            }
+
+            View backgroundView = v.findViewById(R.id.composite_item_bg);
+            if (item.isEnabled()) {
+                if (position == selectedIndex) {
+                    // This is sellected so it should be bright
+                    backgroundView.setBackgroundResource(COMPOSITE_COLOURS[position % COMPOSITE_COLOURS.length]);
+                    nameText.setTextColor(getResources().getColor(R.color.textColorPrimary));
+                } else {
+                    backgroundView.setBackgroundResource(COMPOSITE_COLOURS_LIGHT[position % COMPOSITE_COLOURS_LIGHT.length]);
+                    nameText.setTextColor(getResources().getColor(R.color.textColor));
+                }
+                // The image needs to be in colour
+                // The text needs to be brighter
+                // The top bar needs to be normal
+            } else {
+                backgroundView.setBackgroundResource(R.color.card_disabled);
+                nameText.setTextColor(getResources().getColor(R.color.dimmer_text));
+                // Grey icon
+                // Grey text
+                // Dimmer top bar - maybe just desaturate the translucent colour
             }
 
             return v;

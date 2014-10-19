@@ -80,7 +80,7 @@
         android:layout_toEndOf="@id/mandatory_bar"
         android:paddingLeft="5dip"
         android:paddingStart="5dip"
-        android:textColor="@color/red"
+        android:textColor="@color/material_red"
         android:textSize="10sp"
         android:textStyle="italic"
         android:visibility="gone"

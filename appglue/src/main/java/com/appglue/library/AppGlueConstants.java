@@ -21,6 +21,8 @@ import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.VALUE;
 
+import com.appglue.R;
+
 public class AppGlueConstants {
 
     public static final boolean AND = true;
@@ -391,4 +393,41 @@ public class AppGlueConstants {
 
     public static final String FIRST = "first";
     public static final String PREFS = "appGlue_prefs";
+
+    public static final int[] COMPOSITE_COLOURS = new int[] {
+        R.color.material_deeppurple,
+        R.color.material_indigo,
+        R.color.material_blue,
+        R.color.material_lightblue,
+        R.color.material_cyan,
+        R.color.material_teal,
+        R.color.material_green,
+        R.color.material_lime,
+        R.color.material_yellow,
+        R.color.material_amber,
+        R.color.material_orange,
+        R.color.material_deeporange,
+        R.color.material_red,
+        R.color.material_pink,
+        R.color.material_purple,
+    };
+
+    public static final int[] COMPOSITE_COLOURS_LIGHT = new int[] {
+            R.color.material_deeppurple200,
+            R.color.material_indigo200,
+            R.color.material_blue200,
+            R.color.material_lightblue200,
+            R.color.material_cyan200,
+            R.color.material_teal200,
+            R.color.material_green200,
+            R.color.material_lime200,
+            R.color.material_yellow200,
+            R.color.material_amber200,
+            R.color.material_orange200,
+            R.color.material_deeporange200,
+            R.color.material_red200,
+            R.color.material_pink200,
+            R.color.material_purple200,
+    };
+
 }
