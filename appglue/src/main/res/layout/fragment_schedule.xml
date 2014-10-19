@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -13,9 +15,21 @@
         android:id="@+id/no_schedule"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/empty_log"
+        android:text="@string/no_schedule"
         android:gravity="center"
         android:textColor="@color/textColor_dim"
         android:visibility="gone" />
 
-</LinearLayout>
+    <com.appglue.layout.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="72dip"
+        android:layout_height="72dip"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="16dip"
+        android:layout_marginRight="16dip"
+        android:layout_marginEnd="16dip"
+        app:fabcolor="@color/colorAccent"
+        app:fabdrawable="@drawable/ic_add_white"
+        />
+
+</FrameLayout>

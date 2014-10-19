@@ -43,8 +43,6 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.COMPOSITE_COLOURS;
-import static com.appglue.library.AppGlueConstants.COMPOSITE_COLOURS_LIGHT;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
@@ -208,7 +206,7 @@ public class FragmentCompositeList extends Fragment {
 
         composites = registry.getComposites();
         if (listAdapter != null) {
-            listAdapter = new CompositeListAdapter(getActivity(), R.layout.grid_item_app_selector, composites);
+            listAdapter = new CompositeListAdapter(getActivity(), composites);
             compositeList.setAdapter(listAdapter);
         }
 
@@ -220,9 +218,15 @@ public class FragmentCompositeList extends Fragment {
     private class CompositeListAdapter extends ArrayAdapter<CompositeService> {
 
         int selectedIndex = -1;
+        private Boolean[] expanded;
 
-        public CompositeListAdapter(Context context, int textViewResourceId, ArrayList<CompositeService> items) {
-            super(context, textViewResourceId, items);
+        public CompositeListAdapter(Context context, ArrayList<CompositeService> items) {
+            super(context, R.layout.list_item_app_selector, items);
+
+            expanded = new Boolean[items.size()];
+            for (int i = 0; i < expanded.length; i++) {
+                expanded[i] = false;
+            }
         }
 
         @SuppressLint("InflateParams")
@@ -284,14 +288,14 @@ public class FragmentCompositeList extends Fragment {
                             addFab.hide(true);
                             selectedIndex = position;
                             contextToolbar.setVisibility(View.VISIBLE);
-                            contextToolbar.setBackgroundResource(COMPOSITE_COLOURS[position % COMPOSITE_COLOURS.length]);
+                            contextToolbar.setBackgroundResource(item.getColour(true));
                         } else if (selectedIndex == position) {
                             addFab.hide(false);
                             contextToolbar.setVisibility(View.GONE);
                             selectedIndex = -1;
                         } else {
                             selectedIndex = position;
-                            contextToolbar.setBackgroundResource(COMPOSITE_COLOURS[position % COMPOSITE_COLOURS.length]);
+                            contextToolbar.setBackgroundResource(item.getColour(true));
                         }
                         notifyDataSetChanged();
                     } else {
@@ -311,22 +315,44 @@ public class FragmentCompositeList extends Fragment {
             LinearLayout componentContainer = (LinearLayout) v.findViewById(R.id.composite_components);
             componentContainer.removeAllViews();
 
-            for (int i = 0; i < item.getComponents().size(); i++) {
-                ComponentService component = item.getComponents().get(i);
-                TextView tv = new TextView(getContext());
-                tv.setText(component.getDescription().getName());
+            if (expanded[position]) {
+                for (int i = 0; i < item.getComponents().size(); i++) {
+                    ComponentService component = item.getComponents().get(i);
+                    TextView tv = new TextView(getContext());
+                    tv.setText(component.getDescription().getName());
 
-                if (item.isEnabled()) {
-                    if (position == selectedIndex) {
-                        tv.setTextColor(getResources().getColor(R.color.textColor));
+                    // TODO In expanded mode we need to add more information about the components
+
+                    if (item.isEnabled()) {
+                        if (position == selectedIndex) {
+                            tv.setTextColor(getResources().getColor(R.color.textColor));
+                        } else {
+                            tv.setTextColor(getResources().getColor(R.color.textColor_dim));
+                        }
                     } else {
-                        tv.setTextColor(getResources().getColor(R.color.textColor_dim));
+                        tv.setTextColor(getResources().getColor(R.color.textColor_dimmer));
                     }
-                } else {
-                    tv.setTextColor(getResources().getColor(R.color.textColor_dimmer));
-                }
 
-                componentContainer.addView(tv);
+                    componentContainer.addView(tv);
+                }
+            } else {
+                for (int i = 0; i < item.getComponents().size(); i++) {
+                    ComponentService component = item.getComponents().get(i);
+                    TextView tv = new TextView(getContext());
+                    tv.setText(component.getDescription().getName());
+
+                    if (item.isEnabled()) {
+                        if (position == selectedIndex) {
+                            tv.setTextColor(getResources().getColor(R.color.textColor));
+                        } else {
+                            tv.setTextColor(getResources().getColor(R.color.textColor_dim));
+                        }
+                    } else {
+                        tv.setTextColor(getResources().getColor(R.color.textColor_dimmer));
+                    }
+
+                    componentContainer.addView(tv);
+                }
             }
 
             View backgroundView = v.findViewById(R.id.composite_item_bg);
@@ -334,17 +360,17 @@ public class FragmentCompositeList extends Fragment {
                 // The text needs to be brighter
                 if (position == selectedIndex) {
                     // This is selected so it should be bright
-                    backgroundView.setBackgroundResource(COMPOSITE_COLOURS[position % COMPOSITE_COLOURS.length]);
+                    backgroundView.setBackgroundResource(item.getColour(true));
                     nameText.setTextColor(getResources().getColor(R.color.textColorInverse));
                 } else {
-                    backgroundView.setBackgroundResource(COMPOSITE_COLOURS_LIGHT[position % COMPOSITE_COLOURS_LIGHT.length]);
+                    backgroundView.setBackgroundResource(item.getColour(false));
                     nameText.setTextColor(getResources().getColor(R.color.textColor));
                 }
 
                 // The image needs to be in colour
                 icon.setColorFilter(null);
             } else {
-                backgroundView.setBackgroundResource(R.color.card_disabled);
+                backgroundView.setBackgroundResource(item.getColour(false));
                 nameText.setTextColor(getResources().getColor(R.color.textColorInverse_dim));
 
                 ColorMatrix matrix = new ColorMatrix();
@@ -352,6 +378,20 @@ public class FragmentCompositeList extends Fragment {
                 ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
                 icon.setColorFilter(filter);
             }
+
+            v.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (expanded[position]) {
+                        expanded[position] = false;
+                    } else {
+                        expanded[position] = true;
+                    }
+
+                    notifyDataSetChanged();
+                    return true;
+                }
+            });
 
             return v;
         }
@@ -410,7 +450,7 @@ public class FragmentCompositeList extends Fragment {
 
         protected void onPostExecute(ArrayList<CompositeService> composites) {
             FragmentCompositeList.this.composites = composites;
-            listAdapter = new CompositeListAdapter(getActivity(), R.layout.list_item_app_selector, composites);
+            listAdapter = new CompositeListAdapter(getActivity(), composites);
             compositeList.setAdapter(listAdapter);
 
             loader.setVisibility(View.GONE);

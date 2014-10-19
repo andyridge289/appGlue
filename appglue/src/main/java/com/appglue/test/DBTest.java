@@ -3,10 +3,12 @@ package com.appglue.test;
 import android.test.AndroidTestCase;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.MediumTest;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import com.appglue.IODescription;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.Schedule;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOFilter;
@@ -46,6 +48,48 @@ public class DBTest extends AndroidTestCase {
         } else {
             assertEquals(1, 2);
         }
+    }
+
+    // TODO Change the other tests to see what deleting things does.
+
+    @SmallTest
+    public void testSchedule() throws Exception {
+
+        Registry registry = Registry.getInstance(getContext());
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
+        registry.addComposite(fred);
+
+        Schedule s = new Schedule(-1, fred, true, Schedule.ScheduleType.INTERVAL.index, 1,
+                                  Schedule.Interval.HOURS.index, -1);
+
+        registry.addSchedule(s);
+        Schedule t = registry.getSchedule(s.getID());
+
+        assertEquals(s, t);
+
+        // Change the details of S
+        s.setScheduleType(Schedule.ScheduleType.TIME);
+        s.setNumeral(2);
+        s.setInterval(Schedule.Interval.DAYS);
+        s.setEnabled(false);
+
+        // Update s
+        registry.update(s);
+
+        // Get S back out again
+        t = registry.getSchedule(s.getID());
+        assertEquals(s, t);
+
+        // "Execute" S
+        s.setLastExecuteTime(System.currentTimeMillis());
+        registry.executeSchedule(s);
+        t = registry.getSchedule(s.getID());
+        assertEquals(s, t);
+
+        // Delete S from the database
+        registry.delete(s);
+        t = registry.getSchedule(s.getID());
+        assertEquals(null, t);
     }
 
     public void testUpdate() throws Exception {

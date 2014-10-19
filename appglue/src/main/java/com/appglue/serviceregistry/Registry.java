@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.appglue.ComposableService;
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.Schedule;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
@@ -338,11 +339,31 @@ public class Registry {
         return dbHandler.getServiceDescriptions(0);
     }
 
-    public ArrayList<CompositeService> getScheduledComposites() {
+    public ArrayList<Schedule> getScheduledComposites() {
         return dbHandler.getScheduledComposites();
     }
 
     public void setupIDs(ServiceDescription sd) {
         dbHandler.setupIDs(sd);
+    }
+
+    public void addSchedule(Schedule s) {
+        dbHandler.addSchedule(s);
+    }
+
+    public Schedule getSchedule(long id) {
+        return dbHandler.getSchedule(id);
+    }
+
+    public void update(Schedule s) {
+        dbHandler.updateSchedule(s);
+    }
+
+    public void executeSchedule(Schedule s) {
+        dbHandler.executedSchedule(s);
+    }
+
+    public boolean delete(Schedule s) {
+        return dbHandler.deleteSchedule(s);
     }
 }

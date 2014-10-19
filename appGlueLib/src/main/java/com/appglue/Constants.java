@@ -2,7 +2,7 @@ package com.appglue;
 
 public class Constants 
 {
-    public static final boolean LOG = false;
+    public static final boolean LOG = true;
 
     // Broadcast receive-y thing
 	public static final String ACTION_COMPOSABLE = "com.appglue.IM_A_COMPOSABLE_SERVICE";
@@ -48,26 +48,6 @@ public class Constants
 		ServiceType(int index, String name)
 		{
 			this.index = index;
-			this.name = name;
-		}
-	}
-	
-	public static enum Interval
-	{
-        NONE(0, 0, "None"),
-		SECONDS(1, 1, "Second"),
-		MINUTES(2, 60, "Minute"),
-		HOURS(3, 3600, "Hour"),
-		DAYS(4, 86400, "Day");
-		
-		public int index;
-		public int value;
-		public String name;
-		
-		Interval(int index, int value, String name)
-		{
-			this.index = index;
-			this.value = value;
 			this.name = name;
 		}
 	}

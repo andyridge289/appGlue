@@ -197,5 +197,6 @@
     <string name="bullet">\u2022</string>
     <string name="not_equals">\u2260</string>
     <string name="contains_backwards">\u220b</string>
+    <string name="no_schedule">No scheduled composites</string>
 
 </resources>

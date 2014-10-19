@@ -6,6 +6,7 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
+import com.appglue.R;
 import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import java.util.Arrays;
 
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.ID;
-import static com.appglue.Constants.Interval;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.TAG;
@@ -24,33 +24,11 @@ public class CompositeService {
     private String name;
     private String description;
 
-    private Schedule scheduleMode;
-
-    private long numeral;
-    private Interval interval;
-
-    private int hours;
-    private int minutes;
-
     private boolean enabled;
 
     public static final int TEMP_ID = 1;
     public static final String TEMP_NAME = "temp";
     public static final String TEMP_DESCRIPTION = "This is the temporary composite";
-
-    public enum Schedule {
-        NONE(0, "None"),
-        INTERVAL(1, "Interval"),
-        TIME(2, "Time");
-
-        public int index;
-        public String name;
-
-        Schedule(int index, String name) {
-            this.index = index;
-            this.name = name;
-        }
-    }
 
     private SparseArray<ComponentService> components;
     private LongSparseArray<ComponentService> componentSearch;
@@ -61,12 +39,7 @@ public class CompositeService {
         this.id = -1;
         this.name = "";
         this.description = "";
-        this.numeral = 0;
-        this.interval = Interval.NONE;
         this.enabled = true;
-        this.scheduleMode = Schedule.NONE;
-        this.hours = -1;
-        this.minutes = -1;
         this.components = new SparseArray<ComponentService>();
         this.componentSearch = new LongSparseArray<ComponentService>();
     }
@@ -255,22 +228,6 @@ public class CompositeService {
         this.id = id;
     }
 
-    public long getNumeral() {
-        return numeral;
-    }
-
-    public void setNumeral(long numeral) {
-        this.numeral = numeral;
-    }
-
-    public Interval getInterval() {
-        return interval;
-    }
-
-    public void setInterval(Interval interval) {
-        this.interval = interval;
-    }
-
     public ArrayList<ComponentService> getComponentsAL() {
         ComponentService[] comps = new ComponentService[components.size()];
         for(int i = 0 ; i < components.size(); i++) {
@@ -401,37 +358,6 @@ public class CompositeService {
             return false;
         }
 
-        if(this.numeral != other.getNumeral()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: numeral: " + this.numeral + " - " + other.getNumeral());
-            return false;
-        }
-
-        if(this.interval.index != other.getInterval().index) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: interval: " + this.interval.index + " - " +
-                                other.getInterval().index);
-            return false;
-        }
-
-        if(this.enabled != other.isEnabled()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: enabled");
-            return false;
-        }
-
-        if (this.hours != other.getHours()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: hours " + hours + " - " + other.getHours());
-            return false;
-        }
-
-        if(this.minutes != other.getMinutes()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: minutes " + minutes + " - " + other.getMinutes());
-            return false;
-        }
-
-        if(!this.scheduleMode.equals(other.getScheduleMode())) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: schedule " + scheduleMode.name + " - " + other.getScheduleMode().name);
-            return false;
-        }
-
         if(this.components.size() != other.getComponents().size()) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: not same num components: " +
                 components.size() + " - " + other.getComponents().size());
@@ -449,19 +375,53 @@ public class CompositeService {
         return true;
     }
 
-    public Schedule getScheduleMode() {
-        return scheduleMode;
+    public int getColour(boolean dark) {
+        if (!this.isEnabled() || this.id == -1)
+            return R.color.card_disabled;
+
+        // The first id is 2, but the index should be 0
+        int index = (int) (id - 2);
+
+        if (dark) {
+            return COMPOSITE_COLOURS[index % COMPOSITE_COLOURS.length];
+        } else {
+            return COMPOSITE_COLOURS_LIGHT[index % COMPOSITE_COLOURS_LIGHT.length];
+        }
     }
 
-    public int getScheduleIndex() {
-        return scheduleMode.index;
-    }
+    public static final int[] COMPOSITE_COLOURS = new int[] {
+            R.color.material_deeppurple,
+            R.color.material_indigo,
+            R.color.material_blue,
+            R.color.material_lightblue,
+            R.color.material_cyan,
+            R.color.material_teal,
+            R.color.material_green,
+            R.color.material_lime,
+            R.color.material_yellow,
+            R.color.material_amber,
+            R.color.material_orange,
+            R.color.material_deeporange,
+            R.color.material_red,
+            R.color.material_pink,
+            R.color.material_purple,
+    };
 
-    public int getHours() {
-        return hours;
-    }
-
-    public int getMinutes() {
-        return minutes;
-    }
+    public static final int[] COMPOSITE_COLOURS_LIGHT = new int[] {
+            R.color.material_deeppurple200,
+            R.color.material_indigo200,
+            R.color.material_blue200,
+            R.color.material_lightblue200,
+            R.color.material_cyan200,
+            R.color.material_teal200,
+            R.color.material_green200,
+            R.color.material_lime200,
+            R.color.material_yellow200,
+            R.color.material_amber200,
+            R.color.material_orange200,
+            R.color.material_deeporange200,
+            R.color.material_red200,
+            R.color.material_pink200,
+            R.color.material_purple200,
+    };
 }

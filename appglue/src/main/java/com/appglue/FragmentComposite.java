@@ -178,8 +178,12 @@ public class FragmentComposite extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // FIXME Enable or disabled it, but check whether we can enabled it first - mandatory inputs
+                // TODO Change active to say if it's enabled or not
             }
         });
+
+        // TODO Need to add the bar at the bottom and enable all the buttons
+        // TODO Add a message to direct them to edit it if it's disabled because of mandatoryness
 
 //        runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
 

@@ -57,7 +57,7 @@ public class AppGlueConstants {
     public static final String TBL_IOVALUE = "iovalue";
     public static final String TBL_IOFILTER = "iofilter";
     public static final String TBL_VALUENODE = "valuenode";
-
+    public static final String TBL_SCHEDULE = "schedule";
 
     public static final String TBL_COMPOSITE_EXECUTION_LOG = "compositeexecutionlog";
     public static final String TBL_EXECUTION_LOG = "executionlog";
@@ -81,26 +81,22 @@ public class AppGlueConstants {
     public static final int PLAY_SERVICES = 108;
     public static final int STORY_MODE = 109;
 
-    public static final FilterValue[] FILTER_STRING_VALUES = new FilterValue[]
-            {
-                    FilterFactory.STR_EQUALS, FilterFactory.STR_NOTEQUALS, FilterFactory.STR_CONTAINS
-            };
+    public static final FilterValue[] FILTER_STRING_VALUES = new FilterValue[] {
+        FilterFactory.STR_EQUALS, FilterFactory.STR_NOTEQUALS, FilterFactory.STR_CONTAINS
+    };
 
-    public static final FilterValue[] FILTER_NUMBER_VALUES = new FilterValue[]
-            {
-                    FilterFactory.INT_EQUALS, FilterFactory.INT_NOTEQUALS, FilterFactory.INT_LEQUALS,
-                    FilterFactory.INT_LT, FilterFactory.INT_GEQUALS, FilterFactory.INT_GT
-            };
+    public static final FilterValue[] FILTER_NUMBER_VALUES = new FilterValue[] {
+        FilterFactory.INT_EQUALS, FilterFactory.INT_NOTEQUALS, FilterFactory.INT_LEQUALS,
+        FilterFactory.INT_LT, FilterFactory.INT_GEQUALS, FilterFactory.INT_GT
+    };
 
-    public static final FilterValue[] FILTER_BOOL_VALUES = new FilterValue[]
-            {
-                    FilterFactory.BOOL_EQUALS, FilterFactory.BOOL_NOTEQUALS
-            };
+    public static final FilterValue[] FILTER_BOOL_VALUES = new FilterValue[] {
+        FilterFactory.BOOL_EQUALS, FilterFactory.BOOL_NOTEQUALS
+    };
 
-    public static final FilterValue[] FILTER_SET_VALUES = new FilterValue[]
-            {
-                    FilterFactory.SET_EQUALS, FilterFactory.SET_NOTEQUALS
-            };
+    public static final FilterValue[] FILTER_SET_VALUES = new FilterValue[] {
+        FilterFactory.SET_EQUALS, FilterFactory.SET_NOTEQUALS
+    };
 
     public static String[] FILTER_BOOL = new String[]{"true", "false"};
 
@@ -188,11 +184,6 @@ public class AppGlueConstants {
 
     // Database - Composite
     public static final String ENABLED = "enabled";
-//    public static final String SCHEDULED = "scheduled";
-//    public static final String NUMERAL = "numeral";
-//    public static final String INTERVAL = "interval";
-//    public static final String HOURS = "hours";
-//    public static final String MINUTES = "minutes";
 
     // TODO We also need a scheduling table
 
@@ -203,11 +194,6 @@ public class AppGlueConstants {
         {NAME, "TEXT"},
         {DESCRIPTION, "TEXT"},
         {ENABLED, "TINYINT"},
-//        {SCHEDULED, "TINYINT"},
-//        {NUMERAL, "INTEGER"},
-//        {INTERVAL, "INTEGER"},
-//        {HOURS, "INTEGER"},
-//        {MINUTES, "INTEGER"}
     };
 
     public static final String COMPOSITE_ID = "composite_id";
@@ -215,13 +201,13 @@ public class AppGlueConstants {
     public static final String[][] COLS_COMPONENT = new String[][]
     {
         {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
-        {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID,},
+        {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
         {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
         {POSITION, "INT"}
     };
 
     public static final String[][] FK_COMPONENT = new String[][] {
-        { COMPOSITE_ID, TBL_COMPOSITE, ID }
+            { COMPOSITE_ID, TBL_COMPOSITE, ID }
     };
 
     public static final String IX_COMPOSITE_HAS_COMPONENT = "index_composite_component";
@@ -229,8 +215,20 @@ public class AppGlueConstants {
             COMPOSITE_ID, CLASSNAME
     };
 
-    public static final String OUTPUT_ID = "output_id";
-    public static final String INPUT_ID = "input_id";
+    public static final String NUMERAL = "numeral";
+    public static final String INTERVAL = "interval";
+    public static final String LAST_EXECUTED = "last_executed";
+    public static final String SCHEDULE_TYPE = "schedule_type";
+
+    public static final String[][] COLS_SCHEDULE = new String[][] {
+        { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+        { COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID },
+        { ENABLED, "TINYINT" },
+        { SCHEDULE_TYPE, "INTEGER" },
+        { NUMERAL, "INTEGER" },
+        { INTERVAL, "INTEGER" },
+        { LAST_EXECUTED, "INTEGER" }
+    };
 
     public static final String COMPONENT_ID = "component_id";
 
@@ -393,41 +391,4 @@ public class AppGlueConstants {
 
     public static final String FIRST = "first";
     public static final String PREFS = "appGlue_prefs";
-
-    public static final int[] COMPOSITE_COLOURS = new int[] {
-        R.color.material_deeppurple,
-        R.color.material_indigo,
-        R.color.material_blue,
-        R.color.material_lightblue,
-        R.color.material_cyan,
-        R.color.material_teal,
-        R.color.material_green,
-        R.color.material_lime,
-        R.color.material_yellow,
-        R.color.material_amber,
-        R.color.material_orange,
-        R.color.material_deeporange,
-        R.color.material_red,
-        R.color.material_pink,
-        R.color.material_purple,
-    };
-
-    public static final int[] COMPOSITE_COLOURS_LIGHT = new int[] {
-            R.color.material_deeppurple200,
-            R.color.material_indigo200,
-            R.color.material_blue200,
-            R.color.material_lightblue200,
-            R.color.material_cyan200,
-            R.color.material_teal200,
-            R.color.material_green200,
-            R.color.material_lime200,
-            R.color.material_yellow200,
-            R.color.material_amber200,
-            R.color.material_orange200,
-            R.color.material_deeporange200,
-            R.color.material_red200,
-            R.color.material_pink200,
-            R.color.material_purple200,
-    };
-
 }

@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.appglue.engine.Schedule;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.layout.FloatingActionButton;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -39,8 +41,9 @@ public class FragmentSchedule extends Fragment {
 
         ListView scheduleList = (ListView) root.findViewById(R.id.schedule_list);
         TextView noSchedule = (TextView) root.findViewById(R.id.no_schedule);
+        FloatingActionButton fab = (FloatingActionButton) root.findViewById(R.id.fab_add);
 
-        ArrayList<CompositeService> composites = registry.getScheduledComposites();
+        ArrayList<Schedule> composites = registry.getScheduledComposites();
 
         if (composites.size() == 0) {
             noSchedule.setVisibility(View.VISIBLE);
@@ -96,47 +99,4 @@ public class FragmentSchedule extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
-
-//	private class LogAdapter extends ArrayAdapter<LogItem>
-//	{
-//		private ArrayList<LogItem> items;
-//
-//		public LogAdapter(Context context, ArrayList<LogItem> items)
-//		{
-//			super(context, R.layout.list_item_log, items);
-//
-//			this.items = items;
-//		}
-//
-//		// Add options so that they can actually do things with the log messages
-//		// Make the log look a bit nicer
-//		// Implement clearing of the log
-//		// Add more options to the log viewer - filtering, sorting, etc.
-//
-//		@Override
-//		public View getView(int position, View convertView, ViewGroup viewGroup)
-//		{
-//			View v = convertView;
-//			LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//			if(v == null)
-//			{
-//				v = vi.inflate(R.layout.list_item_log, viewGroup);
-//			}
-//
-//			LogItem log = items.get(position);
-//
-//			TextView logTitle = (TextView) v.findViewById(R.id.log_title);
-//			logTitle.setText(log.getComposite().getName());
-//
-//			TextView logTime = (TextView) v.findViewById(R.id.log_time);
-//			logTime.setText("");
-//
-//			TextView logMessage = (TextView) v.findViewById(R.id.log_message);
-//			logMessage.setText(log.getMessage());
-//
-//			return v;
-//		}
-//
-//	}
 }

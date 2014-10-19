@@ -20,6 +20,7 @@ import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.Tag;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.Schedule;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOFilter;
@@ -68,6 +69,7 @@ import static com.appglue.library.AppGlueConstants.COLS_IOTYPE;
 import static com.appglue.library.AppGlueConstants.COLS_IOVALUE;
 import static com.appglue.library.AppGlueConstants.COLS_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.COLS_IO_SAMPLES;
+import static com.appglue.library.AppGlueConstants.COLS_SCHEDULE;
 import static com.appglue.library.AppGlueConstants.COLS_SD;
 import static com.appglue.library.AppGlueConstants.COLS_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.COLS_TAG;
@@ -102,6 +104,7 @@ import static com.appglue.library.AppGlueConstants.INDEX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.INDEX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.INDEX_VALUENODE;
 import static com.appglue.library.AppGlueConstants.INPUT_DATA;
+import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.IO_DESCRIPTION_ID;
 import static com.appglue.library.AppGlueConstants.IO_ID;
 import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
@@ -114,10 +117,13 @@ import static com.appglue.library.AppGlueConstants.IX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.IX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.IX_VALUENODE;
+import static com.appglue.library.AppGlueConstants.LAST_EXECUTED;
 import static com.appglue.library.AppGlueConstants.LOG_TYPE;
 import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
+import static com.appglue.library.AppGlueConstants.NUMERAL;
 import static com.appglue.library.AppGlueConstants.OUTPUT_DATA;
+import static com.appglue.library.AppGlueConstants.SCHEDULE_TYPE;
 import static com.appglue.library.AppGlueConstants.SINK_IO;
 import static com.appglue.library.AppGlueConstants.SOURCE_IO;
 import static com.appglue.library.AppGlueConstants.START_TIME;
@@ -133,6 +139,7 @@ import static com.appglue.library.AppGlueConstants.TBL_IOTYPE;
 import static com.appglue.library.AppGlueConstants.TBL_IOVALUE;
 import static com.appglue.library.AppGlueConstants.TBL_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.TBL_IO_SAMPLE;
+import static com.appglue.library.AppGlueConstants.TBL_SCHEDULE;
 import static com.appglue.library.AppGlueConstants.TBL_SD;
 import static com.appglue.library.AppGlueConstants.TBL_SD_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.TBL_SERVICEIO;
@@ -179,7 +186,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     // FIXME Setting values doesn't appear to work
@@ -276,6 +283,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_VALUENODE));
         db.execSQL(AppGlueLibrary.createTableString(TBL_VALUENODE, COLS_VALUENODE, FK_VALUENODE));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SCHEDULE));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_SCHEDULE, COLS_SCHEDULE, null));
 
         db.execSQL(AppGlueLibrary.createIndexString(TBL_SERVICEIO, IX_SERVICEIO, INDEX_SERVICEIO));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IOCONNECTION, IX_IOCONNECTION, INDEX_IOCONNECTION));
@@ -2947,42 +2957,123 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return num == 1;
     }
 
-    // TODO Re-implement this once we've got scheduling up and running
-    public ArrayList<CompositeService> getScheduledComposites() {
+    public long addSchedule(Schedule s) {
 
-        //        String query = String.format("SELECT %s FROM %s WHERE %s <> %d",
-//                ID, TBL_COMPOSITE, SCHEDULED, CompositeService.Schedule.NONE.index);
-//
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor c = db.rawQuery(query, null);
-//
-//        if (c == null) {
-//            Log.e(TAG, "Dead cursor: Scheduled composites");
-//            return scheduledComposites;
-//        }
-//
-//        if (c.getCount() == 0) {
-//            return scheduledComposites;
-//        }
-//
-//        ArrayList<Long> idList = new ArrayList<Long>();
-//
-//        do {
-//
-//            long compositeId = c.getLong(c.getColumnIndex(ID));
-//            idList.add(compositeId);
-//
-//        } while (c.moveToNext());
-//        c.close();
-//
-//        long[] ids = new long[idList.size()];
-//        for (int i = 0; i < idList.size(); i++) {
-//            ids[i] = idList.get(i);
-//        }
-//
-//        scheduledComposites = getComposites(ids, false);
+        ContentValues cv = new ContentValues();
+        cv.put(COMPOSITE_ID, s.getComposite().getID());
+        cv.put(ENABLED, s.isEnabled() ? 1 : 0);
+        cv.put(SCHEDULE_TYPE, s.getScheduleType().index);
+        cv.put(NUMERAL, s.getNumeral());
+        cv.put(INTERVAL, s.getInterval().index);
 
-        return new ArrayList<CompositeService>();
+        long insertTime = System.currentTimeMillis();
+        cv.put(LAST_EXECUTED, insertTime); // We need to seed it with this to see when we might next need to go
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = db.insertOrThrow(TBL_SCHEDULE, null, cv);
+        s.setID(id);
+        s.setLastExecuteTime(insertTime);
+
+        return id;
+    }
+
+    public int updateSchedule(Schedule s) {
+
+        if (s.getID() == -1) {
+            addSchedule(s);
+            return 1;
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put(COMPOSITE_ID, s.getComposite().getID());
+        cv.put(ENABLED, s.isEnabled() ? 1 : 0);
+        cv.put(SCHEDULE_TYPE, s.getScheduleType().index);
+        cv.put(NUMERAL, s.getNumeral());
+        cv.put(INTERVAL, s.getInterval().index);
+        cv.put(LAST_EXECUTED, s.getLastExecuted());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        return db.update(TBL_SCHEDULE, cv, ID + " = ?", new String[] { "" + s.getID() });
+    }
+
+    public int executedSchedule(Schedule s) {
+
+        if (s.getID() == -1) { // This should never happen
+            addSchedule(s);
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.put(LAST_EXECUTED, s.getLastExecuted()); // IT should have updated this itself
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.update(TBL_SCHEDULE, cv, ID + " = ?", new String[] { "" + s.getID() });
+    }
+
+    public Schedule getSchedule(long id) {
+        ArrayList<Schedule> ss = getSchedules(id);
+
+        if (ss == null || ss.size() == 0) {
+            return null;
+        }
+
+        return ss.get(0);
+    }
+
+    public ArrayList<Schedule> getSchedules(long scheduleId) {
+        ArrayList<Schedule> scheduledComposites = new ArrayList<Schedule>();
+
+        String where = scheduleId == -1 ? "" : " WHERE " + ID + " = " + scheduleId;
+        String query = String.format("SELECT * FROM %s%s", TBL_SCHEDULE, where);
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: Scheduled composites");
+            return scheduledComposites;
+        }
+
+        if (c.getCount() == 0) {
+            return scheduledComposites;
+        }
+
+        c.moveToFirst();
+        do {
+
+            long id = c.getLong(c.getColumnIndex(ID));
+            long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
+            CompositeService cs = getComposite(compositeId);
+
+            boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
+            int scheduleType = c.getInt(c.getColumnIndex(SCHEDULE_TYPE));
+            long numeral = c.getLong(c.getColumnIndex(NUMERAL));
+            int intervalIndex = c.getInt(c.getColumnIndex(INTERVAL));
+            long lastExecuted = c.getLong(c.getColumnIndex(LAST_EXECUTED));
+
+            Schedule s = new Schedule(id, cs, enabled, scheduleType, numeral, intervalIndex, lastExecuted);
+            scheduledComposites.add(s);
+
+        } while (c.moveToNext());
+        c.close();
+
+        return scheduledComposites;
+    }
+
+    public boolean deleteSchedule(Schedule s) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int num = db.delete(TBL_SCHEDULE, ID + " = ?", new String[] { "" + s.getID() });
+        if (num == 1) {
+            return true;
+        } else if (num > 1) {
+            Log.d(TAG, "Deleted too many, probably a foreign key problem");
+        } else {
+            Log.d(TAG, "Didn't delete anything");
+        }
+        return false;
+    }
+
+    public ArrayList<Schedule> getScheduledComposites() {
+        return getSchedules(-1);
     }
 
     // We need to go through all of the things in here and see what the IDs are

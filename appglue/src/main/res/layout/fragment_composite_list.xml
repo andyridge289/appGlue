@@ -59,7 +59,6 @@
         app:fabdrawable="@drawable/ic_add_white"
         />
 
-    <!-- TODO MAke this animate up and down like the button -->
     <LinearLayout
         android:id="@+id/context_toolbar"
         android:layout_width="fill_parent"

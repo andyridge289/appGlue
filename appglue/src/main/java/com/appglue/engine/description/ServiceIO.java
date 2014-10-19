@@ -134,11 +134,12 @@ public class ServiceIO {
             return false;
         }
 
-        if (!other.getValue().equals(value)) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: value");
-            return false;
+        if (this.hasValue()) {
+            if (!value.equals(other.getValue())) {
+                if (LOG) Log.d(TAG, "ServiceIO->Equals: value");
+                return false;
+            }
         }
-
 
         if (this.connection != null || other.getConnection() != null) {
             if ((this.connection == null && other.getConnection() != null) ||
