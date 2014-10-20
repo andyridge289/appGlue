@@ -13,6 +13,7 @@ import com.appglue.description.AppDescription;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.LaunchAppService;
@@ -54,6 +55,7 @@ import static com.appglue.Constants.TAG;
 public class ServiceFactory {
 
     private static ServiceFactory factory;
+    private CompositeFactory compositeFactory;
     private AppDescription appDescription;
     private Context context;
     private Registry registry;
@@ -120,6 +122,11 @@ public class ServiceFactory {
             if (atomicId == null) {
                 Log.d(TAG, "The atomic ID is -1, apparently this is bad");
             }
+        }
+
+        ArrayList<CompositeService> composites = CompositeFactory.createSampleComposites(context);
+        for (CompositeService cs : composites) {
+            registry.addComposite(cs);
         }
     }
 

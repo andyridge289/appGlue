@@ -60,8 +60,8 @@ public class DBTest extends AndroidTestCase {
         registry.addComposite(fred);
 
         Schedule s = new Schedule(-1, fred, true,
-                                  Schedule.ScheduleType.INTERVAL.index, 1, Schedule.Interval.HOURS.index, -1,
-                                  Schedule.TimePeriod.DAY.index, 0, 7, 0);
+                                  Schedule.ScheduleType.INTERVAL.index, 1, Schedule.Interval.HOUR.index, -1,
+                                  Schedule.TimePeriod.DAY.index, 0, 0, 7, 0);
 
         registry.addSchedule(s);
         Schedule t = registry.getSchedule(s.getID());
@@ -71,7 +71,7 @@ public class DBTest extends AndroidTestCase {
         // Change the details of S
         s.setScheduleType(Schedule.ScheduleType.TIME);
         s.setNumeral(2);
-        s.setInterval(Schedule.Interval.DAYS);
+        s.setInterval(Schedule.Interval.DAY);
         s.setEnabled(false);
 
         // Update s

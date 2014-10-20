@@ -2,7 +2,6 @@ package com.appglue.engine;
 
 import android.util.Log;
 
-import com.appglue.Constants;
 import com.appglue.engine.description.CompositeService;
 
 import static com.appglue.Constants.LOG;
@@ -21,11 +20,33 @@ public class Schedule {
 
     private boolean enabled;
 
-    // TODO Let them specify a start time, i.e. every 20 minutes from 12:00
+    private TimePeriod period;
+    private int minute;
+    private int hour;
+    private int dayOfWeek;
+    private int dayOfMonth;
+    private TimePeriod timePeriod;
+
+    public Schedule() {
+        this.id = -1;
+        this.composite = null;
+        this.type = ScheduleType.TIME;
+        this.numeral = 0;
+        this.interval = Interval.DAY;
+        this.timeLastExecuted = System.currentTimeMillis();
+        this.enabled = true;
+        this.period = TimePeriod.DAY;
+        this.minute = 0;
+        this.hour = 0;
+        this.dayOfWeek = 0;
+        this.dayOfMonth = 0;
+    }
+
+
 
     public Schedule(long id, CompositeService cs, boolean enabled,
                     int scheduleType, long numeral, int intervalIndex, long lastExecuted,
-                    int timePeriod, int day, int hour, int minute) {
+                    int timePeriod, int dayOfWeek, int dayOfMonth, int hour, int minute) {
         this.id = id;
         this.composite = cs;
         this.enabled = enabled;
@@ -34,7 +55,8 @@ public class Schedule {
         this.interval = Interval.values()[intervalIndex];
         this.timeLastExecuted = lastExecuted;
         this.period = TimePeriod.values()[timePeriod];
-        this.day = day;
+        this.dayOfWeek = dayOfWeek;
+        this.dayOfMonth = dayOfMonth;
         this.hour = hour;
         this.minute = minute;
     }
@@ -67,8 +89,8 @@ public class Schedule {
         return period;
     }
 
-    public int getDay() {
-        return day;
+    public int getDayOfWeek() {
+        return dayOfWeek;
     }
 
     public int getMinute() {
@@ -77,6 +99,34 @@ public class Schedule {
 
     public int getHour() {
         return hour;
+    }
+
+    public void setComposite(CompositeService composite) {
+        this.composite = composite;
+    }
+
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+
+    public void setTimePeriod(TimePeriod timePeriod) {
+        this.timePeriod = timePeriod;
+    }
+
+    public int getDayOfMonth() {
+        return dayOfMonth;
+    }
+
+    public void setDayOfWeek(int dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public void setDayOfMonth(int dayOfMonth) {
+        this.dayOfMonth = dayOfMonth;
     }
 
     public enum ScheduleType {
@@ -94,9 +144,9 @@ public class Schedule {
     }
 
     public enum Interval {
-        MINUTES(0, 60, "Minute"),
-        HOURS(1, 3600, "Hour"),
-        DAYS(2, 86400, "Day");
+        MINUTE(0, 60, "Minutes"),
+        HOUR(1, 3600, "Hours"),
+        DAY(2, 86400, "Days");
 
         public int index;
         public int value;
@@ -109,16 +159,11 @@ public class Schedule {
         }
     }
 
-    private TimePeriod period;
-    private int minute;
-    private int hour;
-    private int day;
-
     public enum TimePeriod {
         HOUR(0, "Hour", new String[] { "at" }, new int[1]), // minute
         DAY(1, "Day", new String[] { "at", ":" }, new int[2]), // hour, minute
-        WEEK(2, "Week", new String[] { "on", "at", ":"}, new int[3]), // day, hour, minute
-        MONTH(3, "Month", new String[] { "on", "at", ":" }, new int[3]); // day, hour, minute
+        WEEK(2, "Week", new String[] { "on", "at", ":"}, new int[3]), // dayOfWeek, hour, minute
+        MONTH(3, "Month", new String[] { "on", "at", ":" }, new int[3]); // dayOfWeek, hour, minute
 
         public int index;
         public String name;
@@ -235,9 +280,9 @@ public class Schedule {
             return false;
         }
 
-        if (this.day != other.getDay()) {
+        if (this.dayOfWeek != other.getDayOfWeek()) {
             if (LOG)
-                Log.d(TAG, "Schedule->Equals: day: " + this.day + " - " + other.getDay());
+                Log.d(TAG, "Schedule->Equals: dayOfWeek: " + this.dayOfWeek + " - " + other.getDayOfWeek());
             return false;
         }
 

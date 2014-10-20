@@ -21,8 +21,6 @@ import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.VALUE;
 
-import com.appglue.R;
-
 public class AppGlueConstants {
 
     public static final boolean AND = true;
@@ -221,9 +219,11 @@ public class AppGlueConstants {
     public static final String SCHEDULE_TYPE = "schedule_type";
 
     public static final String TIME_PERIOD = "time_period";
-    public static final String DAY = "day";
+    public static final String DAY_OF_WEEK = "day_of_week";
+    public static final String DAY_OF_MONTH = "day_of_month";
     public static final String MINUTE = "minute";
     public static final String HOUR = "hour";
+    public static final String NEXT_EXECUTE = "next_execute";
 
     public static final String[][] COLS_SCHEDULE = new String[][] {
         { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
@@ -234,9 +234,11 @@ public class AppGlueConstants {
         { INTERVAL, "INTEGER" },
         { LAST_EXECUTED, "INTEGER" },
         { TIME_PERIOD, "INTEGER" },
-        { DAY, "INTEGER" },
+        { DAY_OF_WEEK, "INTEGER" },
+        { DAY_OF_MONTH, "INTEGER" },
         { HOUR, "INTEGER" },
-        { MINUTE, "INTEGER" }
+        { MINUTE, "INTEGER" },
+        { NEXT_EXECUTE, "INTEGER" }
     };
 
     public static final String COMPONENT_ID = "component_id";

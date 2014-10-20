@@ -36,6 +36,7 @@
         android:textSize="14sp"
         android:text="No composites"
         android:layout_gravity="center"
+        android:visibility="gone"
         />
 	
 	<ImageView

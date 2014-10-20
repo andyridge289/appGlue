@@ -322,8 +322,8 @@ public class CompositeService {
 //        int scheduleValue = c.getInt(c.getColumnIndex(prefix + SCHEDULED));
 //        this.scheduleMode = Schedule.values()[scheduleValue];
 
-//        this.hours = c.getInt(c.getColumnIndex(prefix + HOURS));
-//        this.minutes = c.getInt(c.getColumnIndex(prefix + MINUTES));
+//        this.hours = c.getInt(c.getColumnIndex(prefix + HOUR));
+//        this.minutes = c.getInt(c.getColumnIndex(prefix + MINUTE));
     }
 
     public int size() {

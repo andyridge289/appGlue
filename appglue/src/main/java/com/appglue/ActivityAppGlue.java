@@ -389,12 +389,12 @@ public class ActivityAppGlue extends ActionBarActivity
 //
 //                if (intervalIndex == Interval.SECONDS.index) {
 //                    interval = Interval.SECONDS;
-//                } else if (intervalIndex == Interval.MINUTES.index) {
-//                    interval = Interval.MINUTES;
-//                } else if (intervalIndex == Interval.HOURS.index) {
-//                    interval = Interval.HOURS;
+//                } else if (intervalIndex == Interval.MINUTE.index) {
+//                    interval = Interval.MINUTE;
+//                } else if (intervalIndex == Interval.HOUR.index) {
+//                    interval = Interval.HOUR;
 //                } else {
-//                    interval = Interval.DAYS;
+//                    interval = Interval.DAY_OF_WEEK;
 //                }
 //
 //                runOnTimer(cs, numeral * interval.value, runNowCheck.isChecked());

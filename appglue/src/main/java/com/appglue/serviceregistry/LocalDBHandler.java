@@ -77,7 +77,8 @@ import static com.appglue.library.AppGlueConstants.COLS_VALUENODE;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CONDITION;
-import static com.appglue.library.AppGlueConstants.DAY;
+import static com.appglue.library.AppGlueConstants.DAY_OF_MONTH;
+import static com.appglue.library.AppGlueConstants.DAY_OF_WEEK;
 import static com.appglue.library.AppGlueConstants.DB_NAME;
 import static com.appglue.library.AppGlueConstants.DB_VERSION;
 import static com.appglue.library.AppGlueConstants.ENABLED;
@@ -190,7 +191,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     // FIXME Setting values doesn't appear to work
@@ -813,8 +814,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(DESCRIPTION, cs.getDescription());
         values.put(ENABLED, cs.isEnabled());
 //        values.put(SCHEDULED, cs.getScheduleIndex());
-//        values.put(HOURS, cs.getHours());
-//        values.put(MINUTES, cs.getMinutes());
+//        values.put(HOUR, cs.getHours());
+//        values.put(MINUTE, cs.getMinutes());
 //        values.put(INTERVAL, cs.getInterval().index);
 //        values.put(NUMERAL, cs.getNumeral());
 
@@ -2970,7 +2971,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(NUMERAL, s.getNumeral());
         cv.put(INTERVAL, s.getInterval().index);
         cv.put(TIME_PERIOD, s.getTimePeriod().index);
-        cv.put(DAY, s.getDay());
+        cv.put(DAY_OF_WEEK, s.getDayOfWeek());
+        cv.put(DAY_OF_WEEK, s.getDayOfMonth());
         cv.put(HOUR, s.getHour());
         cv.put(MINUTE, s.getMinute());
 
@@ -3000,7 +3002,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(INTERVAL, s.getInterval().index);
         cv.put(LAST_EXECUTED, s.getLastExecuted());
         cv.put(TIME_PERIOD, s.getTimePeriod().index);
-        cv.put(DAY, s.getDay());
+        cv.put(DAY_OF_WEEK, s.getDayOfWeek());
+        cv.put(DAY_OF_MONTH, s.getDayOfMonth());
         cv.put(HOUR, s.getHour());
         cv.put(MINUTE, s.getMinute());
 
@@ -3063,13 +3066,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long lastExecuted = c.getLong(c.getColumnIndex(LAST_EXECUTED));
 
             int periodIndex = c.getInt(c.getColumnIndex(TIME_PERIOD));
-            int day = c.getInt(c.getColumnIndex(DAY));
+            int dayOfWeek = c.getInt(c.getColumnIndex(DAY_OF_WEEK));
+            int dayOfMonth = c.getInt(c.getColumnIndex(DAY_OF_MONTH));
             int hour = c.getInt(c.getColumnIndex(HOUR));
             int minute = c.getInt(c.getColumnIndex(MINUTE));
 
             Schedule s = new Schedule(id, cs, enabled,
                                       scheduleType, numeral, intervalIndex, lastExecuted,
-                                      periodIndex, day, hour, minute);
+                                      periodIndex, dayOfWeek, dayOfMonth, hour, minute);
             scheduledComposites.add(s);
 
         } while (c.moveToNext());

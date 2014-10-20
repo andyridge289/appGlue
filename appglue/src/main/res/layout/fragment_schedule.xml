@@ -12,13 +12,16 @@
         android:orientation="vertical"
         >
         <android.support.v7.widget.CardView
+            android:id="@+id/new_schedule"
+            android:visibility="gone"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             >
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 >
 
                 <LinearLayout
@@ -60,14 +63,11 @@
 
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/composite_name"
+                    <Spinner
+                        android:id="@+id/composite_name_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dip"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:text="@string/composite_name"
                         android:layout_toEndOf="@id/composite_icon_container"
                         android:layout_toRightOf="@id/composite_icon_container"
                         />
@@ -81,9 +81,13 @@
 
                         <LinearLayout
                             android:layout_width="fill_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:background="@color/bar_bg"
+                            >
 
                             <Button
+                                android:id="@+id/time_selector"
+                                style="@style/tab"
                                 android:layout_width="0dip"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
@@ -91,6 +95,8 @@
                                 />
 
                             <Button
+                                android:id="@+id/interval_selector"
+                                style="@style/tab"
                                 android:layout_width="0dip"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
@@ -101,61 +107,217 @@
 
                         <FrameLayout
                             android:layout_width="fill_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            >
 
-                            <RelativeLayout
+                            <LinearLayout
+                                android:id="@+id/time_container"
                                 android:layout_width="fill_parent"
-                                android:layout_height="wrap_content">
+                                android:layout_height="wrap_content"
+                                android:visibility="gone"
+                                android:orientation="vertical"
+                                >
 
-                            </RelativeLayout>
+                                <LinearLayout
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:text="Every"
+                                        />
+
+                                    <Spinner
+                                        android:id="@+id/time_period_spinner"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="4"
+                                        android:layout_height="wrap_content"
+                                        />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/spinner_row"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content"
+                                    >
+
+                                    <TextView
+                                        android:id="@+id/time_text"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:text="at/on"
+                                        />
+
+                                    <EditText
+                                        android:id="@+id/time_edit"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        android:inputType="number"
+                                        android:maxLines="1"
+                                        android:maxLength="2"
+                                        />
+
+                                    <Spinner
+                                        android:id="@+id/week_spinner"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        />
+
+                                    <Spinner
+                                        android:id="@+id/month_spinner"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/time_interval_text"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        android:text="minutes"
+                                        />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/time_row"
+                                    android:layout_width="fill_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:text="at"
+                                        />
+
+                                    <TextView
+                                        android:id="@+id/time_text_time"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        android:text="--:--"
+                                        />
+
+                                    <Button
+                                        android:id="@+id/time_button"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        android:text="Set time"
+                                        />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:id="@+id/interval_container"
                                 android:layout_width="fill_parent"
+                                android:orientation="vertical"
                                 android:layout_height="wrap_content">
 
-                                <TextView
-                                    android:layout_width="wrap_content"
+                                <LinearLayout
+                                    android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="Every"
-                                    />
+                                    >
 
-                                <EditText
-                                    android:layout_width="wrap_content"
+                                    <TextView
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:text="Every"
+                                        />
+
+                                    <EditText
+                                        android:id="@+id/numeral_edit"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:inputType="number"
+                                        android:maxLines="1"
+                                        android:textColor="@color/textColor"
+                                        android:layout_height="wrap_content"
+                                        />
+
+                                    <Spinner
+                                        android:id="@+id/interval_spinner"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        />
+
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="fill_parent"
                                     android:layout_height="wrap_content"
-                                    />
+                                    >
 
-                                <Spinner
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    />
+                                    <TextView
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:text="From"
+                                        />
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="From"
-                                    />
+                                    <TextView
+                                        android:id="@+id/interval_time_text"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:text="--:--"
+                                        />
 
-                                <Spinner
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    />
+                                    <Button
+                                        android:id="@+id/now_button"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="1"
+                                        android:layout_height="wrap_content"
+                                        android:textAllCaps="true"
+                                        android:textSize="12sp"
+                                        android:text="now"
+                                        />
 
+                                    <Button
+                                        android:id="@+id/interval_settime"
+                                        android:layout_width="0dip"
+                                        android:layout_weight="2"
+                                        android:layout_height="wrap_content"
+                                        android:textAllCaps="true"
+                                        android:textSize="12sp"
+                                        android:text="Choose time"
+                                        />
+
+                                </LinearLayout>
                             </LinearLayout>
-
                         </FrameLayout>
-
                     </LinearLayout>
-
                 </RelativeLayout>
 
-            </FrameLayout>
+                <Button
+                    android:id="@+id/schedule_done"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Done"
+                    android:textAllCaps="true"
+                    android:textSize="12sp"
+                    />
 
+            </LinearLayout>
         </android.support.v7.widget.CardView>
+
         <ListView
             android:id="@+id/schedule_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
     </LinearLayout>
 
     <TextView
