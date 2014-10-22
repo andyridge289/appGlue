@@ -232,17 +232,18 @@ public class AppGlueConstants {
             {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
             {COMPOSITE_ID, "INTEGER", TBL_COMPOSITE, ID},
             {ENABLED, "TINYINT"},
+            {IS_SCHEDULED, "TINYINT"},
             {SCHEDULE_TYPE, "INTEGER"},
             {NUMERAL, "INTEGER"},
             {INTERVAL, "INTEGER"},
-            {LAST_EXECUTE, "INTEGER"},
             {TIME_PERIOD, "INTEGER"},
             {DAY_OF_WEEK, "INTEGER"},
             {DAY_OF_MONTH, "INTEGER"},
             {HOUR, "INTEGER"},
             {MINUTE, "INTEGER"},
+            {LAST_EXECUTE, "INTEGER"},
             {NEXT_EXECUTE, "INTEGER"},
-            {IS_SCHEDULED, "TINYINT"}
+
     };
 
     public static final String COMPONENT_ID = "component_id";

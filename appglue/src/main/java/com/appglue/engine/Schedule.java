@@ -28,7 +28,6 @@ public class Schedule {
     private int dayOfWeek;
     private int dayOfMonth;
 
-    private boolean isScheduled;
     private boolean scheduled;
 
     public Schedule() {
@@ -45,7 +44,7 @@ public class Schedule {
         this.dayOfWeek = 0;
         this.dayOfMonth = 0;
         this.timeNextExecute = -1;
-        this.isScheduled = false;
+        this.scheduled = false;
     }
 
 
@@ -67,7 +66,7 @@ public class Schedule {
         this.hour = hour;
         this.minute = minute;
         this.timeNextExecute = nextExecute;
-        this.isScheduled = isScheduled;
+        this.scheduled = isScheduled;
     }
 
     public CompositeService getComposite() {
@@ -148,6 +147,10 @@ public class Schedule {
 
     public boolean isScheduled() {
         return scheduled;
+    }
+
+    public void setScheduled(boolean scheduled) {
+        this.scheduled = scheduled;
     }
 
     public enum ScheduleType {

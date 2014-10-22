@@ -46,7 +46,7 @@ public class Scheduler extends BroadcastReceiver {
         return instance;
     }
 
-    public void schedule(Schedule s) {
+    public void schedule(Schedule s, long time) {
         Intent intent = new Intent(context, Scheduler.class);
         intent.putExtra(COMPOSITE_ID, s.getComposite().getID());
         intent.putExtra(ID, s.getID());
@@ -65,7 +65,7 @@ public class Scheduler extends BroadcastReceiver {
 
         } else {
             Calendar cal = new GregorianCalendar();
-            cal.setTimeInMillis(System.currentTimeMillis());
+            cal.setTimeInMillis(time);
 
             // We need to find the next time that meets the required condition
 
@@ -75,6 +75,10 @@ public class Scheduler extends BroadcastReceiver {
                 // Move forward an hour
                 cal.add(Calendar.HOUR, 1);
             }
+
+            // Set the seconds and milliseconds to be zero
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
 
             // Then move to the right minute
             cal.set(Calendar.MINUTE, s.getMinute());
@@ -93,13 +97,22 @@ public class Scheduler extends BroadcastReceiver {
                 if (s.getTimePeriod().equals(Schedule.TimePeriod.WEEK)) {
 
                     // If it's week, Move to the next appropriate minute, then hour, then day of week
-                    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-                    if (dayOfWeek > s.getDayOfWeek()) {
-                        // Move forward a week
-                        cal.add(Calendar.WEEK_OF_YEAR, 1);
-                    }
+                    int current = cal.get(Calendar.DAY_OF_WEEK);
+                    int target = s.getDayOfWeek();
 
-                    cal.set(Calendar.DAY_OF_WEEK, s.getDayOfWeek());
+                    if (target > current) {
+                        cal.add(Calendar.DAY_OF_YEAR, target - current);
+                    } else if (target < current) {
+                        int day = Calendar.SATURDAY - current + target - 1;
+                        cal.add(Calendar.DAY_OF_YEAR, day);
+                    } else {
+                        // Its either today or next week
+                        if (cal.get(Calendar.HOUR) > s.getHour()) {
+                            cal.add(Calendar.DAY_OF_YEAR, 7);
+                        } else if (cal.get(Calendar.HOUR) == s.getHour() && cal.get(Calendar.MINUTE) > s.getMinute()) {
+                            cal.add(Calendar.DAY_OF_YEAR, 7);
+                        }
+                    }
 
                 } else if (s.getTimePeriod().equals(Schedule.TimePeriod.MONTH)) {
 
@@ -107,24 +120,27 @@ public class Scheduler extends BroadcastReceiver {
                     int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
                     if (dayOfMonth > s.getDayOfMonth()) {
                         // Move forward a month
-                        cal.add(Calendar.WEEK_OF_MONTH, 1);
+                        cal.add(Calendar.MONTH, 1);
                     }
 
                     cal.set(Calendar.DAY_OF_MONTH, s.getDayOfMonth());
                 }
-
-                s.setNextExecute(cal.getTimeInMillis());
             }
+
+            s.setNextExecute(cal.getTimeInMillis());
         }
 
-        registry.update(s);
 
         // At this point the calendar should contain all the information about the time it needs to be scheduled for
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             manager.setExact(AlarmManager.RTC_WAKEUP, s.getNextExecute(), alarmIntent);
+            s.setScheduled(true);
         } else {
             manager.set(AlarmManager.RTC_WAKEUP, s.getNextExecute(), alarmIntent);
+            s.setScheduled(true);
         }
+
+        registry.update(s);
     }
 
     @Override
@@ -163,11 +179,11 @@ public class Scheduler extends BroadcastReceiver {
                 context.startService(serviceIntent);
 
                 // Update the next execute time of this one to show that we've executed it
-                sch.schedule(s);
+                sch.schedule(s, System.currentTimeMillis());
             }
         }
 
         // Schedule that one
-        sch.schedule(registry.getNextScheduledItem());
+        sch.schedule(registry.getNextScheduledItem(), System.currentTimeMillis());
     }
 }

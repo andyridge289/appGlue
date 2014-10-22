@@ -48,7 +48,7 @@ public class FragmentSchedule extends Fragment {
     private ArrayList<Schedule> sch;
 
     private String[] weekDays = new String[] {
-            "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"
+            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
     };
     String[] monthDays = new String[28];
 
@@ -149,7 +149,7 @@ public class FragmentSchedule extends Fragment {
         weekSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                current.setDayOfWeek(position);
+                current.setDayOfWeek(position + 1);
             }
 
             @Override
@@ -347,7 +347,7 @@ public class FragmentSchedule extends Fragment {
 
                 registry.addSchedule(current);
                 Scheduler scheduler = Scheduler.getInstance(getActivity());
-                scheduler.schedule(current);
+                scheduler.schedule(current, System.currentTimeMillis());
                 current = null;
 
                 sch = registry.getScheduledComposites();

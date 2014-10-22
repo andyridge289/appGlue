@@ -12,6 +12,8 @@ import com.appglue.IODescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.OrchestrationServiceConnection;
+import com.appglue.engine.Schedule;
+import com.appglue.engine.Scheduler;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
@@ -21,7 +23,10 @@ import com.appglue.services.NotificationService;
 import com.appglue.services.TubeService;
 
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import static com.appglue.Constants.TAG;
 
@@ -264,6 +269,181 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
     // TODO Create some tests for the scheduler
     // Calendar
     // Interval
+
+    public void testSchedule() throws Exception {
+
+        Registry registry = Registry.getInstance(getContext());
+        Scheduler sch = Scheduler.getInstance(getContext());
+
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
+        registry.addComposite(fred);
+
+        Schedule s = new Schedule();
+        s.setComposite(fred);
+
+        // Set it to run over an interval
+        s.setScheduleType(Schedule.ScheduleType.INTERVAL);
+
+        // TODO We need to see what happens when we initialise the calendar to be NOW
+
+        Calendar cal = new GregorianCalendar();
+        cal.set(2014, Calendar.OCTOBER, 22, 12, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        long baseTime = cal.getTimeInMillis();
+
+        Schedule.Interval[] intervals = Schedule.Interval.values();
+        int[] numerals = new int[]{20, 3, 2};
+        long[] expected = new long[3];
+
+        cal.add(Calendar.MINUTE, numerals[0]);
+        expected[0] = cal.getTimeInMillis();
+
+        cal.setTimeInMillis(baseTime);
+        cal.add(Calendar.HOUR_OF_DAY, numerals[1]);
+        expected[1] = cal.getTimeInMillis();
+
+        cal.setTimeInMillis(baseTime);
+        cal.add(Calendar.DAY_OF_MONTH, numerals[2]);
+        expected[2] = cal.getTimeInMillis();
+
+        for (int i = 0; i < intervals.length; i++) {
+
+            s.setNextExecute(-1);
+            s.setScheduled(false);
+            s.setLastExecuteTime(baseTime);
+
+            s.setInterval(intervals[i]);
+            s.setNumeral(numerals[i]);
+
+            sch.schedule(s, baseTime);
+
+            assertEquals(s.isScheduled(), true);
+            assertEquals(s.getNextExecute(), expected[i]);
+        }
+
+        s.setScheduleType(Schedule.ScheduleType.TIME);
+
+        // TODO Initialising the calendar for this will be more awkward
+
+        s.setNextExecute(-1);
+        s.setScheduled(false);
+        s.setTimePeriod(Schedule.TimePeriod.HOUR);
+        s.setMinute(30);
+        sch.schedule(s, baseTime);
+
+        // Should be whatever hour we are on (or the next) :30
+        cal.setTimeInMillis(baseTime);
+        cal.set(Calendar.MINUTE, 30);
+
+        assertEquals(s.isScheduled(), true);
+        if (s.getNextExecute() != cal.getTimeInMillis()) {
+
+            long calTime = cal.getTimeInMillis();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+            String exp = sdf.format(cal.getTime());
+            cal.setTimeInMillis(s.getNextExecute());
+            String got = sdf.format(cal.getTime());
+            cal.setTimeInMillis(calTime);
+
+            Log.d(TAG, String.format("HOUR: Expected %s, got %s", exp, got));
+        }
+        assertEquals(s.getNextExecute(), cal.getTimeInMillis());
+
+        s.setNextExecute(-1);
+        s.setScheduled(false);
+        s.setTimePeriod(Schedule.TimePeriod.DAY);
+        s.setHour(12);
+        s.setMinute(30);
+        sch.schedule(s, baseTime);
+
+        // Shoudl be 12:00 on 23rd October
+        cal.setTimeInMillis(baseTime);
+        cal.set(2014, Calendar.OCTOBER, 22, 12, 30, 0);
+        assertEquals(s.isScheduled(), true);
+
+        if (s.getNextExecute() != cal.getTimeInMillis()) {
+
+            long calTime = cal.getTimeInMillis();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+            String exp = sdf.format(cal.getTime());
+            cal.setTimeInMillis(s.getNextExecute());
+            String got = sdf.format(cal.getTime());
+            cal.setTimeInMillis(calTime);
+
+            Log.d(TAG, String.format("DAY: Expected %s, got %s", exp, got));
+        }
+        assertEquals(s.getNextExecute(), cal.getTimeInMillis());
+
+        s.setNextExecute(-1);
+        s.setScheduled(false);
+        s.setTimePeriod(Schedule.TimePeriod.WEEK);
+        s.setHour(12);
+        s.setMinute(0);
+        s.setDayOfWeek(Calendar.FRIDAY);
+        sch.schedule(s, baseTime);
+
+        // Should be 12:00 on Friday 24th October
+        cal.setTimeInMillis(baseTime);
+
+        int current = cal.get(Calendar.DAY_OF_WEEK);
+        int target = Calendar.FRIDAY;
+
+        if (target > current) {
+            cal.add(Calendar.DAY_OF_YEAR, target - current);
+        } else if (target < current) {
+            int day = Calendar.SATURDAY - current + target - 1;
+            cal.add(Calendar.DAY_OF_YEAR, day);
+        } else {
+            // Its either today or next week
+            if (cal.get(Calendar.HOUR) > s.getHour()) {
+                cal.add(Calendar.DAY_OF_YEAR, 7);
+            } else if (cal.get(Calendar.HOUR) == s.getHour() && cal.get(Calendar.MINUTE) > s.getMinute()) {
+                cal.add(Calendar.DAY_OF_YEAR, 7);
+            }
+        }
+
+        assertEquals(s.isScheduled(), true);
+        if (s.getNextExecute() != cal.getTimeInMillis()) {
+
+            long calTime = cal.getTimeInMillis();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+            String exp = sdf.format(cal.getTime());
+            cal.setTimeInMillis(s.getNextExecute());
+            String got = sdf.format(cal.getTime());
+            cal.setTimeInMillis(calTime);
+
+            Log.d(TAG, String.format("WEEK: Expected %s, got %s", exp, got));
+        }
+        assertEquals(s.getNextExecute(), cal.getTimeInMillis());
+
+        s.setNextExecute(-1);
+        s.setScheduled(false);
+        s.setTimePeriod(Schedule.TimePeriod.MONTH);
+        s.setHour(12);
+        s.setMinute(0);
+        s.setDayOfMonth(4);
+        sch.schedule(s, baseTime);
+
+        // Should be the 4th of November at 12:00
+        cal.set(2014, Calendar.NOVEMBER, 4, 12, 0, 0);
+
+        assertEquals(s.isScheduled(), true);
+        if (s.getNextExecute() != cal.getTimeInMillis()) {
+
+            long calTime = cal.getTimeInMillis();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS");
+            String exp = sdf.format(cal.getTime());
+            cal.setTimeInMillis(s.getNextExecute());
+            String got = sdf.format(cal.getTime());
+            cal.setTimeInMillis(calTime);
+
+            Log.d(TAG, String.format("MONTH: Expected %s, got %s", exp, got));
+        }
+        assertEquals(s.getNextExecute(), cal.getTimeInMillis());
+    }
+
+    // TODO We probably also want to test the next iteration for each of these
 
 //    @LargeTest
 //    public void testExecution() throws Exception {

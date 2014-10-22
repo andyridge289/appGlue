@@ -50,8 +50,6 @@ public class DBTest extends AndroidTestCase {
         }
     }
 
-    // TODO Change the other tests to see what deleting things does.
-
     @SmallTest
     public void testSchedule() throws Exception {
 
@@ -61,7 +59,7 @@ public class DBTest extends AndroidTestCase {
 
         Schedule s = new Schedule(-1, fred, true,
                                   Schedule.ScheduleType.INTERVAL.index, 1, Schedule.Interval.HOUR.index, -1,
-                                  Schedule.TimePeriod.DAY.index, 0, 0, 7, 0);
+                Schedule.TimePeriod.DAY.index, 0, 0, 7, 0, 0L, false);
 
         registry.addSchedule(s);
         Schedule t = registry.getSchedule(s.getID());
@@ -169,6 +167,11 @@ public class DBTest extends AndroidTestCase {
         // Check
         fred2 = registry.getComposite(fred.getID());
         assertEquals(fred, fred2);
+
+        // Check what happens when you delete it
+        registry.delete(fred);
+        fred2 = registry.getComposite(fred.getID());
+        assertEquals(null, fred2);
     }
 
     @MediumTest
@@ -228,5 +231,7 @@ public class DBTest extends AndroidTestCase {
 
         origTemp = registry.getComposite(CompositeService.TEMP_ID);
         assertEquals(origTemp, testTemp);
+
+        // Can't delete the temp, that would be bad.
     }
 }

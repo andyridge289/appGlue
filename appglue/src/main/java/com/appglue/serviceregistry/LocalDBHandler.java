@@ -193,7 +193,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     // FIXME Setting values doesn't appear to work
@@ -2977,6 +2977,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public long addSchedule(Schedule s) {
 
+//        {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+//        {LAST_EXECUTE, "INTEGER"},
+
         ContentValues cv = new ContentValues();
         cv.put(COMPOSITE_ID, s.getComposite().getID());
         cv.put(ENABLED, s.isEnabled() ? 1 : 0);
@@ -2989,7 +2992,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(HOUR, s.getHour());
         cv.put(MINUTE, s.getMinute());
         cv.put(NEXT_EXECUTE, s.getNextExecute());
-        cv.put(IS_SCHEDULED, s.isScheduled());
+        cv.put(IS_SCHEDULED, s.isScheduled() ? 1 : 0);
 
         long insertTime = System.currentTimeMillis();
         cv.put(LAST_EXECUTE, insertTime); // We need to seed it with this to see when we might next need to go
@@ -3022,7 +3025,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(HOUR, s.getHour());
         cv.put(MINUTE, s.getMinute());
         cv.put(NEXT_EXECUTE, s.getNextExecute());
-        cv.put(IS_SCHEDULED, s.isScheduled());
+
+        if (s.getNextExecute() != -1) {
+
+        }
+
+        cv.put(IS_SCHEDULED, s.isScheduled() ? 1 : 0);
 
         SQLiteDatabase db = this.getWritableDatabase();
 

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:id="@+id/container"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
-    >
+    android:animateLayoutChanges="true">
 
     <View
         android:id="@+id/top_border"
@@ -17,25 +14,23 @@
         android:layout_marginStart="20dip"
         android:layout_marginRight="20dip"
         android:layout_marginEnd="20dip"
-        android:background="@color/divider"
-        />
+        android:background="@color/divider" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <!-- TODO This should just be a floating X -->
-        <com.appglue.layout.FloatingActionButton
+        <View
             android:id="@+id/filter_remove_button"
-            android:layout_width="32dip"
-            android:layout_height="32dip"
-            app:fabcolor="@color/ccc"
-            app:fabdrawable="@drawable/ic_action_remove_small"
+            android:layout_width="24dip"
+            android:layout_height="24dip"
+            android:background="@drawable/close36"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:clickable="true"
             android:layout_margin="5dip"
-            />
+            android:layout_alignParentTop="true" />
 
         <TextView
             android:id="@+id/filter_value_andor"
@@ -46,23 +41,20 @@
             android:textSize="20sp"
             android:gravity="center"
             android:layout_toLeftOf="@id/filter_remove_button"
-            android:layout_toStartOf="@id/filter_remove_button"
-            />
+            android:layout_toStartOf="@id/filter_remove_button" />
 
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dip"
-        >
+        android:layout_marginBottom="10dip">
 
         <LinearLayout
             android:layout_width="0dip"
             android:layout_weight="3"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <Spinner
                 android:id="@+id/filter_condition_spinner"
@@ -70,16 +62,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dip"
                 android:layout_marginRight="5dip"
-                android:textSize="12sp"
-                />
+                android:textSize="12sp" />
 
             <Switch
                 android:id="@+id/filter_value_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dip"
-                />
+                android:layout_marginTop="5dip" />
 
         </LinearLayout>
 
@@ -113,16 +103,14 @@
                 android:layout_marginLeft="5dip"
                 android:layout_marginRight="5dip"
                 android:layout_width="fill_parent"
-                android:layout_height="40dip"
-                />
+                android:layout_height="40dip" />
 
             <Button
                 android:id="@+id/choose_button"
                 android:layout_marginLeft="5dip"
                 android:layout_marginRight="5dip"
                 android:layout_width="fill_parent"
-                android:layout_height="40dip"
-                />
+                android:layout_height="40dip" />
 
             <EditText
                 android:id="@+id/filter_value_text"
@@ -130,8 +118,7 @@
                 android:layout_marginRight="5dip"
                 android:layout_width="fill_parent"
                 android:layout_height="40dip"
-                android:inputType="text"
-                />
+                android:inputType="text" />
 
         </LinearLayout>
 

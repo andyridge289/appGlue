@@ -6,9 +6,7 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,7 +16,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -27,7 +24,6 @@ import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.serviceregistry.Registry;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.ErrorDialogFragment;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.util.ArrayList;
@@ -57,8 +53,7 @@ public class ActivityAppGlue extends ActionBarActivity
         public int index;
         public String name;
 
-        Page(int index, String name)
-        {
+        Page(int index, String name) {
             this.index = index;
             this.name = name;
         }
@@ -98,7 +93,7 @@ public class ActivityAppGlue extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
 
             // Generate default values for all of the things
             this.currentPage = Page.HOME.index;
@@ -118,11 +113,11 @@ public class ActivityAppGlue extends ActionBarActivity
             int compositeMode = savedInstanceState.getInt(COMPOSITE_MODE, -1);
             int componentMode = savedInstanceState.getInt(COMPONENT_MODE, -1);
 
-            if(homeFragment != null) {
+            if (homeFragment != null) {
                 homeFragment.setMode(compositeMode);
             }
 
-            if(componentFragment != null) {
+            if (componentFragment != null) {
                 componentFragment.setMode(componentMode);
             }
         }
@@ -226,11 +221,11 @@ public class ActivityAppGlue extends ActionBarActivity
             int requestCode, int resultCode, Intent data) {
         // Decide what to do based on the original request code
         switch (requestCode) {
-            case CONNECTION_FAILURE_RESOLUTION_REQUEST :
+            case CONNECTION_FAILURE_RESOLUTION_REQUEST:
 
                 switch (resultCode) {
-                    case Activity.RESULT_OK :
-                       break;
+                    case Activity.RESULT_OK:
+                        break;
                 }
         }
     }
@@ -241,15 +236,18 @@ public class ActivityAppGlue extends ActionBarActivity
     public static class ErrorDialogFragment extends DialogFragment {
         // Global field to contain the error dialog
         private Dialog mDialog;
+
         // Default constructor. Sets the dialog field to null
         public ErrorDialogFragment() {
             super();
             mDialog = null;
         }
+
         // Set the dialog to display
         public void setDialog(Dialog dialog) {
             mDialog = dialog;
         }
+
         // Return a Dialog to the DialogFragment.
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -271,7 +269,7 @@ public class ActivityAppGlue extends ActionBarActivity
 
     public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(true);
             actionBar.setTitle(mTitle);
         }
@@ -318,7 +316,7 @@ public class ActivityAppGlue extends ActionBarActivity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             return inflater.inflate(R.layout.fragment_activity_app_glue, container, false);
         }
 
@@ -331,7 +329,7 @@ public class ActivityAppGlue extends ActionBarActivity
     }
 
     void run(CompositeService cs) {
-        if(cs == null) {
+        if (cs == null) {
             Toast.makeText(this, "Error when trying to run composite", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -448,7 +446,7 @@ public class ActivityAppGlue extends ActionBarActivity
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (registry.deleteComposite(cs)) {
+                        if (registry.delete(cs)) {
                             Toast.makeText(ActivityAppGlue.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(ActivityAppGlue.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();

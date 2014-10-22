@@ -169,8 +169,11 @@ public class Registry {
             return null;
         } else {
             long[] id = new long[]{compositeId};
-            ArrayList<CompositeService> composite = dbHandler.getComposites(id, true);
-            return composite.get(0);
+            ArrayList<CompositeService> composites = dbHandler.getComposites(id, true);
+            if (composites.size() == 0)
+                return null;
+
+            return composites.get(0);
         }
     }
 
@@ -178,7 +181,12 @@ public class Registry {
         return dbHandler.getComposites(null, false);
     }
 
-    public boolean deleteComposite(CompositeService cs) {
+    public boolean delete(CompositeService cs) {
+        if (cs.getID() == 1) {
+            Log.e(TAG, "You can't delete the temp");
+            return false;
+        }
+
         return dbHandler.deleteComposite(cs) > 0;
     }
 
