@@ -240,12 +240,12 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         isBound = true;
     }
 
-        // Test each filter separately
-           // Combine them together with the condition applied to the component
-        // Test each of the value nodes
-            // Combine with AND
-        // Test each value within the value node
-            // Combine with condition applied to the value node
+    // Test each filter separately
+    // Combine them together with the condition applied to the component
+    // Test each of the value nodes
+    // Combine with AND
+    // Test each value within the value node
+    // Combine with condition applied to the value node
     private Pair<ArrayList<Bundle>, ArrayList<Bundle>> filter2(ArrayList<Bundle> messageData, ComponentService component) throws OrchestrationException {
 
         ArrayList<Bundle> retained = new ArrayList<Bundle>();
@@ -312,11 +312,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             Log.d(TAG, String.format("%s - %s", io.getDescription().getName(), actualValue));
 
             if (!filterTestValues(actualValue, filter.getCondition(io), filter.getValues(io))) {
-                Log.d(TAG, "\tfail");
+                if (LOG) Log.d(TAG, "\tfail");
                 fail = true;
                 break;
             } else {
-                Log.d(TAG, "\tsuccess");
+                if (LOG) Log.d(TAG, "\tsuccess");
             }
         }
 
@@ -352,31 +352,31 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             expectedValue = ioValue.getSampleValue().getValue();
         }
 
-            if (ioValue == null) {  // Something has gone very very wrong
-                Log.e(TAG, "Filter value is dead, you've done something rather stupid");
-                return false;
-            }
+        if (ioValue == null) {  // Something has gone very very wrong
+            Log.e(TAG, "Filter value is dead, you've done something rather stupid");
+            return false;
+        }
 
-            if (actualValue == null) {
-                Log.e(TAG, "No value from the component... What have you done...");
-                return false;
-            }
+        if (actualValue == null) {
+            Log.e(TAG, "No value from the component... What have you done...");
+            return false;
+        }
 
-            try {
-                // This returns whether it PASSES the test, so we need to filter it if it doesn't
-                boolean b =  ((Boolean) fv.method.invoke(null, actualValue, expectedValue));
-                Log.d(TAG, String.format("%s(%s, %s)=%b", fv.method.getName(), actualValue, expectedValue, b));
-                return b;
+        try {
+            // This returns whether it PASSES the test, so we need to filter it if it doesn't
+            boolean b = ((Boolean) fv.method.invoke(null, actualValue, expectedValue));
+            Log.d(TAG, String.format("%s(%s, %s)=%b", fv.method.getName(), actualValue, expectedValue, b));
+            return b;
 
-            } catch (IllegalArgumentException e) {
-                throw new OrchestrationException("Wrong arguments passed to filter method: " +
-                        fv.method.getName() + actualValue + ", " + expectedValue);
-            } catch (IllegalAccessException e) {
-                throw new OrchestrationException("Can't access filter condition method: " +
-                        fv.method.getName());
-            } catch (InvocationTargetException e) {
-                throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
-            }
+        } catch (IllegalArgumentException e) {
+            throw new OrchestrationException("Wrong arguments passed to filter method: " +
+                    fv.method.getName() + actualValue + ", " + expectedValue);
+        } catch (IllegalAccessException e) {
+            throw new OrchestrationException("Can't access filter condition method: " +
+                    fv.method.getName());
+        } catch (InvocationTargetException e) {
+            throw new OrchestrationException("Invocation target exception in filter method. Not sure what this means");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -517,10 +517,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
                 osc.doUnbindService();
 
-                if (!osc.test && m.what != ComposableService.MSG_FAIL)
+                if (!osc.test && m.what != ComposableService.MSG_FAIL) {
                     osc.registry.compositeSuccess(osc.cs, executionInstance);
-                else if (!osc.test)
+                } else if (!osc.test) {
                     osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
+                }
 
                 return null;
             }

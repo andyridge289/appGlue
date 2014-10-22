@@ -52,6 +52,7 @@ public class Registry {
     public void setCurrent(CompositeService service) {
         this.composite = service;
     }
+
     public void setCurrent(long id) {
         this.composite = this.getComposite(id);
     }
@@ -365,5 +366,9 @@ public class Registry {
 
     public boolean delete(Schedule s) {
         return dbHandler.deleteSchedule(s);
+    }
+
+    public Schedule getNextScheduledItem() {
+        return dbHandler.getNextScheduledItem();
     }
 }

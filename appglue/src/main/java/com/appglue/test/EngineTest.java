@@ -79,13 +79,13 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         assertEquals(mappedList.size(), tubeData.size());
 
         Log.d(TAG, AppGlueLibrary.bundleToString(answers));
-        for(Bundle mapped : mappedList)
+        for (Bundle mapped : mappedList)
             Log.d(TAG, AppGlueLibrary.bundleToString(mapped));
 
         int firstFail = -1;
 
-        for(int i = 0 ; i < mappedList.size(); i++) {
-            if(!AppGlueLibrary.bundlesEqual(mappedList.get(i), answers)) {
+        for (int i = 0; i < mappedList.size(); i++) {
+            if (!AppGlueLibrary.bundlesEqual(mappedList.get(i), answers)) {
                 firstFail = i;
                 break;
             }
@@ -127,24 +127,24 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 //        Bundle { line_icon => 2130837606; line_name => Piccadilly; line_status => part closure; line_url => http://www.google.co.uk; }
 
         // First filter on Bakerloo and check what's in the thing
-        ComponentService isBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
+        ComponentService isBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{lineName},
                 new String[]{TubeService.BAKERLOO}, new FilterFactory.FilterValue[]{strEquals}, false);
 
         // Test whether it isn't the bakerloo line
-        ComponentService isntBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName },
+        ComponentService isntBakerlooComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{lineName},
                 new String[]{TubeService.BAKERLOO}, new FilterFactory.FilterValue[]{strNEquals}, false);
 
         // Get the ones with minor delays
-        ComponentService minorDelaysComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
+        ComponentService minorDelaysComponent = TestLib.createComponentForFilterSample(sd, new IODescription[]{lineStatus},
                 new String[]{TubeService.MINOR_DELAYS}, new FilterFactory.FilterValue[]{strEquals}, false);
 
         // Get one where the it's the Bakerloo line with not minor delays
-        ComponentService bakerlooMinorDelays = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineName, lineStatus },
-                                                new String[]{ TubeService.BAKERLOO, TubeService.MINOR_DELAYS },
-                                                new FilterFactory.FilterValue[]{strEquals, strEquals}, true);
+        ComponentService bakerlooMinorDelays = TestLib.createComponentForFilterSample(sd, new IODescription[]{lineName, lineStatus},
+                new String[]{TubeService.BAKERLOO, TubeService.MINOR_DELAYS},
+                new FilterFactory.FilterValue[]{strEquals, strEquals}, true);
 
         // Get one where isn't not part closed
-        ComponentService notPartClosed = TestLib.createComponentForFilterSample(sd, new IODescription[]{ lineStatus },
+        ComponentService notPartClosed = TestLib.createComponentForFilterSample(sd, new IODescription[]{lineStatus},
                 new String[]{TubeService.PART_CLOSURE}, new FilterFactory.FilterValue[]{strNEquals}, false);
 
         ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new FilterFactory.FilterValue[]{}, false);
@@ -166,20 +166,20 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 //                "No filter"
 //        };
 
-        String[] keptNames = new String[]{ TubeService.BAKERLOO };
-        String[] removedNames = new String[]{ TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
+        String[] keptNames = new String[]{TubeService.BAKERLOO};
+        String[] removedNames = new String[]{TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY};
 
-        String[] mdKept = new String[]{ TubeService.BAKERLOO, TubeService.METROPOLITAN };
-        String[] mdRemoved = new String[]{ TubeService.DLR, TubeService.PICCADILLY };
+        String[] mdKept = new String[]{TubeService.BAKERLOO, TubeService.METROPOLITAN};
+        String[] mdRemoved = new String[]{TubeService.DLR, TubeService.PICCADILLY};
 
-        String[] bmdKept = new String[]{ TubeService.BAKERLOO };
-        String[] bmdRemoved = new String[] { TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
+        String[] bmdKept = new String[]{TubeService.BAKERLOO};
+        String[] bmdRemoved = new String[]{TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY};
 
-        String[] npcKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN };
-        String[] npcRemoved = new String[] { TubeService.PICCADILLY };
+        String[] npcKept = new String[]{TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN};
+        String[] npcRemoved = new String[]{TubeService.PICCADILLY};
 
-        String[] noneKept = new String[] { TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY };
-        String[] noneRemoved = new String[]{ };
+        String[] noneKept = new String[]{TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY};
+        String[] noneRemoved = new String[]{};
 
         ArrayList<String[]> testKept = new ArrayList<String[]>();
         testKept.add(keptNames);
@@ -205,7 +205,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         filterParameters.add(TubeService.LINE_NAME);
         filterParameters.add(TubeService.LINE_NAME);
 
-        for(int i = 0; i < testComponents.size(); i++) {
+        for (int i = 0; i < testComponents.size(); i++) {
 
             Pair<ArrayList<Bundle>, ArrayList<Bundle>> filterResults = (Pair<ArrayList<Bundle>, ArrayList<Bundle>>) filterMethod.invoke(osc, tubeData, testComponents.get(i));
             ArrayList<Bundle> kept = filterResults.first;
@@ -227,7 +227,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
                 for (Bundle b : removed) {
                     removedText += b.getString(filterParameters.get(i)) + " ";
                 }
-                Log.d(TAG, "Removed: " +  removedText);
+                Log.d(TAG, "Removed: " + removedText);
                 assertEquals(1, 2);
             }
         }
@@ -260,6 +260,10 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         return foundAll;
     }
+
+    // TODO Create some tests for the scheduler
+    // Calendar
+    // Interval
 
 //    @LargeTest
 //    public void testExecution() throws Exception {

@@ -507,7 +507,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         float outputWeight;
         float filterWeight;
 
-        switch(wiringMode) {
+        switch (wiringMode) {
             case FragmentWiring.MODE_FILTER:
                 outputWeight = 1.0f;
                 inputWeight = 1.0f;
@@ -634,6 +634,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         DialogIO di = new DialogIO(activity, item);
         di.show();
     }
+
+    // tODO When we go to the filter page make sure we go back to the right position
+    // TODO It crashed when I set doesn't equal severe delays
+    // TODO Didnt we want to add AND/OR when combining the filters?
 
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
@@ -824,7 +828,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             });
 
             if (this.isExpanded()) {
-                if(item.getConnection() == null) {
+                if (item.getConnection() == null) {
                     endpoint.setVisibility(View.GONE);
                     setButton.setVisibility(View.VISIBLE);
                 }
@@ -1183,10 +1187,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                     String enableText = item.isEnabled() ? "Disable" : "Enable";
 
-                    alertDialogBuilder.setItems(new CharSequence[] { "Edit", enableText, "Delete" }, new DialogInterface.OnClickListener() {
+                    alertDialogBuilder.setItems(new CharSequence[]{"Edit", enableText, "Delete"}, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            switch(which) {
+                            switch (which) {
                                 case 0:
                                     // Edit the filter
                                     activity.filter(first.getID(), item.getID());

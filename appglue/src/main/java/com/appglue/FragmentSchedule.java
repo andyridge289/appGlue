@@ -3,8 +3,6 @@ package com.appglue;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.TimePickerDialog;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,15 +13,17 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.appglue.engine.Schedule;
+import com.appglue.engine.Scheduler;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.FloatingActionButton;
 import com.appglue.serviceregistry.Registry;
@@ -31,7 +31,6 @@ import com.appglue.serviceregistry.Registry;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 public class FragmentSchedule extends Fragment {
 
@@ -74,6 +73,9 @@ public class FragmentSchedule extends Fragment {
         }
 
     }
+
+    // FIXME When a shcedule is enabled, we need to schedule it in the alarm manager/scheduler
+    // FIXME When it's disabled we need to de-schedule it. OR we record in the database when we schedule, and only add to the alarm manager when that flag isn't set
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View root = inflater.inflate(R.layout.fragment_schedule, container, false);
@@ -344,7 +346,10 @@ public class FragmentSchedule extends Fragment {
                 // TODO check the values are sane
 
                 registry.addSchedule(current);
+                Scheduler scheduler = Scheduler.getInstance(getActivity());
+                scheduler.schedule(current);
                 current = null;
+
                 sch = registry.getScheduledComposites();
                 adapter = new ScheduleAdapter(getActivity(), sch);
                 scheduleList.setAdapter(adapter);
@@ -614,7 +619,7 @@ public class FragmentSchedule extends Fragment {
                 v = vi.inflate(R.layout.list_item_schedule, null);
             }
 
-            Schedule item = getItem(position);
+            final Schedule item = getItem(position);
 
             TextView compositeName = (TextView) v.findViewById(R.id.composite_name);
             compositeName.setText(item.getComposite().getName());
@@ -693,6 +698,16 @@ public class FragmentSchedule extends Fragment {
 
             // TODO Implement this when we've actually worked out how to to scheduling proper
             TextView next = (TextView) v.findViewById(R.id.next_time);
+
+            Switch enabledSwitch = (Switch) v.findViewById(R.id.enabled_switch);
+            enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    item.setEnabled(isChecked);
+                    notifyDataSetChanged();
+                }
+            });
+            enabledSwitch.setChecked(item.isEnabled());
 
             return v;
         }

@@ -41,6 +41,7 @@ import java.util.Set;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ICON;
 import static com.appglue.Constants.ID;
@@ -53,7 +54,6 @@ import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.VALUE;
@@ -110,6 +110,7 @@ import static com.appglue.library.AppGlueConstants.INPUT_DATA;
 import static com.appglue.library.AppGlueConstants.INTERVAL;
 import static com.appglue.library.AppGlueConstants.IO_DESCRIPTION_ID;
 import static com.appglue.library.AppGlueConstants.IO_ID;
+import static com.appglue.library.AppGlueConstants.IS_SCHEDULED;
 import static com.appglue.library.AppGlueConstants.IX_COMPONENT_HAS_TAG;
 import static com.appglue.library.AppGlueConstants.IX_COMPOSITE_HAS_COMPONENT;
 import static com.appglue.library.AppGlueConstants.IX_EXECUTION_LOG;
@@ -120,11 +121,12 @@ import static com.appglue.library.AppGlueConstants.IX_IO_DESCRIPTION;
 import static com.appglue.library.AppGlueConstants.IX_IO_SAMPLES;
 import static com.appglue.library.AppGlueConstants.IX_SERVICEIO;
 import static com.appglue.library.AppGlueConstants.IX_VALUENODE;
-import static com.appglue.library.AppGlueConstants.LAST_EXECUTED;
+import static com.appglue.library.AppGlueConstants.LAST_EXECUTE;
 import static com.appglue.library.AppGlueConstants.LOG_TYPE;
 import static com.appglue.library.AppGlueConstants.MANUAL_VALUE;
 import static com.appglue.library.AppGlueConstants.MESSAGE;
 import static com.appglue.library.AppGlueConstants.MINUTE;
+import static com.appglue.library.AppGlueConstants.NEXT_EXECUTE;
 import static com.appglue.library.AppGlueConstants.NUMERAL;
 import static com.appglue.library.AppGlueConstants.OUTPUT_DATA;
 import static com.appglue.library.AppGlueConstants.SCHEDULE_TYPE;
@@ -379,7 +381,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // Reset the composite table too in case we disabled it
         ContentValues cv = new ContentValues();
         cv.put(ENABLED, 1);
-        num = db.update(TBL_COMPOSITE, cv, ID + " = ?", new String[] { "" + CompositeService.TEMP_ID});
+        num = db.update(TBL_COMPOSITE, cv, ID + " = ?", new String[]{"" + CompositeService.TEMP_ID});
         if (LOG) Log.d(TAG, "DBUPDATE[resetTemp] updated " + num + " in composite table");
 
         return getComposite(CompositeService.TEMP_ID);
@@ -766,7 +768,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     public IOType getIOType(String inputClassName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        Cursor c = db.query(TBL_IOTYPE, new String[]{ ID, NAME, CLASSNAME }, CLASSNAME + " = ?",
+        Cursor c = db.query(TBL_IOTYPE, new String[]{ID, NAME, CLASSNAME}, CLASSNAME + " = ?",
                 new String[]{"" + inputClassName}, null, null, null);
 
         if (c == null) {
@@ -888,7 +890,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             values.put(DESCRIPTION, composite.getDescription());
             values.put(ENABLED, composite.isEnabled());
 
-            int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{ "" + composite.getID() });
+            int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{"" + composite.getID()});
             if (ret == 1) {
                 Log.d(TAG, "Updated " + ret + " values for " + composite.getID() + " (" + composite.getName() + ")");
             } else {
@@ -1008,7 +1010,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             if (!found) {
                 int count = deleteIOValue(valueId);
-                if (LOG) Log.d(TAG, "DBUPDATE [removeDeadFilterValues] Deleted " + count + " from filter " +
+                if (LOG)
+                    Log.d(TAG, "DBUPDATE [removeDeadFilterValues] Deleted " + count + " from filter " +
                             filter.getID() + "(" + filter.getComponent().getDescription().getName() + ")");
             }
 
@@ -1059,7 +1062,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 //    }
 
     private synchronized int deleteComponent(long id) {
-       return delete(TBL_COMPONENT, id);
+        return delete(TBL_COMPONENT, id);
     }
 
     private synchronized int deleteFilter(long id) {
@@ -1077,9 +1080,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(String.format("SELECT %s.%s AS %s, %s.%s AS %s FROM %s " +
                         "LEFT JOIN %s ON %s.%s = %s.%s " +
                         " WHERE %s.%s = %d",
-                        TBL_SERVICEIO, COMPONENT_ID, "componentId", TBL_COMPONENT, COMPOSITE_ID, "compositeId", TBL_SERVICEIO,
-                        TBL_COMPONENT, TBL_SERVICEIO, COMPONENT_ID, TBL_COMPONENT, ID,
-                        TBL_SERVICEIO, ID, id), null);
+                TBL_SERVICEIO, COMPONENT_ID, "componentId", TBL_COMPONENT, COMPOSITE_ID, "compositeId", TBL_SERVICEIO,
+                TBL_COMPONENT, TBL_SERVICEIO, COMPONENT_ID, TBL_COMPONENT, ID,
+                TBL_SERVICEIO, ID, id), null);
 
         if (c == null) {
             Log.e(TAG, "Dead cursor for getting serviceIO " + id);
@@ -1106,7 +1109,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private synchronized int delete(String table, long id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(table, ID + " = ?", new String[] { "" + id });
+        return db.delete(table, ID + " = ?", new String[]{"" + id});
     }
 
     private synchronized int updateComponent(ComponentService component) {
@@ -1116,8 +1119,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (component.getID() == -1) { // This is a new one and it needs to be added from scratch
             addComponent(component);
-            if(LOG) Log.d(TAG, "DBUPDATE [updateComponent] Added " + component.getDescription().getName() +
-                               " at " + component.getPosition() + " to " + component.getComposite().getName());
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateComponent] Added " + component.getDescription().getName() +
+                        " at " + component.getPosition() + " to " + component.getComposite().getName());
         } else {
             ContentValues values = new ContentValues();
             values.put(COMPOSITE_ID, component.getComposite().getID());
@@ -1128,8 +1132,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (ret != 1) {
                 Log.e(TAG, "Updated " + ret + " values for " + component.getID() + " (" + component.getDescription().getName() + ")");
             } else {
-                if(LOG) Log.d(TAG, "DBUPDATE [updateComponent] Updated " + component.getDescription().getName() +
-                        " in " + component.getComposite().getName());
+                if (LOG)
+                    Log.d(TAG, "DBUPDATE [updateComponent] Updated " + component.getDescription().getName() +
+                            " in " + component.getComposite().getName());
             }
 
             ArrayList<ServiceIO> inputs = component.getInputs();
@@ -1158,7 +1163,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (filter.getID() == -1) {
             long id = addFilter(filter);
-            if(LOG) Log.d(TAG, "DBUPDATE [updateFilter] Added a filter to " + filter.getComponent().getDescription().getName());
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateFilter] Added a filter to " + filter.getComponent().getDescription().getName());
             return id == -1 ? 1 : 0;
         }
 
@@ -1172,9 +1178,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int ret = db.update(TBL_IOFILTER, cv, ID + " = ?", new String[]{"" + filter.getID()});
         if (ret != 1) {
             failureCount++;
-            if(LOG) Log.d(TAG, "DBUPDATE [updateFilter] Failed to update " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateFilter] Failed to update " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
         } else {
-            if(LOG) Log.d(TAG, "DBUPDATE [updateFilter] Updated " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateFilter] Updated " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
         }
 
         TST<IOFilter.ValueNode> nodes = filter.getValues();
@@ -1207,9 +1215,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int ret = db.update(TBL_VALUENODE, cv, ID + " = ?", new String[]{"" + valueNode.getID()});
         if (ret == 0) {
             failureCount++;
-            if(LOG) Log.d(TAG, "DBUPDATE [updateValueNode] Failed to update " + valueNode.getID());
+            if (LOG) Log.d(TAG, "DBUPDATE [updateValueNode] Failed to update " + valueNode.getID());
         } else {
-            if(LOG) Log.d(TAG, "DBUPDATE [updateValueNode] Updated " + valueNode.getID());
+            if (LOG) Log.d(TAG, "DBUPDATE [updateValueNode] Updated " + valueNode.getID());
         }
 
         ArrayList<IOValue> values = valueNode.getValues();
@@ -1226,7 +1234,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
 
-        if(valueNode != null)
+        if (valueNode != null)
             cv.put(VALUE_NODE_ID, valueNode.getID());
         else
             cv.put(VALUE_NODE_ID, -1);
@@ -1252,9 +1260,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         value.setID(id);
 
         if (valueNode != null)
-            if(LOG) Log.d(TAG, "DBUPDATE [addIOValue] Added " + id + " for " + valueNode.getFilter().getComponent().getDescription().getName() + "(" + valueNode.getFilter().getComponent().getID() + ")");
-        else
-            if(LOG) Log.d(TAG, "DBUPDATE [addIOValue] Added " + id);
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [addIOValue] Added " + id + " for " + valueNode.getFilter().getComponent().getDescription().getName() + "(" + valueNode.getFilter().getComponent().getID() + ")");
+            else if (LOG) Log.d(TAG, "DBUPDATE [addIOValue] Added " + id);
 
         return id;
     }
@@ -1266,7 +1274,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (value.getID() == -1) {
             addIOValue(value, null);
-            if(LOG) Log.d(TAG, "DBUPDATE [updateIOValue] Added " + value.getID() + " (" + (vn == null) + ")");
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateIOValue] Added " + value.getID() + " (" + (vn == null) + ")");
             return 0;
         }
 
@@ -1295,12 +1304,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             values.put(SAMPLE_VALUE, value.getSampleValue().getID());
         }
 
-        int ret = db.update(TBL_IOVALUE, values, ID + " = ?", new String[]{ "" + value.getID() });
+        int ret = db.update(TBL_IOVALUE, values, ID + " = ?", new String[]{"" + value.getID()});
 
         if (ret == 0) { // Does this mean nothing has changed, or there was nothing that matched?
             failureCount++;
         } else {
-            if(LOG) Log.d(TAG, "DBUPDATE [updateIOValue] Updated value " + value.getID() + " (" + vn + ")");
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateIOValue] Updated value " + value.getID() + " (" + vn + ")");
         }
 
         return failureCount;
@@ -1314,8 +1324,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         if (io.getID() == -1) {
             // This is a new one and it needs to be added from scratch
             addServiceIO(io);
-            if(LOG) Log.d(TAG, "DBUPDATE [updateServiceIO] Added " + io.getDescription().getName() + " to " +
-                    io.getComponent().getDescription().getName());
+            if (LOG)
+                Log.d(TAG, "DBUPDATE [updateServiceIO] Added " + io.getDescription().getName() + " to " +
+                        io.getComponent().getDescription().getName());
         } else {
 
             ContentValues values = new ContentValues();
@@ -1323,7 +1334,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             values.put(COMPOSITE_ID, io.getComponent().getComposite().getID());
 
             // This might just be needed to fix a quirk with the tests, but maybe not
-            if(io.getDescription().getID() != -1) {
+            if (io.getDescription().getID() != -1) {
                 values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
             } else {
                 // We need to look up the ID and set it first
@@ -1332,12 +1343,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 io.getDescription().setID(desc.getID());
             }
 
-            int ret = db.update(TBL_SERVICEIO, values, ID + " = ?", new String[]{ "" + io.getID() });
+            int ret = db.update(TBL_SERVICEIO, values, ID + " = ?", new String[]{"" + io.getID()});
             if (ret != 1) {
                 failureCount++;
             } else {
-                if(LOG) Log.d(TAG, "DBUPDATE [updateServiceIO] Updated " + io.getDescription().getName() + " in " +
-                        io.getComponent().getDescription().getName());
+                if (LOG)
+                    Log.d(TAG, "DBUPDATE [updateServiceIO] Updated " + io.getDescription().getName() + " in " +
+                            io.getComponent().getDescription().getName());
             }
 
             if (io.hasValue()) {
@@ -1363,7 +1375,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public synchronized int deleteComposite(CompositeService cs) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TBL_COMPOSITE, ID + "= ?", new String[]{ "" + cs.getID() });
+        return db.delete(TBL_COMPOSITE, ID + "= ?", new String[]{"" + cs.getID()});
     }
 
     public boolean isEnabled(CompositeService composite) {
@@ -1450,8 +1462,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 successCount++;
         }
         if (LOG) Log.d(TAG, "DBUPDATE[addComponent] Added " + successCount + "/" + inputs.size() +
-                            " inputs to " + component.getDescription().getName() + "(" +
-                            component.getID() + ")");
+                " inputs to " + component.getDescription().getName() + "(" +
+                component.getID() + ")");
 
         successCount = 0;
         ArrayList<ServiceIO> outputs = component.getOutputs();
@@ -1461,8 +1473,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 successCount++;
         }
         if (LOG) Log.d(TAG, "DBUPDATE[addComponent] Added " + successCount + "/" + outputs.size() +
-                            " outputs to " + component.getDescription().getName() + "(" +
-                            component.getID() + ")");
+                " outputs to " + component.getDescription().getName() + "(" +
+                component.getID() + ")");
 
         successCount = 0;
         ArrayList<IOFilter> filters = component.getFilters();
@@ -1472,8 +1484,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 successCount++;
         }
         if (LOG) Log.d(TAG, "DBUPDATE[addComponent] Added " + successCount + "/" + filters.size() +
-                            " filters to " + component.getDescription().getName() + "(" +
-                            component.getID() + ")");
+                " filters to " + component.getDescription().getName() + "(" +
+                component.getID() + ")");
 
         return componentId;
     }
@@ -1497,9 +1509,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (valueId != -1)
                 successCount++;
         }
-        if (LOG) Log.d(TAG, "DBUPDATE[addFilter] Added " + successCount + " (out of " + nodes.size() +
-                            ") value nodes to " + filter.getComponent().getDescription().getName()  +
-                            "(" + filter.getComponent().getID() + ")");
+        if (LOG)
+            Log.d(TAG, "DBUPDATE[addFilter] Added " + successCount + " (out of " + nodes.size() +
+                    ") value nodes to " + filter.getComponent().getDescription().getName() +
+                    "(" + filter.getComponent().getID() + ")");
 
         return id;
     }
@@ -1523,9 +1536,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (valueId != -1)
                 successCount++;
         }
-        if (LOG) Log.d(TAG, "DBUPDATE[addValueNode] Added " + successCount + " (out of " + values.size() +
-                            ") value nodes to " + valueNode.getFilter().getComponent().getDescription().getName()
-                            + "(" + valueNode.getFilter().getComponent().getID() + ")");
+        if (LOG)
+            Log.d(TAG, "DBUPDATE[addValueNode] Added " + successCount + " (out of " + values.size() +
+                    ") value nodes to " + valueNode.getFilter().getComponent().getDescription().getName()
+                    + "(" + valueNode.getFilter().getComponent().getID() + ")");
 
         return id;
     }
@@ -1538,7 +1552,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(COMPONENT_ID, io.getComponent().getID());
         values.put(COMPOSITE_ID, io.getComponent().getComposite().getID());
 
-        if(io.getDescription().getID() != -1) {
+        if (io.getDescription().getID() != -1) {
             values.put(IO_DESCRIPTION_ID, io.getDescription().getID());
         } else {
             // We need to look up the ID and set it first
@@ -2363,7 +2377,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                     currentComponent.getOutput(iod.getName());
             io.setID(ioId);
 
-            if(iod.isInput()) {
+            if (iod.isInput()) {
                 io.setValue(getIOValues(io));
             }
 
@@ -2385,8 +2399,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         String filterValueString = AppGlueLibrary.buildGetAllString(TBL_VALUENODE, COLS_VALUENODE);
 
         String query = String.format("SELECT %s FROM %s " +
-                "LEFT JOIN %s ON %s.%s = %s.%s " +
-                "WHERE %s = %d",
+                        "LEFT JOIN %s ON %s.%s = %s.%s " +
+                        "WHERE %s = %d",
                 filterString + "," + filterValueString, TBL_IOFILTER,
                 TBL_VALUENODE, TBL_IOFILTER, ID, TBL_VALUENODE, FILTER_ID,
                 TBL_IOFILTER + "." + COMPONENT_ID, component.getID());
@@ -2450,7 +2464,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     private void getIOValues(IOFilter.ValueNode valueNode) {
 
         String query = String.format("SELECT * FROM %s " +
-                "WHERE %s = %d",
+                        "WHERE %s = %d",
                 TBL_IOVALUE, VALUE_NODE_ID, valueNode.getID());
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -2511,35 +2525,34 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.moveToFirst();
 
 
+        long ioId = c.getLong(c.getColumnIndex(IO_ID));
 
-            long ioId = c.getLong(c.getColumnIndex(IO_ID));
+        if (io.getID() != ioId) {
+            Log.e(TAG, "IO ids don't match, something has gone very very wrong");
+            return null;
+        }
 
-            if (io.getID() != ioId) {
-                Log.e(TAG, "IO ids don't match, something has gone very very wrong");
-                return null;
-            }
+        long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
+        if (compositeId != io.getComponent().getComposite().getID()) {
+            Log.e(TAG, "composite ids don't match, something has gone slightly very wrong");
+            return null;
+        }
 
-            long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
-            if (compositeId != io.getComponent().getComposite().getID()) {
-                Log.e(TAG, "composite ids don't match, something has gone slightly very wrong");
-                return null;
-            }
+        long id = c.getLong(c.getColumnIndex(ID));
+        int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
+        int conditionIndex = c.getInt(c.getColumnIndex(FILTER_CONDITION));
+        boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
+        FilterFactory.FilterValue condition = FilterFactory.getFilterValue(conditionIndex);
 
-            long id = c.getLong(c.getColumnIndex(ID));
-            int filterState = c.getInt(c.getColumnIndex(FILTER_STATE));
-            int conditionIndex = c.getInt(c.getColumnIndex(FILTER_CONDITION));
-            boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
-            FilterFactory.FilterValue condition = FilterFactory.getFilterValue(conditionIndex);
+        String manualValueString = c.isNull(c.getColumnIndex(MANUAL_VALUE)) ? null :
+                c.getString(c.getColumnIndex(MANUAL_VALUE));
+        Object manualValue = manualValueString == null ? null :
+                io.getType().fromString(manualValueString);
 
-            String manualValueString = c.isNull(c.getColumnIndex(MANUAL_VALUE)) ? null :
-                    c.getString(c.getColumnIndex(MANUAL_VALUE));
-            Object manualValue = manualValueString == null ? null :
-                    io.getType().fromString(manualValueString);
+        long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
+        SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
 
-            long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
-            SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
-
-            IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
+        IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
 
         c.close();
 
@@ -2972,12 +2985,14 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(INTERVAL, s.getInterval().index);
         cv.put(TIME_PERIOD, s.getTimePeriod().index);
         cv.put(DAY_OF_WEEK, s.getDayOfWeek());
-        cv.put(DAY_OF_WEEK, s.getDayOfMonth());
+        cv.put(DAY_OF_MONTH, s.getDayOfMonth());
         cv.put(HOUR, s.getHour());
         cv.put(MINUTE, s.getMinute());
+        cv.put(NEXT_EXECUTE, s.getNextExecute());
+        cv.put(IS_SCHEDULED, s.isScheduled());
 
         long insertTime = System.currentTimeMillis();
-        cv.put(LAST_EXECUTED, insertTime); // We need to seed it with this to see when we might next need to go
+        cv.put(LAST_EXECUTE, insertTime); // We need to seed it with this to see when we might next need to go
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = db.insertOrThrow(TBL_SCHEDULE, null, cv);
@@ -3000,16 +3015,18 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(SCHEDULE_TYPE, s.getScheduleType().index);
         cv.put(NUMERAL, s.getNumeral());
         cv.put(INTERVAL, s.getInterval().index);
-        cv.put(LAST_EXECUTED, s.getLastExecuted());
+        cv.put(LAST_EXECUTE, s.getLastExecuted());
         cv.put(TIME_PERIOD, s.getTimePeriod().index);
         cv.put(DAY_OF_WEEK, s.getDayOfWeek());
         cv.put(DAY_OF_MONTH, s.getDayOfMonth());
         cv.put(HOUR, s.getHour());
         cv.put(MINUTE, s.getMinute());
+        cv.put(NEXT_EXECUTE, s.getNextExecute());
+        cv.put(IS_SCHEDULED, s.isScheduled());
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        return db.update(TBL_SCHEDULE, cv, ID + " = ?", new String[] { "" + s.getID() });
+        return db.update(TBL_SCHEDULE, cv, ID + " = ?", new String[]{"" + s.getID()});
     }
 
     public int executedSchedule(Schedule s) {
@@ -3019,10 +3036,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         ContentValues cv = new ContentValues();
-        cv.put(LAST_EXECUTED, s.getLastExecuted()); // IT should have updated this itself
+        cv.put(LAST_EXECUTE, s.getLastExecuted()); // IT should have updated this itself
 
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.update(TBL_SCHEDULE, cv, ID + " = ?", new String[] { "" + s.getID() });
+        return db.update(TBL_SCHEDULE, cv, ID + " = ?", new String[]{"" + s.getID()});
     }
 
     public Schedule getSchedule(long id) {
@@ -3063,7 +3080,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             int scheduleType = c.getInt(c.getColumnIndex(SCHEDULE_TYPE));
             long numeral = c.getLong(c.getColumnIndex(NUMERAL));
             int intervalIndex = c.getInt(c.getColumnIndex(INTERVAL));
-            long lastExecuted = c.getLong(c.getColumnIndex(LAST_EXECUTED));
+
+            long created = c.getLong(c.getColumnIndex(LAST_EXECUTE));
+            long nextExecute = c.getLong(c.getColumnIndex(NEXT_EXECUTE));
 
             int periodIndex = c.getInt(c.getColumnIndex(TIME_PERIOD));
             int dayOfWeek = c.getInt(c.getColumnIndex(DAY_OF_WEEK));
@@ -3071,9 +3090,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             int hour = c.getInt(c.getColumnIndex(HOUR));
             int minute = c.getInt(c.getColumnIndex(MINUTE));
 
+            boolean scheduled = c.getInt(c.getColumnIndex(IS_SCHEDULED)) == 1;
+
             Schedule s = new Schedule(id, cs, enabled,
-                                      scheduleType, numeral, intervalIndex, lastExecuted,
-                                      periodIndex, dayOfWeek, dayOfMonth, hour, minute);
+                    scheduleType, numeral, intervalIndex, created,
+                    periodIndex, dayOfWeek, dayOfMonth, hour, minute,
+                    nextExecute, scheduled);
             scheduledComposites.add(s);
 
         } while (c.moveToNext());
@@ -3084,7 +3106,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public boolean deleteSchedule(Schedule s) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int num = db.delete(TBL_SCHEDULE, ID + " = ?", new String[] { "" + s.getID() });
+        int num = db.delete(TBL_SCHEDULE, ID + " = ?", new String[]{"" + s.getID()});
         if (num == 1) {
             return true;
         } else if (num > 1) {
@@ -3108,7 +3130,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (sd.hasOutputs()) {
-           setupIDs(sd.getOutputs(), sd);
+            setupIDs(sd.getOutputs(), sd);
         }
     }
 
@@ -3218,5 +3240,50 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
 
         return io;
+    }
+
+    public Schedule getNextScheduledItem() {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String q = String.format("SELECT * FROM %s WHERE %s > %d ORDER BY %s",
+                TBL_SCHEDULE, NEXT_EXECUTE, System.currentTimeMillis(), NEXT_EXECUTE);
+        Cursor c = db.rawQuery(q, null);
+
+        if (c == null) {
+            Log.e(TAG, "Cursor null for get next scheduled item");
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            return null;
+        }
+
+        c.moveToFirst();
+
+        long id = c.getLong(c.getColumnIndex(ID));
+        long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
+        CompositeService cs = getComposite(compositeId);
+
+        boolean enabled = c.getInt(c.getColumnIndex(ENABLED)) == 1;
+        int scheduleType = c.getInt(c.getColumnIndex(SCHEDULE_TYPE));
+        long numeral = c.getLong(c.getColumnIndex(NUMERAL));
+        int intervalIndex = c.getInt(c.getColumnIndex(INTERVAL));
+        long created = c.getLong(c.getColumnIndex(LAST_EXECUTE));
+
+        int periodIndex = c.getInt(c.getColumnIndex(TIME_PERIOD));
+        int dayOfWeek = c.getInt(c.getColumnIndex(DAY_OF_WEEK));
+        int dayOfMonth = c.getInt(c.getColumnIndex(DAY_OF_MONTH));
+        int hour = c.getInt(c.getColumnIndex(HOUR));
+        int minute = c.getInt(c.getColumnIndex(MINUTE));
+
+        long nextExecute = c.getLong(c.getColumnIndex(NEXT_EXECUTE));
+        boolean scheduled = c.getInt(c.getColumnIndex(IS_SCHEDULED)) == 1;
+
+        Schedule s = new Schedule(id, cs, enabled,
+                scheduleType, numeral, intervalIndex, created,
+                periodIndex, dayOfWeek, dayOfMonth, hour, minute, nextExecute,
+                scheduled);
+        return s;
     }
 }

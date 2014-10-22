@@ -16,7 +16,9 @@ public class Schedule {
 
     private long numeral;
     private Interval interval;
-    private long timeLastExecuted;
+
+    private long lastExecuted;
+    private long timeNextExecute;
 
     private boolean enabled;
 
@@ -25,7 +27,9 @@ public class Schedule {
     private int hour;
     private int dayOfWeek;
     private int dayOfMonth;
-    private TimePeriod timePeriod;
+
+    private boolean isScheduled;
+    private boolean scheduled;
 
     public Schedule() {
         this.id = -1;
@@ -33,32 +37,37 @@ public class Schedule {
         this.type = ScheduleType.TIME;
         this.numeral = 0;
         this.interval = Interval.DAY;
-        this.timeLastExecuted = System.currentTimeMillis();
+        this.lastExecuted = System.currentTimeMillis();
         this.enabled = true;
         this.period = TimePeriod.DAY;
         this.minute = 0;
         this.hour = 0;
         this.dayOfWeek = 0;
         this.dayOfMonth = 0;
+        this.timeNextExecute = -1;
+        this.isScheduled = false;
     }
 
 
 
     public Schedule(long id, CompositeService cs, boolean enabled,
                     int scheduleType, long numeral, int intervalIndex, long lastExecuted,
-                    int timePeriod, int dayOfWeek, int dayOfMonth, int hour, int minute) {
+                    int timePeriod, int dayOfWeek, int dayOfMonth, int hour, int minute,
+                    long nextExecute, boolean isScheduled) {
         this.id = id;
         this.composite = cs;
         this.enabled = enabled;
         this.type = ScheduleType.values()[scheduleType];
         this.numeral = numeral;
         this.interval = Interval.values()[intervalIndex];
-        this.timeLastExecuted = lastExecuted;
+        this.lastExecuted = lastExecuted;
         this.period = TimePeriod.values()[timePeriod];
         this.dayOfWeek = dayOfWeek;
         this.dayOfMonth = dayOfMonth;
         this.hour = hour;
         this.minute = minute;
+        this.timeNextExecute = nextExecute;
+        this.isScheduled = isScheduled;
     }
 
     public CompositeService getComposite() {
@@ -74,11 +83,11 @@ public class Schedule {
     }
 
     public long getLastExecuted() {
-        return timeLastExecuted;
+        return lastExecuted;
     }
 
     public void setLastExecuteTime(long lastExecuteTime) {
-        this.timeLastExecuted = lastExecuteTime;
+        this.lastExecuted = lastExecuteTime;
     }
 
     public void setScheduleType(ScheduleType scheduleType) {
@@ -114,7 +123,7 @@ public class Schedule {
     }
 
     public void setTimePeriod(TimePeriod timePeriod) {
-        this.timePeriod = timePeriod;
+        this.period = timePeriod;
     }
 
     public int getDayOfMonth() {
@@ -127,6 +136,18 @@ public class Schedule {
 
     public void setDayOfMonth(int dayOfMonth) {
         this.dayOfMonth = dayOfMonth;
+    }
+
+    public long getNextExecute() {
+        return timeNextExecute;
+    }
+
+    public void setNextExecute(long nextExecute) {
+        this.timeNextExecute = nextExecute;
+    }
+
+    public boolean isScheduled() {
+        return scheduled;
     }
 
     public enum ScheduleType {
@@ -256,9 +277,9 @@ public class Schedule {
             return false;
         }
 
-        if (this.timeLastExecuted != other.getLastExecuted()) {
+        if (this.lastExecuted != other.getLastExecuted()) {
             if (LOG)
-                Log.d(TAG, "Schedule->Equals: last time executed: " + this.timeLastExecuted + " - " + other.getLastExecuted());
+                Log.d(TAG, "Schedule->Equals: last time executed: " + this.lastExecuted + " - " + other.getLastExecuted());
             return false;
         }
 
@@ -283,6 +304,12 @@ public class Schedule {
         if (this.dayOfWeek != other.getDayOfWeek()) {
             if (LOG)
                 Log.d(TAG, "Schedule->Equals: dayOfWeek: " + this.dayOfWeek + " - " + other.getDayOfWeek());
+            return false;
+        }
+
+        if (this.timeNextExecute != other.getNextExecute()) {
+            if (LOG)
+                Log.d(TAG, "Schedule->Equals: next execute: " + this.timeNextExecute + " - " + other.getNextExecute());
             return false;
         }
 
