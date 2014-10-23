@@ -356,7 +356,7 @@ public class Registry {
         dbHandler.setupIDs(sd);
     }
 
-    public void addSchedule(Schedule s) {
+    public void add(Schedule s) {
         dbHandler.addSchedule(s);
     }
 

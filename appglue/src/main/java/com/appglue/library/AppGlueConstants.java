@@ -227,6 +227,7 @@ public class AppGlueConstants {
     public static final String HOUR = "hour";
     public static final String NEXT_EXECUTE = "next_execute";
     public static final String IS_SCHEDULED = "is_scheduled";
+    public static final String EXECUTION_NUM = "execution_num";
 
     public static final String[][] COLS_SCHEDULE = new String[][]{
             {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
@@ -243,7 +244,7 @@ public class AppGlueConstants {
             {MINUTE, "INTEGER"},
             {LAST_EXECUTE, "INTEGER"},
             {NEXT_EXECUTE, "INTEGER"},
-
+            {EXECUTION_NUM, "INTEGER"}
     };
 
     public static final String COMPONENT_ID = "component_id";

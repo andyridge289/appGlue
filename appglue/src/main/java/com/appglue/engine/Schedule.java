@@ -4,6 +4,9 @@ import android.util.Log;
 
 import com.appglue.engine.description.CompositeService;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
@@ -18,41 +21,41 @@ public class Schedule {
     private Interval interval;
 
     private long lastExecuted;
-    private long timeNextExecute;
+    private long nextExecute;
 
     private boolean enabled;
 
-    private TimePeriod period;
+    private TimePeriod timePeriod;
     private int minute;
     private int hour;
     private int dayOfWeek;
     private int dayOfMonth;
 
     private boolean scheduled;
+    private int executionNum;
 
     public Schedule() {
         this.id = -1;
         this.composite = null;
         this.type = ScheduleType.TIME;
-        this.numeral = 0;
+        this.numeral = 1;
         this.interval = Interval.DAY;
         this.lastExecuted = System.currentTimeMillis();
         this.enabled = true;
-        this.period = TimePeriod.DAY;
+        this.timePeriod = TimePeriod.DAY;
         this.minute = 0;
-        this.hour = 0;
-        this.dayOfWeek = 0;
-        this.dayOfMonth = 0;
-        this.timeNextExecute = -1;
+        this.hour = 12;
+        this.dayOfWeek = Calendar.MONDAY;
+        this.dayOfMonth = 1;
+        this.nextExecute = -1;
         this.scheduled = false;
+        this.executionNum = 0;
     }
-
-
 
     public Schedule(long id, CompositeService cs, boolean enabled,
                     int scheduleType, long numeral, int intervalIndex, long lastExecuted,
                     int timePeriod, int dayOfWeek, int dayOfMonth, int hour, int minute,
-                    long nextExecute, boolean isScheduled) {
+                    long nextExecute, boolean isScheduled, int executionNum) {
         this.id = id;
         this.composite = cs;
         this.enabled = enabled;
@@ -60,13 +63,14 @@ public class Schedule {
         this.numeral = numeral;
         this.interval = Interval.values()[intervalIndex];
         this.lastExecuted = lastExecuted;
-        this.period = TimePeriod.values()[timePeriod];
+        this.timePeriod = TimePeriod.values()[timePeriod];
         this.dayOfWeek = dayOfWeek;
         this.dayOfMonth = dayOfMonth;
         this.hour = hour;
         this.minute = minute;
-        this.timeNextExecute = nextExecute;
+        this.nextExecute = nextExecute;
         this.scheduled = isScheduled;
+        this.executionNum = executionNum;
     }
 
     public CompositeService getComposite() {
@@ -94,7 +98,7 @@ public class Schedule {
     }
 
     public TimePeriod getTimePeriod() {
-        return period;
+        return timePeriod;
     }
 
     public int getDayOfWeek() {
@@ -122,7 +126,7 @@ public class Schedule {
     }
 
     public void setTimePeriod(TimePeriod timePeriod) {
-        this.period = timePeriod;
+        this.timePeriod = timePeriod;
     }
 
     public int getDayOfMonth() {
@@ -138,11 +142,11 @@ public class Schedule {
     }
 
     public long getNextExecute() {
-        return timeNextExecute;
+        return nextExecute;
     }
 
     public void setNextExecute(long nextExecute) {
-        this.timeNextExecute = nextExecute;
+        this.nextExecute = nextExecute;
     }
 
     public boolean isScheduled() {
@@ -151,6 +155,18 @@ public class Schedule {
 
     public void setScheduled(boolean scheduled) {
         this.scheduled = scheduled;
+    }
+
+    public int getExecutionNum() {
+        return executionNum;
+    }
+
+    public void setExecutionNum(int executionNum) {
+        this.executionNum = executionNum;
+    }
+
+    public void nextExecutionNum() {
+        this.executionNum++;
     }
 
     public enum ScheduleType {
@@ -286,9 +302,9 @@ public class Schedule {
             return false;
         }
 
-        if (!this.period.equals(other.getTimePeriod())) {
+        if (!this.timePeriod.equals(other.getTimePeriod())) {
             if (LOG)
-                Log.d(TAG, "Schedule->Equals: time period: " + this.period + " - " + other.getTimePeriod());
+                Log.d(TAG, "Schedule->Equals: time period: " + this.timePeriod + " - " + other.getTimePeriod());
             return false;
         }
 
@@ -310,12 +326,102 @@ public class Schedule {
             return false;
         }
 
-        if (this.timeNextExecute != other.getNextExecute()) {
+        if (this.nextExecute != other.getNextExecute()) {
             if (LOG)
-                Log.d(TAG, "Schedule->Equals: next execute: " + this.timeNextExecute + " - " + other.getNextExecute());
+                Log.d(TAG, "Schedule->Equals: next execute: " + this.nextExecute + " - " + other.getNextExecute());
+            return false;
+        }
+
+        if (this.executionNum != other.getExecutionNum()) {
+            if (LOG)
+                Log.d(TAG, "Schedule->Equals: execution num: " + this.executionNum + " - " + other.getExecutionNum());
+            return false;
+        }
+
+        if (this.scheduled != other.isScheduled()) {
+            if (LOG)
+                Log.d(TAG, "Schedule->Equals: is scheduled: " + this.scheduled + " - " + other.isScheduled());
             return false;
         }
 
         return true;
+    }
+
+    public void calculateNextExecute(long time) {
+        if (type == Schedule.ScheduleType.INTERVAL) {
+
+            // Work out what the difference is is
+            int interval = this.interval.value;
+            interval *= 1000; // Turn it into milliseconds
+            interval *= this.numeral;
+
+            nextExecute = lastExecuted + interval;
+
+        } else {
+            Calendar cal = new GregorianCalendar();
+            cal.setTimeInMillis(time);
+
+            // We need to find the next time that meets the required condition
+
+            // If it's hour, move to the next appropriate minute
+            int minute = cal.get(Calendar.MINUTE);
+            if (minute >= minute) {
+                // Move forward an hour
+                cal.add(Calendar.HOUR, 1);
+            }
+
+            // Set the seconds and milliseconds to be zero
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+
+            // Then move to the right minute
+            cal.set(Calendar.MINUTE, minute);
+
+            if (this.timePeriod.index > Schedule.TimePeriod.HOUR.index) {
+
+                // If it's day, Move to the next appropriate minute, then hour
+                int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
+                if (hourOfDay > hour) {
+                    // Move forward a day
+                    cal.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
+                cal.set(Calendar.HOUR_OF_DAY, hour);
+
+                if (timePeriod.equals(Schedule.TimePeriod.WEEK)) {
+
+                    // If it's week, Move to the next appropriate minute, then hour, then day of week
+                    int current = cal.get(Calendar.DAY_OF_WEEK);
+                    int target = dayOfWeek;
+
+                    if (target > current) {
+                        cal.add(Calendar.DAY_OF_YEAR, target - current);
+                    } else if (target < current) {
+                        int day = Calendar.SATURDAY - current + target - 1;
+                        cal.add(Calendar.DAY_OF_YEAR, day);
+                    } else {
+                        // Its either today or next week
+                        if (cal.get(Calendar.HOUR) > hour) {
+                            cal.add(Calendar.DAY_OF_YEAR, 7);
+                        } else if (cal.get(Calendar.HOUR) == hour && cal.get(Calendar.MINUTE) > minute) {
+                            cal.add(Calendar.DAY_OF_YEAR, 7);
+                        }
+                    }
+
+                } else if (timePeriod.equals(Schedule.TimePeriod.MONTH)) {
+
+                    // If it's month Move to the next appropraite minute, then hour, then day of month
+                    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                    if (dayOfMonth > dayOfMonth) {
+                        // Move forward a month
+                        cal.add(Calendar.MONTH, 1);
+                    }
+
+                    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                }
+            }
+
+            nextExecute = cal.getTimeInMillis();
+        }
     }
 }

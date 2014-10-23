@@ -351,6 +351,10 @@ public class ActivityAppGlue extends ActionBarActivity
         this.startService(serviceIntent);
     }
 
+    // TODO Setting to show toast on successful execution
+    // TODO Setting to show toast on successful execution of trigger
+    // TODO Setting for disabling things that cost money
+
     void schedule(final CompositeService cs) {
         // TODO Go to the schedule fragment and indicate that we want to create a new one
         onNavigationDrawerItemSelected(Page.SCHEDULE.index);

@@ -266,10 +266,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         return foundAll;
     }
 
-    // TODO Create some tests for the scheduler
-    // Calendar
-    // Interval
-
     public void testSchedule() throws Exception {
 
         Registry registry = Registry.getInstance(getContext());
@@ -283,8 +279,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         // Set it to run over an interval
         s.setScheduleType(Schedule.ScheduleType.INTERVAL);
-
-        // TODO We need to see what happens when we initialise the calendar to be NOW
 
         Calendar cal = new GregorianCalendar();
         cal.set(2014, Calendar.OCTOBER, 22, 12, 0, 0);
@@ -316,7 +310,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             s.setInterval(intervals[i]);
             s.setNumeral(numerals[i]);
 
-            sch.schedule(s, baseTime);
+            s.calculateNextExecute(baseTime);
+            sch.schedule(s);
 
             assertEquals(s.isScheduled(), true);
             assertEquals(s.getNextExecute(), expected[i]);
@@ -324,13 +319,12 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         s.setScheduleType(Schedule.ScheduleType.TIME);
 
-        // TODO Initialising the calendar for this will be more awkward
-
         s.setNextExecute(-1);
         s.setScheduled(false);
         s.setTimePeriod(Schedule.TimePeriod.HOUR);
         s.setMinute(30);
-        sch.schedule(s, baseTime);
+        s.calculateNextExecute(baseTime);
+        sch.schedule(s);
 
         // Should be whatever hour we are on (or the next) :30
         cal.setTimeInMillis(baseTime);
@@ -355,7 +349,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         s.setTimePeriod(Schedule.TimePeriod.DAY);
         s.setHour(12);
         s.setMinute(30);
-        sch.schedule(s, baseTime);
+        s.calculateNextExecute(baseTime);
+        sch.schedule(s);
 
         // Shoudl be 12:00 on 23rd October
         cal.setTimeInMillis(baseTime);
@@ -381,7 +376,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         s.setHour(12);
         s.setMinute(0);
         s.setDayOfWeek(Calendar.FRIDAY);
-        sch.schedule(s, baseTime);
+        s.calculateNextExecute(baseTime);
+        sch.schedule(s);
 
         // Should be 12:00 on Friday 24th October
         cal.setTimeInMillis(baseTime);
@@ -423,7 +419,8 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         s.setHour(12);
         s.setMinute(0);
         s.setDayOfMonth(4);
-        sch.schedule(s, baseTime);
+        s.calculateNextExecute(baseTime);
+        sch.schedule(s);
 
         // Should be the 4th of November at 12:00
         cal.set(2014, Calendar.NOVEMBER, 4, 12, 0, 0);

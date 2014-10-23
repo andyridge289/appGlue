@@ -39,8 +39,8 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
-import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
+import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
 public class FragmentCompositeList extends Fragment {
 
@@ -133,7 +133,7 @@ public class FragmentCompositeList extends Fragment {
         delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-               aag.delete(listAdapter.getCurrentComposite());
+                aag.delete(listAdapter.getCurrentComposite());
             }
         });
 
@@ -361,6 +361,8 @@ public class FragmentCompositeList extends Fragment {
                     backgroundView.setBackgroundResource(item.getColour(false));
                     nameText.setTextColor(getResources().getColor(R.color.textColor));
                 }
+
+                // TODO The day of month setting is wrong
 
                 // The image needs to be in colour
                 icon.setColorFilter(null);

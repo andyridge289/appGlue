@@ -198,5 +198,10 @@
     <string name="not_equals">\u2260</string>
     <string name="contains_backwards">\u220b</string>
     <string name="no_schedule">No scheduled composites</string>
+    <string name="next">Next:</string>
+    <string name="every">Every</string>
+    <string name="on">on</string>
+    <string name="at">at</string>
+    <string name="from">from</string>
 
 </resources>

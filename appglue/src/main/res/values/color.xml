@@ -43,6 +43,8 @@
     <color name="bg">#fff3f3f3</color>
     <color name="bar_bg">#2D2D2D</color>
 
+    <color name="eee_trans4">#88EEEEEE</color>
+
     <color name="none">#0000</color>
 
     <color name="white">#FFF</color>

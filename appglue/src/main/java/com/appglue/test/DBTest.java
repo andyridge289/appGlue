@@ -58,10 +58,10 @@ public class DBTest extends AndroidTestCase {
         registry.addComposite(fred);
 
         Schedule s = new Schedule(-1, fred, true,
-                                  Schedule.ScheduleType.INTERVAL.index, 1, Schedule.Interval.HOUR.index, -1,
-                Schedule.TimePeriod.DAY.index, 0, 0, 7, 0, 0L, false);
+                Schedule.ScheduleType.INTERVAL.index, 1, Schedule.Interval.HOUR.index, -1,
+                Schedule.TimePeriod.DAY.index, 0, 0, 7, 0, 0L, false, 0);
 
-        registry.addSchedule(s);
+        registry.add(s);
         Schedule t = registry.getSchedule(s.getID());
 
         assertEquals(s, t);
@@ -190,13 +190,13 @@ public class DBTest extends AndroidTestCase {
         assertEquals(origTemp, testTemp);
 
         ServiceDescription tubeService = registry.getServiceDescription(TubeService.class.getCanonicalName());
-        if(tubeService == null) {
+        if (tubeService == null) {
             tubeService = TestLib.getService(registry, getContext(), "setupTubeService");
             tubeService = registry.addServiceDescription(tubeService);
         }
 
         ServiceDescription notificationService = registry.getServiceDescription(NotificationService.class.getCanonicalName());
-        if(notificationService == null) {
+        if (notificationService == null) {
             notificationService = TestLib.getService(registry, getContext(), "setupNotificationService");
             notificationService = registry.addServiceDescription(notificationService);
         }

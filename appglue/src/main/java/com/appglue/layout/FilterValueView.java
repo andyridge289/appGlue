@@ -76,7 +76,7 @@ public class FilterValueView extends LinearLayout {
         this.ff = ff;
         this.component = component;
 
-        if(value == null) {
+        if (value == null) {
             value = new IOValue(item);
             filter.addValue(item, value);
         }
@@ -146,7 +146,7 @@ public class FilterValueView extends LinearLayout {
             @Override
             public void onClick(View v) {
                 // This needs to change the andor-ness of the filter
-                if(filter.getCondition(item)) {
+                if (filter.getCondition(item)) {
                     filter.setCondition(item, OR);
                 } else {
                     filter.setCondition(item, AND);
@@ -157,8 +157,8 @@ public class FilterValueView extends LinearLayout {
             }
         });
 
-        final View removeFab = v.findViewById(R.id.filter_remove_button);
-        removeFab.setOnClickListener(new OnClickListener() {
+        final View remove = v.findViewById(R.id.filter_remove_button);
+        remove.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // We'll probably need to kill the value somehow
@@ -283,7 +283,7 @@ public class FilterValueView extends LinearLayout {
 
         if (filter.hasValues(item)) {
             andor.setText(filter.getCondition(item) ? getResources().getString(R.string.and) :
-                          getResources().getString(R.string.or));
+                    getResources().getString(R.string.or));
         }
 
         enableSwitch.setChecked(value.isEnabled());
@@ -343,7 +343,7 @@ public class FilterValueView extends LinearLayout {
                         manualButton.setEnabled(true);
                     }
 
-                    if(value != null) {
+                    if (value != null) {
                         value.setFilterState(IOValue.MANUAL);
                     }
                 } else { // It must be filter_radio_sample

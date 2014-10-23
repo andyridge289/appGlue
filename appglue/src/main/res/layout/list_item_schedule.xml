@@ -42,6 +42,14 @@
 
             </LinearLayout>
 
+            <Switch
+                android:id="@+id/enabled_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
             <TextView
                 android:id="@+id/composite_name"
                 android:layout_width="wrap_content"
@@ -51,18 +59,47 @@
                 android:textStyle="bold"
                 android:text="@string/composite_name"
                 android:layout_toEndOf="@id/composite_icon_container"
-                android:layout_toRightOf="@id/composite_icon_container" />
+                android:layout_toRightOf="@id/composite_icon_container"
+                android:layout_toLeftOf="@id/enabled_switch"
+                android:layout_toStartOf="@id/enabled_switch" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/enabled_switch"
+                android:layout_toRightOf="@id/composite_icon_container"
+                android:layout_toEndOf="@id/composite_icon_container"
+                android:layout_marginLeft="5dip"
+                android:layout_marginStart="5dip">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/next"
+                    android:layout_marginRight="5dip"
+                    android:layout_marginEnd="5dip" />
+
+                <TextView
+                    android:id="@+id/next_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_margin="5dip"
                 android:layout_below="@id/composite_icon_container">
 
                 <LinearLayout
                     android:id="@+id/time_container"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dip"
+                    android:layout_marginStart="10dip"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -72,49 +109,60 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Every" />
+                            android:text="@string/every"
+                            android:layout_marginRight="5dip"
+                            android:layout_marginEnd="5dip" />
 
                         <TextView
                             android:id="@+id/time_period"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Week" />
+                            android:textStyle="italic"
+                            android:textAllCaps="true" />
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/period_row_day"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
+                        <LinearLayout
+                            android:id="@+id/period_row_day"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="on" />
+                            android:layout_height="wrap_content">
 
-                        <TextView
-                            android:id="@+id/time_period_days"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dip"
+                                android:layout_marginRight="5dip"
+                                android:layout_marginStart="5dip"
+                                android:layout_marginEnd="5dip"
+                                android:text="@string/on" />
+
+                            <TextView
+                                android:id="@+id/time_period_days"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="italic" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/period_row_time"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Monday" />
+                            android:layout_height="wrap_content">
 
-                    </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5dip"
+                                android:layout_marginRight="5dip"
+                                android:layout_marginStart="5dip"
+                                android:layout_marginEnd="5dip"
+                                android:text="@string/at" />
 
-                    <LinearLayout
-                        android:id="@+id/period_row_time"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
+                            <TextView
+                                android:id="@+id/time_period_time"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textStyle="italic" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="at" />
-
-                        <TextView
-                            android:id="@+id/time_period_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="12:00" />
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -129,70 +177,84 @@
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginStart="10dip"
+                        android:layout_marginLeft="10dip">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Every" />
+                            android:text="@string/every"
+                            android:layout_marginRight="5dip"
+                            android:layout_marginEnd="5dip" />
 
                         <TextView
                             android:id="@+id/interval_numeral"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1" />
+                            android:layout_marginRight="5dip"
+                            android:layout_marginEnd="5dip"
+                            android:textStyle="italic" />
 
                         <TextView
                             android:id="@+id/interval_interval"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="hour" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                            android:layout_marginRight="5dip"
+                            android:layout_marginEnd="5dip"
+                            android:textStyle="italic" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="from" />
+                            android:layout_marginRight="5dip"
+                            android:layout_marginEnd="5dip"
+                            android:text="@string/from" />
 
                         <TextView
                             android:id="@+id/interval_start"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="12:00" />
+                            android:textStyle="italic" />
 
                     </LinearLayout>
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="next scheduled: " />
-
-                    <TextView
-                        android:id="@+id/next_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="22nd October 2014, 12:00" />
-
-                </LinearLayout>
-
-                <Switch
-                    android:id="@+id/enabled_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Enabled" />
-
             </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/edit_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/eee_trans4"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/midpoint"
+                android:layout_width="0dip"
+                android:layout_height="0dip"
+                android:layout_centerInParent="true" />
+
+            <ImageButton
+                android:id="@+id/edit_schedule"
+                android:layout_width="48dip"
+                android:layout_height="48dip"
+                android:src="@drawable/edit_grey"
+                android:layout_centerInParent="true"
+                android:layout_toLeftOf="@id/midpoint"
+                android:layout_toStartOf="@id/midpoint" />
+
+            <ImageButton
+                android:id="@+id/delete_schedule"
+                android:layout_width="48dip"
+                android:layout_height="48dip"
+                android:src="@drawable/delete_grey"
+                android:layout_centerInParent="true"
+                android:layout_toRightOf="@id/midpoint"
+                android:layout_toEndOf="@id/midpoint" />
 
         </RelativeLayout>
 
