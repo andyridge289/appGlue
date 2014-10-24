@@ -363,12 +363,11 @@ public class DialogSchedule extends AlertDialog {
             @Override
             public void onClick(View v) {
 
-                Scheduler scheduler = Scheduler.getInstance(activity);
+                Scheduler scheduler = new Scheduler(activity);
 
                 if (item.getID() == -1) {
                     item.calculateNextExecute(System.currentTimeMillis());
                     registry.add(item);
-
                     scheduler.schedule(item);
                 } else {
 
@@ -376,7 +375,7 @@ public class DialogSchedule extends AlertDialog {
                     item.calculateNextExecute(System.currentTimeMillis());
                     if (item.getNextExecute() != oldTime) {
                         // Increment the index so that the old one is ignored.
-                        item.nextExecutionNum();
+                        item.setExecutionNum(item.getExecutionNum() + 1);
                         scheduler.schedule(item);
                     }
 

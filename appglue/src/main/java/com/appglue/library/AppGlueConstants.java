@@ -32,6 +32,11 @@ public class AppGlueConstants {
     public static final String TEST = "test";
     public static final String MODE = "mode";
 
+    // SharedPreferences
+    public static final String PREFS_HIDDEN = "prefs_hidden";
+    public static final String RUN_BEFORE = "run_before";
+
+
     // Database information
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "appGlue";

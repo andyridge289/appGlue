@@ -2,6 +2,7 @@ package com.appglue.services.factory;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -51,6 +52,8 @@ import static com.appglue.Constants.JSON_SERVICE_LIST;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.PREFS_HIDDEN;
+import static com.appglue.library.AppGlueConstants.RUN_BEFORE;
 
 public class ServiceFactory {
 
@@ -103,7 +106,7 @@ public class ServiceFactory {
 
         services.add(setupBluetoothService());
         services.add(setupLaunchAppService());
-		services.add(setupLocationService());
+        services.add(setupLocationService());
 
         // Triggers
         services.add(setupReceiveSMSTrigger());
@@ -124,9 +127,15 @@ public class ServiceFactory {
             }
         }
 
-        ArrayList<CompositeService> composites = CompositeFactory.createSampleComposites(context);
-        for (CompositeService cs : composites) {
-            registry.addComposite(cs);
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_HIDDEN, Context.MODE_PRIVATE);
+        boolean first = !prefs.getBoolean(RUN_BEFORE, false);
+
+        if (first) {
+            ArrayList<CompositeService> composites = CompositeFactory.createSampleComposites(context);
+            for (CompositeService cs : composites) {
+                registry.addComposite(cs);
+            }
+            prefs.edit().putBoolean(RUN_BEFORE, true).apply();
         }
     }
 
@@ -259,7 +268,7 @@ public class ServiceFactory {
         inputs.add(new IODescription(-1, SendSMSService.SMS_NUMBER, "Phone number", phoneNumber, "The number that you want to send the SMS to", true, null));
         inputs.add(new IODescription(-1, SendSMSService.SMS_MESSAGE, "Message", text, "The message that you want to send (Max 160 characters)", true, null));
 
-        String[] tags = new String[] { "Send SMS" };
+        String[] tags = new String[]{"Send SMS"};
         int flags = ComposableService.FLAG_MONEY;
 
         String sendSMSJSON = Library.makeJSON(-1, "com.appglue", SendSMSService.class.getCanonicalName(),
@@ -379,29 +388,28 @@ public class ServiceFactory {
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, toastJSON);
     }
 
-	private String setupLocationService()
-	{
-		ArrayList<IODescription> getOutputs = new ArrayList<IODescription>();
-		IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
-		IOType number = IOType.Factory.getType(IOType.Factory.NUMBER);
+    private String setupLocationService() {
+        ArrayList<IODescription> getOutputs = new ArrayList<IODescription>();
+        IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
+        IOType number = IOType.Factory.getType(IOType.Factory.NUMBER);
 
-		getOutputs.add(new IODescription(-1, LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false, null));
+        getOutputs.add(new IODescription(-1, LocationService.COUNTRY_NAME, "Country", text, "The country you're in.", false, null));
         getOutputs.add(new IODescription(-1, LocationService.COUNTRY_CODE, "Country code", text, "The code of the country you're in", false, null));
-		getOutputs.add(new IODescription(-1, LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near", false, null));
+        getOutputs.add(new IODescription(-1, LocationService.LOCALITY_NAME, "Locality", text, "The town/city you're in/near", false, null));
         getOutputs.add(new IODescription(-1, LocationService.ROAD_NAME, "Road name", text, "The name of the road you're on", false, null));
-		getOutputs.add(new IODescription(-1, LocationService.LATITUDE, "Latitude", number, "The rough latitude of where you are", false, null));
-		getOutputs.add(new IODescription(-1, LocationService.LONGITUDE, "Longitude", number, "The rough longitude of where you are", false, null));
+        getOutputs.add(new IODescription(-1, LocationService.LATITUDE, "Latitude", number, "The rough latitude of where you are", false, null));
+        getOutputs.add(new IODescription(-1, LocationService.LONGITUDE, "Longitude", number, "The rough longitude of where you are", false, null));
 
-        String[] tags = new String[] { "Location", "GPS" };
+        String[] tags = new String[]{"Location", "GPS"};
         int flags = ComposableService.FLAG_DELAY | ComposableService.FLAG_LOCATION;
 
-		String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(),
-				"Location lookup",
-				"Returns your location",
-				flags, 0, null, getOutputs, tags);
+        String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(),
+                "Location lookup",
+                "Returns your location",
+                flags, 0, null, getOutputs, tags);
 
-		return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, locationJSON);
-	}
+        return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, locationJSON);
+    }
 
     protected String setupServiceList(String appData, ArrayList<String> services) {
         StringBuilder json = new StringBuilder(String.format(
@@ -438,7 +446,7 @@ public class ServiceFactory {
 
         outputs.add(new IODescription(-1, AirplaneTrigger.STATE, "State", bool, "The state that airplane mode has been set to", true, sample));
 
-        String[] tags = { "Airplane", "On", "Off" };
+        String[] tags = {"Airplane", "On", "Off"};
         int flags = ComposableService.FLAG_TRIGGER;
 
         String airplaneJSON = Library.makeJSON(-1, "com.appglue", AirplaneTrigger.class.getCanonicalName(),
@@ -484,7 +492,7 @@ public class ServiceFactory {
 
         outputs.add(new IODescription(-1, BatteryTrigger.STATE, "Battery state", set, "The new state of the battery", true, samples));
 
-        String[] tags = {"Battery", "Low" };
+        String[] tags = {"Battery", "Low"};
 
         String batteryTriggerJSON = Library.makeJSON(-1, "com.appglue", BatteryTrigger.class.getCanonicalName(),
                 "Battery Trigger",

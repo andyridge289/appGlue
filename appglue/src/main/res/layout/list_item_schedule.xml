@@ -42,13 +42,14 @@
 
             </LinearLayout>
 
-            <Switch
+            <android.support.v7.widget.SwitchCompat
                 android:id="@+id/enabled_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                android:layout_alignParentEnd="true"
+                android:layout_margin="2dip" />
 
             <TextView
                 android:id="@+id/composite_name"

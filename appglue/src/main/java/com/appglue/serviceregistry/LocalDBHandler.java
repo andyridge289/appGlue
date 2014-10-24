@@ -2,6 +2,7 @@ package com.appglue.serviceregistry;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteConstraintException;
@@ -73,7 +74,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private LongSparseArray<Tag> tagMap;
 
-    private ArrayList<String> queries = new ArrayList<String>();
+    private Context context;
 
     /**
      * Creates a new class to handle all the database crap
@@ -82,6 +83,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      */
     public LocalDBHandler(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+
+        this.context = context;
 
         appMap = new TST<AppDescription>();
         componentMap = new TST<ServiceDescription>();
@@ -100,7 +103,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     // FIXME Setting values doesn't appear to work
-    // TODO Look here for some animations - http://antonioleiva.com/material-design-everywhere/
 
     @Override
     /**
@@ -118,6 +120,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     public void recreate() {
         SQLiteDatabase db = this.getWritableDatabase();
         onCreate(db);
+
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_HIDDEN, Context.MODE_PRIVATE);
+        prefs.edit().clear().commit();
     }
 
 

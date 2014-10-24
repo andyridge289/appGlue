@@ -22,6 +22,7 @@ public class Schedule {
 
     private long lastExecuted;
     private long nextExecute;
+    private int executionNum;
 
     private boolean enabled;
 
@@ -32,7 +33,7 @@ public class Schedule {
     private int dayOfMonth;
 
     private boolean scheduled;
-    private int executionNum;
+
 
     public Schedule() {
         this.id = -1;
@@ -163,10 +164,6 @@ public class Schedule {
 
     public void setExecutionNum(int executionNum) {
         this.executionNum = executionNum;
-    }
-
-    public void nextExecutionNum() {
-        this.executionNum++;
     }
 
     public enum ScheduleType {
@@ -361,18 +358,21 @@ public class Schedule {
             Calendar cal = new GregorianCalendar();
             cal.setTimeInMillis(time);
 
-            // We need to find the next time that meets the required condition
+            if (cal.get(Calendar.SECOND) > 0 || cal.get(Calendar.MILLISECOND) > 0) { // This should always happen, but you never know
+                // Set the seconds and milliseconds to be zero
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                cal.add(Calendar.MINUTE, 1); // Move forward to the next whole minute
+
+
+            }
 
             // If it's hour, move to the next appropriate minute
-            int minute = cal.get(Calendar.MINUTE);
-            if (minute >= minute) {
+            int currentMinute = cal.get(Calendar.MINUTE);
+            if (currentMinute > minute) {
                 // Move forward an hour
                 cal.add(Calendar.HOUR, 1);
             }
-
-            // Set the seconds and milliseconds to be zero
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
 
             // Then move to the right minute
             cal.set(Calendar.MINUTE, minute);
@@ -403,7 +403,7 @@ public class Schedule {
                         // Its either today or next week
                         if (cal.get(Calendar.HOUR) > hour) {
                             cal.add(Calendar.DAY_OF_YEAR, 7);
-                        } else if (cal.get(Calendar.HOUR) == hour && cal.get(Calendar.MINUTE) > minute) {
+                        } else if (cal.get(Calendar.HOUR) == hour && cal.get(Calendar.MINUTE) > currentMinute) {
                             cal.add(Calendar.DAY_OF_YEAR, 7);
                         }
                     }
@@ -411,8 +411,8 @@ public class Schedule {
                 } else if (timePeriod.equals(Schedule.TimePeriod.MONTH)) {
 
                     // If it's month Move to the next appropraite minute, then hour, then day of month
-                    int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-                    if (dayOfMonth > dayOfMonth) {
+                    int currentDayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                    if (currentDayOfMonth > dayOfMonth) {
                         // Move forward a month
                         cal.add(Calendar.MONTH, 1);
                     }

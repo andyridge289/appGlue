@@ -5,13 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.appglue.engine.Schedule;
@@ -278,7 +278,7 @@ public class FragmentSchedule extends Fragment {
             TextView next = (TextView) v.findViewById(R.id.next_time);
             next.setText(sdf.format(cal.getTime()));
 
-            Switch enabledSwitch = (Switch) v.findViewById(R.id.enabled_switch);
+            SwitchCompat enabledSwitch = (SwitchCompat) v.findViewById(R.id.enabled_switch);
             enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.appglue" >
+    package="com.appglue">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -28,16 +28,16 @@
         android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/application_name"
-        android:theme="@style/Theme.AppGlue" >
+        android:theme="@style/Theme.AppGlue">
 
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
             android:name="com.appglue.ActivityAppGlue"
             android:label="@string/application_name"
-            android:theme="@style/Theme.AppGlue"
-            >
+            android:theme="@style/Theme.AppGlue">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,7 +63,7 @@
             android:label="appGlue"
             android:theme="@style/Theme.AppGlue" />
         <activity android:name="com.appglue.ActivityLog" />
-        <activity android:name="com.appglue.ShortcutActivity" >
+        <activity android:name="com.appglue.ShortcutActivity">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
 
@@ -91,33 +91,36 @@
 
         <receiver
             android:name="com.appglue.services.triggers.ReceiveSMSTrigger"
-            android:exported="true" >
-            <intent-filter android:priority="999" >
+            android:exported="true">
+            <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.PowerTrigger"
-            android:exported="true" >
-            <intent-filter android:priority="999" >
+            android:exported="true">
+            <intent-filter android:priority="999">
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.NewPictureTrigger"
-            android:exported="true" >
-            <intent-filter android:priority="999" >
+            android:exported="true">
+            <intent-filter android:priority="999">
                 <action android:name="android.hardware.action.NEW_PICTURE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".services.triggers.AirplaneTrigger"
+        <receiver
+            android:name=".services.triggers.AirplaneTrigger"
             android:exported="true">
-            <intent-filter android:priority="999" >
+            <intent-filter android:priority="999">
                 <action android:name="android.intent.action.AIRPLANE_MODE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".services.triggers.BatteryTrigger" android:exported="true">
+        <receiver
+            android:name=".services.triggers.BatteryTrigger"
+            android:exported="true">
             <intent-filter android:priority="999">
                 <action android:name="android.intent.action.BATTERY_LOW" />
                 <action android:name="android.intent.action.BATTERY_OKAY" />
@@ -126,7 +129,7 @@
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.BluetoothTrigger"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
                 <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
@@ -163,11 +166,18 @@
         </receiver>
         <receiver
             android:name="com.appglue.serviceregistry.AppUninstalledReceiver"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
 
                 <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.appglue.engine.Scheduler"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.appglue.schedule" />
             </intent-filter>
         </receiver>
         <!-- // android.intent.action.PACKAGE_ADDED -->
