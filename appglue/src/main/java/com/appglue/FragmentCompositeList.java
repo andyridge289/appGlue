@@ -200,10 +200,13 @@ public class FragmentCompositeList extends Fragment {
         }
 
         composites = registry.getComposites();
-        if (listAdapter != null) {
-            listAdapter = new CompositeListAdapter(getActivity(), composites);
-            compositeList.setAdapter(listAdapter);
-        }
+        listAdapter.notifyDataSetChanged();
+//        if (listAdapter != null && getActivity() != null) {
+//            listAdapter = new CompositeListAdapter(getActivity(), composites);
+//            compositeList.setAdapter(listAdapter);
+//        } else {
+//
+//        }
 
         addFab.hide(false);
         contextToolbar.setVisibility(View.GONE);
@@ -247,7 +250,7 @@ public class FragmentCompositeList extends Fragment {
             else
                 nameText.setText(item.getName());
 
-            ImageView icon = (ImageView) v.findViewById(R.id.composite_icon);
+            ImageView icon = (ImageView) v.findViewById(R.id.schedule_icon);
             SparseArray<ComponentService> components = item.getComponents();
 
             AppDescription app = components.get(0).getDescription().getApp();

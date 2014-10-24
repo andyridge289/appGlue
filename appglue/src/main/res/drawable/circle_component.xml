@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- This is the broder -->
+    <item>
+
+        <shape android:shape="oval">
+            <stroke
+                android:color="@color/component"
+                android:width="2dip" />
+            <solid android:color="@color/material_indigo200" />
+        </shape>
+    </item>
+
+</layer-list>

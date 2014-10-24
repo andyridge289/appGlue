@@ -50,6 +50,10 @@
     <color name="white">#FFF</color>
     <color name="translucent_white">#EFFF</color>
 
+    <color name="composite">#ff522385</color>
+    <color name="schedule">#ffb00f11</color>
+    <color name="component">#3f51b5</color>
+
     <!--<color name="active">#CFF</color>-->
     <!--<color name="done">#39F</color>-->
 

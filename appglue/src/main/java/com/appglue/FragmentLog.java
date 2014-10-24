@@ -16,8 +16,7 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-public class FragmentLog extends Fragment
-{
+public class FragmentLog extends Fragment {
     private Registry registry;
 
     public static Fragment create() {
@@ -42,20 +41,17 @@ public class FragmentLog extends Fragment
         View root = inflater.inflate(R.layout.activity_log, container, false);
 
         ListView logList = (ListView) root.findViewById(R.id.log_list);
-		TextView noLog = (TextView) root.findViewById(R.id.no_log);
+        TextView noLog = (TextView) root.findViewById(R.id.no_log);
 
         ArrayList<LogItem> log = registry.getExecutionLog();
 
-		if(log == null || log.size() == 0)
-		{
-			logList.setVisibility(View.GONE);
-			noLog.setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			logList.setAdapter(new LogAdapter(getActivity(), log));
-			noLog.setVisibility(View.GONE);
-		}
+        if (log == null || log.size() == 0) {
+            logList.setVisibility(View.GONE);
+            noLog.setVisibility(View.VISIBLE);
+        } else {
+            logList.setAdapter(new LogAdapter(getActivity(), log));
+            noLog.setVisibility(View.GONE);
+        }
 
         return root;
     }
@@ -105,46 +101,42 @@ public class FragmentLog extends Fragment
     }
 
 
-	private class LogAdapter extends ArrayAdapter<LogItem>
-	{
-		private ArrayList<LogItem> items;
+    private class LogAdapter extends ArrayAdapter<LogItem> {
+        private ArrayList<LogItem> items;
 
-		public LogAdapter(Context context, ArrayList<LogItem> items)
-		{
-			super(context, R.layout.list_item_log, items);
+        public LogAdapter(Context context, ArrayList<LogItem> items) {
+            super(context, R.layout.list_item_log, items);
 
-			this.items = items;
-		}
+            this.items = items;
+        }
 
-		// Add options so that they can actually do things with the log messages
-		// Make the log look a bit nicer
-		// Implement clearing of the log
-		// Add more options to the log viewer - filtering, sorting, etc.
+        // Add options so that they can actually do things with the log messages
+        // Make the log look a bit nicer
+        // Implement clearing of the log
+        // Add more options to the log viewer - filtering, sorting, etc.
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup viewGroup)
-		{
-			View v = convertView;
-			LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        @Override
+        public View getView(int position, View convertView, ViewGroup viewGroup) {
+            View v = convertView;
+            LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			if(v == null)
-			{
-				v = vi.inflate(R.layout.list_item_log, viewGroup);
-			}
+            if (v == null) {
+                v = vi.inflate(R.layout.list_item_log, null);
+            }
 
-			LogItem log = items.get(position);
+            LogItem log = items.get(position);
 
-			TextView logTitle = (TextView) v.findViewById(R.id.log_title);
-			logTitle.setText(log.getComposite().getName());
+            TextView logTitle = (TextView) v.findViewById(R.id.log_title);
+            logTitle.setText(log.getComposite().getName());
 
-			TextView logTime = (TextView) v.findViewById(R.id.log_time);
-			logTime.setText("");
+            TextView logTime = (TextView) v.findViewById(R.id.log_time);
+            logTime.setText("");
 
-			TextView logMessage = (TextView) v.findViewById(R.id.log_message);
-			logMessage.setText(log.getMessage());
+            TextView logMessage = (TextView) v.findViewById(R.id.log_message);
+            logMessage.setText(log.getMessage());
 
-			return v;
-		}
+            return v;
+        }
 
-	}
+    }
 }

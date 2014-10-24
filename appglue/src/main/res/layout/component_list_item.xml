@@ -10,8 +10,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         >
-    
-    <View
+
+        <LinearLayout
 		android:id="@+id/comp_item_inputs"
         android:layout_width="0dip"
         android:layout_weight="1"
@@ -21,65 +21,74 @@
         android:layout_gravity="center_vertical"
         android:orientation="vertical" 
         />
-	
-    <LinearLayout
+
+        <RelativeLayout
         android:layout_width="0dip"
         android:layout_weight="18"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dip"
         android:layout_marginTop="2dip"
-        android:background="@color/comp_item_border" 
         >
 
-       <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white" 
+            <RelativeLayout
+                android:id="@+id/component_icon_container"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="4dip"
+                android:layout_marginLeft="8dip"
+                android:layout_marginStart="8dip"
+                android:background="@drawable/circle_component"
             >
 
-	        <ImageView
-	            android:id="@+id/simple_list_icon"
-	            android:layout_width="48dip"
-	            android:layout_height="48dip"
-	            android:layout_margin="0dip"
-	            android:contentDescription="@string/cd_simple_list_item_icon"
-	            android:paddingBottom="6dip"
-	            android:paddingTop="6dip"
-	            android:src="@drawable/icon" 
-	            />
-	
-	        <LinearLayout
-	            android:id="@+id/name_layout"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="10dip"
-	            android:orientation="vertical" 
-	            >
-	
-	            <TextView
-	                android:id="@+id/service_name"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:text="@string/service_name"
-	                android:textSize="16sp"
-	                android:textStyle="bold" 
-	                />
-	
-	            <LinearLayout
-                    android:id="@+id/flag_container"
-	                android:layout_width="wrap_content"
-	                android:layout_height="wrap_content"
-	                android:layout_marginTop="2dip"
-                    android:orientation="horizontal"
-	                />
-               	
-	        </LinearLayout>
-	        
-		</LinearLayout> 
-        
-    </LinearLayout>
-    
-    <View
+                <ImageView
+                    android:id="@+id/component_icon"
+                    android:layout_width="32dip"
+                    android:layout_height="32dip"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_extension_white_36dp"
+                    android:contentDescription="@string/composite_icon" />
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/component_app_icon"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:layout_marginRight="5dip"
+                android:layout_marginEnd="5dip"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/icon" />
+
+
+            <TextView
+                android:id="@+id/service_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/service_name"
+                android:layout_toRightOf="@id/component_icon_container"
+                android:layout_toEndOf="@id/component_icon_container"
+                android:layout_toLeftOf="@id/component_app_icon"
+                android:layout_toStartOf="@id/component_app_icon"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/flag_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dip"
+                android:orientation="horizontal"
+                android:layout_toLeftOf="@id/component_app_icon"
+                android:layout_toStartOf="@id/component_app_icon" />
+
+        </RelativeLayout>
+
+        <LinearLayout
 		android:id="@+id/comp_item_outputs"
 		android:layout_width="0dip"
 		android:layout_weight="1"

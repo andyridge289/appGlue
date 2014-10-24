@@ -35,7 +35,7 @@
         android:layout_marginBottom="16dip"
         android:layout_marginRight="16dip"
         android:layout_marginEnd="16dip"
-        app:fabcolor="@color/colorAccent"
+        app:fabcolor="@color/android_red"
         app:fabdrawable="@drawable/ic_add_white" />
 
 </FrameLayout>

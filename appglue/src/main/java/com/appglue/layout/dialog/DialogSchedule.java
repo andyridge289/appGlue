@@ -366,19 +366,19 @@ public class DialogSchedule extends AlertDialog {
                 Scheduler scheduler = new Scheduler(activity);
 
                 if (item.getID() == -1) {
-                    item.calculateNextExecute(System.currentTimeMillis());
+//                    item.calculateNextExecute(System.currentTimeMillis());
                     registry.add(item);
-                    scheduler.schedule(item);
+//                    scheduler.schedule(item);
                 } else {
 
-                    long oldTime = item.getNextExecute();
-                    item.calculateNextExecute(System.currentTimeMillis());
-                    if (item.getNextExecute() != oldTime) {
-                        // Increment the index so that the old one is ignored.
-                        item.setExecutionNum(item.getExecutionNum() + 1);
-                        scheduler.schedule(item);
-                    }
-
+//                    long oldTime = item.getNextExecute();
+//                    item.calculateNextExecute(System.currentTimeMillis());
+//                    if (item.getNextExecute() != oldTime) {
+//                        // Increment the index so that the old one is ignored.
+//                        item.setExecutionNum(item.getExecutionNum() + 1);
+//                        scheduler.schedule(item);
+//                    }
+//
                     // Update it in the database
                     registry.update(item);
                 }

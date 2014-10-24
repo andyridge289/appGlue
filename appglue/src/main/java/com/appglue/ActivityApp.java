@@ -71,10 +71,10 @@ public class ActivityApp extends Activity {
             ServiceDescription sd = items.get(position);
 
 
-            ImageView icon = (ImageView) v.findViewById(R.id.simple_list_icon);
+//            ImageView icon = (ImageView) v.findViewById(R.id.simple_list_icon);
 
 //            if (sd.getServiceType() == ServiceType.IN_APP)
-                icon.setImageResource(R.drawable.icon);
+//                icon.setImageResource(R.drawable.icon);
 //            else if (sd.getServiceType() == ServiceType.LOCAL) {
 //                if (sd.getApp() == null) {
 //                    icon.setImageResource(R.drawable.ic_lock_silent_mode_vibrate);

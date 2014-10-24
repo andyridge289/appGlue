@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="Theme.AppGlue" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.AppGlue" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -9,44 +9,49 @@
         <item name="android:textColorPrimary">@color/textColorInverse</item>
     </style>
 
-	<style name="Fill">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">fill_parent</item>
-	</style>
-	<style name="Fill.Vertical">
-	    <item name="android:orientation">vertical</item>
-	</style>
-	<style name="Fill.Horizontal">
-	    <item name="android:orientation">horizontal</item>
-	</style>
-	<style name="Fill.Scroll">
-		<item name="android:fillViewport">true</item>
-	</style>
-	
-	<style name="Wrap">
-	    <item name="android:layout_width">wrap_content</item>
-	    <item name="android:layout_height">wrap_content</item>
-	</style>
-	
-	<style name="FillWrap">
-		<item name="android:layout_width">fill_parent</item>
-		<item name="android:layout_height">wrap_content</item>
-	</style>
-	<style name="FillWrap.Vertical">
-	     <item name="android:orientation">vertical</item>
-	</style>
-	<style name="FillWrap.Horizontal">
-	    <item name="android:orientation">horizontal</item>
-	</style>
-	
-	<style name="Match">
-	    <item name="android:layout_width">match_parent</item>
-	    <item name="android:layout_height">match_parent</item>
-	</style>
-	
-	<style name="tab_bar" parent="@android:style/Widget.Holo.ActionBar.TabBar">
+    <style name="Fill">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+    </style>
+
+    <style name="Fill.Vertical">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Fill.Horizontal">
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Fill.Scroll">
+        <item name="android:fillViewport">true</item>
+    </style>
+
+    <style name="Wrap">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="FillWrap">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="FillWrap.Vertical">
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="FillWrap.Horizontal">
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Match">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="tab_bar" parent="@android:style/Widget.Holo.ActionBar.TabBar">
         <item name="android:background">@color/bar_bg</item>
-	</style>
+    </style>
 
     <style name="tab" parent="@android:style/Widget.Holo.ActionBar.TabView">
         <item name="android:background">@drawable/tab_indicator</item>
@@ -55,56 +60,56 @@
         <item name="android:textAllCaps">true</item>
         <item name="android:gravity">center</item>
     </style>
-	
-	<style name="SubActionBar" parent="@style/FillWrap">
-	    <item name="android:background">@drawable/ab_solid_dark_holo</item>
-	    <item name="android:padding">0dip</item>
-	    <item name="android:layout_margin">0dip</item>
-	</style>
-	
-	<style name="SubActionButton">
-	    <item name="android:layout_width">fill_parent</item>
-	    <item name="android:layout_height">wrap_content</item>
-	    <item name="android:gravity">center</item>
+
+    <style name="SubActionBar" parent="@style/FillWrap">
+        <item name="android:background">@drawable/ab_solid_dark_holo</item>
+        <item name="android:padding">0dip</item>
+        <item name="android:layout_margin">0dip</item>
+    </style>
+
+    <style name="SubActionButton">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
         <item name="android:scaleType">center</item>
-       	<item name="android:paddingLeft">10dip</item>
-       	<item name="android:paddingRight">0dip</item>
-       	<item name="android:paddingTop">0dip</item>
-       	<item name="android:paddingBottom">0dip</item>
-       	<item name="android:layout_margin">0dip</item>
-       	<item name="android:textSize">12sp</item>
-       	<item name="android:textStyle">bold</item>
-       	<item name="android:textColor">@color/white</item>
-       	<item name="android:background">@drawable/ab_button</item>
-	</style>
-	
-	<style name="SubActionText">
-	    <item name="android:textColor">@color/sab_title</item>
-	    <item name="android:layout_width">wrap_content</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">0dip</item>
+        <item name="android:paddingTop">0dip</item>
+        <item name="android:paddingBottom">0dip</item>
+        <item name="android:layout_margin">0dip</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/ab_button</item>
+    </style>
+
+    <style name="SubActionText">
+        <item name="android:textColor">@color/sab_title</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">24sp</item>
         <item name="android:layout_marginTop">8dip</item>
-	</style>
-	
-	<style name="Text.Placeholder" parent="@style/Fill">
-	    <item name="android:layout_gravity">center</item>
-	    <item name="android:gravity">center</item>
-	    <item name="android:lines">2</item>
-	    <item name="android:singleLine">false</item>
-	    <item name="android:textColor">@color/textColor_dim</item>
-	</style>
-	
-	<style name="Simple.Title" parent="@style/FillWrap">
-	    <item name="android:background">@drawable/title_bg</item>
-	    <item name="android:textColor">@color/textColor_dim</item>
-	    <item name="android:gravity">center</item>
-	    <item name="android:layout_gravity">center</item>
-	    <item name="android:paddingTop">5dip</item>
-	    <item name="android:paddingBottom">5dip</item>
-	</style>
+    </style>
+
+    <style name="Text.Placeholder" parent="@style/Fill">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lines">2</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:textColor">@color/textColor_dim</item>
+    </style>
+
+    <style name="Simple.Title" parent="@style/FillWrap">
+        <item name="android:background">@drawable/title_bg</item>
+        <item name="android:textColor">@color/textColor_dim</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:paddingTop">5dip</item>
+        <item name="android:paddingBottom">5dip</item>
+    </style>
 
     <style name="SelectableItem">
         <item name="android:background">@drawable/textview_button</item>
     </style>
-	
+
 </resources>

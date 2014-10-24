@@ -59,7 +59,7 @@ public class CompositeService {
         this.description = description;
         this.components = new SparseArray<ComponentService>();
 
-        if(services != null) {
+        if (services != null) {
             for (int i = 0; i < services.size(); i++) {
                 components.put(i, services.get(i));
                 services.get(i).setComposite(this);
@@ -100,7 +100,7 @@ public class CompositeService {
         this.description = description;
         this.enabled = enabled;
 
-        if(services != null) {
+        if (services != null) {
             for (int i = 0; i < services.size(); i++) {
                 ComponentService component = services.valueAt(i);
                 componentSearch.put(component.getID(), component);
@@ -115,7 +115,7 @@ public class CompositeService {
         this.id = -1;
         this.name = "Random Service";
 
-        if(services != null) {
+        if (services != null) {
             this.components = new SparseArray<ComponentService>();
             for (int i = 0; i < services.size(); i++) {
                 ComponentService cs = services.get(i);
@@ -179,7 +179,8 @@ public class CompositeService {
 
         this.components.put(components.size(), component);
         component.setComposite(this);
-        if(LOG) Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getDescription().getClassName(), name, components.size() - 1));
+        if (LOG)
+            Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getDescription().getClassName(), name, components.size() - 1));
     }
 
     public void addComponent(ServiceDescription sd, int position) {
@@ -192,9 +193,9 @@ public class CompositeService {
 
     public void addComponent(ComponentService component, int position) {
 
-        if(components.get(position) == null) {
+        if (components.get(position) == null) {
             // If there isn't a component at that position, then add one
-            synchronized(lock) {
+            synchronized (lock) {
                 components.put(position, component);
                 component.setComposite(this);
                 if (component.getID() != -1)
@@ -230,10 +231,10 @@ public class CompositeService {
 
     public ArrayList<ComponentService> getComponentsAL() {
         ComponentService[] comps = new ComponentService[components.size()];
-        for(int i = 0 ; i < components.size(); i++) {
+        for (int i = 0; i < components.size(); i++) {
             int k = components.keyAt(i);
             ComponentService v = components.get(k);
-            comps[k] =v;
+            comps[k] = v;
         }
 
         return new ArrayList<ComponentService>(Arrays.asList(comps));
@@ -262,9 +263,9 @@ public class CompositeService {
 
     public ArrayList<ComponentService> getComponents(String className) {
         ArrayList<ComponentService> matching = new ArrayList<ComponentService>();
-        for(int i = 0; i < components.size(); i++) {
+        for (int i = 0; i < components.size(); i++) {
             ComponentService component = components.valueAt(i);
-            if(component.getDescription().getClassName().equals(className))
+            if (component.getDescription().getClassName().equals(className))
                 matching.add(component);
         }
 
@@ -288,9 +289,9 @@ public class CompositeService {
     }
 
     public ServiceIO getInput(long id) {
-        for(int i = 0; i < components.size(); i++) {
+        for (int i = 0; i < components.size(); i++) {
             ServiceIO in = components.valueAt(i).getInput(id);
-            if(in != null)
+            if (in != null)
                 return in;
         }
 
@@ -298,9 +299,9 @@ public class CompositeService {
     }
 
     public ServiceIO getOutput(long id) {
-        for(int i = 0; i < components.size(); i++) {
+        for (int i = 0; i < components.size(); i++) {
             ServiceIO in = components.valueAt(i).getOutput(id);
-            if(in != null)
+            if (in != null)
                 return in;
         }
 
@@ -332,42 +333,43 @@ public class CompositeService {
 
     public boolean equals(Object o) {
 
-        if(o == null) {
-            if(LOG) Log.d(TAG, "CompositeService->Equals: null");
+        if (o == null) {
+            if (LOG) Log.d(TAG, "CompositeService->Equals: null");
             return false;
         }
-        if(!(o instanceof CompositeService)) {
+        if (!(o instanceof CompositeService)) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: Not a CompositeService");
             return false;
         }
         CompositeService other = (CompositeService) o;
 
-        if(this.id != other.getID()) {
+        if (this.id != other.getID()) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: id");
             return false;
         }
 
-        if(!this.name.equals(other.getName())) {
+        if (!this.name.equals(other.getName())) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: name " + name + " - " + other.getName());
             return false;
         }
 
-        if(!this.description.equals(other.getDescription())) {
+        if (!this.description.equals(other.getDescription())) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: description: " + description + " - " +
-                                other.getDescription());
+                    other.getDescription());
             return false;
         }
 
-        if(this.components.size() != other.getComponents().size()) {
+        if (this.components.size() != other.getComponents().size()) {
             if (LOG) Log.d(TAG, "CompositeService->Equals: not same num components: " +
-                components.size() + " - " + other.getComponents().size());
+                    components.size() + " - " + other.getComponents().size());
             return false;
         }
 
-        for(int i = 0; i < components.size(); i++) {
+        for (int i = 0; i < components.size(); i++) {
             ComponentService component = components.valueAt(i);
-            if(!component.equals(other.getComponent(component.getID()))) {
-                if (LOG) Log.d(TAG, "CompositeService->Equals: component " + component.getID() + ": " + i);
+            if (!component.equals(other.getComponent(component.getID()))) {
+                if (LOG)
+                    Log.d(TAG, "CompositeService->Equals: component " + component.getID() + ": " + i);
                 return false;
             }
         }
@@ -389,7 +391,7 @@ public class CompositeService {
         }
     }
 
-    public static final int[] COMPOSITE_COLOURS = new int[] {
+    public static final int[] COMPOSITE_COLOURS = new int[]{
             R.color.material_deeppurple,
             R.color.material_indigo,
             R.color.material_blue,
@@ -407,7 +409,7 @@ public class CompositeService {
             R.color.material_purple,
     };
 
-    public static final int[] COMPOSITE_COLOURS_LIGHT = new int[] {
+    public static final int[] COMPOSITE_COLOURS_LIGHT = new int[]{
             R.color.material_deeppurple200,
             R.color.material_indigo200,
             R.color.material_blue200,
@@ -424,4 +426,17 @@ public class CompositeService {
             R.color.material_pink200,
             R.color.material_purple200,
     };
+
+    public boolean canEnable() {
+        ArrayList<ServiceIO> m = this.getMandatoryInputs();
+        boolean allSet = true;
+        for (int i = 0; i < m.size(); i++) {
+            if (m.get(i).getValue() == null && m.get(i).getConnection() == null) {
+                allSet = false;
+                break;
+            }
+        }
+
+        return allSet;
+    }
 }

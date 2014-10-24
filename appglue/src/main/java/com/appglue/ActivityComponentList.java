@@ -13,7 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,7 +38,7 @@ import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.TEST;
 
-public class ActivityAppGlue extends ActionBarActivity
+public class ActivityComponentList extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     public enum Page {
@@ -59,8 +58,6 @@ public class ActivityAppGlue extends ActionBarActivity
             this.name = name;
         }
     }
-
-    private Toolbar toolbar;
 
     // Result code for the google plus stuff
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
@@ -83,9 +80,6 @@ public class ActivityAppGlue extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_app_glue);
-
-        toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
-        setSupportActionBar(toolbar);
 
         /*
       Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -170,39 +164,31 @@ public class ActivityAppGlue extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
+
         Fragment f = null;
 
-        int background = R.color.colorPrimaryDark;
+        ActionBar ab = getSupportActionBar();
+
 
         if (position == Page.HOME.index) {
             homeFragment = (FragmentComposites) FragmentComposites.create();
             f = homeFragment;
         } else if (position == Page.COMPONENTS.index) {
             componentFragment = (FragmentComponents) FragmentComponents.create(true);
-            background = R.color.material_indigo;
             f = componentFragment;
         } else if (position == Page.SCHEDULE.index) {
-            background = R.color.schedule;
             f = FragmentSchedule.create();
         } else if (position == Page.LOG.index) {
-            background = R.color.material_green;
             f = FragmentLog.create();
         } else if (position == Page.SETTINGS.index) {
-            background = R.color.black;
             f = FragmentSettings.create();
         } else if (position == Page.PRIVACY.index) {
-            background = R.color.black;
             f = FragmentPrivacy.create();
         } else if (position == Page.ACCOUNTS.index) {
-            background = R.color.black;
             f = FragmentAccounts.create();
         }
 
         currentPage = position;
-
-        if (toolbar != null) {
-            toolbar.setBackgroundResource(background);
-        }
 
         fragmentManager.beginTransaction().replace(R.id.container, f).commit();
         invalidateOptionsMenu();
@@ -340,7 +326,7 @@ public class ActivityAppGlue extends ActionBarActivity
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
-            ((ActivityAppGlue) activity).onSectionAttached(
+            ((ActivityComponentList) activity).onSectionAttached(
                     Page.values()[getArguments().getInt(ARG_SECTION_NUMBER)]);
         }
     }
@@ -468,9 +454,9 @@ public class ActivityAppGlue extends ActionBarActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (registry.delete(cs)) {
-                            Toast.makeText(ActivityAppGlue.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActivityComponentList.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(ActivityAppGlue.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActivityComponentList.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
                         }
 
                         // Tell the page to refresh

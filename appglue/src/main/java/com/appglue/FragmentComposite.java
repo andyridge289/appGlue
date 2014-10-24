@@ -62,11 +62,11 @@ public class FragmentComposite extends Fragment {
         registry = Registry.getInstance(getActivity());
         localStorage = LocalStorage.getInstance();
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             composite = registry.getComposite(getArguments().getLong(COMPOSITE_ID));
         }
 
-        if(icicle != null) {
+        if (icicle != null) {
             long compositeId = icicle.getLong(COMPOSITE_ID);
             this.composite = registry.getComposite(compositeId);
         }
@@ -75,7 +75,7 @@ public class FragmentComposite extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View root = inflater.inflate(R.layout.fragment_composite, container, false);
 
-        compositeIcon = (ImageView) root.findViewById(R.id.composite_icon);
+        compositeIcon = (ImageView) root.findViewById(R.id.schedule_icon);
 
         compositeName = (TextView) root.findViewById(R.id.composite_name);
         compositeDescription = (TextView) root.findViewById(R.id.composite_description);
@@ -85,7 +85,7 @@ public class FragmentComposite extends Fragment {
 
         componentList = (ListView) root.findViewById(R.id.composite_component_list);
 
-        if(composite != null) {
+        if (composite != null) {
             updatePage();
         }
 
@@ -151,17 +151,17 @@ public class FragmentComposite extends Fragment {
 
     private void updatePage() {
 
-        if(composite == null) {
+        if (composite == null) {
             return;
         }
 
-        if(composite.getComponents().size() > 0) {
+        if (composite.getComponents().size() > 0) {
             AppDescription app = composite.getComponents().get(0).getDescription().getApp();
             if (app == null || app.iconLocation() == null) {
                 compositeIcon.setBackgroundResource(R.drawable.icon);
             } else {
                 String iconLocation = app.iconLocation();
-                if(localStorage == null)
+                if (localStorage == null)
                     localStorage = LocalStorage.getInstance();
                 Bitmap b = localStorage.readIcon(iconLocation);
                 compositeIcon.setImageBitmap(b);
@@ -197,27 +197,24 @@ public class FragmentComposite extends Fragment {
         return composite.getName();
     }
 
-    private class CompositeComponentAdapter extends ArrayAdapter<ComponentService>
-    {
+    private class CompositeComponentAdapter extends ArrayAdapter<ComponentService> {
         private ArrayList<ComponentService> items;
 
-        public CompositeComponentAdapter(Context context, ArrayList<ComponentService> items)
-        {
+        public CompositeComponentAdapter(Context context, ArrayList<ComponentService> items) {
             super(context, R.layout.li_component_in_composite, items);
             this.items = items;
         }
 
         @SuppressLint("InflateParams")
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
+        public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            if(v == null) {
+            if (v == null) {
                 v = vi.inflate(R.layout.li_component_in_composite, null);
             }
 
-            if(v == null)
+            if (v == null)
                 return null;
 
             final ServiceDescription item = items.get(position).getDescription();
@@ -229,7 +226,7 @@ public class FragmentComposite extends Fragment {
                 String iconLocation = composite.getComponents().get(0).getDescription().getApp().iconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);
 
-                if(b != null)
+                if (b != null)
                     icon.setImageBitmap(b);
             } catch (Exception e) {
                 icon.setImageResource(R.drawable.icon);
@@ -237,12 +234,12 @@ public class FragmentComposite extends Fragment {
 
             name.setText(item.getName());
 
-            if(item.hasInputs())
+            if (item.hasInputs())
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);
             else
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.composite_input);
 
-            if(item.hasOutputs())
+            if (item.hasOutputs())
                 v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.has_io);
             else
                 v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.composite_output);

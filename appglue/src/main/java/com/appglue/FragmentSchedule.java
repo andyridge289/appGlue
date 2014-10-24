@@ -2,7 +2,9 @@ package com.appglue;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
@@ -11,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.engine.Schedule;
+import com.appglue.engine.Scheduler;
 import com.appglue.layout.FloatingActionButton;
 import com.appglue.layout.dialog.DialogSchedule;
 import com.appglue.serviceregistry.Registry;
@@ -158,8 +163,6 @@ public class FragmentSchedule extends Fragment {
         }
     }
 
-    // TODO What about the interaction between scheduling enabledness and composite enabledness
-
     private class ScheduleAdapter extends ArrayAdapter<Schedule> {
 
         public ScheduleAdapter(Context context, ArrayList<Schedule> items) {
@@ -186,6 +189,13 @@ public class FragmentSchedule extends Fragment {
                 compositeBg.setBackgroundResource(item.getComposite().getColour(false));
             } else {
                 compositeBg.setBackgroundResource(R.color.card_disabled);
+            }
+
+            ImageView icon = (ImageView) v.findViewById(R.id.schedule_icon);
+            if (item.isEnabled()) {
+                icon.setBackgroundResource(R.drawable.ic_alarm_black_36dp);
+            } else {
+                icon.setBackgroundResource(R.drawable.ic_alarm_off_grey600_36dp);
             }
 
             View timeContainer = v.findViewById(R.id.time_container);
@@ -273,16 +283,48 @@ public class FragmentSchedule extends Fragment {
             int year = cal.get(Calendar.YEAR);
             intervalStart.setText(String.format("%s %d%s %s %d at %d:%d", DialogSchedule.getWeekDay(item.getDayOfWeek()).name, dayOfMonth, dayEnd, months[month], year, hour, minute));
 
-            cal.setTimeInMillis(item.getNextExecute());
-            SimpleDateFormat sdf = new SimpleDateFormat("cccc d MMMM yyyy   HH:mm");
             TextView next = (TextView) v.findViewById(R.id.next_time);
-            next.setText(sdf.format(cal.getTime()));
+            if (item.getNextExecute() == -1L) {
+                next.setText(" - ");
+            } else {
+                cal.setTimeInMillis(item.getNextExecute());
+                SimpleDateFormat sdf = new SimpleDateFormat("cccc d MMMM yyyy   HH:mm");
 
-            SwitchCompat enabledSwitch = (SwitchCompat) v.findViewById(R.id.enabled_switch);
+                next.setText(sdf.format(cal.getTime()));
+            }
+
+            // TODO Can this be red instead?
+            final SwitchCompat enabledSwitch = (SwitchCompat) v.findViewById(R.id.enabled_switch);
             enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                     item.setEnabled(isChecked);
+                    if (isChecked) {
+                        if (!item.getComposite().isEnabled() && item.getComposite().canEnable()) {
+                            enabledSwitch.setChecked(false);
+                            enableDialog(item, enabledSwitch);
+                            return;
+                        } else if (!item.getComposite().canEnable()) {
+                            Toast.makeText(getContext(), "Can't enable until you fix " + item.getComposite().getName(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        if (item.getScheduleType() == Schedule.ScheduleType.INTERVAL) {
+                            item.setLastExecuteTime(System.currentTimeMillis());
+                        }
+
+                        // item execution num probably isn't up to date, so get it out of the database
+                        Schedule s = registry.getSchedule(item.getID());
+                        item.calculateNextExecute(System.currentTimeMillis());
+                        item.setExecutionNum(s.getExecutionNum() + 1);
+                        Scheduler scheduler = new Scheduler(getActivity());
+                        scheduler.schedule(item);
+                    } else {
+                        item.setNextExecute(-1L);
+                    }
+                    registry.update(item);
+
+
                     notifyDataSetChanged();
                 }
             });
@@ -327,6 +369,21 @@ public class FragmentSchedule extends Fragment {
 
             return v;
         }
+    }
+
+    private void enableDialog(final Schedule s, final SwitchCompat enableSwitch) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Enable")
+                .setMessage(String.format("Composite %s is disabled. Enable it?", s.getComposite().getName()))
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        s.getComposite().setEnabled(true);
+                        enableSwitch.setChecked(true);
+                    }
+                })
+                .setNegativeButton("No", null) // We've turned the switch back off already
+                .show();
     }
 
     // TODO Setting the next calculated time for month isn't working -- maybe it isn't calculating on a new one

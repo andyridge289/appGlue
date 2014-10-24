@@ -80,10 +80,14 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         if (sd == null)
             return v;
 
-        ImageView icon = (ImageView) v.findViewById(R.id.simple_list_icon);
+        ImageView appIcon = (ImageView) v.findViewById(R.id.component_app_icon);
+        appIcon.setImageResource(R.drawable.icon); // TODO This needs to be cleverer
 
+        // FIXME Component search list page is totally broken
+        // TODO Set this if we can use it in the preferences
+//        icon.setImageResource(R.drawable.ic_extension_black_48dp);
 //        if (sd.getServiceType() == ServiceType.IN_APP)
-            icon.setImageResource(R.drawable.icon);
+//            icon.setImageResource(R.drawable.icon);
 //        else if (sd.getServiceType() == ServiceType.LOCAL) {
 //            if (sd.getApp() == null) {
 //                icon.setImageResource(R.drawable.ic_lock_silent_mode_vibrate);
@@ -98,6 +102,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         serviceName.setText(sd.getName());
 
         LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
+        flagContainer.removeAllViews();
 
         if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
 
@@ -116,13 +121,33 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         // TODO public static final int FLAG_LOCATION = 0x10;
 
         if (sd.hasInputs()) {
-            v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);
+            LinearLayout inputs = (LinearLayout) v.findViewById(R.id.comp_item_inputs);
+            inputs.setBackgroundResource(R.drawable.has_io);
+//            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+//            lp.weight = 1;
+//            inputs.removeAllViews();
+//            int num = Math.min(sd.getInputs().size(), 4);
+//            for (int i = 0; i < num; i++) {
+//                FloatingActionButton fab = new FloatingActionButton(getContext());
+//                fab.setColor(getContext().getResources().getColor(R.color.material_cyan));
+//                fab.setLayoutParams(lp);
+//                inputs.addView(fab);
+//            }
         } else {
             v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.inputs);
         }
 
         if (sd.hasOutputs()) {
-            v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.has_io);
+            LinearLayout outputs = (LinearLayout) v.findViewById(R.id.comp_item_outputs);
+            outputs.setBackgroundResource(R.drawable.has_io);
+//            for (int i = 0; i < sd.getOutputs().size(); i++) {
+//                FloatingActionButton fab = new FloatingActionButton(getContext());
+//                fab.setColor(getContext().getResources().getColor(R.color.material_amber));
+//                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+//                lp.weight = 1;
+//                fab.setLayoutParams(lp);
+//                outputs.addView(fab);
+//            }
         } else {
             v.findViewById(R.id.comp_item_outputs).setBackgroundResource(R.drawable.outputs);
         }

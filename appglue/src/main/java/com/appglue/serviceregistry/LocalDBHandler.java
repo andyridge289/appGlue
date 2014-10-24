@@ -99,7 +99,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        // recreate();
     }
 
     // FIXME Setting values doesn't appear to work
@@ -1677,12 +1677,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             String outputString = c.getString(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + OUTPUT_DATA));
 
             Bundle inputBundle = null;
-            if (!inputString.equals("")) {
+            if (inputString != null && !inputString.equals("")) {
                 inputBundle = AppGlueLibrary.JSONToBundle(inputString, component.getDescription(), true);
             }
 
             Bundle outputBundle = null;
-            if (!outputString.equals("")) {
+            if (outputString != null && !outputString.equals("")) {
                 outputBundle = AppGlueLibrary.JSONToBundle(outputString, component.getDescription(), false);
             }
 
