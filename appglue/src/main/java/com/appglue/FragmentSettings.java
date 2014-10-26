@@ -1,18 +1,11 @@
 package com.appglue;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-
-import java.util.Map;
-
-import static com.appglue.library.AppGlueConstants.PREFS;
-
-public class FragmentSettings extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener
-{
+public class FragmentSettings extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private Activity activity;
 
     public static FragmentSettings create() {
@@ -27,7 +20,7 @@ public class FragmentSettings extends Fragment implements SharedPreferences.OnSh
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+//        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
 //        Map<String, ?> prefs = sharedPreferences.getAll();
 
         // This needs to show a clear database button

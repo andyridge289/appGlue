@@ -2,10 +2,13 @@ package com.appglue;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +16,10 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
@@ -34,16 +39,24 @@ public class FragmentComposite extends Fragment {
     private TextView compositeName;
     private TextView compositeDescription;
 
-    private CheckBox activeCheck;
-
+    private SwitchCompat enabledSwitch;
     private ListView componentList;
+
+    private LinearLayout contextBar;
+    private View runButton;
+    private View editButton;
+    private View scheduleButton;
+    private View shortcutButton;
+    private View deleteButton;
 
     private CompositeService composite;
 
     private Registry registry;
     private LocalStorage localStorage;
 
+
     public FragmentComposite() {
+
     }
 
     public static Fragment create() {
@@ -75,13 +88,20 @@ public class FragmentComposite extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
         View root = inflater.inflate(R.layout.fragment_composite, container, false);
 
-        compositeIcon = (ImageView) root.findViewById(R.id.schedule_icon);
+        compositeIcon = (ImageView) root.findViewById(R.id.composite_icon);
 
         compositeName = (TextView) root.findViewById(R.id.composite_name);
         compositeDescription = (TextView) root.findViewById(R.id.composite_description);
 
-        activeCheck = (CheckBox) root.findViewById(R.id.composite_active);
+        enabledSwitch = (SwitchCompat) root.findViewById(R.id.enabled_switch);
         CheckBox runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
+
+        contextBar = (LinearLayout) root.findViewById(R.id.context_toolbar);
+        runButton = root.findViewById(R.id.composite_run);
+        editButton = root.findViewById(R.id.composite_edit);
+        scheduleButton = root.findViewById(R.id.composite_schedule);
+        shortcutButton = root.findViewById(R.id.composite_shortcut);
+        deleteButton = root.findViewById(R.id.composite_delete);
 
         componentList = (ListView) root.findViewById(R.id.composite_component_list);
 
@@ -143,8 +163,9 @@ public class FragmentComposite extends Fragment {
     }
 
     public void setData(long id) {
-        if (registry == null)
+        if (registry == null) {
             registry = Registry.getInstance(getActivity());
+        }
 
         composite = registry.getComposite(id);
     }
@@ -173,19 +194,84 @@ public class FragmentComposite extends Fragment {
         compositeName.setText(composite.getName());
         compositeDescription.setText(composite.getDescription());
 
-        activeCheck.setChecked(composite.isEnabled());
-        activeCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        contextBar.setBackgroundResource(composite.getColour(false));
+
+        if (composite.isEnabled()) {
+            runButton.setVisibility(View.VISIBLE);
+            scheduleButton.setVisibility(View.VISIBLE);
+            shortcutButton.setVisibility(View.VISIBLE);
+        } else {
+            runButton.setVisibility(View.GONE);
+            scheduleButton.setVisibility(View.GONE);
+            shortcutButton.setVisibility(View.GONE);
+        }
+
+        runButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // FIXME Enable or disabled it, but check whether we can enabled it first - mandatory inputs
-                // TODO Change active to say if it's enabled or not
+            public void onClick(View v) {
+                ((ActivityAppGlue) getActivity()).run(composite);
             }
         });
 
-        // TODO Need to add the bar at the bottom and enable all the buttons
-        // TODO Add a message to direct them to edit it if it's disabled because of mandatoryness
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ActivityAppGlue) getActivity()).edit(composite);
+            }
+        });
 
-//        runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
+        scheduleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ActivityAppGlue) getActivity()).schedule(composite);
+            }
+        });
+
+        shortcutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ActivityAppGlue) getActivity()).createShortcut(composite);
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Delete")
+                        .setMessage(String.format("Are you sure you want to delete %s?", composite.getName()))
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (registry.delete(composite)) {
+                                    Toast.makeText(getActivity(), String.format("\"%s\" deleted successfully", composite.getName()), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", composite.getName()), Toast.LENGTH_SHORT).show();
+                                }
+                                getActivity().onBackPressed(); // TODO Ummmm this might achieve what we want
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+            }
+        });
+
+        enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!composite.isEnabled() && composite.canEnable()) {
+                    enabledSwitch.setChecked(false);
+//                    enableDialog(item, enabledSwitch);
+                } else if (!composite.canEnable()) {
+                    Toast.makeText(getActivity(), "Can't enable until you fix " + composite.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        enabledSwitch.setChecked(composite.isEnabled());
+
+        // TODO Add a message to direct them to edit it if it's disabled because of mandatoryness
 
         ArrayList<ComponentService> components = composite.getComponentsAL();
         componentList.setAdapter(new CompositeComponentAdapter(getActivity(), components));

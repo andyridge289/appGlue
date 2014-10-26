@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
@@ -53,6 +53,8 @@ public class ActivityWiring extends ActionBarActivity {
     private int componentPosition = 0;
     private Object callbackView;
 
+    private Toolbar toolbar;
+
     public ActivityWiring() {
     }
 
@@ -67,6 +69,9 @@ public class ActivityWiring extends ActionBarActivity {
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
 		setContentView(R.layout.activity_wiring);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar_wiring);
+        setSupportActionBar(toolbar);
 
         Intent intent = this.getIntent();
         editExisting = intent.getBooleanExtra(EDIT_EXISTING, false);
@@ -113,18 +118,11 @@ public class ActivityWiring extends ActionBarActivity {
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.container, attach).commit(); // TODO Unable to resume, can't do this after on save instance state
 
-        setActionBar();
         invalidateOptionsMenu();
 
         if(wiringFragment != null) {
             wiringFragment.redraw(pagerPosition);
         }
-    }
-
-    public void setActionBar() {
-		ActionBar actionBar = getSupportActionBar();
-		actionBar.setHomeButtonEnabled(true);
-		actionBar.setTitle(mTitle);
     }
 
     public void onBackPressed() {
@@ -316,6 +314,8 @@ public class ActivityWiring extends ActionBarActivity {
 	{
 		MenuInflater inflater = getMenuInflater();
 
+        int background = R.color.composite;
+
         switch(mode) {
             case MODE_CREATE:
                 if(wiringFragment == null) {
@@ -323,15 +323,16 @@ public class ActivityWiring extends ActionBarActivity {
                 }
 
                 inflater.inflate(R.menu.wiring, menu);
-                switch(wiringFragment.getCurrentWiringMode()) {
-                    case FragmentWiring.MODE_WIRING:
-                        menu.setGroupVisible(R.id.menu_group_create_wiring, true);
-                        break;
-
-                    default:
-                        menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-                        break;
-                }
+//                switch(wiringFragment.getCurrentWiringMode()) {
+//                    case FragmentWiring.MODE_WIRING:
+//                        menu.setGroupVisible(R.id.menu_group_create_wiring, true);
+//                        break;
+//
+//                    default:
+//                        menu.setGroupVisible(R.id.menu_group_create_wiring, false);
+//                        break;
+//                }
+                background = R.color.composite;
                 break;
 
             case MODE_FILTER:
@@ -339,11 +340,16 @@ public class ActivityWiring extends ActionBarActivity {
                     return true;
                 }
                 inflater.inflate(R.menu.wiring_filter, menu);
+                background = R.color.filter;
                 break;
 
-            default:
-                // We dont need no stinkin' menu
+            case MODE_CHOOSE:
+                background = R.color.component;
                 break;
+        }
+
+        if (toolbar != null) {
+            toolbar.setBackgroundResource(background);
         }
 
         return true;
@@ -360,6 +366,9 @@ public class ActivityWiring extends ActionBarActivity {
             setMode(MODE_CREATE);
             registry.updateComposite(registry.getCurrent());
             redraw();
+        } else if (item.getItemId() == R.id.wiring_auto) {
+            // We must be on a wiring page or we wouldn't be able to see this menu item
+            wiringFragment.getCurrentFragment().autoConnect();
         }
 
         return true;

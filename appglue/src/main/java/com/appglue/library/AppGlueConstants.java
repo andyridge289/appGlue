@@ -36,6 +36,9 @@ public class AppGlueConstants {
     public static final String PREFS_HIDDEN = "prefs_hidden";
     public static final String RUN_BEFORE = "run_before";
 
+    public static final String PREFS_APP = "prefs_app";
+    public static final String P_COST = "pref_cost";
+    public static final String P_NOTIFICATION = "pref_notification";
 
     // Database information
     public static final int DB_VERSION = 1;
@@ -412,5 +415,4 @@ public class AppGlueConstants {
     public static final String HAS_OUTPUTS = "has_outputs";
 
     public static final String FIRST = "first";
-    public static final String PREFS = "appGlue_prefs";
 }

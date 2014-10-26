@@ -2,14 +2,6 @@
 <pre-dex-items>
 
     <item
-        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-06c11a875de33503ef5265319ba235e46e3d9ce8.jar"
-        jar="/Users/andyridge/Code/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
-        jumboMode="false" revision="21.0.1" sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e" />
-    <item
-        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ed438e30333109f05141e4c24a892d4c2d949fb8.jar"
-        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/classes.jar"
-        jumboMode="false" revision="21.0.1" sha1="95fd37732ec852e99f07eeb516a3650172f1d136" />
-    <item
         dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-9fc42f6d75dc4055c1a2f3d60b8df05d8bc84c3d.jar"
         jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v13/20.0.0/classes.jar"
         jumboMode="false" revision="21.0.1" sha1="e128103d5281ddd26195a7f980b36d0d005a4e56" />
@@ -17,10 +9,6 @@
         dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-1ba615c7c83a4085aa6d640462842c09f2eb133d.jar"
         jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.1.11/classes.jar"
         jumboMode="false" revision="21.0.1" sha1="0f700f6802ba1a1f1fa7ac26d5db0666a89d75a6" />
-    <item
-        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-9c7da9146156d3e939cec0f96c572617d5b1cf50.jar"
-        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v13/20.0.0/libs/internal_impl-20.0.0.jar"
-        jumboMode="false" revision="21.0.1" sha1="27bbd3982cdfe4468a9bf99c8c773734a9049e33" />
     <item
         dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-abb97aca3e2295a6bead02f7fe87b6c721598ac6.jar"
         jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/cardview-v7/21.0.0/classes.jar"
@@ -40,6 +28,18 @@
     <item
         dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-2e7834f100e4daf029f5c1e2e0dceb4b3ac998da.jar"
         jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
-        jumboMode="false" revision="21.0.1" sha1="293a27e2707eefde3c1047dc126c2348f8783bb6" />
+        jumboMode="false" revision="21.0.1" sha1="bd9d25a713deffae95322fb0d3619fa61e0ccd6c" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-06c11a875de33503ef5265319ba235e46e3d9ce8.jar"
+        jar="/Users/andyridge/Code/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"
+        jumboMode="false" revision="21.0.1" sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ed438e30333109f05141e4c24a892d4c2d949fb8.jar"
+        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/classes.jar"
+        jumboMode="false" revision="21.0.1" sha1="95fd37732ec852e99f07eeb516a3650172f1d136" />
+    <item
+        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-9c7da9146156d3e939cec0f96c572617d5b1cf50.jar"
+        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v13/20.0.0/libs/internal_impl-20.0.0.jar"
+        jumboMode="false" revision="21.0.1" sha1="27bbd3982cdfe4468a9bf99c8c773734a9049e33" />
 
 </pre-dex-items>

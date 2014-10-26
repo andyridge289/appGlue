@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -90,18 +89,9 @@ public class ActivityApp extends Activity {
             serviceName.setText(sd.getName());
 
             LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
+            flagContainer.removeAllViews();
 
-            if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
-
-                ImageView iv = new ImageView(getContext());
-                iv.setBackgroundResource(R.drawable.ic_trigger);
-                flagContainer.addView(iv);
-
-                TextView tv = new TextView(getContext());
-                tv.setText(getContext().getResources().getString(R.string.trigger));
-                flagContainer.addView(tv);
-            }
-            // TODO Make icons for the other flags and put things in
+            // TODO Make icons for the other flags and put things in, update this to use the same layout as the other one
 
             if (sd.hasInputs()) {
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);

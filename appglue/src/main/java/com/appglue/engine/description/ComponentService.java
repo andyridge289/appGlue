@@ -115,6 +115,19 @@ public class ComponentService {
     public ArrayList<ServiceIO> getInputs() {
         return inputs;
     }
+
+    public ArrayList<ServiceIO> getDisconnectedInputs() {
+        ArrayList<ServiceIO> in = new ArrayList<ServiceIO>();
+
+        // Hopefully this should preserve the order
+        for (int i = 0; i < inputs.size(); i++) {
+            if (inputs.get(i).getConnection() == null && inputs.get(i).getValue() == null) {
+                in.add(inputs.get(i));
+            }
+        }
+
+        return in;
+    }
     public ServiceIO getInput(long id) {
         return inputSearch.get(id);
     }
@@ -139,6 +152,19 @@ public class ComponentService {
     }
     public ArrayList<ServiceIO> getOutputs() {
         return outputs;
+    }
+
+    public ArrayList<ServiceIO> getDisconnectedOutputs() {
+        ArrayList<ServiceIO> out = new ArrayList<ServiceIO>();
+
+        // Hopefully this should preserve the order
+        for (int i = 0; i < outputs.size(); i++) {
+            if (outputs.get(i).getConnection() == null) {
+                out.add(outputs.get(i));
+            }
+        }
+
+        return out;
     }
     public ServiceIO getOutput(long id) {
         return outputSearch.get(id);

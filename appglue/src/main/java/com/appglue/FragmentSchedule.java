@@ -59,7 +59,7 @@ public class FragmentSchedule extends Fragment {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        for(int i = 0; i < monthDays.length; i++) {
+        for (int i = 0; i < monthDays.length; i++) {
             monthDays[i] = "" + (i + 1);
         }
 
@@ -265,7 +265,7 @@ public class FragmentSchedule extends Fragment {
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
             String dayEnd = "th";
-            switch(dayOfMonth) {
+            switch (dayOfMonth) {
                 case 1:
                 case 21:
                 case 31:
@@ -278,7 +278,7 @@ public class FragmentSchedule extends Fragment {
                     break;
             }
             int month = cal.get(Calendar.MONTH);
-            String[] months = new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+            String[] months = new String[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
             int year = cal.get(Calendar.YEAR);
             intervalStart.setText(String.format("%s %d%s %s %d at %d:%d", DialogSchedule.getWeekDay(item.getDayOfWeek()).name, dayOfMonth, dayEnd, months[month], year, hour, minute));
@@ -293,7 +293,6 @@ public class FragmentSchedule extends Fragment {
                 next.setText(sdf.format(cal.getTime()));
             }
 
-            // TODO Can this be red instead?
             final SwitchCompat enabledSwitch = (SwitchCompat) v.findViewById(R.id.enabled_switch);
             enabledSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -307,6 +306,7 @@ public class FragmentSchedule extends Fragment {
                             return;
                         } else if (!item.getComposite().canEnable()) {
                             Toast.makeText(getContext(), "Can't enable until you fix " + item.getComposite().getName(), Toast.LENGTH_SHORT).show();
+                            enabledSwitch.setChecked(false);
                         }
 
                         if (item.getScheduleType() == Schedule.ScheduleType.INTERVAL) {

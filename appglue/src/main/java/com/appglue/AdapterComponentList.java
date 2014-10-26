@@ -3,6 +3,7 @@ package com.appglue;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.appglue.description.ServiceDescription;
+import com.appglue.library.AppGlueConstants;
 import com.appglue.library.LocalStorage;
 
 import java.util.ArrayList;
+
+import static com.appglue.library.AppGlueConstants.P_COST;
+import static com.appglue.library.AppGlueConstants.P_NOTIFICATION;
 
 class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
 
@@ -83,7 +88,10 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         ImageView appIcon = (ImageView) v.findViewById(R.id.component_app_icon);
         appIcon.setImageResource(R.drawable.icon); // TODO This needs to be cleverer
 
-        // FIXME Component search list page is totally broken
+        SharedPreferences prefs = getContext().getSharedPreferences(AppGlueConstants.PREFS_APP, Context.MODE_PRIVATE);
+        boolean cost = prefs.getBoolean(P_COST, true);
+        boolean network = prefs.getBoolean(P_NOTIFICATION, true);
+
         // TODO Set this if we can use it in the preferences
 //        icon.setImageResource(R.drawable.ic_extension_black_48dp);
 //        if (sd.getServiceType() == ServiceType.IN_APP)
@@ -106,19 +114,54 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
 
         if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
 
-            ImageView iv = new ImageView(getContext());
-            iv.setBackgroundResource(R.drawable.ic_trigger);
-            flagContainer.addView(iv);
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
 
-            TextView tv = new TextView(getContext());
-            tv.setText(getContext().getResources().getString(R.string.trigger));
-            flagContainer.addView(tv);
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            iv.setBackgroundResource(R.drawable.ic_exit_to_app_white_18dp);
+            tv.setText("Trigger");
         }
 
-        // TODO public static final int FLAG_MONEY = 0x2;
-        // TODO public static final int FLAG_NETWORK = 0x4;
-        // TODO public static final int FLAG_DELAY = 0x8;
-        // TODO public static final int FLAG_LOCATION = 0x10;
+        if (sd.hasFlag(ComposableService.FLAG_MONEY)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            // TODO Find an icon for money
+//            iv.setBackgroundResource(R.drawable.ic_exit_to_app_white_18dp);
+            tv.setText("Costs money");
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            // TODO Find an icon for network
+//            iv.setBackgroundResource(R.drawable.ic_exit_to_app_white_18dp);
+            tv.setText("Uses data");
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_LOCATION)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            // TODO Find an icon for location
+//            iv.setBackgroundResource(R.drawable.ic_exit_to_app_white_18dp);
+            tv.setText("Uses GPS");
+        }
 
         if (sd.hasInputs()) {
             LinearLayout inputs = (LinearLayout) v.findViewById(R.id.comp_item_inputs);

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/trigger"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/component_attribute_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/component_attribute_text"
+        android:textSize="12sp"
+        android:text="Trigger"
+        android:textColor="@color/white"
+        android:layout_marginLeft="20dip"
+        android:layout_marginStart="20dip"
+        android:layout_marginTop="4dip"
+        android:paddingLeft="5dip"
+        android:paddingStart="5dip"
+        android:paddingRight="5dip"
+        android:paddingEnd="5dip" />
+
+    <RelativeLayout
+        android:id="@+id/attr_icon"
+        android:layout_width="24dip"
+        android:layout_height="24dip"
+        android:background="@drawable/component_attribute_icon">
+
+        <ImageView
+            android:id="@+id/component_attribute_icon"
+            android:layout_width="16dip"
+            android:layout_height="16dip"
+            android:background="@drawable/ic_trigger"
+            android:layout_centerInParent="true" />
+
+    </RelativeLayout>
+
+
+</FrameLayout>

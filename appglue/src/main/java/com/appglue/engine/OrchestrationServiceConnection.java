@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.PREFS;
+import static com.appglue.library.AppGlueConstants.PREFS_APP;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
     boolean isBound;
@@ -578,7 +578,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     Bundle errorBundle = dummyList.get(0);
                     Registry.getInstance(context).componentCompositeFail(osc.cs, executionInstance, osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
 
-                    SharedPreferences prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+                    SharedPreferences prefs = context.getSharedPreferences(PREFS_APP, Context.MODE_PRIVATE);
 
                     // Sorts out the showing notifications preference.
                     if (prefs.getBoolean(context.getResources().getString(R.string.prefs_notifications), false)) {

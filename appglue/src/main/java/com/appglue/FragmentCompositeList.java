@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
@@ -133,7 +136,25 @@ public class FragmentCompositeList extends Fragment {
         delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                aag.delete(listAdapter.getCurrentComposite());
+                final CompositeService cs = listAdapter.getCurrentComposite();
+                new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Delete")
+                        .setMessage(String.format("Are you sure you want to delete %s?", cs.getName()))
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (registry.delete(cs)) {
+                                    Toast.makeText(getActivity(), String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
+                                }
+
+                                listAdapter.remove(cs);
+                                listAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("No", null).show();
             }
         });
 
@@ -406,7 +427,6 @@ public class FragmentCompositeList extends Fragment {
     }
 
     // TODO Component list icon triggers and things
-    // TODO Remove the composite list view as icons
     // TODO Sort out the selection thing for components
     // TODO Auto connect in wiring
 

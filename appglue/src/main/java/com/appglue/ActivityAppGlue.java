@@ -1,10 +1,8 @@
 package com.appglue;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -23,7 +21,6 @@ import android.widget.Toast;
 
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.serviceregistry.Registry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -303,6 +300,23 @@ public class ActivityAppGlue extends ActionBarActivity
             }
         }
 
+        int background = R.color.settings;
+
+        if (currentPage == Page.HOME.index) {
+            background = R.color.composite;
+        } else if (currentPage == Page.COMPONENTS.index) {
+            background = R.color.component;
+        } else if (currentPage == Page.SCHEDULE.index) {
+            background = R.color.schedule;
+        } else if (currentPage == Page.LOG.index) {
+            background = R.color.log;
+        }
+
+        if (toolbar != null) {
+            toolbar.setBackgroundResource(background);
+        }
+
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -456,34 +470,6 @@ public class ActivityAppGlue extends ActionBarActivity
         sendBroadcast(putShortCutIntent);
     }
 
-    void delete(final CompositeService cs) {
-
-        final Registry registry = Registry.getInstance(this);
-
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Delete")
-                .setMessage(String.format("Are you sure you want to delete %s?", cs.getName()))
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (registry.delete(cs)) {
-                            Toast.makeText(ActivityAppGlue.this, String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(ActivityAppGlue.this, String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
-                        }
-
-                        // Tell the page to refresh
-                        if (homeFragment == null) {
-                            onNavigationDrawerItemSelected(Page.HOME.index);
-                        } else {
-                            homeFragment.setMode(FragmentComposites.MODE_LIST);
-                            homeFragment.redraw();
-                        }
-                    }
-                })
-                .setNegativeButton("No", null)
-                .show();
-    }
+    // TODO Get rid of the context bar when the user clicks on an action
 
 }

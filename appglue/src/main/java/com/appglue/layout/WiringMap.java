@@ -545,6 +545,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 break;
         }
 
+        Log.d(TAG, String.format("Weights: %f %f %f", outputWeight, filterWeight, inputWeight));
+
         WeightedExpandAnimation ia = new WeightedExpandAnimation(inputFrame, ((LayoutParams) inputFrame.getLayoutParams()).weight, inputWeight);
         ia.setDuration(500);
         inputFrame.startAnimation(ia);
@@ -642,6 +644,45 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
         redraw(true);
+    }
+
+    public void autoConnect() {
+
+        if (first == null || second == null) {
+            return;
+        }
+
+        ArrayList<ServiceIO> outputs = first.getDisconnectedOutputs();
+        ArrayList<ServiceIO> inputs = second.getDisconnectedInputs();
+
+        for (int i = 0; i < outputs.size(); ) {
+            ServiceIO out = outputs.get(i);
+            IOType type = out.getType();
+
+            boolean removed = false;
+
+            for (int j = 0; j < inputs.size(); j++) {
+                ServiceIO in = inputs.get(j);
+                if (type.typeEquals(in.getType())) {
+
+                    Handler h = new Handler();
+                    h.postDelayed(new RedrawRunnable(out.getDescription().getIndex(),
+                            in.getDescription().getIndex()), 200);
+                    Log.d(TAG, String.format("Connecting %d to %d", out.getDescription().getIndex(),
+                            in.getDescription().getIndex()));
+
+                    outputs.remove(i);
+                    inputs.remove(j);
+                    removed = true;
+                    break;
+                }
+            }
+
+            if (!removed) {
+                i++;
+            }
+        }
+
     }
 
     private class InputAdapter extends WiringIOAdapter {

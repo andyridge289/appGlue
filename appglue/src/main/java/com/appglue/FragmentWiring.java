@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,7 +19,6 @@ import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.FloatingActionButton;
 import com.appglue.layout.WiringMap;
-import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
@@ -269,6 +267,10 @@ public class FragmentWiring extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void autoConnect() {
+        wiringMap.autoConnect();
     }
 
     public void onPause() {

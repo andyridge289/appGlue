@@ -55,7 +55,6 @@ public class Scheduler extends BroadcastReceiver {
         Log.d(TAG, "Putting: (" + intent.hashCode() + ")" + intent.getLongExtra(COMPOSITE_ID, -1) + ", " + intent.getLongExtra(ID, -1) + ", " +
                 intent.getIntExtra(EXECUTION_NUM, -1));
 
-        // TODO Might need to put something sensible in the request code? A checksum?
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
