@@ -102,8 +102,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // recreate();
     }
 
-    // FIXME Setting values doesn't appear to work
-
     @Override
     /**
      * Automagically called when the database needs to be created, usually on an upgrade
@@ -2298,7 +2296,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return currentComponent;
     }
 
-    // FIXME Presumably the problem is in here somewhere . Walk through it please
     private ArrayList<IOFilter> getFilters(ComponentService component) {
 
         ArrayList<IOFilter> filters = new ArrayList<IOFilter>();

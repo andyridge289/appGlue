@@ -14,7 +14,7 @@ public class IOValue {
     public static final int MANUAL = 0;
     public static final int SAMPLE = 1;
 
-    private long id; // It'll be going in the database so we'll need an ID at some point
+    private long id = -1; // It'll be going in the database so we'll need an ID at some point
 
     private int filterState;
 

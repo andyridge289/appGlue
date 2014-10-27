@@ -47,25 +47,21 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.PREFS_APP;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
+
     boolean isBound;
-
     Messenger messageReceiver;
-
     private int index;
 
     private Context context;
-
     private Message message;
 
     private CompositeService cs;
 
     private boolean test;
-
     private Registry registry;
 
     private Bundle[] sent;
     private Bundle[] received;
-
     private long executionInstance = -1L; // Initialise this to -1
 
     public OrchestrationServiceConnection(Context context, CompositeService cs, boolean test) {
@@ -434,6 +430,9 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         // Go through the getInputs and input any manual values that are there
         for (ServiceIO input : inputs) {
             if (input.hasValue()) {
+
+                Log.d(TAG, "Should be getting value for " + input.getDescription().getFriendlyName());
+
                 // Then add it to the input list
                 String name = input.getDescription().getName();
                 IOType type = input.getDescription().getType();

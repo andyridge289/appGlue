@@ -440,8 +440,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         assertEquals(s.getNextExecute(), cal.getTimeInMillis());
     }
 
-    // TODO We probably also want to test the next iteration for each of these
-
 //    @LargeTest
 //    public void testExecution() throws Exception {
 //

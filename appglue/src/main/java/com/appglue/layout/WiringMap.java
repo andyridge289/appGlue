@@ -659,6 +659,9 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             ServiceIO out = outputs.get(i);
             IOType type = out.getType();
 
+            // TODO Need to make the filter stuff shades of red
+            // TODO The titles are alllll kinds of fucked
+
             boolean removed = false;
 
             for (int j = 0; j < inputs.size(); j++) {
@@ -1131,16 +1134,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                         iSelected = null;
                         iIndex = -1;
                     }
-                }
-            });
-
-            endpoint.setOnLongClickListener(new OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-//					// Show the dialog
-//					DialogConnection cd = new DialogConnection(activity, WiringMap.this, outputList, inputList, item, position);
-//					cd.show();
-                    return true;
                 }
             });
 

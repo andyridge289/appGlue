@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -634,6 +632,8 @@ public class DialogIO extends AlertDialog {
                         SampleValue sampleValue = (SampleValue) sampleSpinner.getSelectedItem();
                         IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
                         item.setValue(value);
+                    } else {
+                        Log.d(TAG, "Ummm");
                     }
 
                     // The setting of the list values needs to move to the creating of the list. Do an invalidate
