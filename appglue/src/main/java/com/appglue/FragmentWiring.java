@@ -79,6 +79,7 @@ public class FragmentWiring extends Fragment {
 
         hueMap = new HashMap<String, Integer>();
         wiringMap = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
+        wiringMap.setPosition(position);
 
         TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
         TextView secondName = (TextView) rootView.findViewById(R.id.second_name);

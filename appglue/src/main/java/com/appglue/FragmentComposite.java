@@ -250,7 +250,7 @@ public class FragmentComposite extends Fragment {
                                 } else {
                                     Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", composite.getName()), Toast.LENGTH_SHORT).show();
                                 }
-                                getActivity().onBackPressed(); // TODO Ummmm this might achieve what we want
+                                getActivity().onBackPressed();
                             }
                         })
                         .setNegativeButton("No", null)
@@ -265,13 +265,11 @@ public class FragmentComposite extends Fragment {
                     enabledSwitch.setChecked(false);
 //                    enableDialog(item, enabledSwitch);
                 } else if (!composite.canEnable()) {
-                    Toast.makeText(getActivity(), "Can't enable until you fix " + composite.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Can't enable until you fix " + composite.getName() + ". Edit it and fix these errors first!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         enabledSwitch.setChecked(composite.isEnabled());
-
-        // TODO Add a message to direct them to edit it if it's disabled because of mandatoryness
 
         ArrayList<ComponentService> components = composite.getComponentsAL();
         componentList.setAdapter(new CompositeComponentAdapter(getActivity(), components));

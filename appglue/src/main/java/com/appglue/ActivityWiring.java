@@ -411,9 +411,10 @@ public class ActivityWiring extends ActionBarActivity {
         redraw();
     }
 
-    public void filter(long componentId, long filterId) {
+    public void filter(long componentId, long filterId, int position) {
         this.componentId = componentId;
         this.filterId = filterId;
+        this.pagerPosition = position;
         this.setMode(MODE_FILTER);
         this.redraw();
     }

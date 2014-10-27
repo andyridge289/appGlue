@@ -1106,9 +1106,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         int failureCount = 0;
 
-        // FIXME What about if the ID of the value node is -1?
         if (valueNode.getID() == -1) {
-            Log.e(TAG, "Trying to update a value node that doesn't have an ID. This is stupid");
+            addValueNode(valueNode);
         }
 
         ContentValues cv = new ContentValues();

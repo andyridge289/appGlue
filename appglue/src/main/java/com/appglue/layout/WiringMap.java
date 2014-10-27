@@ -81,6 +81,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     private LinearLayout filterFrame;
     private View noFilters;
     private ListView filterList;
+    private View addFilter;
 
     private static final int LOWLIGHT_ALPHA = 10;
     private static final int HIGHLIGHT_ALPHA = 5;
@@ -100,6 +101,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
     private ArrayList<Point> connections;
     private final Object lock = new Object();
+    private int position;
 
     public WiringMap(Context context) {
         super(context);
@@ -150,14 +152,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
         addOutput = findViewById(R.id.add_output);
         addInput = findViewById(R.id.add_input);
-        View addFilter = findViewById(R.id.wiring_filter_add);
-
-        addFilter.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.filter(first.getID(), -1);
-            }
-        });
 
         connections = new ArrayList<Point>();
 
@@ -241,7 +235,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     }
 
 
-    public void set(ComponentService first, ComponentService second, int mode) {
+    public void set(final ComponentService first, final ComponentService second, int mode) {
         this.first = first;
         if (first != null) {
             if (first.getDescription().getOutputs().size() > 0) {
@@ -303,6 +297,14 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             }
         }
+
+        addFilter = findViewById(R.id.wiring_filter_add);
+        addFilter.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activity.filter(first.getID(), -1, position);
+            }
+        });
 
         hueGeneration();
         this.wiringMode = mode;
@@ -686,6 +688,14 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             }
         }
 
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public int getPosition() {
+        return position;
     }
 
     private class InputAdapter extends WiringIOAdapter {
@@ -1227,7 +1237,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                             switch (which) {
                                 case 0:
                                     // Edit the filter
-                                    activity.filter(first.getID(), item.getID());
+                                    activity.filter(first.getID(), item.getID(), position);
                                     break;
 
                                 case 1:
