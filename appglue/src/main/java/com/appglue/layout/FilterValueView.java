@@ -56,7 +56,7 @@ public class FilterValueView extends LinearLayout {
 
     private EditText manualText;
     private Spinner sampleSpinner;
-    private Spinner filterConditionSpinner;
+    private Spinner conditionSpinner;
 
     private Button manualButton;
 
@@ -118,7 +118,7 @@ public class FilterValueView extends LinearLayout {
 
         manualText = (EditText) v.findViewById(R.id.filter_value_text);
         sampleSpinner = (Spinner) v.findViewById(R.id.filter_value_spinner);
-        filterConditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
+        conditionSpinner = (Spinner) v.findViewById(R.id.filter_condition_spinner);
         manualButton = (Button) v.findViewById(R.id.choose_button);
 
         // Need to set up the and or button
@@ -198,7 +198,8 @@ public class FilterValueView extends LinearLayout {
             setup(FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
                     hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
-            // TODO Do drawable, need a dialog
+            // TODO Do drawable dialog
+            setup(FILTER_BOOL_VALUES, -1, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
             manualButton.setText("Choose contact");
             manualButton.setOnClickListener(new OnClickListener() {
@@ -235,12 +236,12 @@ public class FilterValueView extends LinearLayout {
             }
         }
 
-        this.value.setCondition((FilterFactory.FilterValue) filterConditionSpinner.getSelectedItem());
+        this.value.setCondition((FilterFactory.FilterValue) conditionSpinner.getSelectedItem());
     }
 
     private void setChildrenEnabled(boolean isChecked) {
         radioGroup.setEnabled(isChecked);
-        filterConditionSpinner.setEnabled(isChecked);
+        conditionSpinner.setEnabled(isChecked);
 
         if (!isChecked) {
             manualText.setEnabled(false);
@@ -255,8 +256,12 @@ public class FilterValueView extends LinearLayout {
 
             if (item.getType().supportsManualLookup()) {
                 manualButton.setEnabled(true);
+                manualButton.setVisibility(View.VISIBLE);
             } else {
                 manualButton.setEnabled(false);
+                manualButton.setVisibility(View.GONE);
+                // We need to resize this so everything isn't swamped
+                manualButton.setHeight((int) AppGlueLibrary.dpToPx(activity.getResources(), 40));
             }
 
             if (item.getType().acceptsManualValues()) {
@@ -326,8 +331,9 @@ public class FilterValueView extends LinearLayout {
     private void setup(FilterFactory.FilterValue[] conditions, int type,
                        boolean hasSamples, ArrayList<SampleValue> values) {
 
-        if (filterConditionSpinner != null)
-            filterConditionSpinner.setAdapter(new WiringFilterAdapter(activity, conditions));
+        if (conditionSpinner != null) {
+            conditionSpinner.setAdapter(new WiringFilterAdapter(activity, conditions));
+        }
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -404,12 +410,15 @@ public class FilterValueView extends LinearLayout {
             radioGroup.setEnabled(false);
         }
 
-        filterConditionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        conditionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                FilterFactory.FilterValue fv = (FilterFactory.FilterValue) filterConditionSpinner.getSelectedItem();
+                FilterFactory.FilterValue fv = (FilterFactory.FilterValue) conditionSpinner.getSelectedItem();
                 if (value != null) {
                     value.setCondition(fv);
+                    Log.d(TAG, "Setting condition spinner " + position);
+                } else {
+                    Log.e(TAG, "Can't do that, value is null");
                 }
             }
 
@@ -418,6 +427,12 @@ public class FilterValueView extends LinearLayout {
                 // Again, don't think we need to do anything here
             }
         });
+
+        if (value.getCondition() != null) {
+            conditionSpinner.setSelection(0);
+        } else {
+            conditionSpinner.setSelection(((WiringFilterAdapter) conditionSpinner.getAdapter()).getPosition(value.getCondition()));
+        }
 
         // Just update the manual value every time they enter a key.
         manualText.setOnKeyListener(new OnKeyListener() {
@@ -429,6 +444,10 @@ public class FilterValueView extends LinearLayout {
                 return false; // I'm not sure if we need to consume the event or not
             }
         });
+
+        if (value.getManualValue() != null) {
+            manualText.setText(item.getType().toString(item.getValue().getManualValue()));
+        }
     }
 
     public void setContact(Pair<String, ArrayList<String>> data) {

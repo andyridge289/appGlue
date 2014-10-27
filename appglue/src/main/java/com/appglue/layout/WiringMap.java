@@ -639,8 +639,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         di.show();
     }
 
-    // tODO When we go to the filter page make sure we go back to the right position
-    // TODO It crashed when I set doesn't equal severe delays
     // TODO Didnt we want to add AND/OR when combining the filters?
 
     public void setWiringMode(int wiringMode) {

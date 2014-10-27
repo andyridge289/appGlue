@@ -36,6 +36,8 @@ public class IOFilter {
     public void addValue(ServiceIO io, IOValue value) {
 
         String key = io.getDescription().getName();
+        value.setServiceIO(io);
+
         if (values.get(key) == null) {
             // Then we need to create a new one
             ValueNode vn = new ValueNode(io, this);
