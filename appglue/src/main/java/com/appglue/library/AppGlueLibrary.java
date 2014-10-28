@@ -31,9 +31,7 @@ import static com.appglue.Constants.TAG;
 
 public class AppGlueLibrary {
 
-    // TODO Work out how we're going to test the services
-
-    public static float dpToPx(Resources r, int dp){
+    public static float dpToPx(Resources r, int dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
     }
 
@@ -250,7 +248,7 @@ public class AppGlueLibrary {
             int propHeight = (maxWidth / w) * h;
             newHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, propHeight, context.getResources().getDisplayMetrics());
 
-        } else if(h > w) {
+        } else if (h > w) {
             // h needs to be resized to maxHeight
             newHeight = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, maxHeight, context.getResources().getDisplayMetrics());
 
@@ -273,7 +271,7 @@ public class AppGlueLibrary {
         String id = result.getLastPathSegment();
 
         String whereName = ContactsContract.Data.CONTACT_ID + " = ?";
-        String[] whereNameParams = new String[] { "" + id };
+        String[] whereNameParams = new String[]{"" + id};
         Cursor c = context.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams,
                 ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
         c.moveToFirst();
@@ -282,7 +280,7 @@ public class AppGlueLibrary {
         ArrayList<String> numbers = new ArrayList<String>();
 
         do {
-            if(name == null) {
+            if (name == null) {
                 name = c.getString(c.getColumnIndex("display_name"));
             }
 
@@ -296,7 +294,7 @@ public class AppGlueLibrary {
 
         numbers = AppGlueLibrary.validatePhoneNumbers(numbers);
 
-        for(String number : numbers)
+        for (String number : numbers)
             Log.d(TAG, name + ", " + number);
 
         return new Pair<String, ArrayList<String>>(name, numbers);
@@ -305,7 +303,7 @@ public class AppGlueLibrary {
     public static ArrayList<String> validatePhoneNumbers(ArrayList<String> numbers) {
         for (int i = 0; i < numbers.size(); ) {
 
-            if(validPhoneNumber(numbers.get(i)))
+            if (validPhoneNumber(numbers.get(i)))
                 i++;
             else
                 numbers.remove(i);
@@ -324,7 +322,7 @@ public class AppGlueLibrary {
 
     public static String getContactName(Context context, String phoneNumber) {
         String whereName = ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?";
-        String[] whereNameParams = new String[] { phoneNumber };
+        String[] whereNameParams = new String[]{phoneNumber};
         Cursor c = context.getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, whereName, whereNameParams,
                 ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
         c.moveToFirst();

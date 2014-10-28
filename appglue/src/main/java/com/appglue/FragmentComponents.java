@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.appglue.engine.description.ComponentService;
+
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
@@ -151,5 +153,12 @@ public class FragmentComponents extends Fragment {
         } else {
             return ActivityAppGlue.Page.COMPONENTS.name;
         }
+    }
+
+    public ComponentService getComponent() {
+        if (componentFragment != null) {
+            return componentFragment.getComponent();
+        }
+        return null;
     }
 }

@@ -659,7 +659,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
      * @param item The item for the dialog to show.
      */
     private void showIODialog(final ServiceIO item) {
-        DialogIO di = new DialogIO(activity, item);
+        DialogIO di = new DialogIO(activity, item, null);
         di.show();
     }
 
@@ -680,8 +680,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         for (int i = 0; i < outputs.size(); ) {
             ServiceIO out = outputs.get(i);
             IOType type = out.getType();
-
-            // TODO The titles are alllll kinds of fucked
 
             boolean removed = false;
 
@@ -879,7 +877,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                         iSelected = item;
                         iIndex = position;
-//                        activity.setStatus("Selected " + iod.getName());
                         oSelected = null;
                         oIndex = -1;
                     }
@@ -887,10 +884,9 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             });
 
             if (item.hasValue()) {
-                // TODO This needs to look more like an edit button
-                setButton.setBackgroundResource(R.drawable.ic_add_on);
+                setButton.setImageResource(R.drawable.ic_settings_black_48dp);
             } else {
-                setButton.setBackgroundResource(R.drawable.ic_add);
+                setButton.setImageResource(R.drawable.ic_add_black_48dp);
             }
 
             setButton.setOnClickListener(new OnClickListener() {
@@ -1019,32 +1015,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     String valueName = item.getType().toString(item.getValue().getManualValue());
                     ioValue.setText(valueName);
                 }
-
-                // TODO Greyscale icon for disabled
-
-                // If it's not unfiltered, then it's either manual or not
-//    			if (item.getFilterState() == ServiceIO.UNFILTERED)
-//    			{
-//    				ioType.setText(iod.getType().getName());
-//    			}
-//    			else
-//    			{
-//    				FilterValue fv = IOFilter.filters.get(item.getCondition());
-//
-//    				ioType.setText(iod.getType().getName() + ": " + fv.text + " ");
-//
-//    	    		// This is for a manual one
-//    	    		if (item.getFilterState() == ServiceIO.MANUAL)
-//    	    		{
-//    	    			String value = iod.getType().toString(item.getManualValue());
-//    	    			ioValue.setText(value);
-//    	    		}
-//    	    		else if (item.getFilterState() == ServiceIO.SAMPLE)
-//    	    		{
-//    	    			// Need to look up what the value for this thing is, but return the friendly name not the other thing
-//    	    			ioValue.setText(item.getChosenSampleValue().name);
-//    	    		}
-//    			}
             }
 
             // Change the filter button image if a filter is selected

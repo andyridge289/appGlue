@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.appglue.engine.OrchestrationService;
+import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -301,19 +302,54 @@ public class ActivityAppGlue extends ActionBarActivity
         }
 
         int background = R.color.settings;
+        String title = "";
 
         if (currentPage == Page.HOME.index) {
             background = R.color.composite;
+            if (homeFragment.getMode() == FragmentComposites.MODE_COMPOSITE) {
+                CompositeService composite = homeFragment.getComposite();
+                if (composite != null) {
+                    title = "Composite: " + composite.getName();
+                } else {
+                    title = "Composite";
+                }
+            } else {
+                title = "appGlue";
+            }
+
         } else if (currentPage == Page.COMPONENTS.index) {
             background = R.color.component;
+            if (componentFragment.getMode() == FragmentComponents.MODE_COMPONENT) {
+                ComponentService component = componentFragment.getComponent();
+                if (component != null) {
+                    title = "Component: " + component.getDescription().getName();
+                } else {
+                    title = "Component";
+                }
+            } else {
+                title = "Components";
+            }
         } else if (currentPage == Page.SCHEDULE.index) {
             background = R.color.schedule;
+            title = "Schedule";
         } else if (currentPage == Page.LOG.index) {
             background = R.color.log;
+            title = "Log";
+        } else if (currentPage == Page.SETTINGS.index) {
+            background = R.color.settings;
+            title = "Settings";
+        } else if (currentPage == Page.ACCOUNTS.index) {
+            background = R.color.settings;
+            title = "Connect accounts";
+        } else if (currentPage == Page.PRIVACY.index) {
+            background = R.color.settings;
+            title = "Privacy";
         }
 
         if (toolbar != null) {
             toolbar.setBackgroundResource(background);
+            toolbar.setTitle(title);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         }
 
 

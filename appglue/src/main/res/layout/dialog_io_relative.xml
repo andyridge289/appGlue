@@ -2,24 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" 
-    >
-    
+    android:orientation="vertical">
+
     <TextView
         android:id="@+id/top_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/enter_value"
-        android:layout_alignParentTop="true"
-        />
+        android:layout_alignParentTop="true" />
 
     <LinearLayout
         android:id="@+id/button_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarStyle"
-        android:layout_alignParentBottom="true"
-        >
+        android:layout_alignParentBottom="true">
 
         <Button
             android:id="@+id/dialog_io_negative"
@@ -27,8 +24,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_weight="1"
-            android:text="@string/dialog_io_negative"
-            />
+            android:text="@string/dialog_io_negative" />
 
         <Button
             android:id="@+id/dialog_io_neutral"
@@ -36,8 +32,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_weight="1"
-            android:text="@string/dialog_io_neutral"
-            />
+            android:text="@string/dialog_io_neutral" />
 
         <Button
             android:id="@+id/dialog_io_positive"
@@ -45,8 +40,7 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dip"
             android:layout_weight="1"
-            android:text="@string/dialog_io_positive"
-            />
+            android:text="@string/dialog_io_positive" />
 
     </LinearLayout>
 
@@ -56,8 +50,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_above="@id/button_bar"
-        android:layout_below="@id/top_text"
-        />
-
+        android:layout_below="@id/top_text" />
 
 </RelativeLayout>

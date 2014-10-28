@@ -500,8 +500,6 @@ public class ServiceFactory {
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
 
-        // TODO It's going to take something special to test this one
-
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, batteryTriggerJSON);
     }
 

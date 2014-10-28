@@ -32,6 +32,7 @@ import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.layout.adapter.WiringFilterAdapter;
+import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.FilterFactory;
 
@@ -193,7 +194,14 @@ public class FilterValueView extends LinearLayout {
             setup(FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
                     hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
-            // TODO Do drawable dialog
+            manualButton.setText("Choose drawable");
+            manualButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DialogIO di = new DialogIO(activity, item, FilterValueView.this);
+                    di.show();
+                }
+            });
             setup(FILTER_BOOL_VALUES, -1, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
             manualButton.setText("Choose contact");
@@ -456,5 +464,17 @@ public class FilterValueView extends LinearLayout {
         }
 
         manualRadio.setChecked(true);
+    }
+
+    /**
+     * This is where we go to when we have come back from the IODialog for images
+     *
+     * @param s
+     * @param res
+     */
+    public void setManualValue(String s, int res) {
+        manualButton.setText(s);
+        value.setManualValue(res);
+        manualText.setText("" + res);
     }
 }

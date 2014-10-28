@@ -58,17 +58,17 @@ public class ActivityWiring extends ActionBarActivity {
     public ActivityWiring() {
     }
 
-	private Registry registry;
+    private Registry registry;
 
     private int mode;
     public static final int MODE_CREATE = 0;
     public static final int MODE_CHOOSE = 1;
     public static final int MODE_FILTER = 2;
 
-	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		setContentView(R.layout.activity_wiring);
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setContentView(R.layout.activity_wiring);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_wiring);
         setSupportActionBar(toolbar);
@@ -84,6 +84,7 @@ public class ActivityWiring extends ActionBarActivity {
     public void setMode(int mode) {
         this.mode = mode;
     }
+
     public int getMode() {
         return mode;
     }
@@ -93,7 +94,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         CompositeService composite = registry.getCurrent();
 
-        switch(mode) {
+        switch (mode) {
             case MODE_CREATE:
                 mTitle = "Create glued app";
 
@@ -120,7 +121,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         invalidateOptionsMenu();
 
-        if(wiringFragment != null) {
+        if (wiringFragment != null) {
             wiringFragment.redraw(pagerPosition);
         }
     }
@@ -139,24 +140,21 @@ public class ActivityWiring extends ActionBarActivity {
         super.onBackPressed();
     }
 
-	public void onPause()
-	{
-		super.onPause();
-	}
+    public void onPause() {
+        super.onPause();
+    }
 
-	public void onResume()
-	{
-		super.onResume();
+    public void onResume() {
+        super.onResume();
 
         Intent intent = this.getIntent();
         final long compositeId = intent.getLongExtra(COMPOSITE_ID, -1);
         registry = Registry.getInstance(this);
         AlertDialog.Builder keepTemp = null;
 
-        if(createNew) {
+        if (createNew) {
             // They are DEFINITELY creating a new one
-            if(registry.tempExists())
-            {
+            if (registry.tempExists()) {
                 // There is stuff in the temp -- they might want to save it
                 keepTemp = new AlertDialog.Builder(this);
                 keepTemp.setMessage("You have a saved draft, do you want to carry on with it, or start again?");
@@ -178,21 +176,19 @@ public class ActivityWiring extends ActionBarActivity {
                                 redraw();
                             }
                         });
-            }
-            else
-            {
+            } else {
                 // There isn't stuff in the temp, just use that
                 registry.setCurrent(registry.resetTemp());
                 setMode(MODE_CHOOSE);
                 redraw();
             }
         } else if (editExisting) { // They might not be creating a new one
-            if(registry.getCurrent() == null) {
+            if (registry.getCurrent() == null) {
                 // If they've come in from the composite list then CS might not have been set yet, so set it.
                 registry.setCurrent(registry.getComposite(compositeId));
             }
 
-            if(registry.tempExists()) {
+            if (registry.tempExists()) {
                 keepTemp = new AlertDialog.Builder(this);
                 keepTemp.setMessage("You have a saved draft, do you want to keep it?");
                 keepTemp.setCancelable(true);
@@ -227,7 +223,7 @@ public class ActivityWiring extends ActionBarActivity {
         createNew = false;
         editExisting = false;
 
-        if(keepTemp != null) {
+        if (keepTemp != null) {
             keepTemp.create().show(); // TODO This has leaked something
         }
     }
@@ -295,61 +291,57 @@ public class ActivityWiring extends ActionBarActivity {
 
     public SparseArray<ComponentService> getComponents() {
         CompositeService composite = registry.getCurrent();
-        if(registry != null)
+        if (registry != null)
             return composite.getComponents();
         else
             return new SparseArray<ComponentService>();
     }
 
-	public ArrayList<ComponentService> getComponentsAL() {
+    public ArrayList<ComponentService> getComponentsAL() {
         CompositeService composite = registry.getCurrent();
-        if(composite != null)
-		    return composite.getComponentsAL();
+        if (composite != null)
+            return composite.getComponentsAL();
         else
             return new ArrayList<ComponentService>();
-	}
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		MenuInflater inflater = getMenuInflater();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
 
         int background = R.color.composite;
+        String title = "";
 
-        switch(mode) {
+        switch (mode) {
             case MODE_CREATE:
-                if(wiringFragment == null) {
+                if (wiringFragment == null) {
                     return true;
                 }
 
                 inflater.inflate(R.menu.wiring, menu);
-//                switch(wiringFragment.getCurrentWiringMode()) {
-//                    case FragmentWiring.MODE_WIRING:
-//                        menu.setGroupVisible(R.id.menu_group_create_wiring, true);
-//                        break;
-//
-//                    default:
-//                        menu.setGroupVisible(R.id.menu_group_create_wiring, false);
-//                        break;
-//                }
                 background = R.color.composite;
+                title = "Connect components";
                 break;
 
             case MODE_FILTER:
-                if(wiringFragment == null) {
+                if (wiringFragment == null) {
                     return true;
                 }
                 inflater.inflate(R.menu.wiring_filter, menu);
                 background = R.color.filter;
+                title = "Add filter";
                 break;
 
             case MODE_CHOOSE:
                 background = R.color.component;
+                title = "Choose component";
                 break;
         }
 
         if (toolbar != null) {
             toolbar.setBackgroundResource(background);
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+            toolbar.setTitle(title);
         }
 
         return true;
@@ -357,14 +349,13 @@ public class ActivityWiring extends ActionBarActivity {
 
     // FIXME Back on the component list doesn't work
 
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if(item.getItemId() == android.R.id.home) {
-			finish();
-		} else if(item.getItemId() == R.id.wiring_done) {
-			wiringFragment.saveDialog();
-        } else if(item.getItemId() == R.id.filter_done) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        } else if (item.getItemId() == R.id.wiring_done) {
+            wiringFragment.saveDialog();
+        } else if (item.getItemId() == R.id.filter_done) {
             setMode(MODE_CREATE);
-            // TODO At this point it appears to be in the current but not in the temp?
             registry.updateComposite(registry.getCurrent());
             redraw();
         } else if (item.getItemId() == R.id.wiring_auto) {
@@ -373,7 +364,7 @@ public class ActivityWiring extends ActionBarActivity {
         }
 
         return true;
-	}
+    }
 
     public void setStatus(String status) {
 

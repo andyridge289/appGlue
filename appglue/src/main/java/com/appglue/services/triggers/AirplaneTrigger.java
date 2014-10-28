@@ -1,21 +1,18 @@
 package com.appglue.services.triggers;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
-
-import static com.appglue.Constants.TAG;
 
 public class AirplaneTrigger extends GenericTrigger
 {
 	public static final String STATE = "state";
 
 	@Override
-	public void onReceive(Context context, Intent intent) 
+    @SuppressWarnings("deprecation")
+    public void onReceive(Context context, Intent intent)
 	{
 		String action = intent.getAction();
 		Bundle data = new Bundle();
@@ -35,8 +32,6 @@ public class AirplaneTrigger extends GenericTrigger
             mode = Settings.System.getInt(context.getContentResolver(),
                     Settings.System.AIRPLANE_MODE_ON, 0) != 0;
         }
-
-        // TODO MAke sure you test this on lower versions of android particularly 4.1 and 4.2 to see what happens
 
         data.putBoolean(STATE, mode);
         super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);

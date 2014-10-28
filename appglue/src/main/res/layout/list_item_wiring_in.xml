@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/endpoint_container"
@@ -16,7 +16,7 @@
             android:layout_width="48dip"
             android:layout_height="48dip"
             android:orientation="horizontal"
-            android:visibility="visible" >
+            android:visibility="visible">
 
             <View
                 android:id="@+id/stub"
@@ -40,9 +40,7 @@
             android:layout_width="48dip"
             android:layout_height="48dip"
             android:background="?android:selectableItemBackground"
-            android:contentDescription="@string/set_button"
-            android:src="@drawable/ic_add"
-            />
+            android:contentDescription="@string/set_button" />
     </LinearLayout>
 
     <View

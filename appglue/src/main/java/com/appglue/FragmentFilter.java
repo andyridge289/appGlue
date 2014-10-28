@@ -55,7 +55,7 @@ public class FragmentFilter extends Fragment {
         filterViews = new LongSparseArray<ArrayList<FilterValueView>>();
 
         // TODO At this point the filter doesn't seem to have the information from the first filter in it
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             CompositeService cs = registry.getCurrent();
             component = cs.getComponent(getArguments().getLong(COMPONENT_ID));
             long filterId = getArguments().getLong(FILTER_ID);
@@ -96,6 +96,8 @@ public class FragmentFilter extends Fragment {
             ioType.setText(output.getDescription().getType().getName());
 
             final LinearLayout valueLayout = (LinearLayout) vv.findViewById(R.id.filter_value_container);
+
+            // TODO What happens if the filter stuff is empty?
 
             // Set up the add button
             View addButton = vv.findViewById(R.id.filter_add_button);
@@ -187,9 +189,9 @@ public class FragmentFilter extends Fragment {
 
         // Tell all of the children with that item to redraw - probably to reflect AND/OR change
         if (views != null) {
-           for (FilterValueView v : views) {
-               v.redraw();
-           }
+            for (FilterValueView v : views) {
+                v.redraw();
+            }
         }
 
     }

@@ -7,6 +7,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@color/textColor</item>
         <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:actionMenuTextColor">@color/white</item>
+        <item name="android:actionMenuTextAppearance">@color/white</item>
     </style>
 
     <style name="Fill">

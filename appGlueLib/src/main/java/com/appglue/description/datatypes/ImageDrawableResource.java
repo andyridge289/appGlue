@@ -27,7 +27,7 @@ public class ImageDrawableResource extends IOType {
 
     @Override
     public String toString(Object value) {
-        return (String) value;
+        return "" + value;
     }
 
     public Object fromString(String value) {

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class CompositeFactory {
 
-    // FIXME Create some sample composites and put the in the database on start up
+    // TODO Create some sample composites and put the in the database on start up
     private static Registry registry;
 
     public static ArrayList<CompositeService> createSampleComposites(Context context) {
@@ -25,8 +25,6 @@ public class CompositeFactory {
 
         return composites;
     }
-
-    // TODO Need to make sure this only happens once
 
     private static CompositeService TubeStatusNotification() {
 

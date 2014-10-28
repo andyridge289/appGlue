@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.description.ComponentService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
@@ -42,6 +43,7 @@ public class FragmentComponent extends Fragment {
     private ServiceDescription sd;
 
     private Registry registry;
+    private ComponentService component;
 
     public static Fragment create() {
         return new FragmentComponent();
@@ -58,7 +60,7 @@ public class FragmentComponent extends Fragment {
 
         registry = Registry.getInstance(getActivity());
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             sd = registry.getServiceDescription(getArguments().getString(CLASSNAME));
         }
     }
@@ -83,7 +85,7 @@ public class FragmentComponent extends Fragment {
         noInputs = (TextView) root.findViewById(R.id.component_no_inputs);
         noOutputs = (TextView) root.findViewById(R.id.component_no_outputs);
 
-        if(sd != null) {
+        if (sd != null) {
             setupPage();
         }
 
@@ -135,7 +137,7 @@ public class FragmentComponent extends Fragment {
     }
 
     public void setData(String className) {
-        if(registry == null)
+        if (registry == null)
             registry = Registry.getInstance(getActivity());
 
         sd = registry.getServiceDescription(className);
@@ -150,15 +152,15 @@ public class FragmentComponent extends Fragment {
 
 //        if (sd.getServiceType() != Constants.ServiceType.REMOTE) {
 
-            if (sd.getApp() == null)
-                appName.setText("");
-            else
-                appName.setText(sd.getApp().getName());
+        if (sd.getApp() == null)
+            appName.setText("");
+        else
+            appName.setText(sd.getApp().getName());
 
-            if (sd.getApp() != null) {
-                appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
-                appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
-            }
+        if (sd.getApp() != null) {
+            appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
+            appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
+        }
 //        } else {
 //            appName.setVisibility(View.GONE);
 //            appIcon.setVisibility(View.GONE);
@@ -244,6 +246,10 @@ public class FragmentComponent extends Fragment {
 
     public String getName() {
         return sd.getName();
+    }
+
+    public ComponentService getComponent() {
+        return component;
     }
 
     private class IOAdapter extends ArrayAdapter<IODescription> {

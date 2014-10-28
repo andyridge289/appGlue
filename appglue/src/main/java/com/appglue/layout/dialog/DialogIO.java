@@ -34,6 +34,7 @@ import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
+import com.appglue.layout.FilterValueView;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.library.FilterFactory;
 import com.appglue.serviceregistry.Registry;
@@ -49,7 +50,10 @@ public class DialogIO extends AlertDialog {
 
     private ActivityWiring activity;
     private IODescription description;
+
     private ServiceIO item;
+    private FilterValueView filterValueView;
+
     private Registry registry;
 
     private Button positiveButton;
@@ -58,11 +62,12 @@ public class DialogIO extends AlertDialog {
 
     private DialogContactView dcv;
 
-    public DialogIO(ActivityWiring context, final ServiceIO io) {
+    public DialogIO(ActivityWiring context, final ServiceIO io, final FilterValueView filterValueView) {
         super(context);
 
         this.activity = context;
         this.item = io;
+        this.filterValueView = filterValueView;
         this.description = item.getDescription();
         this.registry = Registry.getInstance(context);
 
@@ -304,18 +309,22 @@ public class DialogIO extends AlertDialog {
             imageGrid.setAdapter(adapter);
 
             // Loading previous ones
-            if (item.hasValue()) {
-                IOValue value = item.getValue();
+            if (item.getDescription().isInput()) {
+                if (item.hasValue()) {
+                    IOValue value = item.getValue();
 
-                if (value.getFilterState() == IOValue.MANUAL) {
-                    int resId = (Integer) value.getManualValue();
+                    if (value.getFilterState() == IOValue.MANUAL) {
+                        int resId = (Integer) value.getManualValue();
 
-                    if (resId != -1) {
-                        int position = adapter.getPosition(resId);
-                        adapter.selectedIndex = position;
-                        adapter.notifyDataSetChanged();
+                        if (resId != -1) {
+                            int position = adapter.getPosition(resId);
+                            adapter.selectedIndex = position;
+                            adapter.notifyDataSetChanged();
+                        }
                     }
                 }
+            } else {
+                // TODO Do this for loading filtering outputs
             }
 
             positiveButton.setOnClickListener(new OnClickListener() {
@@ -325,13 +334,20 @@ public class DialogIO extends AlertDialog {
                     int res = adapter.getSelected();
 
                     // Set the value to be the image that has been selected
-                    if (item.hasValue()) {
-                        item.getValue().setManualValue(res);
+                    if (item.getDescription().isInput()) {
+                        if (item.hasValue()) {
+                            item.getValue().setManualValue(res);
 
+                        } else {
+                            // Create one
+                            IOValue value = new IOValue(item);
+                            value.setManualValue(res);
+                        }
                     } else {
-                        // Create one
-                        IOValue value = new IOValue(item);
-                        value.setManualValue(res);
+                        if (filterValueView != null) {
+                            filterValueView.setManualValue("Change image", res);
+                        }
+                        dismiss();
                     }
                 }
             });
@@ -343,14 +359,14 @@ public class DialogIO extends AlertDialog {
             private int selectedIndex = -1;
 
             public GridImageAdapter(Context context, ArrayList<Integer> values) {
-                super(context, R.layout.grid_item_app_selector, values);
+                super(context, R.layout.grid_item_drawable_selector, values);
                 this.values = values;
             }
 
             public View getView(final int position, View v, ViewGroup parent) {
                 if (v == null) {
                     LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    v = vi.inflate(R.layout.grid_item_app_selector, null);
+                    v = vi.inflate(R.layout.grid_item_drawable_selector, null);
                 }
 
                 if (position != selectedIndex) {
@@ -367,15 +383,8 @@ public class DialogIO extends AlertDialog {
                     }
                 });
 
-                TextView appName = (TextView) v.findViewById(R.id.load_list_name);
-                ImageView appIcon = (ImageView) v.findViewById(R.id.service_icon);
-
                 final Integer item = values.get(position);
-
-                // Load all the icons in the background?
-                appName.setVisibility(View.GONE);
-                appIcon.setImageDrawable(getContext().getResources().getDrawable(item));
-
+                ((ImageView) v).setImageDrawable(getContext().getResources().getDrawable(item));
                 return v;
             }
 
