@@ -32,25 +32,27 @@ public class IOValue {
         this.io = io;
         this.filterState = UNFILTERED;
         this.enabled = true;
+        Log.d(TAG, "Creating IOValue " + io);
     }
 
     public IOValue(FilterFactory.FilterValue condition, Object manualValue, ServiceIO io) {
+        this(io);
         this.condition = condition;
         this.manualValue = manualValue;
-        this.io = io;
         this.filterState = MANUAL;
         this.enabled = true;
     }
 
     public IOValue(FilterFactory.FilterValue condition, SampleValue sampleValue, ServiceIO io) {
+        this(io);
         this.condition = condition;
         this.sampleValue = sampleValue;
-        this.io = io;
         this.filterState = SAMPLE;
         this.enabled = true;
     }
 
-    public IOValue(long id, int filterState, FilterFactory.FilterValue condition, Object manualValue, SampleValue sample, boolean enabled) {
+    public IOValue(long id, ServiceIO io, int filterState, FilterFactory.FilterValue condition, Object manualValue, SampleValue sample, boolean enabled) {
+        this(io);
         this.id = id;
         this.filterState = filterState;
         this.condition = condition;

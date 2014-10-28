@@ -78,10 +78,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     private View noOutputs;
     private View addOutput;
 
-    private LinearLayout filterFrame;
+    private View filterFrame;
     private View noFilters;
     private ListView filterList;
     private View addFilter;
+    private TextView filterAndor;
+    private FilterAdapter filterAdapter;
 
     private static final int LOWLIGHT_ALPHA = 10;
     private static final int HIGHLIGHT_ALPHA = 5;
@@ -131,7 +133,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
         inputFrame = (FrameLayout) findViewById(R.id.wiring_input_frame);
         outputFrame = (FrameLayout) findViewById(R.id.wiring_output_frame);
-        filterFrame = (LinearLayout) findViewById(R.id.wiring_filter_frame);
+        filterFrame = findViewById(R.id.wiring_filter_frame);
 
         outputList = (ListView) findViewById(R.id.output_list);
         outputList.setClickable(false);
@@ -149,6 +151,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         noOutputs = findViewById(R.id.no_outputs);
         noInputs = findViewById(R.id.no_inputs);
         noFilters = findViewById(R.id.wiring_no_filters);
+        filterAndor = (TextView) findViewById(R.id.wiring_filter_andor);
 
         addOutput = findViewById(R.id.add_output);
         addInput = findViewById(R.id.add_input);
@@ -254,9 +257,30 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             if (first.hasFilters()) {
                 Log.d(TAG, first.getFilters().size() + " filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
-                filterList.setAdapter(new FilterAdapter(getContext(), first.getFilters()));
+                filterAdapter = new FilterAdapter(getContext(), first.getFilters());
+                filterList.setAdapter(filterAdapter);
                 filterList.setVisibility(View.VISIBLE);
                 noFilters.setVisibility(View.GONE);
+
+                filterAndor.setText(first.getFilterCondition() ? "OR" : "AND");
+                filterAndor.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (first.getFilterCondition()) {
+                            first.setFilterCondition(false);
+                            filterAndor.setText("AND");
+                        } else {
+                            first.setFilterCondition(true);
+                            filterAndor.setText("OR");
+                        }
+                        filterAdapter.notifyDataSetChanged();
+                    }
+                });
+                if (first.getFilters().size() > 1) {
+                    filterAndor.setVisibility(View.VISIBLE);
+                } else {
+                    filterAndor.setVisibility(View.GONE);
+                }
             } else {
                 Log.d(TAG, "Nope, no filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
             }
@@ -638,8 +662,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         DialogIO di = new DialogIO(activity, item);
         di.show();
     }
-
-    // TODO Didnt we want to add AND/OR when combining the filters?
 
     public void setWiringMode(int wiringMode) {
         this.wiringMode = wiringMode;
@@ -1220,8 +1242,17 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             final IOFilter item = items.get(position);
 
-            final TableLayout v = (TableLayout) convertView;
-            v.setOnClickListener(new OnClickListener() {
+            TextView andor = (TextView) convertView.findViewById(R.id.andor);
+            if (items.size() > 1 && items.size() != position + 1) {
+                andor.setVisibility(View.VISIBLE);
+                andor.setText(first.getFilterCondition() ? "AND" : "OR");
+            } else {
+                andor.setVisibility(View.GONE);
+            }
+
+
+            final TableLayout table = (TableLayout) convertView.findViewById(R.id.table);
+            table.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View vv) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
@@ -1241,15 +1272,20 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                                 case 1:
                                     // Disable or enable the filter
                                     if (item.isEnabled())
-                                        v.setEnabled(false);
+                                        table.setEnabled(false);
                                     else
-                                        v.setEnabled(true);
+                                        table.setEnabled(true);
                                     break;
 
                                 case 2:
                                     // Delete the filter
                                     items.remove(item);
                                     FilterAdapter.this.notifyDataSetChanged();
+                                    if (first.getFilters().size() > 1) {
+                                        filterAndor.setVisibility(View.VISIBLE);
+                                    } else {
+                                        filterAndor.setVisibility(View.GONE);
+                                    }
                                     registry.updateComposite(registry.getCurrent());
                                     break;
                             }
@@ -1260,12 +1296,12 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             });
 
-            v.removeAllViews();
+            table.removeAllViews();
             ArrayList<ServiceIO> ios = item.getIOs();
             for (ServiceIO io : ios) {
 
                 TableRow row = new TableRow(getContext());
-                v.addView(row);
+                table.addView(row);
 
                 TextView ioText = new TextView(getContext());
                 ioText.setText(io.getDescription().getFriendlyName());
@@ -1280,7 +1316,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 for (IOValue value : values) {
 
                     TableRow subRow = new TableRow(getContext());
-                    v.addView(subRow);
+                    table.addView(subRow);
 
                     TextView conditionText = new TextView(getContext());
                     conditionText.setText(value.getCondition().shortText);
@@ -1298,7 +1334,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             }
 
-            return v;
+            return convertView;
         }
 
     }

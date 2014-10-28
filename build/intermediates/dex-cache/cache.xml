@@ -28,7 +28,7 @@
     <item
         dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-2e7834f100e4daf029f5c1e2e0dceb4b3ac998da.jar"
         jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
-        jumboMode="false" revision="21.0.1" sha1="bd9d25a713deffae95322fb0d3619fa61e0ccd6c" />
+        jumboMode="false" revision="21.0.1" sha1="0c8d97db6c7e4d8fdba90af88de6602c049ed775" />
     <item
         dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/support-annotations-21.0.0-06c11a875de33503ef5265319ba235e46e3d9ce8.jar"
         jar="/Users/andyridge/Code/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/21.0.0/support-annotations-21.0.0.jar"

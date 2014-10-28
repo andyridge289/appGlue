@@ -1,41 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list 
-    xmlns:android="http://schemas.android.com/apk/res/android" 
-    >
-    
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- This is the border -->
-	<item>
-		
-		<shape 
-		    android:shape="rectangle" 
-		    >
-		    
-		    <solid 
-		        android:color="@color/colorPrimaryLight_trans"
-		        />
-		    
-		    <padding
-		        android:bottom="5dip"
-		        android:right="5dip"
-		        android:top="5dip"
-                android:left="5dip"
-		    	/>
-		
-		    <corners
-                android:radius="5dip"
-		        />
-		    
-		</shape>
-	</item>
-	
-	<item>
-		<shape 
-		    android:shape="rectangle" 
-		    >
-		
-	    	<solid 
-	    	    android:color="@color/translucent_white"
-	    	   	/>
-		</shape>
-	</item>
+    <item>
+
+        <shape android:shape="rectangle">
+
+            <solid android:color="@color/filter_light" />
+
+            <padding
+                android:bottom="5dip"
+                android:right="5dip"
+                android:top="5dip"
+                android:left="5dip" />
+
+            <corners android:radius="5dip" />
+
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+
+            <solid android:color="@color/translucent_white" />
+        </shape>
+    </item>
 </layer-list>

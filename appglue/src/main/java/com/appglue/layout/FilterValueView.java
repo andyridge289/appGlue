@@ -76,11 +76,6 @@ public class FilterValueView extends LinearLayout {
         this.ff = ff;
         this.component = component;
 
-        if (value == null) {
-            value = new IOValue(item);
-            filter.addValue(item, value);
-        }
-
         this.value = value;
         this.filter = filter;
         this.item = item;

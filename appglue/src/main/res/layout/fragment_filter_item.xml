@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryLight_trans"
-        >
+        android:background="@color/filter_light">
 
         <com.appglue.layout.FloatingActionButton
             android:id="@+id/filter_add_button"
             android:layout_width="48dip"
             android:layout_height="48dip"
-            app:fabcolor="@color/colorPrimary"
+            app:fabcolor="@color/filter_bright"
             app:fabdrawable="@drawable/ic_add_white"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            />
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/filter_io_name"
@@ -35,8 +31,7 @@
             android:gravity="center_horizontal"
             android:layout_toLeftOf="@id/filter_add_button"
             android:layout_toStartOf="@id/filter_add_button"
-            android:layout_alignParentTop="true"
-            />
+            android:layout_alignParentTop="true" />
 
         <TextView
             android:id="@+id/filter_io_type"
@@ -48,8 +43,7 @@
             android:gravity="center_horizontal"
             android:layout_toLeftOf="@id/filter_add_button"
             android:layout_toStartOf="@id/filter_add_button"
-            android:layout_below="@id/filter_io_name"
-            />
+            android:layout_below="@id/filter_io_name" />
 
     </RelativeLayout>
 
@@ -61,14 +55,12 @@
         android:textAllCaps="true"
         android:gravity="center_horizontal"
         android:textColor="@color/aaa"
-        android:layout_margin="5dip"
-        />
+        android:layout_margin="5dip" />
 
     <LinearLayout
         android:id="@+id/filter_value_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        />
+        android:orientation="vertical" />
 
 </LinearLayout>

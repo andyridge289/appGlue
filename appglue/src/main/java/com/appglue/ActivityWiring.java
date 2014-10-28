@@ -364,6 +364,7 @@ public class ActivityWiring extends ActionBarActivity {
 			wiringFragment.saveDialog();
         } else if(item.getItemId() == R.id.filter_done) {
             setMode(MODE_CREATE);
+            // TODO At this point it appears to be in the current but not in the temp?
             registry.updateComposite(registry.getCurrent());
             redraw();
         } else if (item.getItemId() == R.id.wiring_auto) {

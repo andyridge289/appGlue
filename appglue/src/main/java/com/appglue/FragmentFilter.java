@@ -54,6 +54,7 @@ public class FragmentFilter extends Fragment {
         Registry registry = Registry.getInstance(getActivity());
         filterViews = new LongSparseArray<ArrayList<FilterValueView>>();
 
+        // TODO At this point the filter doesn't seem to have the information from the first filter in it
         if(getArguments() != null) {
             CompositeService cs = registry.getCurrent();
             component = cs.getComponent(getArguments().getLong(COMPONENT_ID));
@@ -61,11 +62,12 @@ public class FragmentFilter extends Fragment {
             if (filterId == -1) {
                 // Then we need to create a new one
                 filter = new IOFilter(component);
+                component.addFilter(filter);
             } else {
                 // We need to load the relevant filter from the composite
                 filter = component.getFilter(filterId);
             }
-            component.addFilter(filter);
+
             Log.d(TAG, "Added filter to " + component.getID() + "( " + component.getDescription().getName() + ")");
         } else {
             Log.e(TAG, "No arguments!");
@@ -103,7 +105,9 @@ public class FragmentFilter extends Fragment {
 
                     vv.findViewById(R.id.no_filters).setVisibility(View.GONE);
 
-                    FilterValueView vvv = new FilterValueView(getActivity(), FragmentFilter.this, component, filter, null, output, valueLayout.getChildCount());
+                    IOValue value = new IOValue(output);
+                    filter.addValue(output, value);
+                    FilterValueView vvv = new FilterValueView(getActivity(), FragmentFilter.this, component, filter, value, output, valueLayout.getChildCount());
 
                     // Keep track of all of the filter views we've created
                     if (filterViews.get(output.getID()) == null) {
@@ -131,7 +135,6 @@ public class FragmentFilter extends Fragment {
                     }
                 }
             }
-
 
             outputList.addView(vv);
         }

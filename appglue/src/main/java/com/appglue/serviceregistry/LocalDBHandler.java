@@ -99,7 +99,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        // recreate();
+//        recreate();
     }
 
     @Override
@@ -1139,10 +1139,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         ContentValues cv = new ContentValues();
 
-        if (valueNode != null)
+        if (valueNode != null) {
             cv.put(VALUE_NODE_ID, valueNode.getID());
-        else
+        } else {
             cv.put(VALUE_NODE_ID, -1);
+        }
 
         cv.put(FILTER_STATE, value.getFilterState());
         cv.put(FILTER_CONDITION, value.getCondition().index);
@@ -1164,10 +1165,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         long id = db.insertOrThrow(TBL_IOVALUE, null, cv);
         value.setID(id);
 
-        if (valueNode != null)
+        if (valueNode != null) {
             if (LOG)
                 Log.d(TAG, "DBUPDATE [addIOValue] Added " + id + " for " + valueNode.getFilter().getComponent().getDescription().getName() + "(" + valueNode.getFilter().getComponent().getID() + ")");
-            else if (LOG) Log.d(TAG, "DBUPDATE [addIOValue] Added " + id);
+        } else {
+            if (LOG) Log.d(TAG, "DBUPDATE [addIOValue] Added " + id);
+        }
 
         return id;
     }
@@ -1182,6 +1185,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (LOG)
                 Log.d(TAG, "DBUPDATE [updateIOValue] Added " + value.getID() + " (" + (vn == null) + ")");
             return 0;
+        }
+
+        if (value.getServiceIO() == null) {
+            Log.e(TAG, "Errrrr");
         }
 
         ContentValues values = new ContentValues();
@@ -2402,7 +2409,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
             SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
 
-            IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
+            IOValue value = new IOValue(id, io, filterState, condition, manualValue, sample, enabled);
+
             Log.d(TAG, "Added value " + id + " to value node " + valueNode.getID());
             valueNode.add(value);
 
@@ -2456,7 +2464,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         long sampleId = c.getLong(c.getColumnIndex(SAMPLE_VALUE));
         SampleValue sample = sampleId == -1 ? null : io.getDescription().getSampleValue(sampleId);
 
-        IOValue value = new IOValue(id, filterState, condition, manualValue, sample, enabled);
+        IOValue value = new IOValue(id, io, filterState, condition, manualValue, sample, enabled);
 
         c.close();
 
