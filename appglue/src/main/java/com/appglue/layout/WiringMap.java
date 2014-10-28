@@ -681,7 +681,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             ServiceIO out = outputs.get(i);
             IOType type = out.getType();
 
-            // TODO Need to make the filter stuff shades of red
             // TODO The titles are alllll kinds of fucked
 
             boolean removed = false;

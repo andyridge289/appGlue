@@ -8,7 +8,7 @@
             android:shape="rectangle"
             >
             <stroke
-                android:color="@color/colorPrimary"
+                android:color="@color/filter"
                 android:width="2dip"
                 />
             <solid
@@ -27,8 +27,7 @@
         <shape
             android:shape="rectangle"
             >
-            <solid
-                android:color="@color/colorPrimaryLight_trans"
+            <solid android:color="@color/filter_light"
                 />
         </shape>
     </item>
