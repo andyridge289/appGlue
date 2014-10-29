@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
+
 public class FragmentSchedule extends Fragment {
 
     private Registry registry;
@@ -43,8 +45,12 @@ public class FragmentSchedule extends Fragment {
 
     public String[] monthDays = new String[28];
 
-    public static Fragment create() {
-        return new FragmentSchedule();
+    public static Fragment create(long id) {
+        FragmentSchedule f = new FragmentSchedule();
+        Bundle b = new Bundle();
+        b.putLong(COMPOSITE_ID, id);
+        f.setArguments(b);
+        return f;
     }
 
     @Override
@@ -63,6 +69,9 @@ public class FragmentSchedule extends Fragment {
             monthDays[i] = "" + (i + 1);
         }
 
+        if (getArguments() != null) {
+            this.compositeId = getArguments().getLong(COMPOSITE_ID, -1);
+        }
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
@@ -101,6 +110,11 @@ public class FragmentSchedule extends Fragment {
                 ds.show();
             }
         });
+
+        if (compositeId != -1) {
+            DialogSchedule ds = new DialogSchedule(getActivity(), FragmentSchedule.this, new Schedule(), compositeId);
+            ds.show();
+        }
 
         return root;
     }
@@ -385,6 +399,4 @@ public class FragmentSchedule extends Fragment {
                 .setNegativeButton("No", null) // We've turned the switch back off already
                 .show();
     }
-
-    // TODO Setting the next calculated time for month isn't working -- maybe it isn't calculating on a new one
 }

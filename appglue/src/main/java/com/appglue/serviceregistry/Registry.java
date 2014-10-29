@@ -2,6 +2,7 @@ package com.appglue.serviceregistry;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,7 +27,7 @@ public class Registry {
     public static Registry registry = null;
     private LocalDBHandler dbHandler = null;
 
-    // FIXME Need to make a composite cache here
+    private LongSparseArray<CompositeService> composites;
 
     private HashMap<String, ServiceDescription> remoteCache;
 
@@ -39,6 +40,7 @@ public class Registry {
     private Registry(Context context) {
         dbHandler = new LocalDBHandler(context);
         remoteCache = new HashMap<String, ServiceDescription>();
+        composites = new LongSparseArray<CompositeService>();
         this.context = context;
     }
 
@@ -178,7 +180,13 @@ public class Registry {
     }
 
     public ArrayList<CompositeService> getComposites() {
-        return dbHandler.getComposites(null, false);
+        ArrayList<CompositeService> composites = dbHandler.getComposites(null, false);
+
+        for (CompositeService composite : composites) {
+            this.composites.put(composite.getID(), composite);
+        }
+
+        return composites;
     }
 
     public boolean delete(CompositeService cs) {

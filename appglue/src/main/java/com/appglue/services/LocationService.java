@@ -37,8 +37,6 @@ public class LocationService extends ComposableService implements GooglePlayServ
 		
 		return null;
 	}
-
-    // TODO This needs to fail with grace a bit better
 	
 	@Override
 	public ArrayList<Bundle> performList(ArrayList<Bundle> os)
@@ -62,17 +60,9 @@ public class LocationService extends ComposableService implements GooglePlayServ
 		
 		Bundle locationBundle = new Bundle();
 		locationBundle.putDouble(LATITUDE, latitude);
-		locationBundle.putDouble(LONGITUDE, longitude);	
-		
-//		ConnectivityManager connManager = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-//		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//
-//		if (mWifi.isConnected())
-//		{
-//		    Toast.makeText(this, "Wifi is connected, this sometimes doesn't work for looking up Lat long.", Toast.LENGTH_LONG).show();
-//		}
-		
-		Geocoder g = new Geocoder(this, Locale.getDefault());
+        locationBundle.putDouble(LONGITUDE, longitude);
+
+        Geocoder g = new Geocoder(this, Locale.getDefault());
 		List<Address> addresses;
 		try 
 		{

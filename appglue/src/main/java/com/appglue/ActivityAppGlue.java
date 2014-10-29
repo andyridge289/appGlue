@@ -41,6 +41,8 @@ import static com.appglue.library.AppGlueConstants.TEST;
 public class ActivityAppGlue extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+    private CompositeService scheduledComposite;
+
     public enum Page {
         HOME(0, "My Glued Apps"),
         COMPONENTS(1, "Component List"),
@@ -192,7 +194,13 @@ public class ActivityAppGlue extends ActionBarActivity
             f = componentFragment;
         } else if (position == Page.SCHEDULE.index) {
             background = R.color.schedule;
-            f = FragmentSchedule.create();
+            if (scheduledComposite != null) {
+                f = FragmentSchedule.create(scheduledComposite.getID());
+                scheduledComposite = null;
+            } else {
+                f = FragmentSchedule.create(-1);
+            }
+
         } else if (position == Page.LOG.index) {
             background = R.color.material_green;
             f = FragmentLog.create();
@@ -419,12 +427,9 @@ public class ActivityAppGlue extends ActionBarActivity
         this.startService(serviceIntent);
     }
 
-    // TODO Setting to show toast on successful execution
-    // TODO Setting to show toast on successful execution of trigger
-    // TODO Setting for disabling things that cost money
-
     void schedule(final CompositeService cs) {
         // TODO Go to the schedule fragment and indicate that we want to create a new one
+        this.scheduledComposite = cs;
         onNavigationDrawerItemSelected(Page.SCHEDULE.index);
 
 

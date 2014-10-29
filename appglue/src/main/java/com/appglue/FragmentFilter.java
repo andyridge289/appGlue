@@ -54,7 +54,6 @@ public class FragmentFilter extends Fragment {
         Registry registry = Registry.getInstance(getActivity());
         filterViews = new LongSparseArray<ArrayList<FilterValueView>>();
 
-        // TODO At this point the filter doesn't seem to have the information from the first filter in it
         if (getArguments() != null) {
             CompositeService cs = registry.getCurrent();
             component = cs.getComponent(getArguments().getLong(COMPONENT_ID));
@@ -96,8 +95,6 @@ public class FragmentFilter extends Fragment {
             ioType.setText(output.getDescription().getType().getName());
 
             final LinearLayout valueLayout = (LinearLayout) vv.findViewById(R.id.filter_value_container);
-
-            // TODO What happens if the filter stuff is empty?
 
             // Set up the add button
             View addButton = vv.findViewById(R.id.filter_add_button);
