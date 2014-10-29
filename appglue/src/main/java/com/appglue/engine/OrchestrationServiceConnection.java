@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
@@ -44,7 +46,6 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.PREFS_APP;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
 
@@ -121,10 +122,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.startAtPosition(" + position + ") " + System.currentTimeMillis());
         this.index = position;
 
-        if (isList)
+        if (isList) {
             message = Message.obtain(null, ComposableService.MSG_LIST);
-        else
+        } else {
             message = Message.obtain(null, ComposableService.MSG_OBJECT);
+        }
 
         message.replyTo = messageReceiver;
 
@@ -161,6 +163,12 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         Library.printBundle(messageData);
 
         if (registry.isTerminated(cs, executionInstance)) {
+            return;
+        }
+
+        int execStatus = canExecute(service);
+        if (execStatus != 0) {
+            registry.cantExecute(cs, executionInstance, service, execStatus);
             return;
         }
 
@@ -256,6 +264,37 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         }
 
         return new Pair<ArrayList<Bundle>, ArrayList<Bundle>>(retained, removed);
+    }
+
+    private int canExecute(ComponentService component) {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        int result = 0;
+
+        Resources res = context.getResources();
+        ServiceDescription sd = component.getDescription();
+        if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
+            if (!prefs.getBoolean(res.getString(R.string.prefs_cost), true)) {
+                result |= ComposableService.FLAG_MONEY;
+            }
+            if (!prefs.getBoolean(res.getString(R.string.prefs_network), true)) {
+                result |= ComposableService.FLAG_NETWORK;
+            }
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_MONEY)) {
+            if (!prefs.getBoolean(res.getString(R.string.prefs_cost), true)) {
+                result |= ComposableService.FLAG_MONEY;
+            }
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_LOCATION)) {
+            if (!prefs.getBoolean(res.getString(R.string.prefs_location), true)) {
+                result |= ComposableService.FLAG_LOCATION;
+            }
+        }
+
+        return result;
     }
 
     private boolean filterTestFilters(Bundle datum, boolean condition, ArrayList<IOFilter> filters) throws OrchestrationException {
@@ -577,7 +616,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     Bundle errorBundle = dummyList.get(0);
                     Registry.getInstance(context).componentCompositeFail(osc.cs, executionInstance, osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
 
-                    SharedPreferences prefs = context.getSharedPreferences(PREFS_APP, Context.MODE_PRIVATE);
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
                     // Sorts out the showing notifications preference.
                     if (prefs.getBoolean(context.getResources().getString(R.string.prefs_notifications), false)) {

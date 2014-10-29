@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -46,8 +47,7 @@ public class ActivityAppGlue extends ActionBarActivity
         SCHEDULE(2, "Schedule"),
         LOG(3, "Log"),
         ACCOUNTS(4, "Connect accounts"),
-        SETTINGS(5, "Settings"),
-        PRIVACY(6, "Privacy");
+        PRIVACY(5, "Privacy");
 
         public int index;
         public String name;
@@ -159,9 +159,20 @@ public class ActivityAppGlue extends ActionBarActivity
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
 
+
         out.putInt(PAGE, this.currentPage);
         out.putInt(COMPOSITE_MODE, homeFragment == null ? -1 : homeFragment.getMode());
         out.putInt(COMPONENT_MODE, componentFragment == null ? -1 : componentFragment.getMode());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.settings) {
+            Intent intent = new Intent(ActivityAppGlue.this, ActivitySettings.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -185,9 +196,9 @@ public class ActivityAppGlue extends ActionBarActivity
         } else if (position == Page.LOG.index) {
             background = R.color.material_green;
             f = FragmentLog.create();
-        } else if (position == Page.SETTINGS.index) {
-            background = R.color.black;
-            f = FragmentSettings.create();
+//        } else if (position == Page.SETTINGS.index) {
+//            background = R.color.black;
+//            f = FragmentSettings.create();
         } else if (position == Page.PRIVACY.index) {
             background = R.color.black;
             f = FragmentPrivacy.create();
@@ -292,14 +303,8 @@ public class ActivityAppGlue extends ActionBarActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (currentPage == Page.HOME.index) {
 
-            if (homeFragment.getMode() == FragmentComposites.MODE_LIST) {
-                getMenuInflater().inflate(R.menu.activity_app_glue, menu);
-            } else {
-                getMenuInflater().inflate(R.menu.composite_menu, menu);
-            }
-        }
+        getMenuInflater().inflate(R.menu.activity_app_glue, menu);
 
         int background = R.color.settings;
         String title = "";
@@ -335,9 +340,6 @@ public class ActivityAppGlue extends ActionBarActivity
         } else if (currentPage == Page.LOG.index) {
             background = R.color.log;
             title = "Log";
-        } else if (currentPage == Page.SETTINGS.index) {
-            background = R.color.settings;
-            title = "Settings";
         } else if (currentPage == Page.ACCOUNTS.index) {
             background = R.color.settings;
             title = "Connect accounts";
@@ -351,7 +353,6 @@ public class ActivityAppGlue extends ActionBarActivity
             toolbar.setTitle(title);
             toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         }
-
 
         return super.onCreateOptionsMenu(menu);
     }

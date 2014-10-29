@@ -41,7 +41,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import static com.appglue.Constants.TAG;
-import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
@@ -209,12 +208,6 @@ public class FragmentCompositeList extends Fragment {
         super.onDetach();
     }
 
-    private void view(CompositeService cs) {
-        Intent intent = new Intent(getActivity(), ActivityComposite.class);
-        intent.putExtra(COMPOSITE_ID, cs.getID());
-        startActivity(intent);
-    }
-
     public void redraw() {
         if (registry == null) {
             return;
@@ -222,12 +215,6 @@ public class FragmentCompositeList extends Fragment {
 
         composites = registry.getComposites();
         listAdapter.notifyDataSetChanged();
-//        if (listAdapter != null && getActivity() != null) {
-//            listAdapter = new CompositeListAdapter(getActivity(), composites);
-//            compositeList.setAdapter(listAdapter);
-//        } else {
-//
-//        }
 
         addFab.hide(false);
         contextToolbar.setVisibility(View.GONE);

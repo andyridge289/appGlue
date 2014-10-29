@@ -127,15 +127,17 @@ public class ServiceFactory {
             }
         }
 
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_HIDDEN, Context.MODE_PRIVATE);
-        boolean first = !prefs.getBoolean(RUN_BEFORE, false);
+        SharedPreferences hiddenPrefs = context.getSharedPreferences(PREFS_HIDDEN, Context.MODE_PRIVATE);
+        boolean first = !hiddenPrefs.getBoolean(RUN_BEFORE, false);
 
         if (first) {
+
+            // Setup the initial set of composites that we need
             ArrayList<CompositeService> composites = CompositeFactory.createSampleComposites(context);
             for (CompositeService cs : composites) {
                 registry.addComposite(cs);
             }
-            prefs.edit().putBoolean(RUN_BEFORE, true).apply();
+            hiddenPrefs.edit().putBoolean(RUN_BEFORE, true).apply();
         }
     }
 

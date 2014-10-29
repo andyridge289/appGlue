@@ -4,8 +4,7 @@ import com.appglue.engine.description.CompositeService;
 
 import java.util.ArrayList;
 
-public class LogItem 
-{
+public class LogItem {
     public static final int SUCCESS = 0x1;
 
     public static final int FILTER = 0x1;
@@ -16,18 +15,19 @@ public class LogItem
     public static final int NETWORK_FAIL = 0x5; // If some networking fails somewhere
     public static final int OTHER_FAIL = 0x6; // Derp
     public static final int ORCH_FAIL = 0x7; // If the orchestrator fails
+    public static final int PARAM_STOP = 0x8; // If it stops based on one of the flags
 
     public static final int GENERIC_TRIGGER_FAIL = 0x7; // This is very much a special case
 
     private long id;
-	private CompositeService cs;
-	private long startTime;
+    private CompositeService cs;
+    private long startTime;
     private long endTime;
-	private String message;
-	private int status;
+    private String message;
+    private int status;
     private ArrayList<ComponentLogItem> componentLogs;
-	
-	public LogItem(long id, CompositeService cs, long startTime, long endTime, String message, int status) {
+
+    public LogItem(long id, CompositeService cs, long startTime, long endTime, String message, int status) {
 
         this.id = id;
         this.cs = cs;
@@ -37,35 +37,35 @@ public class LogItem
         this.status = status;
 
         componentLogs = new ArrayList<ComponentLogItem>();
-	}
+    }
 
     public long getID() {
         return id;
     }
-	public String getMessage()
-	{
-		return message;
-	}
-	public void setMessage(String message)
-	{
-		this.message = message;
-	}
-	public int getStatus()
-	{
-		return status;
-	}
-	public void setStatus(int success)
-	{
-		this.status = success;
-	}
-	public CompositeService getComposite()
-	{
-		return cs;
-	}
-	public void setComposite(CompositeService cs)
-	{
-		this.cs = cs;
-	}
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int success) {
+        this.status = success;
+    }
+
+    public CompositeService getComposite() {
+        return cs;
+    }
+
+    public void setComposite(CompositeService cs) {
+        this.cs = cs;
+    }
 
     public void addComponentLog(ComponentLogItem cli) {
         componentLogs.add(cli);

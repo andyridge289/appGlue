@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +17,10 @@ import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
-import com.appglue.library.AppGlueConstants;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
 
 import java.util.ArrayList;
-
-import static com.appglue.library.AppGlueConstants.P_COST;
-import static com.appglue.library.AppGlueConstants.P_NOTIFICATION;
 
 class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
 
@@ -105,9 +103,10 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
             appIcon.setImageResource(R.drawable.icon);
         }
 
-        SharedPreferences prefs = getContext().getSharedPreferences(AppGlueConstants.PREFS_APP, Context.MODE_PRIVATE);
-        boolean cost = prefs.getBoolean(P_COST, true);
-        boolean network = prefs.getBoolean(P_NOTIFICATION, true);
+        Resources res = getContext().getResources();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean cost = prefs.getBoolean(res.getString(R.string.prefs_cost), true);
+        boolean network = prefs.getBoolean(res.getString(R.string.prefs_network), true);
 
         ImageView icon = (ImageView) v.findViewById(R.id.component_icon);
         if (!cost && sd.hasFlag(ComposableService.FLAG_MONEY)) {

@@ -222,14 +222,6 @@ public class Registry {
         return dbHandler.getServiceDescriptions(ComposableService.FLAG_TRIGGER);
     }
 
-    public long isCompositeRunning(long compositeId) {
-        return dbHandler.isCompositeRunning(compositeId);
-    }
-
-    public boolean isInstanceRunning(long compositeId, long executionInstance) {
-        return dbHandler.isInstanceRunning(compositeId, executionInstance);
-    }
-
     public boolean isTerminated(CompositeService composite, long executionInstance) {
         return dbHandler.isTerminated(composite, executionInstance);
     }
@@ -275,11 +267,11 @@ public class Registry {
 
     public boolean componentSuccess(CompositeService composite, long executionInstance, ComponentService component, String message, Bundle outputData) {
         // If a component works, then say what output it gave back to the orchestrator
-        return dbHandler.addToLog(composite, executionInstance, component, message, null, outputData, LogItem.SUCCESS);
+        return dbHandler.addToLog(composite, executionInstance, component, message, null, outputData, LogItem.SUCCESS, 0);
     }
 
     public void genericTriggerFail(ComponentService component, Bundle inputData, String error) {
-        dbHandler.addToLog(null, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL);
+        dbHandler.addToLog(null, -1L, component, error, inputData, null, LogItem.GENERIC_TRIGGER_FAIL, 0);
         //EngineTest.executeFinished = true;
     }
 
@@ -295,7 +287,7 @@ public class Registry {
      */
     public boolean componentCompositeFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData, String message) {
         // If a component fails, we should tell the user what the input to the component was when it failed
-        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.COMPONENT_FAIL);
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.COMPONENT_FAIL, 0);
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
 
         //EngineTest.executeFinished = true;
@@ -311,7 +303,7 @@ public class Registry {
 
     public boolean messageFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData) {
         String message = "Failed to send message.";
-        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.MESSAGE_FAIL);
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.MESSAGE_FAIL, 0);
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.COMPONENT_FAIL, message);
 
         //EngineTest.executeFinished = true;
@@ -332,7 +324,7 @@ public class Registry {
 //        ServiceDescription sd = component.getDescription();
         String message = "Stopped execution at filter: expected and got \"" + AppGlueLibrary.bundleToString(inputData) + "\"";
 
-        boolean logComponent = dbHandler.addToLog(cs, executionInstance, component, message, inputData, null, LogItem.FILTER);
+        boolean logComponent = dbHandler.addToLog(cs, executionInstance, component, message, inputData, null, LogItem.FILTER, 0);
         boolean logComposite = dbHandler.terminate(cs, executionInstance, LogItem.FILTER, message);
 
         //EngineTest.executeFinished = true;
@@ -340,8 +332,16 @@ public class Registry {
     }
 
     public boolean orchestratorFail(CompositeService composite, long executionInstance, ServiceDescription sd, String message) {
-        //EngineTest.executeFinished = true;
         return dbHandler.terminate(composite, executionInstance, LogItem.ORCH_FAIL, message);
+    }
+
+    public boolean cantExecute(CompositeService composite, long executionInstance, ComponentService component, int execStatus) {
+        String message = "Stopped due to user preferences";
+
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, null, null, LogItem.PARAM_STOP, execStatus);
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.PARAM_STOP, message);
+
+        return logComponent && logComposite;
     }
 
     public ArrayList<ServiceDescription> getAllServiceDescriptions() {

@@ -88,7 +88,7 @@
     <!-- <string name="wiring_menu_next">Next</string> -->
     <!-- <string name="wiring_menu_previous">Previous</string> -->
     <string name="param_cancel">I changed my mind..</string>
-    <string name="prefs_notifications">prefs_notifications</string>
+
     <string name="no_examples">No examples available</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
@@ -203,5 +203,10 @@
     <string name="on">on</string>
     <string name="at">at</string>
     <string name="from">from</string>
+
+    <string name="prefs_notifications">prefs_notifications</string>
+    <string name="prefs_cost">prefs_cost</string>
+    <string name="prefs_location">prefs_location</string>
+    <string name="prefs_network">prefs_network</string>
 
 </resources>

@@ -99,7 +99,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     @Override
@@ -1562,7 +1562,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         return db.insert(TBL_COMPOSITE_EXECUTION_LOG, null, cv);
     }
 
-    public boolean addToLog(CompositeService composite, long executionInstance, ComponentService component, String message, Bundle inputData, Bundle outputData, int status) {
+    public boolean addToLog(CompositeService composite, long executionInstance, ComponentService component, String message, Bundle inputData, Bundle outputData, int status, int flags) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
@@ -1578,6 +1578,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(TIME, sdf.format(date));
         values.put(LOG_TYPE, status);
         values.put(TIME, System.currentTimeMillis());
+        values.put(FLAGS, flags);
 
         if (inputData != null) {
             ArrayList<Bundle> data = inputData.getParcelableArrayList(ComposableService.INPUT);
@@ -2834,12 +2835,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
 
         return !terminated;
-    }
-
-    public synchronized long isCompositeRunning(long compositeId) {
-        // Look through all the rows for that compositeId, and see if there are any instances with the timestamp not set
-        // Return the instance ID so that we can control it
-        return -1L;
     }
 
     public synchronized boolean isTerminated(CompositeService composite, long executionInstance) {

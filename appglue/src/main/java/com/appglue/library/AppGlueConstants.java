@@ -36,14 +36,9 @@ public class AppGlueConstants {
     public static final String PREFS_HIDDEN = "prefs_hidden";
     public static final String RUN_BEFORE = "run_before";
 
-    public static final String PREFS_APP = "prefs_app";
-    public static final String P_COST = "pref_cost";
-    public static final String P_NOTIFICATION = "pref_notification";
-
     // Database information
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "appGlue";
-
 
     // 'static' database tables
     public static final String TBL_APP = "app";
@@ -395,6 +390,7 @@ public class AppGlueConstants {
                     {INPUT_DATA, "BLOB"},
                     {OUTPUT_DATA, "BLOB"},
                     {LOG_TYPE, "INTEGER"},
+                    {FLAGS, "INTEGER"},
                     {TIME, "INTEGER"}
             };
 
