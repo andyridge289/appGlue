@@ -18,11 +18,12 @@ import java.util.ArrayList;
 
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
-public class FragmentComponentList extends Fragment
-{
-	protected ListView serviceListView;
+public class FragmentComponentList extends Fragment {
+    protected ListView serviceListView;
 	protected TextView noneFound;
 	protected ImageView loader;
+
+    // TODO Add a categories view to the component list
 
     protected boolean homeParent;
     protected boolean justList;

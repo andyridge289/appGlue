@@ -34,6 +34,7 @@ import com.appglue.services.triggers.DockedTrigger;
 import com.appglue.services.triggers.HeadphoneTrigger;
 import com.appglue.services.triggers.PowerTrigger;
 import com.appglue.services.triggers.ReceiveSMSTrigger;
+import com.appglue.services.triggers.ScreenStateTrigger;
 import com.appglue.services.triggers.ShutdownTrigger;
 import com.appglue.services.triggers.StartupTrigger;
 import com.appglue.services.util.BluetoothService;
@@ -124,6 +125,7 @@ public class ServiceFactory {
         services.add(setupShutdownTrigger());
         services.add(setupDockedTrigger());
         services.add(setupDeviceStorageTrigger());
+        services.add(setupScreenStateTrigger());
 
         String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
@@ -649,6 +651,28 @@ public class ServiceFactory {
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, storageTriggerJSON);
     }
 
+    private String setupScreenStateTrigger() {
+
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Screen On", ScreenStateTrigger.SCREEN_ON));
+        samples.add(new SampleValue("Screen Off", ScreenStateTrigger.SCREEN_OFF));
+
+        outputs.add(new IODescription(-1, ScreenStateTrigger.STATE, "Screen state", set, "Whether the screen is now on or off", true, samples));
+
+        String[] tags = {"Screen", "Display", "On", "Off"};
+
+        String screenTriggerJSON = Library.makeJSON(-1, "com.appglue", ScreenStateTrigger.class.getCanonicalName(),
+                "Screen Trigger",
+                "Signals that the screen has gone on or off",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, screenTriggerJSON);
+    }
+
     // Android Triggers
 
     // On shutdown/startup
@@ -662,10 +686,6 @@ public class ServiceFactory {
     //	android.intent.action.NEW_OUTGOING_CALL
     //	android.intent.action.NEW_VOICEMAIL
     //	android.intent.action.PHONE_STATE
-
-    // Screen on/off
-    //	android.intent.action.SCREEN_OFF
-    //	android.intent.action.SCREEN_ON
 
     // Time
     //	android.intent.action.TIMEZONE_CHANGED
@@ -691,15 +711,6 @@ public class ServiceFactory {
     //	android.net.wifi.SCAN_RESULTS
     //	android.net.wifi.STATE_CHANGE
     //	android.net.wifi.WIFI_STATE_CHANGED
-
-    // P2P Wifi
-    //	android.net.wifi.p2p.CONNECTION_STATE_CHANGE
-    //	android.net.wifi.p2p.DISCOVERY_STATE_CHANGE
-    //	android.net.wifi.p2p.PEERS_CHANGED
-    //	android.net.wifi.p2p.STATE_CHANGED
-    //	android.net.wifi.p2p.THIS_DEVICE_CHANGED
-    //	android.net.wifi.supplicant.CONNECTION_CHANGE
-    //	android.net.wifi.supplicant.STATE_CHANGE
 
     // NFC
     //	android.nfc.action.ADAPTER_STATE_CHANGED
@@ -782,28 +793,6 @@ public class ServiceFactory {
     // Media uploaded
 
     // http://developers.google.com/drive/android-quickstart
-
-
-//	android.hardware.action.NEW_VIDEO
-//	android.intent.action.ACTION_POWER_CONNECTED
-//	android.intent.action.ACTION_POWER_DISCONNECTED
-//	android.intent.action.ACTION_SHUTDOWN
-//	android.intent.action.AIRPLANE_MODE
-//	android.intent.action.BATTERY_LOW
-//	android.intent.action.BATTERY_OKAY
-//	android.intent.action.BOOT_COMPLETED
-//	android.intent.action.DATA_SMS_RECEIVED
-//	android.intent.action.DATE_CHANGED
-//	android.intent.action.DEVICE_STORAGE_LOW
-//	android.intent.action.DEVICE_STORAGE_OK
-//	android.intent.action.DOCK_EVENT
-//	android.intent.action.HEADSET_PLUG
-//	android.intent.action.NEW_OUTGOING_CALL
-//	android.intent.action.NEW_VOICEMAIL
-//	android.intent.action.SCREEN_OFF
-//	android.intent.action.SCREEN_ON
-//	android.provider.Telephony.SMS_RECEIVED
-//	android.provider.Telephony.SMS_REJECTED
 
     // Train prices in foreign country
     // Currency converter
