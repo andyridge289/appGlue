@@ -84,6 +84,10 @@ public class AppDescription {
         this.developer = developer;
     }
 
+    public String getIconLocation() {
+        return iconLocation;
+    }
+
     @Override
     public boolean equals(Object o) {
 

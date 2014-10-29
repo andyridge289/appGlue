@@ -12,7 +12,14 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.appglue.ComposableService;
+import com.appglue.R;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 
@@ -336,5 +343,56 @@ public class AppGlueLibrary {
         } while (c.moveToNext());
 
         return name;
+    }
+
+    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi) {
+        flagContainer.removeAllViews();
+        if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            iv.setBackgroundResource(R.drawable.ic_exit_to_app_white_18dp);
+            tv.setText("Trigger");
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_MONEY)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            iv.setBackgroundResource(R.drawable.ic_money);
+            tv.setText("Costs money");
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            iv.setBackgroundResource(R.drawable.ic_settings_input_antenna_white_18dp);
+            tv.setText("Uses data");
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_LOCATION)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
+            tv.setText("Uses GPS");
+        }
     }
 }

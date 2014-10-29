@@ -193,8 +193,6 @@ public class AppGlueConstants {
     // Database - Composite
     public static final String ENABLED = "enabled";
 
-    // TODO We also need a scheduling table
-
     // 'dynamic' database tables
     public static final String[][] COLS_COMPOSITE = new String[][]
             {

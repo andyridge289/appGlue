@@ -2,9 +2,8 @@ package com.appglue;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,39 +14,103 @@ import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
-import com.appglue.library.LocalStorage;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.TAG;
 
-public class ActivityApp extends Activity {
+public class FragmentApp extends Fragment {
 
+    private AppDescription app;
+    private Registry registry;
+
+    public static Fragment create() {
+        return new FragmentApp();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+    }
+
+    @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-        setContentView(R.layout.activity_app);
+        registry = Registry.getInstance(getActivity());
 
-        Registry registry = Registry.getInstance(this);
-        LocalStorage localStorage = LocalStorage.getInstance();
+        if (getArguments() != null) {
+            String packageName = getArguments().getString(PACKAGENAME);
+            app = registry.getApp(packageName);
 
-        Intent intent = this.getIntent();
-        String packageName = intent.getStringExtra(PACKAGENAME);
-        if (LOG) Log.d(TAG, "Got package " + packageName);
+        }
+    }
 
-        AppDescription app = registry.getApp(packageName);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
+        View root = inflater.inflate(R.layout.activity_app, container, false);
 
-        ((TextView) findViewById(R.id.app_name)).setText(app.getName());
-        ((TextView) findViewById(R.id.app_dev)).setText(app.getDeveloper());
-        ((TextView) findViewById(R.id.app_description)).setText(app.getDescription());
+        ((TextView) root.findViewById(R.id.app_name)).setText(app.getName());
+        ((TextView) root.findViewById(R.id.app_dev)).setText(app.getDeveloper());
+        ((TextView) root.findViewById(R.id.app_description)).setText(app.getDescription());
 
-        ListView componentList = (ListView) findViewById(R.id.app_component_list);
+        ListView componentList = (ListView) root.findViewById(R.id.app_component_list);
         ArrayList<ServiceDescription> components = registry.getComponentsForApp(app.getPackageName());
 
-        componentList.setAdapter(new AppComponentAdapter(this, components));
+        componentList.setAdapter(new AppComponentAdapter(getActivity(), components));
+        return root;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle icicle) {
+        super.onActivityCreated(icicle);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    public void setData(String packageName) {
+        if (registry == null)
+            registry = Registry.getInstance(getActivity());
+
+        app = registry.getApp(packageName);
     }
 
     private class AppComponentAdapter extends ArrayAdapter<ServiceDescription> {
@@ -61,14 +124,13 @@ public class ActivityApp extends Activity {
 
         public View getView(int position, View convertView, ViewGroup viewGroup) {
             View v = convertView;
-            LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             if (v == null) {
-                v = vi.inflate(R.layout.component_list_item, viewGroup);
+                v = vi.inflate(R.layout.component_list_item, null);
             }
 
             ServiceDescription sd = items.get(position);
-
 
 //            ImageView icon = (ImageView) v.findViewById(R.id.simple_list_icon);
 
@@ -89,9 +151,7 @@ public class ActivityApp extends Activity {
             serviceName.setText(sd.getName());
 
             LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
-            flagContainer.removeAllViews();
-
-            // TODO Make icons for the other flags and put things in, update this to use the same layout as the other one
+            AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi);
 
             if (sd.hasInputs()) {
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);
@@ -116,8 +176,4 @@ public class ActivityApp extends Activity {
             return v;
         }
     }
-
-
-    // Need to pass down that they might want to tick it if they've come from the composition page
-    // Need to pass back if they do actually click the tick. It should just bubble back up but you never know
 }

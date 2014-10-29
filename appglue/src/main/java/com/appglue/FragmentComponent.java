@@ -3,8 +3,11 @@ package com.appglue;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ import com.appglue.serviceregistry.Registry;
 import java.util.ArrayList;
 
 import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.TAG;
 
 public class FragmentComponent extends Fragment {
 
@@ -187,30 +191,28 @@ public class FragmentComponent extends Fragment {
         launchAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                try {
-//                    PackageManager pm = getActivity().getPackageManager();
-//
-//                    if (pm != null) {
-//                        Intent i = pm.getLaunchIntentForPackage(sd.getApp().getPackageName());
-//                        getActivity().startActivity(i);
-//                    } else {
-//                        // Do something?
-//                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + sd.getApp().getPackageName());
-//                    }
-//                } catch (Exception e) {
-//                    Log.e(TAG, "Trying to launch app? " + e.getMessage());
-//                }
+                try {
+                    PackageManager pm = getActivity().getPackageManager();
+
+                    if (pm != null) {
+                        Intent i = pm.getLaunchIntentForPackage(sd.getApp().getPackageName());
+                        getActivity().startActivity(i);
+                    } else {
+                        // Do something?
+                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + sd.getApp().getPackageName());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Trying to launch app? " + e.getMessage());
+                }
             }
         });
 
-        viewAppButton.setVisibility(View.GONE);//.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), ActivityApp.class);
-//                intent.putExtra(PACKAGENAME, service.app().getPackageName());
-//                startActivity(intent);
-//            }
-//        });
+        viewAppButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((FragmentComponents) getParentFragment()).showApp(sd.getApp().getPackageName());
+            }
+        });
 
 //        final ArrayList<CompositeService> examples = registry.getExamples(service.getClassName());
 //        LayoutInflater inflater = this.getLayoutInflater();

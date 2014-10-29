@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.appglue.engine.description.ComponentService;
 
 import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
 public class FragmentComponents extends Fragment {
@@ -18,10 +19,13 @@ public class FragmentComponents extends Fragment {
     private int mode;
     public static final int MODE_LIST = 0;
     public static final int MODE_COMPONENT = 1;
+    public static final int MODE_APP = 2;
 
     private FragmentComponent componentFragment;
+    private FragmentApp appFragment;
 
     private String className = "";
+    private String packageName = "";
 
     private boolean justList;
 
@@ -118,6 +122,17 @@ public class FragmentComponents extends Fragment {
                 }
                 break;
 
+            case MODE_APP:
+                appFragment = (FragmentApp) FragmentApp.create();
+                active = appFragment;
+                if (!packageName.equals("")) {
+                    Bundle args = new Bundle();
+                    args.putString(PACKAGENAME, packageName);
+                    appFragment.setArguments(args);
+                    packageName = "";
+                }
+                break;
+
             case MODE_LIST:
             default:
                 FragmentComponentListPager listFragment = (FragmentComponentListPager) FragmentComponentListPager.create(justList);
@@ -132,6 +147,18 @@ public class FragmentComponents extends Fragment {
 
     public int getMode() {
         return mode;
+    }
+
+    public void showApp(String packageName) {
+        if (appFragment != null) {
+            appFragment.setData(packageName);
+            this.packageName = "";
+        } else {
+            this.packageName = packageName;
+        }
+
+        setMode(MODE_APP);
+        redraw();
     }
 
     public void showServiceDescription(String className) {
