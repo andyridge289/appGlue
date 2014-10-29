@@ -2,6 +2,7 @@ package com.appglue.services.factory;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -28,9 +29,13 @@ import com.appglue.services.TubeService;
 import com.appglue.services.triggers.AirplaneTrigger;
 import com.appglue.services.triggers.BatteryTrigger;
 import com.appglue.services.triggers.BluetoothTrigger;
+import com.appglue.services.triggers.DeviceStorageTrigger;
+import com.appglue.services.triggers.DockedTrigger;
 import com.appglue.services.triggers.HeadphoneTrigger;
 import com.appglue.services.triggers.PowerTrigger;
 import com.appglue.services.triggers.ReceiveSMSTrigger;
+import com.appglue.services.triggers.ShutdownTrigger;
+import com.appglue.services.triggers.StartupTrigger;
 import com.appglue.services.util.BluetoothService;
 import com.appglue.services.util.WifiService;
 
@@ -115,6 +120,10 @@ public class ServiceFactory {
         services.add(setupHeadphoneTrigger());
         services.add(setupAirplaneTrigger());
         services.add(setupBatteryTrigger());
+        services.add(setupStartupTrigger());
+        services.add(setupShutdownTrigger());
+        services.add(setupDockedTrigger());
+        services.add(setupDeviceStorageTrigger());
 
         String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
@@ -573,42 +582,81 @@ public class ServiceFactory {
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, headphoneTriggerJSON);
     }
 
+    private String setupStartupTrigger() {
+
+        String[] tags = {"Startup", "Boot"};
+
+        String startupTriggerJSON = Library.makeJSON(-1, "com.appglue", StartupTrigger.class.getCanonicalName(),
+                "Startup Trigger",
+                "Activated when your phone has finished turning on",
+                ComposableService.FLAG_TRIGGER,
+                0, null, null, tags);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, startupTriggerJSON);
+    }
+
+    private String setupShutdownTrigger() {
+
+        String[] tags = {"Shutdown", "Turn off"};
+
+        String startupTriggerJSON = Library.makeJSON(-1, "com.appglue", ShutdownTrigger.class.getCanonicalName(),
+                "Shutdown Trigger",
+                "Activated when your phone is turning off",
+                ComposableService.FLAG_TRIGGER,
+                0, null, null, tags);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, startupTriggerJSON);
+    }
+
+    private String setupDockedTrigger() {
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Undocked", Intent.EXTRA_DOCK_STATE_UNDOCKED));
+        samples.add(new SampleValue("Car docked", Intent.EXTRA_DOCK_STATE_CAR));
+        samples.add(new SampleValue("Desk docked", Intent.EXTRA_DOCK_STATE_DESK));
+
+        outputs.add(new IODescription(-1, DockedTrigger.STATE, "Docked State", set, "The new state of dock", true, samples));
+        String[] tags = {"Dock", "Car", "Desk", "Undock", "On", "Off"};
+
+        String dockTriggerJSON = Library.makeJSON(-1, "com.appglue", DockedTrigger.class.getCanonicalName(),
+                "Docked Trigger",
+                "Signals that the phone has been docked or undocked",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, dockTriggerJSON);
+    }
+
+    private String setupDeviceStorageTrigger() {
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Low storage", DeviceStorageTrigger.LOW_STORAGE));
+        samples.add(new SampleValue("Okay storage", DeviceStorageTrigger.OKAY_STORAGE));
+
+        outputs.add(new IODescription(-1, DeviceStorageTrigger.STATE, "Device storage state", set, "The new state of the storage in the device", true, samples));
+        String[] tags = {"Device storage", "SD card"};
+
+        String storageTriggerJSON = Library.makeJSON(-1, "com.appglue", DeviceStorageTrigger.class.getCanonicalName(),
+                "Storage Trigger",
+                "Signals that the storage in the phone has changed",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, storageTriggerJSON);
+    }
+
     // Android Triggers
 
-    // Media taken Taken
-    // android.hardware.action.NEW_PICTURE
-    //	android.hardware.action.NEW_VIDEO
-
     // On shutdown/startup
-    // android.intent.action.ACTION_SHUTDOWN
-    //	android.intent.action.BOOT_COMPLETED
     //	android.intent.action.REBOOT
-
-    // Storage
-    //	android.intent.action.DEVICE_STORAGE_LOW
-    //	android.intent.action.DEVICE_STORAGE_OK
-
-    // Docked/Dreaming
-    //	android.intent.action.DOCK_EVENT
 
     // Google Talk
     //	android.intent.action.GTALK_CONNECTED
     //	android.intent.action.GTALK_DISCONNECTED
-
-    // Media Stuff?
-    //	android.intent.action.MEDIA_BAD_REMOVAL
-    //	android.intent.action.MEDIA_BUTTON
-    //	android.intent.action.MEDIA_CHECKING
-    //	android.intent.action.MEDIA_EJECT
-    //	android.intent.action.MEDIA_MOUNTED
-    //	android.intent.action.MEDIA_NOFS
-    //	android.intent.action.MEDIA_REMOVED
-    //	android.intent.action.MEDIA_SCANNER_FINISHED
-    //	android.intent.action.MEDIA_SCANNER_SCAN_FILE
-    //	android.intent.action.MEDIA_SCANNER_STARTED
-    //	android.intent.action.MEDIA_SHARED
-    //	android.intent.action.MEDIA_UNMOUNTABLE
-    //	android.intent.action.MEDIA_UNMOUNTED
 
     // Making call
     //	android.intent.action.NEW_OUTGOING_CALL
@@ -655,6 +703,10 @@ public class ServiceFactory {
 
     // NFC
     //	android.nfc.action.ADAPTER_STATE_CHANGED
+
+    // Media taken Taken
+    // android.hardware.action.NEW_PICTURE
+    //	android.hardware.action.NEW_VIDEO
 
     // Atooma
     // Phone mode

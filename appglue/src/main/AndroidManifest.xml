@@ -136,34 +136,39 @@
                 <action android:name="android.bluetooth.adapter.action.DISCOVERY_STARTED" />
                 <action android:name="android.bluetooth.adapter.action.SCAN_MODE_CHANGED" />
                 <action android:name="android.bluetooth.adapter.action.STATE_CHANGED" />
-
-                <!--
-            Not sure what A2DP is...
-                android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED
-                android.bluetooth.a2dp.profile.action.PLAYING_STATE_CHANGED
-
-                Device connected/disconnected
-                android.bluetooth.device.action.ACL_CONNECTED
-                android.bluetooth.device.action.ACL_DISCONNECTED
-                android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED
-
-            //  android.bluetooth.adapter.action.LOCAL_NAME_CHANGED
-            //  android.bluetooth.device.action.BOND_STATE_CHANGED
-            //  android.bluetooth.device.action.CLASS_CHANGED
-            //  android.bluetooth.device.action.FOUND
-            //  android.bluetooth.device.action.NAME_CHANGED
-            //  android.bluetooth.device.action.UUID
-            //  android.bluetooth.devicepicker.action.DEVICE_SELECTED
-            //  android.bluetooth.devicepicker.action.LAUNCH
-            //  android.bluetooth.headset.action.VENDOR_SPECIFIC_HEADSET_EVENT
-            //  android.bluetooth.headset.profile.action.AUDIO_STATE_CHANGED
-            //  android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED
-            //  android.bluetooth.input.profile.action.CONNECTION_STATE_CHANGED
-            //  android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED
-                -->
-
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="com.appglue.services.triggers.StartupTrigger"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.appglue.services.triggers.ShutdownTrigger"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.appglue.services.triggers.DockedTrigger"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.DOCK_EVENT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.appglue.services.triggers.DeviceStorageTrigger"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+            </intent-filter>
+        </receiver>
+
+
         <receiver
             android:name="com.appglue.serviceregistry.AppUninstalledReceiver"
             android:exported="true">
