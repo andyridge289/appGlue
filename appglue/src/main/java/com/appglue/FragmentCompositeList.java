@@ -104,6 +104,7 @@ public class FragmentCompositeList extends Fragment {
             @Override
             public void onClick(View v) {
                 aag.run(listAdapter.getCurrentComposite());
+                contextToolbar.setVisibility(View.GONE);
             }
         });
 
@@ -112,6 +113,7 @@ public class FragmentCompositeList extends Fragment {
             @Override
             public void onClick(View v) {
                 aag.schedule(listAdapter.getCurrentComposite());
+                contextToolbar.setVisibility(View.GONE);
             }
         });
 
@@ -120,6 +122,7 @@ public class FragmentCompositeList extends Fragment {
             @Override
             public void onClick(View v) {
                 aag.edit(listAdapter.getCurrentComposite());
+                contextToolbar.setVisibility(View.GONE);
             }
         });
 
@@ -128,6 +131,7 @@ public class FragmentCompositeList extends Fragment {
             @Override
             public void onClick(View v) {
                 aag.createShortcut(listAdapter.getCurrentComposite());
+                contextToolbar.setVisibility(View.GONE);
             }
         });
 
@@ -154,6 +158,7 @@ public class FragmentCompositeList extends Fragment {
                             }
                         })
                         .setNegativeButton("No", null).show();
+                contextToolbar.setVisibility(View.GONE);
             }
         });
 
@@ -228,7 +233,6 @@ public class FragmentCompositeList extends Fragment {
 
         public CompositeListAdapter(Context context, ArrayList<CompositeService> items) {
             super(context, R.layout.list_item_composite, items);
-
             expanded = new Boolean[items.size()];
             for (int i = 0; i < expanded.length; i++) {
                 expanded[i] = false;
@@ -327,7 +331,7 @@ public class FragmentCompositeList extends Fragment {
                     TextView tv = new TextView(getContext());
                     tv.setText(component.getDescription().getName());
 
-                    // TODO In expanded mode we need to add more information about the components
+                    // XXX In expanded mode we need to add more information about the components
 
                     if (item.isEnabled()) {
                         if (position == selectedIndex) {
@@ -373,8 +377,6 @@ public class FragmentCompositeList extends Fragment {
                     nameText.setTextColor(getResources().getColor(R.color.textColor));
                 }
 
-                // TODO The day of month setting is wrong
-
                 // The image needs to be in colour
                 icon.setColorFilter(null);
             } else {
@@ -413,10 +415,6 @@ public class FragmentCompositeList extends Fragment {
         }
     }
 
-    // TODO Component list icon triggers and things
-    // TODO Sort out the selection thing for components
-    // TODO Auto connect in wiring
-
     private class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
 
         @Override
@@ -431,7 +429,6 @@ public class FragmentCompositeList extends Fragment {
 
             if (getActivity() == null) {
                 return new ArrayList<CompositeService>();
-                // TODO Probably should schedule the thing to have another look. Don't know why the activity would be null
             }
 
             ActivityManager manager = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);

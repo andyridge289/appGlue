@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 public class CompositeFactory {
 
-    // TODO Create some sample composites and put the in the database on start up
     private static Registry registry;
 
     public static ArrayList<CompositeService> createSampleComposites(Context context) {

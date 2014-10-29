@@ -70,6 +70,10 @@ public class FilterValueView extends LinearLayout {
     private IOValue value;
     private ServiceIO item;
 
+    public IOValue getValue() {
+        return value;
+    }
+
     public FilterValueView(Context context, FragmentFilter ff, ComponentService component,
                            IOFilter filter, IOValue value, ServiceIO item, int childCount) {
         super(context);

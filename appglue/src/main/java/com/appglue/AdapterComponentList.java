@@ -117,8 +117,6 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
             icon.setImageResource(R.drawable.ic_extension_grey600_48dp);
         }
 
-        // TODO The engine needs to check if we can run things or not and then indicate if they have been stoppped because the preferences say we shouldn't
-
         TextView serviceName = (TextView) v.findViewById(R.id.service_name);
         serviceName.setText(sd.getName());
 

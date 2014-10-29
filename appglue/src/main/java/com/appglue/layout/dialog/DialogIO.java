@@ -186,20 +186,6 @@ public class DialogIO extends AlertDialog {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Get the value they entered - not sure what happens
-//                    if (manualRadio.isChecked()) {
-//                        // Then look up the text value
-//                        Object objectValue = description.getType().fromString(manualText.getText().toString());
-//                        IOValue value = new IOValue(FilterFactory.NONE, objectValue, io);
-//                        item.setValue(value);
-//                    } else if (sampleRadio.isChecked()) {
-//                        // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
-//                        SampleValue sampleValue = (SampleValue) sampleSpinner.getSelectedItem();
-//                        IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
-//                        item.setValue(value);
-//                    }
-
-                    // The setting of the list values needs to move to the creating of the list. Do an invalidate
                     registry.updateComposite(registry.getCurrent());
                     DialogIO.this.activity.redraw();
                     dismiss();
@@ -237,30 +223,8 @@ public class DialogIO extends AlertDialog {
                     activity.startActivityForResult(DialogIO.this, contactPickerIntent, ActivityWiring.CONTACT_PICKER_VALUE);
                 }
             });
-
-//            // TODO Loading saved values
-//            if (item.hasValue()) {
-//
-//                IOValue value = item.getValue();
-//
-//                if (value.getFilterState() == IOValue.MANUAL) {
-//
-//                    // Load the value from the item and Set the manual one to be checked
-//                    manualText.setText(type.toString(value.getManualValue()));
-//                    manualRadio.setChecked(true);
-//
-//                } else if (value.getFilterState() == IOValue.SAMPLE) {
-//
-//                    ((FilterSampleAdapter) sampleSpinner.getAdapter()).getPosition(value.getSampleValue());
-//                    sampleRadio.setChecked(true);
-//                    // Set the sameple one to be checked
-//                }
-//            }
         }
     }
-
-
-    // TODO Need to set an initial checked radio button
 
     private class DialogImageResourceView extends LinearLayout {
 
@@ -324,7 +288,17 @@ public class DialogIO extends AlertDialog {
                     }
                 }
             } else {
-                // TODO Do this for loading filtering outputs
+                if (filterValueView != null) {
+                    IOValue value = filterValueView.getValue();
+                    if (value != null) {
+                        if (value.getManualValue() != null) {
+                            int res = (Integer) value.getManualValue();
+                            int pos = adapter.getPosition(res);
+                            adapter.selectedIndex = pos;
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }
             }
 
             positiveButton.setOnClickListener(new OnClickListener() {

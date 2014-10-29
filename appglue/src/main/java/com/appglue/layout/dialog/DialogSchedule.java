@@ -382,6 +382,14 @@ public class DialogSchedule extends AlertDialog {
                     // Update it in the database
                     registry.update(item);
                 }
+
+                if (item.isEnabled()) {
+                    Schedule s = registry.getSchedule(item.getID());
+                    item.calculateNextExecute(System.currentTimeMillis());
+                    item.setExecutionNum(s.getExecutionNum() + 1);
+                    scheduler.schedule(item);
+                }
+
                 fragment.dialogDone();
                 dismiss();
             }

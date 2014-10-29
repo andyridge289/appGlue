@@ -7,18 +7,13 @@ import com.appglue.R;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.library.Network;
 
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.VALUE;
 
 public class TubeService extends ComposableService {
     public static final IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
@@ -58,25 +53,7 @@ public class TubeService extends ComposableService {
     public static final String WATERLOO_CITY = "Waterloo & City";
 
     private String getFromURL(String url) throws IOException {
-//        if (parameters == null) {
-        // TODO This probably needs to connect
-            return Network.httpGet(url);
-//        } else {
-//            ArrayList<NameValuePair> postData = new ArrayList<NameValuePair>();
-//
-//            for (Bundle b : parameters) {
-//                String name = b.getString(NAME);
-//                String[] values = b.getStringArray(VALUE);
-//                String value = "";
-//                for (String value1 : values) {
-//                    value += value1;
-//                }
-//
-//                postData.add(new BasicNameValuePair(name, value));
-//            }
-
-//            return Network.httpPost(url, postData);
-//        }
+        return Network.httpGet(url);
     }
 
     @Override

@@ -428,59 +428,8 @@ public class ActivityAppGlue extends ActionBarActivity
     }
 
     void schedule(final CompositeService cs) {
-        // TODO Go to the schedule fragment and indicate that we want to create a new one
         this.scheduledComposite = cs;
         onNavigationDrawerItemSelected(Page.SCHEDULE.index);
-
-
-//        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.MyDialog));
-//        builder.setTitle("Set timer duration");
-//
-//        LayoutInflater inflater = getLayoutInflater();
-//        View layout = inflater.inflate(R.layout.dialog_timer, null);
-//        builder.setView(layout);
-//
-//        if (layout == null)
-//            return;
-//
-//        final EditText numeralEdit = (EditText) layout.findViewById(R.id.timer_edit_numerals);
-//        final CheckBox runNowCheck = (CheckBox) layout.findViewById(R.id.timer_run_now);
-//
-//        if (numeralEdit == null || runNowCheck == null)
-//            return;
-//
-//        final Spinner intervalSpinner = (Spinner) layout.findViewById(R.id.timer_spinner_intervals);
-//        ArrayAdapter<CharSequence> intervalAdapter = ArrayAdapter.createFromResource(this, R.array.time_array, R.layout.dialog_spinner_dropdown);
-//        intervalAdapter.setDropDownViewResource(R.layout.dialog_spinner_dropdown);
-//        intervalSpinner.setAdapter(intervalAdapter);
-//
-//        Dialog.OnClickListener okayClick = new Dialog.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                // Get the things of each of the spinners and work out the duration
-//                long numeral = Integer.parseInt(numeralEdit.getText().toString());
-//                int intervalIndex = intervalSpinner.getSelectedItemPosition();
-//                Interval interval;
-//
-//                if (intervalIndex == Interval.SECONDS.index) {
-//                    interval = Interval.SECONDS;
-//                } else if (intervalIndex == Interval.MINUTE.index) {
-//                    interval = Interval.MINUTE;
-//                } else if (intervalIndex == Interval.HOUR.index) {
-//                    interval = Interval.HOUR;
-//                } else {
-//                    interval = Interval.DAY_OF_WEEK;
-//                }
-//
-//                runOnTimer(cs, numeral * interval.value, runNowCheck.isChecked());
-//            }
-//        };
-//
-//        builder.setPositiveButton("Okay", okayClick);
-//        builder.setNegativeButton("Cancel", null);
-//
-//        AlertDialog dialog = builder.create();
-//        dialog.show();
     }
 
     void edit(CompositeService cs) {
@@ -511,7 +460,4 @@ public class ActivityAppGlue extends ActionBarActivity
         putShortCutIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
         sendBroadcast(putShortCutIntent);
     }
-
-    // TODO Get rid of the context bar when the user clicks on an action
-
 }

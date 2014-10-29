@@ -118,7 +118,7 @@ public class ActivityWiring extends ActionBarActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         fm.beginTransaction().replace(R.id.container, attach).commit();
-        // TODO Unable to resume, can't do this after on save instance state
+        // XXX Unable to resume, can't do this after on save instance state
 
         invalidateOptionsMenu();
 
@@ -225,7 +225,7 @@ public class ActivityWiring extends ActionBarActivity {
         editExisting = false;
 
         if (keepTemp != null) {
-            keepTemp.create().show(); // TODO This has leaked something
+            keepTemp.create().show();
         }
     }
 
@@ -347,9 +347,6 @@ public class ActivityWiring extends ActionBarActivity {
 
         return true;
     }
-
-    // tODO Setting image doesn't appear to work..!
-    // FIXME Back on the component list doesn't work
 
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
