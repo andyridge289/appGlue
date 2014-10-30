@@ -2,7 +2,6 @@ package com.appglue.engine;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
 
-import com.appglue.ActivityLog;
 import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
@@ -556,6 +554,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 osc.doUnbindService();
 
                 if (!osc.test && m.what != ComposableService.MSG_FAIL) {
+                    registry.componentSuccess(osc.cs, executionInstance, components.get(osc.index), "Success", null);
                     osc.registry.compositeSuccess(osc.cs, executionInstance);
                 } else if (!osc.test) {
                     osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
@@ -568,6 +567,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 case ComposableService.MSG_OBJECT: {
                     // Got a single object back from a service, send it on to the next one
                     osc.doUnbindService();
+                    registry.componentSuccess(osc.cs, executionInstance, components.get(osc.index), "Success", null);
                     Log.d(TAG, "Unbinding for object " + components.get(osc.index).getDescription().getName());
 
                     osc.incrementIndex();
@@ -586,6 +586,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 case ComposableService.MSG_LIST: {
                     Log.d(TAG, "Unbinding for list " + components.get(osc.index).getDescription().getName());
                     // Then we need to make it so that it sends one message to register, and then sends another to start processing the list (one object at a time)
+                    registry.componentSuccess(osc.cs, executionInstance, components.get(osc.index), "Success", null);
                     osc.doUnbindService();
 
                     osc.incrementIndex();
@@ -619,14 +620,15 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
                     // Sorts out the showing notifications preference.
-                    if (prefs.getBoolean(context.getResources().getString(R.string.prefs_notifications), false)) {
+                    if (prefs.getBoolean(context.getResources().getString(R.string.prefs_fail), false)) {
 
                         // Notify the user that there has been a failure
                         NotificationManager n = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
 
-                        Intent intent = new Intent(context, ActivityLog.class);
-                        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                        // TODO Link this notification back somewhere?
+//                        Intent intent = new Intent(context, ActivityLog.class);
+//                        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
                         NotificationCompat.Builder notificationBuilder;
                         notificationBuilder = new NotificationCompat.Builder(
@@ -638,8 +640,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                                 .setLargeIcon(largeIcon)
                                 .setPriority(NotificationCompat.PRIORITY_MIN)
                                 .setVibrate(null)
-                                .setTicker(String.format("AppGlue: %s failed", osc.cs.getName()))
-                                .setContentIntent(pendingIntent);
+                                .setTicker(String.format("AppGlue: %s failed", osc.cs.getName()));
+//                                .setContentIntent(pendingIntent);
 
                         Notification notification = notificationBuilder.build();
                         n.notify(this.hashCode(), notification);

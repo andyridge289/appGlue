@@ -99,7 +99,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -1674,6 +1674,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
 
             long componentLogId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + ID));
+            if (componentLogId < 1) {
+                continue;
+            }
+
             long componentId = c.getLong(c.getColumnIndex(TBL_EXECUTION_LOG + "_" + COMPONENT_ID));
             ComponentService component = current.getComposite().getComponent(componentId);
 
@@ -2605,7 +2609,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long ioId = c.getLong(c.getColumnIndex(TBL_IO_DESCRIPTION + "_" + ID));
             IODescription io = getIODescription(ioId, currentComponent);
 
-            currentComponent.addIO(io, io.isInput(), io.getIndex());
+            if (io != null) {
+                currentComponent.addIO(io, io.isInput(), io.getIndex());
+            }
+
+            // TODO Need to make sure the background task can't fire again once it's gone off
 
             if (!currentComponent.hasTags()) {
                 Cursor c2 = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = '%s'",

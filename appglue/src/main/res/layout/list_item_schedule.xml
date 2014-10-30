@@ -23,7 +23,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/composite_icon_container"
+                android:id="@+id/log_icon_container"
                 android:layout_width="48dip"
                 android:layout_height="48dip"
                 android:layout_alignParentStart="true"
@@ -57,8 +57,8 @@
                 android:layout_height="24dip"
                 android:layout_margin="2dip"
                 android:background="@drawable/icon"
-                android:layout_toEndOf="@id/composite_icon_container"
-                android:layout_toRightOf="@id/composite_icon_container" />
+                android:layout_toEndOf="@id/log_icon_container"
+                android:layout_toRightOf="@id/log_icon_container" />
 
             <TextView
                 android:id="@+id/composite_name"
@@ -77,8 +77,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/enabled_switch"
-                android:layout_toRightOf="@id/composite_icon_container"
-                android:layout_toEndOf="@id/composite_icon_container"
+                android:layout_toRightOf="@id/log_icon_container"
+                android:layout_toEndOf="@id/log_icon_container"
                 android:layout_marginLeft="5dip"
                 android:layout_marginStart="5dip">
 
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_margin="5dip"
-                android:layout_below="@id/composite_icon_container">
+                android:layout_below="@id/log_icon_container">
 
                 <LinearLayout
                     android:id="@+id/time_container"

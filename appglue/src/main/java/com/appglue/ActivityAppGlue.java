@@ -225,6 +225,10 @@ public class ActivityAppGlue extends ActionBarActivity
         invalidateOptionsMenu();
     }
 
+    // TODO Categories for component list
+    // TODO Test rotations on every page
+    // TOdO Look up that error about doing fragment things after saved instance state
+
     @Override
     public void onBackPressed() {
         if (currentPage == Page.HOME.index) {

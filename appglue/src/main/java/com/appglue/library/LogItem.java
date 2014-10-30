@@ -18,6 +18,7 @@ public class LogItem {
     public static final int PARAM_STOP = 0x8; // If it stops based on one of the flags
 
     public static final int GENERIC_TRIGGER_FAIL = 0x7; // This is very much a special case
+    // tODO The fragment probably needs to not look at the composite in this case as it will be null
 
     private long id;
     private CompositeService cs;

@@ -273,6 +273,8 @@ public class Registry {
         return dbHandler.terminate(composite, executionInstance, LogItem.SUCCESS, "Successfully executed");
     }
 
+    // FIXME Make sure we record when components are successful too
+
     public boolean componentSuccess(CompositeService composite, long executionInstance, ComponentService component, String message, Bundle outputData) {
         // If a component works, then say what output it gave back to the orchestrator
         return dbHandler.addToLog(composite, executionInstance, component, message, null, outputData, LogItem.SUCCESS, 0);

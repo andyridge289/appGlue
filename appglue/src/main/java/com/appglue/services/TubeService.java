@@ -1,6 +1,7 @@
 package com.appglue.services;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
@@ -14,6 +15,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.appglue.Constants.TAG;
 
 public class TubeService extends ComposableService {
     public static final IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
@@ -52,6 +55,8 @@ public class TubeService extends ComposableService {
     public static final String VICTORIA = "Victoria";
     public static final String WATERLOO_CITY = "Waterloo & City";
 
+    // TODO Need to make sure the networking on this fails properly
+
     private String getFromURL(String url) throws IOException {
         return Network.httpGet(url);
     }
@@ -75,6 +80,7 @@ public class TubeService extends ComposableService {
     }
 
     public ArrayList<Bundle> processOutput(String s) {
+        Log.d(TAG, s);
         try {
             JSONObject json = new JSONObject(s);
             JSONArray lines = json.getJSONArray(TAG_LINES);

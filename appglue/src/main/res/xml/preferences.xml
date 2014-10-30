@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <CheckBoxPreference
-        android:key="@string/prefs_notifications"
-        android:summary="A popup message shows when composites are executed"
-        android:title="Notifiction of composite execution"
-        android:defaultValue="false" />
+    <PreferenceCategory
+        android:title="Composite Preferences"
+        android:key="pref_composite_flags">
+        <CheckBoxPreference
+            android:key="@string/prefs_success"
+            android:summary="A popup message shows when composites are executed successfully"
+            android:title="Success popup"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="@string/prefs_fail"
+            android:summary="A popup message shows when composites are executed successfully"
+            android:title="Success popup"
+            android:defaultValue="false" />
+    </PreferenceCategory>
     <PreferenceCategory
         android:title="Component Preferences"
         android:key="pref_component_flags">
         <CheckBoxPreference
             android:key="@string/prefs_cost"
-            android:title="Allow components that may cost you money"
-            android:summary=""
+            android:title="Cost components"
+            android:summary="Allow components that may cost you money"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="@string/prefs_location"
-            android:title="Allow components that access your location"
-            android:summary=""
+            android:title="Location components"
+            android:summary="Allow components that access your location"
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="@string/prefs_network"
-            android:title="Allow components that may use mobile data"
-            android:summary=""
+            android:title="Network components"
+            android:summary="Allow components that may use mobile data"
             android:defaultValue="true" />
     </PreferenceCategory>
 </PreferenceScreen>

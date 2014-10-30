@@ -11,7 +11,7 @@ public class ComponentLogItem
     private String message;
     private Bundle inputBundle;
     private Bundle outputBundle;
-    private int logType;
+    private int status;
     private long time;
 
     public ComponentLogItem(long id, ComponentService component, String message, Bundle inputBundle, Bundle outputBundle, int logType, long time) {
@@ -20,7 +20,7 @@ public class ComponentLogItem
         this.message = message;
         this.inputBundle = inputBundle;
         this.outputBundle = outputBundle;
-        this.logType = logType;
+        this.status = logType;
         this.time = time;
     }
 
@@ -28,6 +28,9 @@ public class ComponentLogItem
         return id;
     }
 
+    public ComponentService getComponent() {
+        return component;
+    }
     public String getClassName() {
         return component.getDescription().getClassName();
     }
@@ -44,11 +47,11 @@ public class ComponentLogItem
         return outputBundle;
     }
 
-    public int getType() {
-        return logType;
+    public int getStatus() {
+        return status;
     }
 
-    public long time() {
+    public long getTime() {
         return time;
     }
 }

@@ -18,6 +18,7 @@
     <!--<color name="hex222">#222</color>-->
     <!--<color name="hex111">#111</color>-->
     <!--<color name="hex000">#000</color>-->
+    <color name="white_a">#AAFFFFFF</color>
 
     <color name="colorPrimaryDark">#ff522385</color>
     <color name="colorPrimary">#ff862ecc</color>
