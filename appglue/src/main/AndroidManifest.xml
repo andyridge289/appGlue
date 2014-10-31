@@ -46,15 +46,6 @@
         </activity>
 
         <activity
-            android:name="com.appglue.ActivityComponent"
-            android:theme="@style/Theme.AppGlue" />
-        <activity
-            android:name="com.appglue.ActivityApp"
-            android:theme="@style/Theme.AppGlue" />
-        <activity
-            android:name="com.appglue.ActivityComposite"
-            android:theme="@style/Theme.AppGlue" />
-        <activity
             android:name="com.appglue.ActivityWiring"
             android:label="@string/application_name"
             android:theme="@style/Theme.AppGlue" />
@@ -62,7 +53,6 @@
             android:name="com.appglue.ActivitySettings"
             android:label="appGlue"
             android:theme="@style/Theme.AppGlue" />
-        <activity android:name="com.appglue.ActivityLog" />
         <activity android:name="com.appglue.ShortcutActivity">
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
@@ -175,7 +165,14 @@
                 <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
         </receiver>
-
+        <receiver
+            android:name=".services.triggers.WifiTrigger"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGED" />
+                <action android:name="android.net.wifi.SUPPLICANT_CONNECTION_CHANGE_ACTION" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name="com.appglue.serviceregistry.AppUninstalledReceiver"

@@ -240,6 +240,8 @@ public class FragmentCompositeList extends Fragment {
             }
         }
 
+        // TODO Unhighlight the selected composite when the contextbar is hidden
+
         @SuppressLint("InflateParams")
         public View getView(final int position, View convertView, final ViewGroup parent) {
             View v = convertView;

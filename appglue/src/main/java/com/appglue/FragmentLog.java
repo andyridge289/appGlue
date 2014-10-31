@@ -286,6 +286,7 @@ public class FragmentLog extends Fragment {
                 componentName.setText(componentItem.getComponent().getDescription().getName());
 
                 // TODO Something was null above here, make sure it's looking it up right from the database
+                // TODO Put the message in the log too
 
                 ImageView componentIcon = (ImageView) vv.findViewById(R.id.log_component_icon);
                 if (componentItem.getStatus() == LogItem.SUCCESS) {

@@ -37,6 +37,7 @@ import com.appglue.services.triggers.ReceiveSMSTrigger;
 import com.appglue.services.triggers.ScreenStateTrigger;
 import com.appglue.services.triggers.ShutdownTrigger;
 import com.appglue.services.triggers.StartupTrigger;
+import com.appglue.services.triggers.WifiTrigger;
 import com.appglue.services.util.BluetoothService;
 import com.appglue.services.util.WifiService;
 
@@ -126,6 +127,7 @@ public class ServiceFactory {
         services.add(setupDockedTrigger());
         services.add(setupDeviceStorageTrigger());
         services.add(setupScreenStateTrigger());
+        services.add(setupWifiTrigger());
 
         String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
@@ -671,6 +673,32 @@ public class ServiceFactory {
                 0, null, outputs, tags);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, screenTriggerJSON);
+    }
+
+    private String setupWifiTrigger() {
+
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+        IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("On", WifiTrigger.WIFI_ON));
+        samples.add(new SampleValue("Off", WifiTrigger.WIFI_OFF));
+        samples.add(new SampleValue("Connected", WifiTrigger.WIFI_CONNECTED));
+        samples.add(new SampleValue("Disconnected", WifiTrigger.WIFI_DISCONNECTED));
+
+        outputs.add(new IODescription(-1, WifiTrigger.STATE, "WiFi state", set, "Whether WiFi is now on or off", true, samples));
+        String[] tags = {"Wifi", "Trigger", "On", "Off"};
+
+        outputs.add(new IODescription(-1, WifiTrigger.NETWORK_SSID, "SSID", text, "The name of the network you've connected to", true, null));
+
+        String wifiTriggerJSON = Library.makeJSON(-1, "com.appglue", WifiTrigger.class.getCanonicalName(),
+                "WiFi Trigger",
+                "Signals that wifi has gone on or off",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, wifiTriggerJSON);
     }
 
     // Android Triggers
