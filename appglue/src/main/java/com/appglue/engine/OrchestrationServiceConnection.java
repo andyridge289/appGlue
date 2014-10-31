@@ -538,6 +538,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     }
 
     private class ReceiverTask extends AsyncTask<Message, Object, Object> {
+
+        private String toastMessage = "";
         private OrchestrationServiceConnection osc;
 
         private ReceiverTask(OrchestrationServiceConnection osc) {
@@ -564,7 +566,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     if (prefs.getBoolean(context.getResources().getString(R.string.prefs_success), false)) {
                         // TODO Can't do this because: java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare() -- maybe set a flag and do it at the end
-                        Toast.makeText(context, "Composite \"" + cs.getName() + "\" executed successfully", Toast.LENGTH_SHORT).show();
+                        toastMessage = "Composite \"" + cs.getName() + "\" executed successfully";
                     }
 
                 } else if (!osc.test) {
@@ -576,7 +578,6 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
             // TODO Make the failure notification work
             // TODO Put in a check to see which components require what features in a device and don't enable those ones
-            // TODO Change the success popup to be a composite start popup, or maybe have both
 
             switch (m.what) {
                 case ComposableService.MSG_OBJECT: {
@@ -676,8 +677,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             // Work out what to put here
         }
 
+        // Hopefully this is back on a normal thread
         protected void onPostExecute(Object result) {
-            // Work out what to put here
+            if (!toastMessage.equals("")) {
+                Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
