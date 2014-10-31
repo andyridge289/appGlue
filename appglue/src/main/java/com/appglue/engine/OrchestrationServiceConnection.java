@@ -2,6 +2,7 @@ package com.appglue.engine;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
+import com.appglue.ActivityAppGlue;
 import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
@@ -44,6 +47,7 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.LOG_EXECUTION_INSTANCE;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
 
@@ -556,12 +560,23 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 if (!osc.test && m.what != ComposableService.MSG_FAIL) {
                     registry.componentSuccess(osc.cs, executionInstance, components.get(osc.index), "Success", null);
                     osc.registry.compositeSuccess(osc.cs, executionInstance);
+
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    if (prefs.getBoolean(context.getResources().getString(R.string.prefs_success), false)) {
+                        // TODO Can't do this because: java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare() -- maybe set a flag and do it at the end
+                        Toast.makeText(context, "Composite \"" + cs.getName() + "\" executed successfully", Toast.LENGTH_SHORT).show();
+                    }
+
                 } else if (!osc.test) {
                     osc.registry.componentCompositeFail(osc.cs, executionInstance, components.get(osc.index), m.getData(), "Failed on the last one, that's not so good");
                 }
 
                 return null;
             }
+
+            // TODO Make the failure notification work
+            // TODO Put in a check to see which components require what features in a device and don't enable those ones
+            // TODO Change the success popup to be a composite start popup, or maybe have both
 
             switch (m.what) {
                 case ComposableService.MSG_OBJECT: {
@@ -615,7 +630,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     Bundle b = m.getData();
                     ArrayList<Bundle> dummyList = b.getParcelableArrayList(ComposableService.INPUT);
                     Bundle errorBundle = dummyList.get(0);
-                    Registry.getInstance(context).componentCompositeFail(osc.cs, executionInstance, osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
+                    registry.componentCompositeFail(osc.cs, executionInstance, osc.cs.getComponents().get(osc.index), sent[osc.index], errorBundle.getString(ComposableService.ERROR));
 
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -626,9 +641,10 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                         NotificationManager n = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
 
-                        // TODO Link this notification back somewhere?
-//                        Intent intent = new Intent(context, ActivityLog.class);
-//                        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                        // TODO Tell the main activity what to do when we start with given intent things?
+                        Intent intent = new Intent(context, ActivityAppGlue.class);
+                        intent.putExtra(LOG_EXECUTION_INSTANCE, executionInstance);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
                         NotificationCompat.Builder notificationBuilder;
                         notificationBuilder = new NotificationCompat.Builder(
@@ -640,8 +656,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                                 .setLargeIcon(largeIcon)
                                 .setPriority(NotificationCompat.PRIORITY_MIN)
                                 .setVibrate(null)
-                                .setTicker(String.format("AppGlue: %s failed", osc.cs.getName()));
-//                                .setContentIntent(pendingIntent);
+                                .setTicker(String.format("AppGlue: %s failed", osc.cs.getName()))
+                                .setContentIntent(pendingIntent);
 
                         Notification notification = notificationBuilder.build();
                         n.notify(this.hashCode(), notification);

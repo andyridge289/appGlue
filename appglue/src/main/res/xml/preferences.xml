@@ -6,12 +6,12 @@
         android:key="pref_composite_flags">
         <CheckBoxPreference
             android:key="@string/prefs_success"
-            android:summary="A popup message shows when composites are executed successfully"
+            android:summary="A popup message shows when composites start."
             android:title="Success popup"
             android:defaultValue="false" />
         <CheckBoxPreference
             android:key="@string/prefs_fail"
-            android:summary="A popup message shows when composites are executed successfully"
+            android:summary="A notification shows when composites fail."
             android:title="Success popup"
             android:defaultValue="false" />
     </PreferenceCategory>
@@ -21,17 +21,17 @@
         <CheckBoxPreference
             android:key="@string/prefs_cost"
             android:title="Cost components"
-            android:summary="Allow components that may cost you money"
+            android:summary="Allow components that may cost you money."
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="@string/prefs_location"
             android:title="Location components"
-            android:summary="Allow components that access your location"
+            android:summary="Allow components that access your location."
             android:defaultValue="true" />
         <CheckBoxPreference
             android:key="@string/prefs_network"
             android:title="Network components"
-            android:summary="Allow components that may use mobile data"
+            android:summary="Allow components that may use mobile data."
             android:defaultValue="true" />
     </PreferenceCategory>
 </PreferenceScreen>

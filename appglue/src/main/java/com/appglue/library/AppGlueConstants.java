@@ -32,6 +32,8 @@ public class AppGlueConstants {
     public static final String TEST = "test";
     public static final String MODE = "mode";
 
+    public static final String LOG_EXECUTION_INSTANCE = "log_id";
+
     // SharedPreferences
     public static final String PREFS_HIDDEN = "prefs_hidden";
     public static final String RUN_BEFORE = "run_before";

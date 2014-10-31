@@ -232,6 +232,7 @@ public class FragmentCompositeList extends Fragment {
         private Boolean[] expanded;
 
         public CompositeListAdapter(Context context, ArrayList<CompositeService> items) {
+            // TODO java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.Object android.content.Context.getSystemService(java.lang.String)' on a null object reference
             super(context, R.layout.list_item_composite, items);
             expanded = new Boolean[items.size()];
             for (int i = 0; i < expanded.length; i++) {
