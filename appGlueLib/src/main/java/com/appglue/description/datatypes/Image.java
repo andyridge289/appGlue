@@ -3,80 +3,155 @@ package com.appglue.description.datatypes;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-public class Image extends IOType
-{
+import static com.appglue.Constants.TAG;
+
+public class Image extends IOType {
+
     private String location;
 
-	public Image()
-	{
-		super();
-		this.name = "Image";
+    // Each image should only be needed for a short time so keeping 20 of them should be ample
+    private final int SIZE = 20;
+
+    public Image() {
+        super();
+
+        this.name = "Image";
 		this.className = Image.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
         this.acceptsManual = false;
-	}
+        this.location = Environment.getExternalStorageDirectory().toString() + "/appGlue/imageTemp";
+    }
 
     @Override
-    public Object getFromBundle(Bundle bundle, String key, Object defaultValue)
-    {
+    public Object getFromBundle(Bundle bundle, String key, Object defaultValue) {
+
         String filename = bundle.getString(key);
         if(filename == null)
             filename = (String) defaultValue;
 
-        File f = new File(filename);
-        Bitmap value = null;
-
-        try {
-            value = BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return value;
+        return loadFile(filename);
     }
 
     @Override
     public void addToBundle(Bundle b, Object o, String key) {
 
+        // Find a filename
+        String filename = getFilename();
+
+        if (!(o instanceof Bitmap)) {
+            Log.e(TAG, "This is a problem");
+        }
+
+        // Write the bitmap to the file
+        writeFile(filename, (Bitmap) o);
+
+        // Add the filename to the bundle
+        b.putString(key, filename);
     }
 
-    public void loadFile()
-    {
-//        File f = new File(this.location);
-//        Bitmap value = null;
+    private String getFilename() {
 
-//        try {
-//            value = BitmapFactory.decodeStream(new FileInputStream(f));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        String filename = location + "/imagetemp_";
+
+        File f = new File(location);
+        if (f.isDirectory()) {
+            File[] fs = f.listFiles();
+            if (fs.length < SIZE) {
+                // think up a new one
+                return filename + fs.length + ".png";
+            } else {
+                // Find the oldest one
+                File min = fs[0];
+                int index = 0;
+                for (int i = 1; i < fs.length; i++) {
+                    if (fs[i].lastModified() < min.lastModified()) {
+                        min = fs[i];
+                        index = i;
+                    }
+                }
+                return filename + index + ".png";
+            }
+
+        } else {
+            Log.e(TAG, "It isn't a directory");
+            return filename + "0.png";
+        }
     }
 
-//	@Override
-//	public String fromStorable(Object value) {
-//
-//        this.location = (String) value;
-//        loadFile();
-//        return location;
-//    }
+
+    private Bitmap loadFile(String filename) {
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filename, options);
+        options.inSampleSize = calculateInSampleSize(options, 1000, 1000);
+
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(filename, options);
+    }
+
+    private void writeFile(String filename, Bitmap bitmap) {
+        FileOutputStream out = null;
+
+        try {
+            out = new FileOutputStream(filename);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
 
 	@Override
-	public String toString(Object value)
-	{
-		return (String) value;
-	}
-	
-	public Object fromString(String value)
-	{
-		return value;
-	}
+    public String toString(Object value) {
+        // write it to a file
+        // TODO Might need to check if it's actually a bitmap...
+        String filename = getFilename();
+        writeFile(filename, (Bitmap) value);
+        return filename;
+    }
 
-    public String getLocation() { return location; }
+    public Object fromString(String value) {
+        // read it from a file
+        return loadFile(value);
+    }
 
     public boolean compare(Object a, Object b) {
         return a.equals(b);

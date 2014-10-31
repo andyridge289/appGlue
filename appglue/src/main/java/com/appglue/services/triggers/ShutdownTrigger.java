@@ -9,10 +9,6 @@ public class ShutdownTrigger extends GenericTrigger {
     public void onReceive(Context context, Intent intent) {
         Bundle data = new Bundle();
 
-        if (!intent.getAction().intern().equals(Intent.ACTION_SHUTDOWN)) {
-            super.fail(context, "Not really a shutdown");
-            return;
-        }
 
         super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);
     }

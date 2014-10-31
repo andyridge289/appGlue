@@ -33,5 +33,10 @@
             android:title="Network components"
             android:summary="Allow components that may use mobile data."
             android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="@string/prefs_storage"
+            android:title="Storage components"
+            android:summary="Allow components that use your device's storage."
+            android:defaultValue="true" />
     </PreferenceCategory>
 </PreferenceScreen>

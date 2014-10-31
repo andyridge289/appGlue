@@ -133,13 +133,15 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+                <action android:name="android.intent.action.REBOOT" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.ShutdownTrigger"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+
             </intent-filter>
         </receiver>
         <receiver

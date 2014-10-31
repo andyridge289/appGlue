@@ -209,5 +209,6 @@
     <string name="prefs_cost">prefs_cost</string>
     <string name="prefs_location">prefs_location</string>
     <string name="prefs_network">prefs_network</string>
+    <string name="prefs_storage">prefs_storage</string>
 
 </resources>

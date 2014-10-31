@@ -35,7 +35,6 @@ import com.appglue.services.triggers.HeadphoneTrigger;
 import com.appglue.services.triggers.PowerTrigger;
 import com.appglue.services.triggers.ReceiveSMSTrigger;
 import com.appglue.services.triggers.ScreenStateTrigger;
-import com.appglue.services.triggers.ShutdownTrigger;
 import com.appglue.services.triggers.StartupTrigger;
 import com.appglue.services.triggers.WifiTrigger;
 import com.appglue.services.util.BluetoothService;
@@ -123,7 +122,6 @@ public class ServiceFactory {
         services.add(setupAirplaneTrigger());
         services.add(setupBatteryTrigger());
         services.add(setupStartupTrigger());
-        services.add(setupShutdownTrigger());
         services.add(setupDockedTrigger());
         services.add(setupDeviceStorageTrigger());
         services.add(setupScreenStateTrigger());
@@ -588,26 +586,23 @@ public class ServiceFactory {
 
     private String setupStartupTrigger() {
 
-        String[] tags = {"Startup", "Boot"};
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Startup", StartupTrigger.STARTUP));
+        samples.add(new SampleValue("Shutdown", StartupTrigger.SHUTDOWN));
+        samples.add(new SampleValue("Reboot", StartupTrigger.REBOOT));
+
+        String[] tags = {"Startup", "Boot", "Shutdown", "Turn off", "Reboot"};
+        outputs.add(new IODescription(-1, StartupTrigger.STATE, "Phone State", set, "Whether the phone has turned on, off, or rebooted", true, samples));
+
 
         String startupTriggerJSON = Library.makeJSON(-1, "com.appglue", StartupTrigger.class.getCanonicalName(),
                 "Startup Trigger",
-                "Activated when your phone has finished turning on",
+                "Activated when your phone has finished turning on, is about to turn off, or has rebooted",
                 ComposableService.FLAG_TRIGGER,
-                0, null, null, tags);
-
-        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, startupTriggerJSON);
-    }
-
-    private String setupShutdownTrigger() {
-
-        String[] tags = {"Shutdown", "Turn off"};
-
-        String startupTriggerJSON = Library.makeJSON(-1, "com.appglue", ShutdownTrigger.class.getCanonicalName(),
-                "Shutdown Trigger",
-                "Activated when your phone is turning off",
-                ComposableService.FLAG_TRIGGER,
-                0, null, null, tags);
+                0, null, outputs, tags);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, startupTriggerJSON);
     }
@@ -735,44 +730,29 @@ public class ServiceFactory {
 
     // Wifi
     //	android.net.wifi.NETWORK_IDS_CHANGED
-    //	android.net.wifi.RSSI_CHANGED
     //	android.net.wifi.SCAN_RESULTS
-    //	android.net.wifi.STATE_CHANGE
-    //	android.net.wifi.WIFI_STATE_CHANGED
+    //	android.net.wifi.STATE_CHANGE,  //	android.net.wifi.WIFI_STATE_CHANGED
 
     // NFC
     //	android.nfc.action.ADAPTER_STATE_CHANGED
 
-    // Media taken Taken
-    // android.hardware.action.NEW_PICTURE
-    //	android.hardware.action.NEW_VIDEO
-
     // Atooma
     // Phone mode
     // Silent mode on/off
-    // Wifi
-    // Disconnected/connected
     // Internet
     // On/off
     // Time
     // Countdown alarm
     // Particular time
-    // Battery
-    // Level reached
-    // unplugged/plugged
-    // App launcher
     // App installed
     // App uninstalled
     // Bluetooth
-    // Connected/disconnected
     // Device found
-    // Headphone jack
-    // Plugged
     // Data network
     // On/off
     // Standby
     // On/off
-    // Camera
+    // Camera -- Apparently this doesn't always work
     // New photo
     // New video
     // Light sensor
