@@ -17,7 +17,7 @@ public class AirplaneTrigger extends GenericTrigger
 		String action = intent.getAction();
 		Bundle data = new Bundle();
 
-        if (!intent.getAction().intern().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
+        if (!intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
             super.fail(context, "Not really an airplane mode change");
             return;
         }

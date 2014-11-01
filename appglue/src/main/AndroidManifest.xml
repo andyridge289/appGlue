@@ -138,13 +138,6 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.appglue.services.triggers.ShutdownTrigger"
-            android:exported="true">
-            <intent-filter>
-
-            </intent-filter>
-        </receiver>
-        <receiver
             android:name="com.appglue.services.triggers.DockedTrigger"
             android:exported="true">
             <intent-filter>
@@ -173,6 +166,13 @@
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGED" />
                 <action android:name="android.net.wifi.SUPPLICANT_CONNECTION_CHANGE_ACTION" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".services.triggers.RingerTrigger"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.RINGER_MODE_CHANGED" />
             </intent-filter>
         </receiver>
 

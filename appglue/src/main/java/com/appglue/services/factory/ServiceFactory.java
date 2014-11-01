@@ -77,6 +77,8 @@ public class ServiceFactory {
         return factory;
     }
 
+    // FIXME Do the privacy policy
+
     private ServiceFactory(Registry registry, Context context) throws JSONException {
         this.context = context;
         this.registry = registry;
@@ -696,28 +698,6 @@ public class ServiceFactory {
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, wifiTriggerJSON);
     }
 
-    // Android Triggers
-
-    // On shutdown/startup
-    //	android.intent.action.REBOOT
-
-    // Google Talk
-    //	android.intent.action.GTALK_CONNECTED
-    //	android.intent.action.GTALK_DISCONNECTED
-
-    // Making call
-    //	android.intent.action.NEW_OUTGOING_CALL
-    //	android.intent.action.NEW_VOICEMAIL
-    //	android.intent.action.PHONE_STATE
-
-    // Time
-    //	android.intent.action.TIMEZONE_CHANGED
-    //	android.intent.action.TIME_SET
-    //	android.intent.action.TIME_TICK
-
-    // Wallpaper
-    //	android.intent.action.WALLPAPER_CHANGED
-
 
     // Ringer mode
     //	android.media.RINGER_MODE_CHANGED
@@ -825,5 +805,13 @@ public class ServiceFactory {
     // Traffic problems -> Notification
     // Train problems -> Notification
 
+
+    // Time
+    //	android.intent.action.TIMEZONE_CHANGED
+    //	android.intent.action.TIME_SET
+    //	android.intent.action.TIME_TICK
+
     // TODO Work out how to do testing of services
+    // TODO Work out how to do this: file:///Users/andyridge/Code/android-sdk-macosx/docs/reference/android/content/BroadcastReceiver.html#onReceive(android.content.Context, android.content.Intent)
+    // TODO intent filters are here file:///Users/andyridge/Code/android-sdk-macosx/docs/reference/android/content/Intent.html#ACTION_AIRPLANE_MODE_CHANGED
 }
