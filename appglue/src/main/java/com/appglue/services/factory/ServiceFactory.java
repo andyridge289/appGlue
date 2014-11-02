@@ -77,8 +77,6 @@ public class ServiceFactory {
         return factory;
     }
 
-    // FIXME Do the privacy policy
-
     private ServiceFactory(Registry registry, Context context) throws JSONException {
         this.context = context;
         this.registry = registry;

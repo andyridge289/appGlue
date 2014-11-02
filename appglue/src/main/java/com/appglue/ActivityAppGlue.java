@@ -3,7 +3,9 @@ package com.appglue;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -36,6 +38,8 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
+import static com.appglue.library.AppGlueConstants.PREFS_HIDDEN;
+import static com.appglue.library.AppGlueConstants.P_DISCLAIMER;
 import static com.appglue.library.AppGlueConstants.TEST;
 
 public class ActivityAppGlue extends ActionBarActivity
@@ -127,6 +131,13 @@ public class ActivityAppGlue extends ActionBarActivity
             if (componentFragment != null) {
                 componentFragment.setMode(componentMode);
             }
+        }
+
+        SharedPreferences hiddenPrefs = getSharedPreferences(PREFS_HIDDEN, Context.MODE_PRIVATE);
+        boolean disclaimer = hiddenPrefs.getBoolean(P_DISCLAIMER, false);
+        if (!disclaimer) {
+            onNavigationDrawerItemSelected(Page.PRIVACY.index);
+            hiddenPrefs.edit().putBoolean(P_DISCLAIMER, true).commit();
         }
 
     }

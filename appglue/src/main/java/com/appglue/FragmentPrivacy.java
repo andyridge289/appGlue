@@ -27,10 +27,6 @@ public class FragmentPrivacy extends Fragment
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
 
-        WebView web = (WebView) inflater.inflate(R.layout.fragment_privacy, container, false);
-        web.getSettings().setAllowContentAccess(true);
-        web.loadUrl("file:///android_res/xml/privacy.html");
-
-        return web;
+        return inflater.inflate(R.layout.fragment_privacy, container, false);
     }
 }

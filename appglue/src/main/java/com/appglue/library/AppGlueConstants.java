@@ -37,6 +37,7 @@ public class AppGlueConstants {
     // SharedPreferences
     public static final String PREFS_HIDDEN = "prefs_hidden";
     public static final String RUN_BEFORE = "run_before";
+    public static final String P_DISCLAIMER = "p_disclaimer";
 
     // Database information
     public static final int DB_VERSION = 1;
