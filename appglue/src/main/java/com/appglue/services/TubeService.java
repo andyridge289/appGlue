@@ -55,8 +55,6 @@ public class TubeService extends ComposableService {
     public static final String VICTORIA = "Victoria";
     public static final String WATERLOO_CITY = "Waterloo & City";
 
-    // TODO Need to make sure the networking on this fails properly
-
     private String getFromURL(String url) throws IOException {
         return Network.httpGet(url);
     }
@@ -95,7 +93,7 @@ public class TubeService extends ComposableService {
                 JSONArray jsonMessages = jsonLine.getJSONArray(TAG_MESSAGES);
 
                 String[] messages = new String[jsonMessages.length()];
-                if(jsonMessages.length() == 0) {
+                if (jsonMessages.length() == 0) {
                     messages = new String[1];
                     messages[0] = "";
                 }

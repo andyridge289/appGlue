@@ -2613,8 +2613,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 currentComponent.addIO(io, io.isInput(), io.getIndex());
             }
 
-            // TODO Need to make sure the background task can't fire again once it's gone off
-
             if (!currentComponent.hasTags()) {
                 Cursor c2 = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = '%s'",
                         TBL_SD_HAS_TAG, CLASSNAME,

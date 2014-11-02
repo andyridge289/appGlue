@@ -7,8 +7,6 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
-// TODO Need to sort out what happens when you press back
-
 public class FragmentSettings extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private Activity activity;
 

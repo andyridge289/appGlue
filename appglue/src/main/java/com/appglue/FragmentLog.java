@@ -106,119 +106,6 @@ public class FragmentLog extends Fragment {
         super.onDetach();
     }
 
-//    private class CompositeListAdapter extends ArrayAdapter<CompositeService> {
-//
-//        int selectedIndex = -1;
-//        private Boolean[] expanded;
-//
-//        public CompositeListAdapter(Context context, ArrayList<CompositeService> items) {
-//            super(context, R.layout.list_item_composite, items);
-//            expanded = new Boolean[items.size()];
-//            for (int i = 0; i < expanded.length; i++) {
-//                expanded[i] = false;
-//            }
-//        }
-//
-//        @SuppressLint("InflateParams")
-//        public View getView(final int position, View convertView, final ViewGroup parent) {
-//
-//
-//            AppDescription app = components.get(0).getDescription().getApp();
-//            if (app == null || app.iconLocation() == null) {
-//                icon.setBackgroundResource(R.drawable.icon);
-//            } else {
-//                String iconLocation = app.iconLocation();
-//                Bitmap b = localStorage.readIcon(iconLocation);
-//                if (b != null) {
-//                    icon.setImageBitmap(b);
-//                } else {
-//                    icon.setBackgroundResource(R.drawable.icon);
-//                }
-//            }
-//
-
-//
-//
-//            v.setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    if (expanded[position]) {
-//                        expanded[position] = false;
-//                    } else {
-//                        expanded[position] = true;
-//                    }
-//
-//                    notifyDataSetChanged();
-//                    return true;
-//                }
-//            });
-//
-//            return v;
-//        }
-//
-//        private CompositeService getCurrentComposite() {
-//            if (selectedIndex == -1) {
-//                return null;
-//            }
-//
-//            return composites.get(selectedIndex);
-//        }
-//    }
-//
-//    private class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
-//
-//        @Override
-//        protected ArrayList<CompositeService> doInBackground(Void... arg0) {
-//            try {
-//                ServiceFactory sf = ServiceFactory.getInstance(registry, getActivity());
-//                sf.setupServices();
-//
-//            } catch (JSONException e) {
-//                Log.e(TAG, "JSONException - Failed to create services (CompositeListActivity) " + e.getMessage());
-//            }
-//
-//            if (getActivity() == null) {
-//                return new ArrayList<CompositeService>();
-//            }
-//
-//            ActivityManager manager = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
-//
-//            if (manager != null) {
-//                boolean registryRunning = false;
-//
-//                for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-//                    if (RegistryService.class.getCanonicalName().equals(service.service.getClassName())) {
-//                        registryRunning = true;
-//                    }
-//                }
-//
-//                if (!registryRunning) {
-//                    Intent registryIntent = new Intent(getActivity(), RegistryService.class);
-//                    getActivity().startService(registryIntent);
-//                }
-//            }
-//
-//            ArrayList<CompositeService> composites = registry.getComposites();
-//            return composites;
-//        }
-//
-//        protected void onPostExecute(ArrayList<CompositeService> composites) {
-//            FragmentCompositeList.this.composites = composites;
-//            listAdapter = new CompositeListAdapter(getActivity(), composites);
-//            compositeList.setAdapter(listAdapter);
-//
-//            loader.setVisibility(View.GONE);
-//
-//            if (composites.size() > 0) {
-//                compositeList.setVisibility(View.VISIBLE);
-//                noComposites.setVisibility(View.GONE);
-//            } else {
-//                noComposites.setVisibility(View.VISIBLE);
-//                compositeList.setVisibility(View.GONE);
-//            }
-//        }
-//    }
-
     private class LogAdapter extends ArrayAdapter<LogItem> {
         private ArrayList<LogItem> items;
 
@@ -228,10 +115,9 @@ public class FragmentLog extends Fragment {
             this.items = items;
         }
 
-        // Add options so that they can actually do things with the log messages
-        // Make the log look a bit nicer
-        // Implement clearing of the log
-        // Add more options to the log viewer - filtering, sorting, etc.
+        // TODO Add options so that they can actually do things with the log messages
+        // TODO Implement clearing of the log
+        // TODO Add more options to the log viewer - filtering, sorting, etc.
 
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup) {
@@ -263,6 +149,11 @@ public class FragmentLog extends Fragment {
                 logStatus.setTextColor(getResources().getColor(R.color.material_red));
             }
 
+            if (item.getComposite() == null) {
+                // TODO It's a generic trigger fail so there's not much information about it
+                return v;
+            }
+
             View backgroundView = v.findViewById(R.id.composite_item_bg);
             backgroundView.setBackgroundResource(item.getComposite().getColour(false));
             nameText.setTextColor(getResources().getColor(R.color.textColor));
@@ -285,7 +176,6 @@ public class FragmentLog extends Fragment {
                 TextView componentName = (TextView) vv.findViewById(R.id.log_component_name);
                 componentName.setText(componentItem.getComponent().getDescription().getName());
 
-                // TODO Something was null above here, make sure it's looking it up right from the database
                 // TODO Put the message in the log too
 
                 ImageView componentIcon = (ImageView) vv.findViewById(R.id.log_component_icon);

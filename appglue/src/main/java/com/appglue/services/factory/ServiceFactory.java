@@ -811,7 +811,6 @@ public class ServiceFactory {
     //	android.intent.action.TIME_SET
     //	android.intent.action.TIME_TICK
 
-    // TODO Work out how to do testing of services
     // TODO Work out how to do this: file:///Users/andyridge/Code/android-sdk-macosx/docs/reference/android/content/BroadcastReceiver.html#onReceive(android.content.Context, android.content.Intent)
     // TODO intent filters are here file:///Users/andyridge/Code/android-sdk-macosx/docs/reference/android/content/Intent.html#ACTION_AIRPLANE_MODE_CHANGED
 }

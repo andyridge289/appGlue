@@ -99,6 +99,7 @@ public class ActivityAppGlue extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+
         if (savedInstanceState == null) {
 
             // Generate default values for all of the things
@@ -160,7 +161,6 @@ public class ActivityAppGlue extends ActionBarActivity
 
     protected void onSaveInstanceState(Bundle out) {
         super.onSaveInstanceState(out);
-
 
         out.putInt(PAGE, this.currentPage);
         out.putInt(COMPOSITE_MODE, homeFragment == null ? -1 : homeFragment.getMode());

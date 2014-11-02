@@ -20,20 +20,19 @@ import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
 public class FragmentComponentList extends Fragment {
     protected ListView serviceListView;
-	protected TextView noneFound;
-	protected ImageView loader;
-
-    // TODO Add a categories view to the component list
+    protected TextView noneFound;
+    protected ImageView loader;
 
     protected boolean homeParent;
     protected boolean justList;
 
-	protected Registry registry;
-	
-	protected String name;
-	
-	protected ArrayList<ServiceDescription> services;
-	protected ArrayList<ServiceDescription> renderServices;
+    protected Registry registry;
+
+    protected String name;
+
+    protected ArrayList<ServiceDescription> services;
+    protected ArrayList<ServiceDescription> renderServices;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -41,41 +40,37 @@ public class FragmentComponentList extends Fragment {
         homeParent = getActivity() instanceof ActivityAppGlue;
     }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle)
-	{
-		View v = inflater.inflate(R.layout.fragment_component_list, container, false);
-		
-		serviceListView = (ListView) v.findViewById(R.id.simple_list);
-		serviceListView.setDivider(null); 
-		serviceListView.setDividerHeight(0);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
+        View v = inflater.inflate(R.layout.fragment_component_list, container, false);
+
+        serviceListView = (ListView) v.findViewById(R.id.simple_list);
+        serviceListView.setDivider(null);
+        serviceListView.setDividerHeight(0);
 
         Bundle args = getArguments();
         justList = args.getBoolean(JUST_A_LIST, false);
 
-		loader = (ImageView) v.findViewById(R.id.loading_spinner);
-		noneFound = (TextView) v.findViewById(R.id.simple_list_none);
-		
-		AnimationDrawable ad = (AnimationDrawable) loader.getBackground();
-		ad.start();
-		
-		return v;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle icicle)
-	{	
-		super.onActivityCreated(icicle);
-		renderServices = new ArrayList<ServiceDescription>();
-	}
-	
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
+        loader = (ImageView) v.findViewById(R.id.loading_spinner);
+        noneFound = (TextView) v.findViewById(R.id.simple_list_none);
+
+        AnimationDrawable ad = (AnimationDrawable) loader.getBackground();
+        ad.start();
+
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle icicle) {
+        super.onActivityCreated(icicle);
+        renderServices = new ArrayList<ServiceDescription>();
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

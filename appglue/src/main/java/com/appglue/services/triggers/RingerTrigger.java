@@ -8,6 +8,9 @@ import android.os.Bundle;
 public class RingerTrigger extends GenericTrigger {
 
     // TODO Need to create a flag for uses storage one
+    // TODO No schedule menu item if the composite contains a trigger
+    // TODO Need to sort out the logic for composition if it contains a trigger
+    // TODO Editing composite details
 
     @Override
     public void onReceive(Context context, Intent intent) {

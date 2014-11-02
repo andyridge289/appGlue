@@ -565,7 +565,6 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     if (prefs.getBoolean(context.getResources().getString(R.string.prefs_success), false)) {
-                        // TODO Can't do this because: java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare() -- maybe set a flag and do it at the end
                         toastMessage = "Composite \"" + cs.getName() + "\" executed successfully";
                     }
 

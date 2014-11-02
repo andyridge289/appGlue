@@ -23,7 +23,7 @@ public class Image extends IOType {
         super();
 
         this.name = "Image";
-		this.className = Image.class.getCanonicalName();
+        this.className = Image.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
         this.acceptsManual = false;
         this.location = Environment.getExternalStorageDirectory().toString() + "/appGlue/imageTemp";
@@ -33,7 +33,7 @@ public class Image extends IOType {
     public Object getFromBundle(Bundle bundle, String key, Object defaultValue) {
 
         String filename = bundle.getString(key);
-        if(filename == null)
+        if (filename == null)
             filename = (String) defaultValue;
 
         return loadFile(filename);
@@ -139,10 +139,15 @@ public class Image extends IOType {
         return inSampleSize;
     }
 
-	@Override
+    @Override
     public String toString(Object value) {
+
+        // Check if it's actually a bitmap
+        if (!(value instanceof Bitmap)) {
+            return "";
+        }
+
         // write it to a file
-        // TODO Might need to check if it's actually a bitmap...
         String filename = getFilename();
         writeFile(filename, (Bitmap) value);
         return filename;
