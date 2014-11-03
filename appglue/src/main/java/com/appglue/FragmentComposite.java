@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -49,11 +50,18 @@ public class FragmentComposite extends Fragment {
     private View shortcutButton;
     private View deleteButton;
 
+    private View nameRow;
+    private View nameEditRow;
+
+    private EditText editName;
+    private EditText editDescription;
+
     private CompositeService composite;
 
     private Registry registry;
     private LocalStorage localStorage;
 
+    private boolean editMode = false;
 
     public FragmentComposite() {
 
@@ -83,6 +91,8 @@ public class FragmentComposite extends Fragment {
             long compositeId = icicle.getLong(COMPOSITE_ID);
             this.composite = registry.getComposite(compositeId);
         }
+
+        // TODO Need to set up all the edit features
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
@@ -102,6 +112,12 @@ public class FragmentComposite extends Fragment {
         scheduleButton = root.findViewById(R.id.composite_schedule);
         shortcutButton = root.findViewById(R.id.composite_shortcut);
         deleteButton = root.findViewById(R.id.composite_delete);
+
+        nameRow = root.findViewById(R.id.name_row);
+        nameEditRow = root.findViewById(R.id.name_edit_row);
+
+        editName = (EditText) root.findViewById(R.id.composite_edit_name);
+        editDescription = (EditText) root.findViewById(R.id.composite_edit_description);
 
         componentList = (ListView) root.findViewById(R.id.composite_component_list);
 
@@ -263,7 +279,6 @@ public class FragmentComposite extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (!composite.isEnabled() && composite.canEnable()) {
                     enabledSwitch.setChecked(false);
-//                    enableDialog(item, enabledSwitch);
                 } else if (!composite.canEnable()) {
                     Toast.makeText(getActivity(), "Can't enable until you fix " + composite.getName() + ". Edit it and fix these errors first!", Toast.LENGTH_SHORT).show();
                 }
@@ -279,6 +294,35 @@ public class FragmentComposite extends Fragment {
 
     public String getName() {
         return composite.getName();
+    }
+
+    public boolean getEditMode() {
+        return editMode;
+    }
+
+    public void setMode(boolean normalMode) {
+        if (normalMode) {
+            composite.setName(editName.getText().toString());
+            composite.setDescription(editDescription.getText().toString());
+        }
+
+        // And now update all of the things
+        editName.setText(composite.getName());
+        compositeName.setText(composite.getName());
+        editDescription.setText(composite.getDescription());
+        compositeDescription.setText(composite.getDescription());
+
+        if (normalMode) {
+            nameRow.setVisibility(View.VISIBLE);
+            compositeDescription.setVisibility(View.VISIBLE);
+            nameEditRow.setVisibility(View.GONE);
+            editDescription.setVisibility(View.GONE);
+        } else {
+            nameRow.setVisibility(View.GONE);
+            compositeDescription.setVisibility(View.GONE);
+            nameEditRow.setVisibility(View.VISIBLE);
+            editDescription.setVisibility(View.VISIBLE);
+        }
     }
 
     private class CompositeComponentAdapter extends ArrayAdapter<ComponentService> {

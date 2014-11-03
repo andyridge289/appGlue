@@ -1022,6 +1022,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             // Change the filter button image if a filter is selected
             endpoint.setVisibility(View.VISIBLE);
 
+            // tOdo update references when we add components to fragment wiring
+
             endpoint.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View b) {
@@ -1299,6 +1301,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                         valueText.setText(io.getType().toString("\"" + value.getManualValue()) + "\"");
                     } else if (value.getFilterState() == IOValue.SAMPLE) {
                         valueText.setText(io.getType().toString("\"" + value.getSampleValue().getValue() + "\""));
+                        // todo  the sample value is null
                     }
 
                     subRow.addView(valueText);

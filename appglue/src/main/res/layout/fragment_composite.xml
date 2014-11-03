@@ -71,6 +71,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/name_row"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
@@ -83,30 +84,61 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:src="@drawable/icon"
-            android:paddingBottom="5dip" />
+            android:paddingBottom="5dip"
+            />
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/enabled_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            />
 
         <TextView
             android:id="@+id/composite_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/service_name"
             android:paddingTop="10dip"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_toRightOf="@id/composite_icon"
             android:layout_toEndOf="@id/composite_icon"
             android:layout_toLeftOf="@id/enabled_switch"
-            android:layout_toStartOf="@id/enabled_switch" />
-
+            android:layout_toStartOf="@id/enabled_switch"
+            />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/name_edit_row"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        >
+
+        <ImageButton
+            android:id="@+id/composite_edit_icon"
+            android:contentDescription="@string/component_icon_contdesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dip"
+            android:src="@drawable/icon"
+            android:paddingBottom="5dip"
+            />
+
+        <EditText
+            android:id="@+id/composite_edit_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/service_name"
+            android:paddingTop="10dip"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+
+
+    </LinearLayout>
 
     <TextView
         style="@style/Simple.Title"
@@ -117,7 +149,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="5dip"
-        android:text="@string/simple_service_description_text" />
+        />
+
+    <EditText
+        android:id="@+id/composite_edit_description"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
 
     <TextView
         style="@style/Simple.Title"

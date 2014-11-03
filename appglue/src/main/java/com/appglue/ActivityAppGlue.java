@@ -183,6 +183,14 @@ public class ActivityAppGlue extends ActionBarActivity
         if (item.getItemId() == R.id.settings) {
             Intent intent = new Intent(ActivityAppGlue.this, ActivitySettings.class);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.composite_edit) {
+            // Show or hide the right pages of the composite page
+            homeFragment.setCompositeMode(false);
+            invalidateOptionsMenu();
+        } else if (item.getItemId() == R.id.composite_done) {
+            // also need a done button to commit the changes that they make
+            homeFragment.setCompositeMode(true);
+            invalidateOptionsMenu();
         }
 
         return super.onOptionsItemSelected(item);
@@ -215,9 +223,6 @@ public class ActivityAppGlue extends ActionBarActivity
         } else if (position == Page.LOG.index) {
             background = R.color.material_green;
             f = FragmentLog.create();
-//        } else if (position == Page.SETTINGS.index) {
-//            background = R.color.black;
-//            f = FragmentSettings.create();
         } else if (position == Page.PRIVACY.index) {
             background = R.color.black;
             f = FragmentPrivacy.create();
@@ -333,6 +338,10 @@ public class ActivityAppGlue extends ActionBarActivity
         }
     }
 
+    // FIXME Choosing which app to view didn't work
+    // FIXME Saving the phone number also didn't work
+    // TODO Could do with adding an overview to the wiring page
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -346,10 +355,19 @@ public class ActivityAppGlue extends ActionBarActivity
             if (homeFragment.getMode() == FragmentComposites.MODE_COMPOSITE) {
                 CompositeService composite = homeFragment.getComposite();
                 if (composite != null) {
-                    title = "Composite: " + composite.getName();
+                    title = composite.getName();
                 } else {
                     title = "Composite";
                 }
+
+                if (homeFragment.isEditingComposite()) {
+                    menu.setGroupVisible(R.id.composite_done_group, true);
+                    menu.setGroupVisible(R.id.composite_edit_group, false);
+                } else {
+                    menu.setGroupVisible(R.id.composite_done_group, false);
+                    menu.setGroupVisible(R.id.composite_edit_group, true);
+                }
+
             } else {
                 title = "appGlue";
             }

@@ -177,4 +177,17 @@ public class FragmentComposites extends Fragment {
         }
         return null;
     }
+
+    public boolean isEditingComposite() {
+        if (compositeFragment != null) {
+            return compositeFragment.getEditMode();
+        }
+        return false;
+    }
+
+    public void setCompositeMode(boolean normalMode) {
+        if (compositeFragment != null) {
+            compositeFragment.setMode(normalMode);
+        }
+    }
 }

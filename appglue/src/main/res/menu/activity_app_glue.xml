@@ -4,4 +4,16 @@
     <item
         android:id="@+id/settings"
         android:title="Settings" />
+    <group
+        android:id="@+id/composite_edit_group">
+        <item
+            android:id="@+id/composite_edit"
+            android:title="Edit" />
+    </group>
+    <group
+        android:id="@+id/composite_done_group">
+        <item
+            android:id="@+id/composite_done"
+            android:title="Done" />
+        </group>
 </menu>

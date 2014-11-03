@@ -57,6 +57,11 @@ public class FragmentFilter extends Fragment {
         if (getArguments() != null) {
             CompositeService cs = registry.getCurrent();
             component = cs.getComponent(getArguments().getLong(COMPONENT_ID));
+
+            if (component == null) {
+
+            }
+
             long filterId = getArguments().getLong(FILTER_ID);
             if (filterId == -1) {
                 // Then we need to create a new one
