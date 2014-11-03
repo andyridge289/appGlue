@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.serviceregistry.Registry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -85,8 +86,11 @@ public class ActivityAppGlue extends ActionBarActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_app_glue);
+
+        Registry registry = Registry.getInstance(this);
 
         toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
@@ -136,7 +140,10 @@ public class ActivityAppGlue extends ActionBarActivity
         SharedPreferences hiddenPrefs = getSharedPreferences(PREFS_HIDDEN, Context.MODE_PRIVATE);
         boolean disclaimer = hiddenPrefs.getBoolean(P_DISCLAIMER, false);
         if (!disclaimer) {
-            onNavigationDrawerItemSelected(Page.PRIVACY.index);
+
+            Intent intent = new Intent(this, ActivityTutorial.class);
+            startActivity(intent);
+
             hiddenPrefs.edit().putBoolean(P_DISCLAIMER, true).commit();
         }
 

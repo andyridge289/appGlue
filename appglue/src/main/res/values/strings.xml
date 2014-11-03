@@ -88,7 +88,6 @@
     <!-- <string name="wiring_menu_next">Next</string> -->
     <!-- <string name="wiring_menu_previous">Previous</string> -->
     <string name="param_cancel">I changed my mind..</string>
-
     <string name="no_examples">No examples available</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
@@ -165,7 +164,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
-
     <string name="page_home">My Glue</string>
     <string name="page_components">Components List</string>
     <string name="page_log">Log</string>
@@ -180,7 +178,6 @@
     <string name="wiring_wiring_switch">Do Wiring</string>
     <string name="composite_components">Components</string>
     <string name="cd_composite_icon">Composite icon</string>
-
     <string name="wiring_tab">Wiring</string>
     <string name="filter_tab">Filters</string>
     <string name="value_tab">Values</string>
@@ -203,7 +200,6 @@
     <string name="on">on</string>
     <string name="at">at</string>
     <string name="from">from</string>
-
     <string name="prefs_success">prefs_notifications</string>
     <string name="prefs_fail">prefs_fail</string>
     <string name="prefs_cost">prefs_cost</string>
@@ -222,5 +218,7 @@
     <string name="privacy_disclaimer_4">Additional features are provided to reduce the potential damage you can cause, but they can be altered on the Settings page</string>
     <string name="privacy_title">Privacy Policy</string>
     <string name="privacy_1">In its current incarnation, no user information is collected whatsoever. The vast majority of permissions are used by components and the application itself does not utilise any of the data provided by these components.</string>
+    <string name="title_activity_activity_tutorial">ActivityTutorial</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

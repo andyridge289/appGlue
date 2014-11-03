@@ -7,9 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.TextView;
 
-public class FragmentPrivacy extends Fragment
-{
+import static com.appglue.Constants.INDEX;
+
+public class FragmentPrivacy extends Fragment {
+
     private Activity activity;
 
     public static FragmentPrivacy create() {

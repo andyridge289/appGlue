@@ -1301,7 +1301,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                         valueText.setText(io.getType().toString("\"" + value.getManualValue()) + "\"");
                     } else if (value.getFilterState() == IOValue.SAMPLE) {
                         valueText.setText(io.getType().toString("\"" + value.getSampleValue().getValue() + "\""));
-                        // todo  the sample value is null
+                        // todo  the sample value is null, it might be a quirk with the booleans
                     }
 
                     subRow.addView(valueText);
@@ -1310,6 +1310,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             return convertView;
         }
+
+        // TODO So the temp is probably being executed when the app starts, we need to ensure the temp can't be triggered
 
     }
 

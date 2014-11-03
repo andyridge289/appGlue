@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.appglue">
+    package="com.appglue" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -28,8 +28,7 @@
         android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/application_name"
-        android:theme="@style/Theme.AppGlue">
-
+        android:theme="@style/Theme.AppGlue" >
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -37,14 +36,13 @@
         <activity
             android:name="com.appglue.ActivityAppGlue"
             android:label="@string/application_name"
-            android:theme="@style/Theme.AppGlue">
+            android:theme="@style/Theme.AppGlue" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.appglue.ActivityWiring"
             android:label="@string/application_name"
@@ -53,13 +51,17 @@
             android:name="com.appglue.ActivitySettings"
             android:label="appGlue"
             android:theme="@style/Theme.AppGlue" />
-        <activity android:name="com.appglue.ShortcutActivity">
+        <activity android:name="com.appglue.ShortcutActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.appglue.ActivityTutorial"
+            android:label="@string/application_name"
+            android:theme="@style/Theme.AppGlue" />
 
         <service android:name="com.appglue.serviceregistry.RegistryService" />
         <!-- <service android:name="com.appglue.engine.TriggerService"></service> -->
@@ -81,37 +83,37 @@
 
         <receiver
             android:name="com.appglue.services.triggers.ReceiveSMSTrigger"
-            android:exported="true">
-            <intent-filter android:priority="999">
+            android:exported="true" >
+            <intent-filter android:priority="999" >
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.PowerTrigger"
-            android:exported="true">
-            <intent-filter android:priority="999">
+            android:exported="true" >
+            <intent-filter android:priority="999" >
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.NewPictureTrigger"
-            android:exported="true">
-            <intent-filter android:priority="999">
+            android:exported="true" >
+            <intent-filter android:priority="999" >
                 <action android:name="android.hardware.action.NEW_PICTURE" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".services.triggers.AirplaneTrigger"
-            android:exported="true">
-            <intent-filter android:priority="999">
+            android:name="com.appglue.services.triggers.AirplaneTrigger"
+            android:exported="true" >
+            <intent-filter android:priority="999" >
                 <action android:name="android.intent.action.AIRPLANE_MODE" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".services.triggers.BatteryTrigger"
-            android:exported="true">
-            <intent-filter android:priority="999">
+            android:name="com.appglue.services.triggers.BatteryTrigger"
+            android:exported="true" >
+            <intent-filter android:priority="999" >
                 <action android:name="android.intent.action.BATTERY_LOW" />
                 <action android:name="android.intent.action.BATTERY_OKAY" />
                 <action android:name="android.intent.action.BATTERY_CHANGED" />
@@ -119,7 +121,7 @@
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.BluetoothTrigger"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.bluetooth.adapter.action.CONNECTION_STATE_CHANGED" />
                 <action android:name="android.bluetooth.adapter.action.DISCOVERY_FINISHED" />
@@ -130,7 +132,7 @@
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.StartupTrigger"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
@@ -139,46 +141,45 @@
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.DockedTrigger"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.DOCK_EVENT" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.appglue.services.triggers.DeviceStorageTrigger"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
                 <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".services.triggers.ScreenStateTrigger"
-            android:exported="true">
+            android:name="com.appglue.services.triggers.ScreenStateTrigger"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_OFF" />
                 <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".services.triggers.WifiTrigger"
-            android:exported="true">
+            android:name="com.appglue.services.triggers.WifiTrigger"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGED" />
                 <action android:name="android.net.wifi.SUPPLICANT_CONNECTION_CHANGE_ACTION" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".services.triggers.RingerTrigger"
-            android:exported="true">
+            android:name="com.appglue.services.triggers.RingerTrigger"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.media.RINGER_MODE_CHANGED" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name="com.appglue.serviceregistry.AppUninstalledReceiver"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.PACKAGE_REMOVED" />
 
@@ -187,7 +188,7 @@
         </receiver>
         <receiver
             android:name="com.appglue.engine.Scheduler"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.appglue.schedule" />
             </intent-filter>
@@ -203,7 +204,6 @@
         <!-- // android.intent.action.PACKAGE_REPLACED -->
         <!-- // android.intent.action.PACKAGE_RESTARTED -->
         <!-- // android.intent.action.PACKAGE_VERIFIED -->
-
     </application>
 
 </manifest>
