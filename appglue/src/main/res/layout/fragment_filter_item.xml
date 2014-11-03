@@ -54,7 +54,7 @@
         android:text="@string/no_filters"
         android:textAllCaps="true"
         android:gravity="center_horizontal"
-        android:textColor="@color/aaa"
+        android:textColor="@color/hexAAA"
         android:layout_margin="5dip" />
 
     <LinearLayout

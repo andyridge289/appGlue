@@ -34,7 +34,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     private final Object lock = new Object();
 
     public AdapterComponentList(Context context, ArrayList<ServiceDescription> items, FragmentComponentListPager parentFragment) {
-        super(context, R.layout.component_list_item, items);
+        super(context, R.layout.list_item_component, items);
 
         LocalStorage localStorage = LocalStorage.getInstance();
 
@@ -76,7 +76,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         LayoutInflater vi = (LayoutInflater) parent.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (v == null)
-            v = vi.inflate(R.layout.component_list_item, null);
+            v = vi.inflate(R.layout.list_item_component, null);
 
         ServiceDescription sd;
         synchronized (lock) {
@@ -124,7 +124,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi);
 
         if (sd.hasInputs()) {
-            LinearLayout inputs = (LinearLayout) v.findViewById(R.id.comp_item_inputs);
+            View inputs = v.findViewById(R.id.comp_item_inputs);
             inputs.setBackgroundResource(R.drawable.has_io);
 //            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
 //            lp.weight = 1;
@@ -141,7 +141,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         }
 
         if (sd.hasOutputs()) {
-            LinearLayout outputs = (LinearLayout) v.findViewById(R.id.comp_item_outputs);
+            View outputs = v.findViewById(R.id.comp_item_outputs);
             outputs.setBackgroundResource(R.drawable.has_io);
 //            for (int i = 0; i < sd.getOutputs().size(); i++) {
 //                FloatingActionButton fab = new FloatingActionButton(getContext());

@@ -60,7 +60,7 @@
         </activity>
         <activity
             android:name="com.appglue.ActivityTutorial"
-            android:label="@string/application_name"
+            android:label="@string/disclaimer_tutorial"
             android:theme="@style/Theme.AppGlue" />
 
         <service android:name="com.appglue.serviceregistry.RegistryService" />

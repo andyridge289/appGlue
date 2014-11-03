@@ -16,13 +16,6 @@
         <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-ce3cc32a54842cf7e84cc5279dc00a9e1781625b.jar" />
     </item>
     <item
-        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\appGlue\appGlueLib\unspecified\classes.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="a20cafb24df81a3188857afb86bddd3e36367924">
-        <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-899cb823e7e9266af22bd6f05e25d29eba75356d.jar" />
-    </item>
-    <item
         jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\support-v13\20.0.0\classes.jar"
         jumboMode="false"
         revision="21.0.1"
@@ -30,11 +23,11 @@
         <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-62a5fc9a29c12e483da2acff544ed3828367ad1d.jar" />
     </item>
     <item
-        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.0\classes.jar"
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\appGlue\appGlueLib\unspecified\classes.jar"
         jumboMode="false"
         revision="21.0.1"
-        sha1="95fd37732ec852e99f07eeb516a3650172f1d136">
-        <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-147ffc989f0f64ef5c5cb3a069fd0aec16a72543.jar" />
+        sha1="728957f4ff102cbd966184e523f5ab56cf8cea43">
+        <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-899cb823e7e9266af22bd6f05e25d29eba75356d.jar" />
     </item>
     <item
         jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.11\classes.jar"
@@ -56,6 +49,13 @@
         revision="21.0.1"
         sha1="686344a780033e4ba22b926cd225f8d4941247e6">
         <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-5ea8947a9dc3d7097f8ac25eee0bb6a7bc45d435.jar" />
+    </item>
+    <item
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.0\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="95fd37732ec852e99f07eeb516a3650172f1d136">
+        <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-147ffc989f0f64ef5c5cb3a069fd0aec16a72543.jar" />
     </item>
     <item
         jar="C:\Users\andy\AppData\Local\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"

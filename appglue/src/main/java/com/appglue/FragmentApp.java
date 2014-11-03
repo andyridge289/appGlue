@@ -117,7 +117,7 @@ public class FragmentApp extends Fragment {
         private ArrayList<ServiceDescription> items;
 
         public AppComponentAdapter(Context context, ArrayList<ServiceDescription> items) {
-            super(context, R.layout.component_list_item, items);
+            super(context, R.layout.list_item_component, items);
 
             this.items = items;
         }
@@ -127,7 +127,7 @@ public class FragmentApp extends Fragment {
             LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             if (v == null) {
-                v = vi.inflate(R.layout.component_list_item, null);
+                v = vi.inflate(R.layout.list_item_component, null);
             }
 
             ServiceDescription sd = items.get(position);

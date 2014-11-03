@@ -51,7 +51,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static com.appglue.Constants.FULL_ALPHA;
+import static com.appglue.library.AppGlueConstants.FULL_ALPHA;
+import static com.appglue.library.AppGlueConstants.BASE_ALPHA;
+
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 
@@ -87,7 +89,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
     private static final int LOWLIGHT_ALPHA = 10;
     private static final int HIGHLIGHT_ALPHA = 5;
-    private static final int BASE_ALPHA = 2;
 
     private ActivityWiring activity;
     private int wiringMode;

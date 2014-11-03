@@ -17,8 +17,6 @@ public class Constants
 	public static final String KEY_COMPOSITE = "key_composite";
 	public static final String KEY_SERVICE_LIST = "key_service_list";
 	
-	public static final int FULL_ALPHA = 360;
-	
 	public static enum Requiredness
 	{
 		MANDATORY(0, "Mandatory"),

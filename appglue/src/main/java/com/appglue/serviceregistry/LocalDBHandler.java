@@ -2179,7 +2179,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
 
-        String sql = String.format("SELECT DISTINCT %s FROM %s WHERE %s = '%s' AND %s = %s", COMPOSITE_ID, TBL_COMPONENT, CLASSNAME, className, POSITION, position);
+        String sql = String.format("SELECT DISTINCT %s FROM %s WHERE %s = '%s' AND %s = %s AND %s <> %d",
+                COMPOSITE_ID, TBL_COMPONENT,
+                CLASSNAME, className,
+                POSITION, position,
+                COMPOSITE_ID, CompositeService.TEMP_ID);
         Cursor c = db.rawQuery(sql, null);
 
         if (c == null) {

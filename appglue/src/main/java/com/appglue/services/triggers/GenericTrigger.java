@@ -40,8 +40,7 @@ public abstract class GenericTrigger extends BroadcastReceiver
 	{
         Registry registry = Registry.getInstance(context);
 
-        if(fail)
-        {
+        if(fail) {
             // There has been a failure in executing the trigger, so don't start. Just record it to the log
             // The compositeId is -1 because nothing actually started.
             ArrayList<ComponentService> components = registry.getComponents(this.getClass().getCanonicalName(), 0);

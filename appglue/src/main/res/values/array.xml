@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="composite_terms">
+        <item>mini apps</item>
+        <item>composite</item>
+        <item>composites</item>
+        <item>purple</item>
+        <item>wiring</item>
+    </array>
+
+    <array name="component_terms">
+        <item>component</item>
+        <item>components</item>
+        <item>trigger</item>
+        <item>triggers</item>
+        <item>blue</item>
+    </array>
+
+    <array name="important_terms">
+        <item>type (colour)</item>
+        <item>input</item>
+        <item>inputs</item>
+        <item>outputs</item>
+        <item>output</item>
+        <item>setting values</item>
+        <item>values</item>
+    </array>
+
+    <array name="filter_terms">
+        <item>filter</item>
+        <item> red</item>
+    </array>
+
+    <array name="schedule_terms">
+        <item>schedule</item>
+    </array>
+
+</resources>

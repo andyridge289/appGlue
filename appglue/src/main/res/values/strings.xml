@@ -220,5 +220,48 @@
     <string name="privacy_1">In its current incarnation, no user information is collected whatsoever. The vast majority of permissions are used by components and the application itself does not utilise any of the data provided by these components.</string>
     <string name="title_activity_activity_tutorial">ActivityTutorial</string>
     <string name="hello_world">Hello world!</string>
+    <string name="disclaimer_tutorial">Disclaimer \u0026 Tutorial</string>
+
+    <string name="tutorial_1_0">Composites</string>
+    <string name="tutorial_1_1">appGlue lets you make your own mini apps by combining components.</string>
+    <string name="tutorial_1_2">These mini apps are called composites and look like this:</string>
+    <string name="tutorial_1_3">If in doubt, check the bar at the top. When you\'re looking at or editing composites, the top bar is purple.</string>
+
+    <string name="tutorial_2_0">Components</string>
+    <string name="tutorial_2_1">Components are the things you stick together to make your composite.</string>
+    <string name="tutorial_2_2">Components look like this:</string>
+    <string name="tutorial_2_3">You can give data to some components as inputs. A component with inputs looks like this:</string>
+    <string name="tutorial_2_4">Other components give you data back as outputs, which can be connected to the inputs of another component:</string>
+    <string name="tutorial_2_5">You can add as many components as you like to each composite.</string>
+    <string name="tutorial_2_6">Components are blue, and when you\'re dealing with them the bar at the top will be blue</string>
+
+    <string name="tutorial_3_0">Triggers</string>
+    <string name="tutorial_3_1">Triggers are a special kind of component that have to be the first thing a composite does.</string>
+    <string name="tutorial_3_2">Triggers run when an event occurs, for example when you receive an SMS, or when you plug your headphones into your device.</string>
+    <string name="tutorial_3_3">You can tell when a component is a trigger because it looks like this:</string>
+    <string name="tutorial_3_4">There are other properties of components that we will tell you about, such as costing money, accessing the network, using your location, etc. Their labels look like this:</string>
+
+    <string name="tutorial_4_0">Creating composites</string>
+    <string name="tutorial_4_01">Creating composites has three modes, wiring, filtering, and setting value.</string>
+    <string name="tutorial_4_02">Use the bar at the bottom of the page to change the mode:</string>
+
+    <string name="tutorial_4_1">Wiring Mode</string>
+    <string name="tutorial_4_2">You can connect components together by wiring up their inputs and outputs, which looks like this before:</string>
+    <string name="tutorial_4_3">And this after:</string>
+    <string name="tutorial_4_4">To connect an output to an input, the data must be the same type (colour). You connect them by clicking on one, and then clicking on the other</string>
+    <string name="tutorial_4_5">You can tell appGlue to just guess how to connect everything for you, although this can be a bit hit and miss!</string>
+    <string name="tutorial_4_6">When they are connected, the data goes from the output to the input, so for the example above, the text from Output is transferred to Input</string>
+
+    <string name="tutorial_4_8">Value Mode</string>
+    <string name="tutorial_4_9">Sometimes you want to choose values yourself, and in value mode the inputs you can set manually look like this:</string>
+    <string name="tutorial_4_10">Simply click the button and choose or enter a value in the dialog that appears!</string>
+
+    <string name="tutorial_5_0">Filters</string>
+    <string name="tutorial_5_1">In filter mode you can add filters to the outputs of each component</string>
+    <string name="tutorial_5_2">You choose what values are allowed through the filter:</string>
+    <string name="tutorial_5_3">If a filter doesn\'t match, then the composite stops</string>
+    <string name="tutorial_5_4">A single filter can go across all the outputs of a component</string>
+    <string name="tutorial_5_5">And you can have more than one filter for each component</string>
+    <string name="tutorial_5_6">Because filters can be a bit of a faff, they are separate and the bar at the top is red</string>
 
 </resources>

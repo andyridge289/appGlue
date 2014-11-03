@@ -8,7 +8,7 @@
             android:shape="oval"
             >
             <stroke
-                android:color="@color/aaa"
+                android:color="@color/hexAAA"
                 android:width="2dip"
                 />
             <solid

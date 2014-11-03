@@ -72,7 +72,7 @@
         android:layout_marginLeft="5dip"
         android:layout_marginRight="5dip"
         android:layout_marginBottom="5dip"
-        android:background="@color/aaa"
+        android:background="@color/hexAAA"
         android:visibility="gone"
         android:animateLayoutChanges="true"
         >

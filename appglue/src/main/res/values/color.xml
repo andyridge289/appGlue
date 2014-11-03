@@ -7,9 +7,9 @@
     <!--<color name="ddd">#DDD</color>-->
     <color name="ccc">#CCC</color>
     <!--<color name="bbb">#BBB</color>-->
-    <color name="aaa">#AAA</color>
+    <color name="hexAAA">#AAA</color>
     <!--<color name="hex999">#999</color>-->
-    <!--<color name="hex888">#888</color>-->
+    <color name="hex888">#888</color>
     <!--<color name="hex777">#777</color>-->
     <!--<color name="hex666">#666</color>-->
     <!--<color name="hex555">#555</color>-->

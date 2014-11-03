@@ -71,6 +71,9 @@ public class AppGlueConstants {
     public static final String TRIGGERS_ONLY = "triggers_only";
     public static final String NO_TRIGGERS = "no_triggers";
 
+    public static final int BASE_ALPHA = 2;
+    public static final int FULL_ALPHA = 360;
+
     // Values for calling activities and such
     public static final int SERVICE_REQUEST = 100;
     public static final int PRE_EXEC_PARAMS = 101;

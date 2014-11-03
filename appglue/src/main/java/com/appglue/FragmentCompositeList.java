@@ -219,7 +219,10 @@ public class FragmentCompositeList extends Fragment {
         }
 
         composites = registry.getComposites();
-        listAdapter.notifyDataSetChanged();
+
+        if (listAdapter != null) {
+            listAdapter.notifyDataSetChanged();
+        }
 
         addFab.hide(false);
         contextToolbar.setVisibility(View.GONE);

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,12 +17,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 
 import java.util.ArrayList;
 
 
-public class ActivityTutorial extends ActionBarActivity {
+public class ActivityTutorial extends ActionBarActivity implements ViewPager.OnPageChangeListener {
 
     private ArrayList<Fragment> fragments;
     private ArrayList<View> navs;
@@ -31,6 +36,8 @@ public class ActivityTutorial extends ActionBarActivity {
 
     private ImageView next;
     private ImageView previous;
+
+    private ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +52,7 @@ public class ActivityTutorial extends ActionBarActivity {
 
         toolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(toolbar);
-        toolbar.setBackgroundResource(R.color.composite);
+        toolbar.setBackgroundResource(R.color.hex444);
         toolbar.setTitle("Tutorial & Disclaimer");
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
@@ -84,10 +91,21 @@ public class ActivityTutorial extends ActionBarActivity {
             navs.add(v);
         }
 
+        pager = (ViewPager) findViewById(R.id.tutorial_pager);
+        pager.setAdapter(new PagerAdapter(getSupportFragmentManager(), fragments));
+        pager.setOnPageChangeListener(this);
+
         setIndex(0);
+        onPageSelected(0);
     }
 
-    private void setIndex(int index) {
+    @Override
+    public void onPageScrolled(int i, float v, int i2) {
+
+    }
+
+    @Override
+    public void onPageSelected(int index) {
 
         navs.get(this.index).setEnabled(false);
         navs.get(index).setEnabled(true);
@@ -106,11 +124,16 @@ public class ActivityTutorial extends ActionBarActivity {
         }
 
         this.index = index;
+    }
 
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(R.id.container, fragments.get(index)).commit();
-//        .setCustomAnimations(slideIn, slideOut)
+    @Override
+    public void onPageScrollStateChanged(int i) {
 
+    }
+
+    private void setIndex(int index) {
+
+        pager.setCurrentItem(index);
         invalidateOptionsMenu();
     }
 
@@ -136,5 +159,26 @@ public class ActivityTutorial extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class PagerAdapter extends FragmentStatePagerAdapter {
+
+        private ArrayList<Fragment> fragments;
+
+        public PagerAdapter(FragmentManager fragmentManager, ArrayList<Fragment> fragments) {
+            super(fragmentManager);
+
+            this.fragments = fragments;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
     }
 }
