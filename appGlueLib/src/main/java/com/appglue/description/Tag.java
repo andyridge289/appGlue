@@ -15,30 +15,27 @@ public class Tag
 	private long id;
 	private String name;
 	
-	public Tag()
-	{
+	public Tag() {
 		this.id = -1;
 		this.name = "";
 	}
 	
-	public Tag(String name)
-	{
+	public Tag(String name) {
 		this.id = -1;
 		this.name = name;
 	}
 	
-	public Tag(long id, String name)
-	{
+	public Tag(long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 	
-	public String name()
+	public String getName()
 	{
 		return name;
 	}
 	
-	public long id() {
+	public long getID() {
 		return id;
 	}
 
@@ -46,11 +43,12 @@ public class Tag
         this.id = id;
     }
 	
-	public static Tag createOneFromCursor(Cursor c)
-	{
+	public static Tag createOneFromCursor(Cursor c) {
+
 		long id = c.getLong(c.getColumnIndex(ID));
 		String name = c.getString(c.getColumnIndex(NAME));
-		
+		Log.d(TAG, "Setting tag " + id + ", " + name);
+
 		return new Tag(id, name);
 	}
 	
@@ -81,13 +79,17 @@ public class Tag
         }
         Tag other = (Tag) o;
 
-        if(this.id != other.id()) {
+        if (id == -1) {
+            Log.d(TAG, "-1 for " + name);
+        }
+
+        if(this.id != other.getID()) {
 //            if (LOG) Log.d(TAG, "Tag->Equals: id: [" + this.id + " - " + other.id() + "]");
             return false;
         }
 
-        if(!this.name.equals(other.name())) {
-            if (LOG) Log.d(TAG, "Tag->Equals: name");
+        if(!this.name.equals(other.getName())) {
+            if (LOG) Log.d(TAG, "Tag->Equals: name " + name + " - " + other.getName());
             return false;
         }
 

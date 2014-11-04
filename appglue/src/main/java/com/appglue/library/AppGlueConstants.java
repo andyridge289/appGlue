@@ -52,6 +52,8 @@ public class AppGlueConstants {
     public static final String TBL_TAG = "tag";
     public static final String TBL_SD_HAS_TAG = "sdhastag";
     public static final String TBL_IO_SAMPLE = "iosamples";
+    public static final String TBL_CATEGORY = "category";
+    public static final String TBL_SD_HAS_CATEGORY = "sd_has_category";
 
     // 'dynamic' database tables
     public static final String TBL_COMPOSITE = "composite";
@@ -190,6 +192,19 @@ public class AppGlueConstants {
     public static final String IX_COMPONENT_HAS_TAG = "index_component_has_tag";
     public static final String[] INDEX_COMPONENT_HAS_TAG = new String[]{
             CLASSNAME, TAG_ID
+    };
+
+    public static final String[][] COLS_CATEGORY = new String[][] {
+            { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+            { NAME, "TEXT" }
+    };
+
+    public static final String CATEGORY_ID = "category_id";
+
+    public static final String[][] COLS_SD_HAS_CATEGORY = new String[][] {
+            { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
+            { CLASSNAME, "TEXT" },
+            { CATEGORY_ID, "INTEGER" }
     };
 
     // Database - Composite

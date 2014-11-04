@@ -2,7 +2,7 @@ package com.appglue;
 
 public class Constants 
 {
-    public static final boolean LOG = true;
+    public static final boolean LOG = false;
 
     // Broadcast receive-y thing
 	public static final String ACTION_COMPOSABLE = "com.appglue.IM_A_COMPOSABLE_SERVICE";
@@ -120,6 +120,7 @@ public class Constants
 	public static final String JSON_ERRMSG = "errmsg";
 	
 	public static final String TAGS = "tags";
+    public static final String CATEGORIES = "categories";
 	
 	public static final int ERR_CLASSNAME = 1;
 	public static final int ERR_NOSERVICE = 2;

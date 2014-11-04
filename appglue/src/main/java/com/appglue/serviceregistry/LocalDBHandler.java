@@ -17,6 +17,7 @@ import com.appglue.ComposableService;
 import com.appglue.IODescription;
 import com.appglue.TST;
 import com.appglue.description.AppDescription;
+import com.appglue.description.Category;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.Tag;
@@ -74,6 +75,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     private TST<IOType> sTypeMap;
 
     private LongSparseArray<Tag> tagMap;
+    private LongSparseArray<Category> categoryMap;
 
     private Context context;
 
@@ -94,13 +96,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         sIOMap = new TST<IODescription>();
         lTypeMap = new LongSparseArray<IOType>();
         sTypeMap = new TST<IOType>();
+
         tagMap = new LongSparseArray<Tag>();
+        categoryMap = new LongSparseArray<Category>();
 
         cacheIOTypes();
         cacheTags();
+        cacheCategories();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     @Override
@@ -181,6 +186,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         // references Component and Tag
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SD_HAS_TAG));
         db.execSQL(AppGlueLibrary.createTableString(TBL_SD_HAS_TAG, COLS_COMPONENT_HAS_TAG, null));
+
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_CATEGORY));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_CATEGORY, COLS_CATEGORY, null));
+
+//        // references Component and Category
+        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SD_HAS_CATEGORY));
+        db.execSQL(AppGlueLibrary.createTableString(TBL_SD_HAS_CATEGORY, COLS_SD_HAS_CATEGORY, null));
 
         // references Component, composite and ServiceIO
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IOCONNECTION));
@@ -342,6 +354,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (sd.hasTags()) {
                 addTagsForSD(sd);
             }
+
+            if (sd.hasCategories()) {
+                addCategoriesForSD(sd);
+            }
+
         } catch (SQLiteConstraintException e) {
             // This means that that key is already in the database
             return null;
@@ -723,11 +740,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(NAME, cs.getName());
         values.put(DESCRIPTION, cs.getDescription());
         values.put(ENABLED, cs.isEnabled());
-//        values.put(SCHEDULED, cs.getScheduleIndex());
-//        values.put(HOUR, cs.getHours());
-//        values.put(MINUTE, cs.getMinutes());
-//        values.put(INTERVAL, cs.getInterval().index);
-//        values.put(NUMERAL, cs.getNumeral());
 
         long compositeId = db.insertOrThrow(TBL_COMPOSITE, null, values);
         cs.setID(compositeId);
@@ -926,48 +938,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         } while (c.moveToNext());
         c.close();
     }
-
-    // Not sure I even need this
-//    private synchronized void removeDeadValuesForIO(ServiceIO io) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//
-//        // We need to not delete those who have a live value node I think?
-//        Cursor c = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = %d AND %s = %d",
-//                               ID, TBL_IOVALUE, IO_ID, io.getID(), VALUE_NODE_ID, -1), null);
-//
-//        if (c == null) {
-//            Log.e(TAG, "Dead cursor for removing dead values for serviceIO " + io.getID());
-//            return;
-//        }
-//
-//        if (c.getCount() == 0) {
-//            return;
-//        }
-//
-//        c.moveToFirst();
-//
-//        do {
-//
-//            long valueId = c.getLong(c.getColumnIndex(ID));
-//
-//            ArrayList<IOValue> values = io.getValues();
-//            boolean found = false;
-//            for (IOValue value : values) {
-//                if (value.getID() == valueId) {
-//                    found = true;
-//                    break;
-//                }
-//            }
-//
-//            if (!found) {
-//                int count = deleteIOValue(valueId);
-//                Log.d(TAG, "DBUPDATE [removeDeadIOValues] Deleted " + count + " from IO " +
-//                        io.getID() + "(" + io.getComponent().getDescription().getName() + ")");
-//            }
-//
-//        } while (c.moveToNext());
-//        c.close();
-//    }
 
     private synchronized int deleteComponent(long id) {
         return delete(TBL_COMPONENT, id);
@@ -1792,9 +1762,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
-        cv.put(NAME, t.name());
+        cv.put(NAME, t.getName());
 
         long id = db.insertOrThrow(TBL_TAG, null, cv);
+        Log.d(TAG, "Inserting tag [" + id + ": " + t.getName() + "]");
         t.setID(id);
     }
 
@@ -1821,7 +1792,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         c.moveToFirst(); // There better not be more than one...
 
-        return Tag.createOneFromCursor(c);
+        String name = c.getString(c.getColumnIndex(NAME));
+        Log.d(TAG, "DBUPDATE[getTag]: Creating tag " + id + ": " + name);
+
+        return new Tag(id, name);
     }
 
     public Tag getTag(Tag t) {
@@ -1829,11 +1803,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         // Should probably do something clever than just equals - consider lower case too
         Cursor c = db.query(TBL_TAG, null,
-                NAME + " = ?", new String[]{t.name()},
+                NAME + " = ?", new String[]{t.getName()},
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: get tag " + t.name());
+            Log.e(TAG, "Dead cursor: get tag " + t.getName());
             return null;
         }
 
@@ -1845,7 +1819,105 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         c.moveToFirst(); // There better not be more than one...
 
-        return Tag.createOneFromCursor(c);
+        long tagId = c.getLong(c.getColumnIndex(ID));
+        t.setID(tagId);
+        Log.d(TAG, "Set ID to " + tagId + " for " + t.getName());
+
+        return t;
+    }
+
+    public boolean addCategoriesForSD(ServiceDescription sd) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        boolean allWin = true;
+        ArrayList<Category> cats = sd.getCategories();
+
+        for (Category c : cats) {
+
+            if (c.getID() == -1) {
+                // Then we need to get an ID and maybe insert it
+                getCategory(c);
+            }
+
+            ContentValues cv = new ContentValues();
+            cv.put(CATEGORY_ID, c.getID());
+            cv.put(CLASSNAME, sd.getClassName());
+
+            long id = db.insertOrThrow(TBL_SD_HAS_CATEGORY, null, cv);
+            if (id == -1)
+                allWin = false;
+        }
+
+        return allWin;
+    }
+
+    public Category getCategory(long id) {
+        if (categoryMap.get(id) != null)
+            return categoryMap.get(id);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Should probably do something clever than just equals - consider lower case too
+        Cursor c = db.query(TBL_CATEGORY, null,
+                ID + " = ?", new String[]{ "" + id },
+                null, null, null, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: category exists " + id);
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            // Insert it?
+            Log.d(TAG, "Category doesn't exist for " + id);
+            return new Category(Category.Factory.MISC);
+        }
+
+        c.moveToFirst(); // There better not be more than one...
+
+        long tagId = c.getLong(c.getColumnIndex(ID));
+        String name = c.getString(c.getColumnIndex(NAME));
+
+        return new Category(tagId, name);
+    }
+
+    public Category getCategory(Category cat) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Should probably do something clever than just equals - consider lower case too
+        Cursor c = db.query(TBL_CATEGORY, null,
+                NAME + " = ?", new String[]{ cat.getName() },
+                null, null, null, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: get category " + cat.getName());
+            return null;
+        }
+
+        if (c.getCount() == 0) {
+            // Insert it?
+            addCategory(cat);
+            return cat;
+        }
+
+        c.moveToFirst(); // There better not be more than one...
+
+        long id = c.getLong(c.getColumnIndex(ID));
+        cat.setID(id);
+        Log.d(TAG, "set category: [" + id + ": " + cat.getName() + "]");
+
+        return cat;
+    }
+
+    public void addCategory(Category cat) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(NAME, cat.getName());
+
+        long id = db.insertOrThrow(TBL_CATEGORY, null, cv);
+        cat.setID(id);
+        Log.d(TAG, "Inserted category: [" + id + ": " + cat.getName() + "]");
     }
 
     public boolean addTagsForSD(ServiceDescription component) {
@@ -1855,13 +1927,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ArrayList<Tag> tags = component.getTags();
 
         for (Tag t : tags) {
-            if (t.id() == -1) {
+            if (t.getID() == -1) {
                 // Then we need to get an ID (and maybe insert it)
                 getTag(t);
             }
 
             ContentValues cv = new ContentValues();
-            cv.put(TAG_ID, t.id());
+            cv.put(TAG_ID, t.getID());
             cv.put(CLASSNAME, component.getClassName());
 
             long id = db.insertOrThrow(TBL_SD_HAS_TAG, null, cv);
@@ -2638,6 +2710,27 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 } while (c2.moveToNext());
                 c2.close();
             }
+
+            if (!currentComponent.hasCategories()) {
+                Cursor c2 = db.rawQuery(String.format("SELECT * FROM %s WHERE %s = '%s'",
+                        TBL_SD_HAS_CATEGORY, CLASSNAME,
+                        currentComponent.getClassName()), null);
+
+                if (c2 == null) {
+                    Log.e(TAG, "Category cursor dead for getting components w/ join");
+                    continue;
+                }
+
+                if (c2.getCount() == 0) // This is fine
+                    continue;
+
+                c2.moveToFirst();
+
+                do {
+                    currentComponent.addCategory(getCategory(c2.getInt(c2.getColumnIndex(CATEGORY_ID))));
+                } while (c2.moveToNext());
+                c2.close();
+            }
         }
         while (c.moveToNext());
         c.close();
@@ -2796,6 +2889,31 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.close();
     }
 
+    private void cacheCategories() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_CATEGORY), null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: Caching all the categories");
+            return;
+        }
+
+        if (c.getCount() == 0) {
+            // Insert it?
+            Log.w(TAG, "Empty cursor: Caching all the categories");
+            return;
+        }
+
+        c.moveToFirst();
+
+        do {
+            Category cat = Category.createOneFromCursor(c);
+            categoryMap.put(cat.getID(), cat);
+        }
+        while (c.moveToNext());
+        c.close();
+    }
+
     private void cacheTags() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_TAG), null);
@@ -2815,7 +2933,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         do {
             Tag tag = Tag.createOneFromCursor(c);
-            tagMap.put(tag.id(), tag);
+            tagMap.put(tag.getID(), tag);
         }
         while (c.moveToNext());
         c.close();
@@ -3053,6 +3171,20 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (sd.hasOutputs()) {
             setupIDs(sd.getOutputs(), sd);
+        }
+
+        setupIDs(sd.getTags(), sd.getCategories());
+    }
+
+    private void setupIDs(ArrayList<Tag> tags, ArrayList<Category> cats) {
+        for (Tag t : tags) {
+            Tag tt = getTag(t);
+            t.setID(tt.getID());
+        }
+
+        for (Category c : cats) {
+            Category cc = getCategory(c);
+            c.setID(cc.getID());
         }
     }
 

@@ -36,10 +36,11 @@ import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAGS;
+import static com.appglue.Constants.CATEGORIES;
 
 public class Library {
     public static String makeJSON(int id, String packageName, String className, String name, String shortName, String description,
-                                  int flags, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags) {
+                                  int flags, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags, String[] categories) {
 
         String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", " +
                         "\"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", " +
@@ -121,7 +122,16 @@ public class Library {
         }
         tagBuilder.append("]");
 
-        return first + inputs + outputs + tagBuilder.toString() + "}";
+        StringBuilder categoryBuilder = new StringBuilder(String.format(",\"%s\":[", CATEGORIES));
+        for (int i = 0; i < categories.length; i++) {
+            if (i > 0)
+                categoryBuilder.append(",");
+
+            categoryBuilder.append(String.format("\"%s\"", categories[i]));
+        }
+        categoryBuilder.append("]");
+
+        return first + inputs + outputs + tagBuilder.toString() + categoryBuilder.toString() + "}";
     }
 
     public static String printBundle(Bundle bundle) {

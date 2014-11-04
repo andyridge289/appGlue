@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.appglue.Constants.CATEGORIES;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FRIENDLY_NAME;
@@ -74,6 +75,7 @@ public class ServiceDescription {
     private TST<IODescription> nameSearchOutputs = new TST<IODescription>();
 
     private ArrayList<Tag> tags = new ArrayList<Tag>();
+    private ArrayList<Category> categories = new ArrayList<Category>();
 
     // Representations of the icon of the service
     private AppDescription app = null;
@@ -278,6 +280,13 @@ public class ServiceDescription {
         this.tags.add(new Tag(name));
     }
 
+    public void addCategory(Category category) {
+        this.categories.add(category);
+    }
+    public void addCategory(String name) {
+        this.categories.add(Category.Factory.get(name));
+    }
+
     public void addTags(ArrayList<Tag> tags) {
         this.tags.addAll(tags);
     }
@@ -413,7 +422,7 @@ public class ServiceDescription {
 
             boolean found = false;
             for (Tag otherTag : otherTags) {
-                if (!tags.get(i).equals(otherTag)) {
+                if (tags.get(i).equals(otherTag)) {
                     found = true;
                     break;
                 }
@@ -421,6 +430,29 @@ public class ServiceDescription {
 
             if (!found) {
                 if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag " + i);
+                return false;
+            }
+        }
+
+        // Need to do equals for categories
+        ArrayList<Category> otherCategories = other.getCategories();
+        if (categories.size() != otherCategories.size()) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: category sizes don't match");
+            return false;
+        }
+
+        for (int i = 0; i < categories.size(); i++) {
+
+            boolean found = false;
+            for (Category otherCat : otherCategories) {
+                if (categories.get(i).equals(otherCat)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                if (LOG) Log.d(TAG, "ServiceDescription->Equals: category " + i);
                 return false;
             }
         }
@@ -581,6 +613,12 @@ public class ServiceDescription {
             sd.addTag(sTag);
         }
 
+        JSONArray cats = json.getJSONArray(CATEGORIES);
+        for (int i = 0; i < cats.length(); i++) {
+            String sCat = cats.getString(i);
+            sd.addCategory(sCat);
+        }
+
         sd.setApp(app);
 
         return sd;
@@ -588,5 +626,13 @@ public class ServiceDescription {
 
     public String getShortName() {
         return shortName;
+    }
+
+    public ArrayList<Category> getCategories() {
+        return categories;
+    }
+
+    public boolean hasCategories() {
+        return categories.size() > 0;
     }
 }
