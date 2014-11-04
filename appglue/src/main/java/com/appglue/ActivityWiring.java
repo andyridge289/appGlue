@@ -92,7 +92,7 @@ public class ActivityWiring extends ActionBarActivity {
     public void redraw() {
         Fragment attach = null;
 
-        CompositeService composite = registry.getCurrent();
+        CompositeService composite = registry.getCurrent(true);
 
         switch (mode) {
             case MODE_CREATE:
@@ -128,7 +128,7 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void onBackPressed() {
-        if (mode == MODE_CHOOSE && registry.getCurrent().size() == 0) {
+        if (mode == MODE_CHOOSE && registry.getCurrent(false).size() == 0) {
 
             super.onBackPressed();
             return;
@@ -184,7 +184,7 @@ public class ActivityWiring extends ActionBarActivity {
                 redraw();
             }
         } else if (editExisting) { // They might not be creating a new one
-            if (registry.getCurrent() == null) {
+            if (registry.getCurrent(false) == null) {
                 // If they've come in from the composite list then CS might not have been set yet, so set it.
                 registry.setCurrent(registry.getComposite(compositeId));
             }
@@ -231,7 +231,7 @@ public class ActivityWiring extends ActionBarActivity {
 
     public void saveDialog(String name, boolean autoSave) {
         boolean enabled = true;
-        CompositeService cs = registry.getCurrent();
+        CompositeService cs = registry.getCurrent(false);
         for (ServiceIO io : cs.getMandatoryInputs()) {
             if (!io.hasValueOrConnection()) {
                 enabled = false;
@@ -291,7 +291,7 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public SparseArray<ComponentService> getComponents() {
-        CompositeService composite = registry.getCurrent();
+        CompositeService composite = registry.getCurrent(false);
         if (registry != null)
             return composite.getComponents();
         else
@@ -299,7 +299,7 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public ArrayList<ComponentService> getComponentsAL() {
-        CompositeService composite = registry.getCurrent();
+        CompositeService composite = registry.getCurrent(false);
         if (composite != null)
             return composite.getComponentsAL();
         else
@@ -355,7 +355,7 @@ public class ActivityWiring extends ActionBarActivity {
             wiringFragment.saveDialog();
         } else if (item.getItemId() == R.id.filter_done) {
             setMode(MODE_CREATE);
-            registry.updateComposite(registry.getCurrent());
+            registry.updateComposite(registry.getCurrent(false));
             redraw();
         } else if (item.getItemId() == R.id.wiring_auto) {
             // We must be on a wiring page or we wouldn't be able to see this menu item
@@ -387,12 +387,12 @@ public class ActivityWiring extends ActionBarActivity {
 
     public void chooseItem(String className) {
         ServiceDescription sd = registry.getServiceDescription(className);
-        ComponentService component = new ComponentService(registry.getCurrent(), sd, componentPosition);
+        ComponentService component = new ComponentService(registry.getCurrent(false), sd, componentPosition);
         long id = registry.addComponent(component);
 
         if (id != -1) {
             component.setID(id);
-            registry.getCurrent().addComponent(component, componentPosition);
+            registry.getCurrent(false).addComponent(component, componentPosition);
         } else {
             Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
             Log.e(TAG, "Failed to add component");

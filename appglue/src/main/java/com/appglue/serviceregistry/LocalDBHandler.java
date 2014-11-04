@@ -249,7 +249,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
     }
 
-    public synchronized CompositeService saveTempAsComposite(String name, CompositeService temp, boolean enabled) {
+    public synchronized CompositeService saveTempAsComposite(String name, boolean enabled) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -262,7 +262,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv = new ContentValues();
         cv.put(COMPOSITE_ID, id);
 
-        String[] tables = new String[]{TBL_COMPONENT, TBL_EXECUTION_LOG, TBL_IOCONNECTION, TBL_SERVICEIO
+        String[] tables = new String[]{TBL_COMPONENT, TBL_EXECUTION_LOG, TBL_IOCONNECTION, TBL_SERVICEIO, TBL_IOVALUE
         };
 
         for (String table : tables) {
@@ -2456,7 +2456,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
         if (compositeId != io.getComponent().getComposite().getID()) {
-            Log.e(TAG, "composite ids don't match, something has gone slightly very wrong");
+            Log.e(TAG, "composite ids don't match, something has gone slightly very wrong " + compositeId + " - " + io.getComponent().getComposite().getID());
             return null;
         }
 

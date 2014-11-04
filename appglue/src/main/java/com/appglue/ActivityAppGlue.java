@@ -348,9 +348,7 @@ public class ActivityAppGlue extends ActionBarActivity
         }
     }
 
-    // FIXME Choosing which app to view didn't work
     // FIXME Saving the phone number also didn't work
-    // TODO Could do with adding an overview to the wiring page
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

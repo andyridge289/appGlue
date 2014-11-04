@@ -97,8 +97,7 @@ public class FragmentWiring extends Fragment {
         filterButton = (Button) rootView.findViewById(R.id.filter_button_all);
         valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
-        CompositeService composite = registry.getCurrent();
-        ArrayList<ComponentService> components = composite.getComponentsAL();
+        ArrayList<ComponentService> components = registry.getCurrent(false).getComponentsAL();
 
         if (components.size() == 0) {
             first = null;

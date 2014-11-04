@@ -100,10 +100,10 @@ public class FragmentComponentListLocal extends FragmentComponentList {
                 services = registry.getTriggers();
             } else if (matching) {
                 // Need to get the matching components
-                if (registry.getCurrent() != null) {
+                if (registry.getCurrent(false) != null) {
                     // Get the current list, find the components before and/or after where we're trying to add
 
-                    SparseArray<ComponentService> components = registry.getCurrent().getComponents();
+                    SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
 
                     Log.w(TAG, "position is " + position + " and size is" + components.size());
 

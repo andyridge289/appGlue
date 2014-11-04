@@ -173,7 +173,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             }
         });
 
-        final CompositeService cs = registry.getCurrent();
+        final CompositeService cs = registry.getCurrent(false);
         if (cs.getName().equals("")) {
             csNameText.setText("Temp name");
             csNameEdit.setText("Temp name");
@@ -255,7 +255,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             registry = Registry.getInstance(getActivity());
         }
 
-        CompositeService cs = registry.getCurrent();
+        CompositeService cs = registry.getCurrent(true);
 
         // Tell all the fragments to redraw...
         if (wiringPager != null) {
@@ -292,7 +292,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         int m = (int) AppGlueLibrary.dpToPx(getActivity().getResources(), 2);
 
         ArrayList<Integer> components = new ArrayList<Integer>();
-        final CompositeService composite = registry.getCurrent();
+        final CompositeService composite = registry.getCurrent(false);
 
         int width = (w + m) * composite.getComponents().size();
 
@@ -376,7 +376,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         lastLeft = left;
     }
 
-    // TODO Use the overview to be
+    // TODO Add schedule and log to the tutorial
 
     private void overviewDraw() {
 
@@ -405,7 +405,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     public void saveDialog() {
         // Then it's the temp, we should save it
         String name = csNameEdit.getText().toString();
-        CompositeService cs = registry.getCurrent();
+        CompositeService cs = registry.getCurrent(false);
         SparseArray<ComponentService> comps = cs.getComponents();
 
         if (name.equals("Temp name")) {

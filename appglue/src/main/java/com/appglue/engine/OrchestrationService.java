@@ -82,7 +82,7 @@ public class OrchestrationService extends Service
                 final boolean test = thing.getBoolean(TEST, false);
                 final Bundle data = thing.getBundle(DATA);
 
-                final CompositeService cs = test ? registry.getCurrent() : registry.getComposite(compositeId);
+                final CompositeService cs = test ? registry.getCurrent(true) : registry.getComposite(compositeId);
 
                 if (cs == null) {
                     Log.e(TAG, "The composite is null. WHAT THE FUCK HAVE YOU DONE");

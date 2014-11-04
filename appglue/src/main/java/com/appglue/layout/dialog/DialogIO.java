@@ -32,6 +32,7 @@ import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
+import com.appglue.engine.description.CompositeService;
 import com.appglue.engine.description.IOValue;
 import com.appglue.engine.description.ServiceIO;
 import com.appglue.layout.FilterValueView;
@@ -57,8 +58,6 @@ public class DialogIO extends AlertDialog {
     private Registry registry;
 
     private Button positiveButton;
-    private Button negativeButton;
-    private Button neutralButton;
 
     private DialogContactView dcv;
 
@@ -86,8 +85,8 @@ public class DialogIO extends AlertDialog {
         LinearLayout container = (LinearLayout) v.findViewById(R.id.ioview_container);
 
         positiveButton = (Button) v.findViewById(R.id.dialog_io_positive);
-        neutralButton = (Button) v.findViewById(R.id.dialog_io_neutral);
-        negativeButton = (Button) v.findViewById(R.id.dialog_io_negative);
+        Button neutralButton = (Button) v.findViewById(R.id.dialog_io_neutral);
+        Button negativeButton = (Button) v.findViewById(R.id.dialog_io_negative);
 
         if (type.typeEquals(IOType.Factory.getType(IOType.Factory.APP))) {
             // We need to show the app one
@@ -121,7 +120,7 @@ public class DialogIO extends AlertDialog {
                 // Put this back
                 // Shouldn't this be clearing the value that is set?
                 item.clearValue();
-                registry.updateComposite(registry.getCurrent());
+                registry.updateComposite(registry.getCurrent(false));
                 cancel();
             }
         });
@@ -180,14 +179,36 @@ public class DialogIO extends AlertDialog {
             manualText = (EditText) v.findViewById(R.id.io_value_text);
             sampleButton = (Button) v.findViewById(R.id.io_value_button);
 
-            final IOType type = description.getType();
             manualText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-            positiveButton.setOnClickListener(new View.OnClickListener() {
+            positiveButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    registry.updateComposite(registry.getCurrent());
-                    DialogIO.this.activity.redraw();
+
+                    Object objectValue = description.getType().fromString(manualText.getText().toString());
+
+                    // Set the value to be the image that has been selected
+                    if (item.getDescription().isInput()) {
+                        if (item.hasValue()) {
+                            item.getValue().setManualValue(objectValue);
+
+                        } else {
+                            // Create one
+                            IOValue value = new IOValue(FilterFactory.NONE, objectValue, item);
+                            value.setManualValue(objectValue);
+                            item.setValue(value);
+                        }
+                    } else {
+                        if (filterValueView != null) {
+                            filterValueView.setManualValue("Change contact", objectValue);
+                        }
+                        dismiss();
+                        return;
+                    }
+
+                    // This can't just use the one in the registry because we've sodded off and now we're back and I think they are different objects...?
+                    registry.updateComposite(item.getComponent().getComposite());
+                    activity.redraw();
                     dismiss();
                 }
             });
@@ -314,15 +335,21 @@ public class DialogIO extends AlertDialog {
 
                         } else {
                             // Create one
-                            IOValue value = new IOValue(item);
+                            IOValue value = new IOValue(FilterFactory.NONE, res, item);
                             value.setManualValue(res);
+                            item.setValue(value);
                         }
                     } else {
                         if (filterValueView != null) {
                             filterValueView.setManualValue("Change image", res);
                         }
                         dismiss();
+                        return;
                     }
+
+                    registry.updateComposite(registry.getCurrent(false));
+                    activity.redraw();
+                    dismiss();
                 }
             });
         }
@@ -433,7 +460,7 @@ public class DialogIO extends AlertDialog {
                     IOValue value = new IOValue(FilterFactory.NONE, selected.packageName, item);
                     item.setValue(value);
 
-                    registry.updateComposite(registry.getCurrent());
+                    registry.updateComposite(registry.getCurrent(false));
                     activity.redraw();
                     dismiss();
                 }
@@ -620,7 +647,7 @@ public class DialogIO extends AlertDialog {
                     }
 
                     // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                    registry.updateComposite(registry.getCurrent());
+                    registry.updateComposite(registry.getCurrent(false));
                     DialogIO.this.activity.redraw();
                     dismiss();
                 }

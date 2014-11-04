@@ -220,13 +220,13 @@ public class FragmentCompositeList extends Fragment {
 
         composites = registry.getComposites();
 
-        if (listAdapter != null) {
-            listAdapter.notifyDataSetChanged();
-        }
-
         addFab.hide(false);
         contextToolbar.setVisibility(View.GONE);
-        listAdapter.selectedIndex = -1;
+
+        if (listAdapter != null) {
+            listAdapter.notifyDataSetChanged();
+            listAdapter.selectedIndex = -1;
+        }
     }
 
     private class CompositeListAdapter extends ArrayAdapter<CompositeService> {

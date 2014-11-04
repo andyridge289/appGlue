@@ -476,9 +476,12 @@ public class FilterValueView extends LinearLayout {
      * @param s
      * @param res
      */
-    public void setManualValue(String s, int res) {
+    public void setManualValue(String s, Object obj) {
+
         manualButton.setText(s);
-        value.setManualValue(res);
-        manualText.setText("" + res);
+
+        value.setManualValue(obj);
+        String strValue = item.getType().toString(obj);
+        manualText.setText(strValue);
     }
 }

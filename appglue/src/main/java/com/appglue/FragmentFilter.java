@@ -55,7 +55,7 @@ public class FragmentFilter extends Fragment {
         filterViews = new LongSparseArray<ArrayList<FilterValueView>>();
 
         if (getArguments() != null) {
-            CompositeService cs = registry.getCurrent();
+            CompositeService cs = registry.getCurrent(true);
             component = cs.getComponent(getArguments().getLong(COMPONENT_ID));
 
             if (component == null) {

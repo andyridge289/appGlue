@@ -958,7 +958,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             out.setConnection(in);
             in.setConnection(out);
 
-            registry.updateComposite(registry.getCurrent());
+            registry.updateComposite(registry.getCurrent(false));
             redraw(true);
         }
 
@@ -1258,7 +1258,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                                     } else {
                                         filterAndor.setVisibility(View.GONE);
                                     }
-                                    registry.updateComposite(registry.getCurrent());
+                                    registry.updateComposite(registry.getCurrent(false));
                                     break;
                             }
                         }

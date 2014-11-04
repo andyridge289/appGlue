@@ -64,7 +64,10 @@ public class Registry {
         return temp;
     }
 
-    public CompositeService getCurrent() {
+    public CompositeService getCurrent(boolean refresh) {
+        if(refresh) {
+            composite = registry.getComposite(composite.getID());
+        }
         return composite;
     }
 
@@ -87,7 +90,7 @@ public class Registry {
             } while (dbHandler.compositeExistsWithName(name));
         }
 
-        CompositeService composite = dbHandler.saveTempAsComposite(name, getTemp(), enabled);
+        CompositeService composite = dbHandler.saveTempAsComposite(name, enabled);
         Toast.makeText(context, "Saved composite with name \"" + name + "\"", Toast.LENGTH_LONG).show();
         dbHandler.resetTemp();
         return composite;
