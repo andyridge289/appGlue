@@ -1,26 +1,36 @@
 package com.appglue;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.description.ServiceIO;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
+
+import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.POSITION;
@@ -36,6 +46,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private EditText csNameEdit;
     private Button csNameSet;
     private TextView status;
+
+//    private HorizontalScrollView overviewScroll;
+    private FrameLayout overviewParent;
+    private FrameLayout overviewContainer;
+    private View currentPage;
+    private int lastLeft = -1;
+    private int overviewPosition = 0;
 
     private ImageView pageLeft;
     private ImageView pageRight;
@@ -76,6 +93,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         csNameText = (TextView) root.findViewById(R.id.cs_name);
         csNameEdit = (EditText) root.findViewById(R.id.cs_name_edit);
         csNameSet = (Button) root.findViewById(R.id.cs_name_edit_button);
+
+        overviewParent = (FrameLayout) root.findViewById(R.id.overview_parent);
+        overviewContainer = (FrameLayout) root.findViewById(R.id.overview_page_container);
+        currentPage = root.findViewById(R.id.page_indicator);
 
         status = (TextView) root.findViewById(R.id.status);
 
@@ -233,13 +254,15 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         if (registry == null) {
             // It hasn't called create yet. There's no point trying to do anything at all.
-            return;
+            registry = Registry.getInstance(getActivity());
         }
 
         CompositeService cs = registry.getCurrent();
 
         // Tell all the fragments to redraw...
         if (wiringPager != null) {
+            overviewDraw();
+
             adapter = new WiringPagerAdapter(getFragmentManager(), true, cs);
             adapter.notifyDataSetChanged();
             wiringPager.setAdapter(adapter);
@@ -254,6 +277,137 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 this.position = position;
             }
         }
+    }
+
+    private void overviewRedraw2() {
+
+        if(overviewContainer.getWidth() == 0) {
+            overviewDraw();
+            return;
+        }
+
+        if (getActivity() == null) {
+            return;
+        }
+
+        int w = (int) getActivity().getResources().getDimension(R.dimen.wi_page_width);
+        int m = (int) AppGlueLibrary.dpToPx(getActivity().getResources(), 2);
+
+        ArrayList<Integer> components = new ArrayList<Integer>();
+        final CompositeService composite = registry.getCurrent();
+
+        int width = (w + m) * composite.getComponents().size();
+
+        if (components.size() != composite.getComponents().size()) {
+
+            overviewContainer.removeAllViews();
+            int componentOffset = w + m;
+
+            overviewParent.setLayoutParams(new LinearLayout.LayoutParams(width + componentOffset, ViewGroup.LayoutParams.MATCH_PARENT));
+            overviewContainer.setLayoutParams(new FrameLayout.LayoutParams(width + componentOffset, ViewGroup.LayoutParams.MATCH_PARENT));
+
+            // We need to resize the parent based on how many components there are
+            overviewParent.setMinimumWidth(width + w + m);
+            overviewContainer.setMinimumWidth(width + w + m);
+//            overviewParent.setC/lipBounds(null);
+            Log.d(TAG, "Setting width " + (width + w + m));
+            int allLeft = w / 2 + m / 2; //(overviewContainer.getWidth() / 2) - (width / 2) - overviewContainer.getLeft();
+
+            for (int i = 0; i < composite.getComponents().size(); i++) {
+
+                TextView tv = new TextView(new ContextThemeWrapper(getActivity(), R.style.overview_component));
+                tv.setText(composite.getComponent(i).getDescription().getShortName());
+
+                LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(w, ViewGroup.LayoutParams.MATCH_PARENT);
+                lp2.setMargins(m / 2, 0, 0, m / 2);
+                tv.setLayoutParams(lp2);
+                int left = allLeft + (i * componentOffset);
+                tv.setX(left);
+
+                overviewContainer.addView(tv);
+                components.add(left);
+            }
+        }
+
+        int offset = w / 2 + m / 2;
+        int left = 0;
+
+        if (position == components.size()) {
+            // Go right of the last one
+            left = components.get(components.size() - 1) + offset;
+
+        } else {
+            // Go left of the ith one
+            left = components.get(position) - offset;
+        }
+
+        ObjectAnimator animator = ObjectAnimator.ofFloat(currentPage, "X", left);
+        animator.setInterpolator(new AccelerateDecelerateInterpolator());
+        animator.start();
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int pageWidth = displaymetrics.widthPixels;
+
+        Log.d(TAG, "Containers: " + overviewContainer.getWidth() + ", " + overviewParent.getWidth() + " and page width is " + pageWidth);
+
+        int maxRight = 0;
+        int maxLeft = 0 - (width + w + m - pageWidth);
+
+        if (lastLeft > left) {
+            // Then we are moving left, so we might need to move the container right
+            if(overviewPosition + left < pageWidth / 4) {
+                // Then the thing is on the left of the screen
+                Log.d(TAG, "Container should be going right!");
+
+                int newLeft = Math.min(maxRight, overviewPosition + 3 * (w + m));
+                overviewParent.setX(newLeft);
+                overviewPosition = newLeft;
+            }
+
+        } else {
+            // We are moving right, we might need to move the container left
+            if(overviewPosition + left > 3 * pageWidth / 4 - w - m) {
+                // Then the thing is on the right of the screen
+                Log.d(TAG, "Container should be going left!");
+                int newLeft = Math.max(maxLeft, overviewPosition - 3 *  (w + m));
+                overviewParent.setX(newLeft);
+                overviewPosition = newLeft;
+            }
+        }
+
+        lastLeft = left;
+
+        // TODO Try to keep the purple thing on screen
+//        overviewScroll.scrollTo(left, 0);
+    }
+
+    // TODO Add schedule and log to the tutorial
+
+    private void overviewDraw() {
+
+        // TODO What if there are more things than will fit?
+        ViewTreeObserver textViewTreeObserver = overviewContainer.getViewTreeObserver();
+        textViewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            public void onGlobalLayout() {
+
+                // Put the things in
+                Log.d(TAG, "Done! " + overviewContainer.getWidth());
+                overviewRedraw2();
+
+                //Do your operations here.
+                if (Build.VERSION.SDK_INT < 16) {
+                    overviewContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    overviewContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
+    }
+
+    public int getPosition() {
+        return position;
     }
 
     public void saveDialog() {
@@ -297,6 +451,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         } else {
             pageRight.setEnabled(false);
         }
+
+        overviewRedraw2();
     }
 
     @Override

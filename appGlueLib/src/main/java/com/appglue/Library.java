@@ -34,13 +34,19 @@ import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAGS;
 
 public class Library {
-    public static String makeJSON(int id, String packageName, String className, String name, String description,
+    public static String makeJSON(int id, String packageName, String className, String name, String shortName, String description,
                                   int flags, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags) {
-        String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", \"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %d, ",
-                ID, id, PACKAGENAME, packageName, CLASSNAME, className, NAME, name, DESCRIPTION, description, FLAGS, flags);
+
+        String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", " +
+                        "\"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", " +
+                        "\"%s\":\"%s\", \"%s\": %d, ",
+                ID, id, PACKAGENAME, packageName,
+                CLASSNAME, className, NAME, name, SHORT_NAME, shortName,
+                DESCRIPTION, description, FLAGS, flags);
 
         inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
         outputList = outputList == null ? new ArrayList<IODescription>() : outputList;

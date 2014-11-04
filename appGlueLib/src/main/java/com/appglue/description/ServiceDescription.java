@@ -32,6 +32,7 @@ import static com.appglue.Constants.JSON_SERVICE_LIST;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.OUTPUTS;
 import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
@@ -49,6 +50,7 @@ public class ServiceDescription {
 
     // The friendly name of the service
     private String name = "";
+    private String shortName = "";
 
     // The type of the service - either local or remote
 //    private ServiceType serviceType = ServiceType.IN_APP;
@@ -77,7 +79,7 @@ public class ServiceDescription {
     private AppDescription app = null;
 
     private ServiceDescription(
-            String packageName, String className, String name,
+            String packageName, String className, String name, String shortName,
             String description,
             ArrayList<IODescription> inputs, ArrayList<IODescription> outputs,
             ServiceType serviceType, int flags) {
@@ -85,6 +87,7 @@ public class ServiceDescription {
         this.className = className;
         this.packageName = packageName;
         this.description = description;
+        this.shortName = shortName;
 
         this.setInputs(inputs);
         this.setOutputs(outputs);
@@ -344,6 +347,11 @@ public class ServiceDescription {
             return false;
         }
 
+        if (!this.shortName.equals(other.getShortName())) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: shortname " + shortName + " - " + other.getShortName());
+            return false;
+        }
+
         if (this.flags != other.getFlags()) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
             return false;
@@ -469,6 +477,7 @@ public class ServiceDescription {
         this.packageName = c.getString(c.getColumnIndex(prefix + PACKAGENAME));
         this.className = c.getString(c.getColumnIndex(prefix + CLASSNAME));
         this.name = c.getString(c.getColumnIndex(prefix + NAME));
+        this.shortName = c.getString(c.getColumnIndex(prefix + SHORT_NAME));
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
 //        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
@@ -496,13 +505,14 @@ public class ServiceDescription {
         String packageName = c.getString(c.getColumnIndex(prefix + PACKAGENAME));
         String className = c.getString(c.getColumnIndex(prefix + CLASSNAME));
         String name = c.getString(c.getColumnIndex(prefix + NAME));
+        String shortName = c.getString(c.getColumnIndex(prefix + SHORT_NAME));
 
         String description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
         int serviceType = c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE));
         int flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
 
-        return new ServiceDescription(packageName, className, name, description, null, null,
+        return new ServiceDescription(packageName, className, name, shortName, description, null, null,
                 ServiceDescription.getServiceType(serviceType), flags);
     }
 
@@ -540,15 +550,19 @@ public class ServiceDescription {
         return list;
     }
 
+    // TODO Short name needs to go in the equals method
+    // TODO Short name needs to go in the wiring overview
+
     public static ServiceDescription parseFromNewJSON(JSONObject json, AppDescription app) throws JSONException {
         String packageName = json.getString(PACKAGENAME);
         String className = json.getString(CLASSNAME);
         String name = json.getString(NAME);
+        String shortName = json.getString(SHORT_NAME);
         String description = json.getString(DESCRIPTION);
         int flags = json.getInt(FLAGS);
         ServiceType serviceType = ServiceType.LOCAL;
 
-        ServiceDescription sd = new ServiceDescription(packageName, className, name, description, null, null, serviceType, flags);
+        ServiceDescription sd = new ServiceDescription(packageName, className, name, shortName, description, null, null, serviceType, flags);
 
         ArrayList<IODescription> inputs = parseIOFromNewJSON(json.getJSONArray(INPUTS), true, sd);
         ArrayList<IODescription> outputs = parseIOFromNewJSON(json.getJSONArray(OUTPUTS), false, sd);
@@ -573,5 +587,9 @@ public class ServiceDescription {
         sd.setApp(app);
 
         return sd;
+    }
+
+    public String getShortName() {
+        return shortName;
     }
 }

@@ -2,7 +2,7 @@ package com.appglue;
 
 public class Constants 
 {
-    public static final boolean LOG = false;
+    public static final boolean LOG = true;
 
     // Broadcast receive-y thing
 	public static final String ACTION_COMPOSABLE = "com.appglue.IM_A_COMPOSABLE_SERVICE";
@@ -77,6 +77,7 @@ public class Constants
     // These sort out the service descriptions too
     public static final String ID = "id";
     public static final String NAME = "name";
+    public static final String SHORT_NAME = "short_name";
     public static final String DESCRIPTION = "description";
 
     // Database - Atomic

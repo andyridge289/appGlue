@@ -13,9 +13,9 @@ public class ServiceTest extends AndroidTestCase {
     @SmallTest
     public void testAlarmService() throws Exception {
 
-        AlarmService as = new AlarmService();
-        Bundle input = new Bundle();
-        ArrayList<Bundle> output = as.performService(input);
+//        AlarmService as = new AlarmService();
+//        Bundle input = new Bundle();
+//        ArrayList<Bundle> output = as.performService(input);
 
         // TODO Work out how to check if this was successful
     }

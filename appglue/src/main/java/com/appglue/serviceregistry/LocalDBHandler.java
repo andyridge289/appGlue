@@ -53,6 +53,7 @@ import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.SAMPLE_VALUE;
@@ -99,7 +100,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheTags();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -305,6 +306,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(NAME, sd.getName());
         values.put(CLASSNAME, sd.getClassName());
+        values.put(SHORT_NAME, sd.getShortName());
         values.put(PACKAGENAME, sd.getPackageName());
         values.put(DESCRIPTION, sd.getDescription());
         values.put(FLAGS, sd.getFlags());
@@ -2420,7 +2422,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             IOValue value = new IOValue(id, io, filterState, condition, manualValue, sample, enabled);
 
-            Log.d(TAG, "Added value " + id + " to value node " + valueNode.getID());
             valueNode.add(value);
 
         } while (c.moveToNext());

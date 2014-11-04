@@ -283,7 +283,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     filterAndor.setVisibility(View.GONE);
                 }
             } else {
-                Log.d(TAG, "Nope, no filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
+//                Log.d(TAG, "Nope, no filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
             }
         } else {
             // There isn't a service here. Hide the list and the text that says NONE
@@ -571,8 +571,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
                 break;
         }
-
-        Log.d(TAG, String.format("Weights: %f %f %f", outputWeight, filterWeight, inputWeight));
 
         WeightedExpandAnimation ia = new WeightedExpandAnimation(inputFrame, ((LayoutParams) inputFrame.getLayoutParams()).weight, inputWeight);
         ia.setDuration(500);

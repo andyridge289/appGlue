@@ -346,7 +346,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             // Get the actual value for that node
             Object actualValue = datum.get(io.getDescription().getName());
 
-            Log.d(TAG, String.format("%s - %s", io.getDescription().getName(), actualValue));
+//            Log.d(TAG, String.format("%s - %s", io.getDescription().getName(), actualValue));
 
             if (!filterTestValues(actualValue, filter.getCondition(io), filter.getValues(io))) {
                 if (LOG) Log.d(TAG, "\tfail");
@@ -374,7 +374,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             s += b + " ";
         }
         boolean b = conditionCheck(condition, results);
-        Log.d(TAG, String.format("%s[%s] = %b", condition ? "AND" : "OR", s, b));
+//        Log.d(TAG, String.format("%s[%s] = %b", condition ? "AND" : "OR", s, b));
 
         return b;
     }
@@ -402,7 +402,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         try {
             // This returns whether it PASSES the test, so we need to filter it if it doesn't
             boolean b = ((Boolean) fv.method.invoke(null, actualValue, expectedValue));
-            Log.d(TAG, String.format("%s(%s, %s)=%b", fv.method.getName(), actualValue, expectedValue, b));
+//            Log.d(TAG, String.format("%s(%s, %s)=%b", fv.method.getName(), actualValue, expectedValue, b));
             return b;
 
         } catch (IllegalArgumentException e) {

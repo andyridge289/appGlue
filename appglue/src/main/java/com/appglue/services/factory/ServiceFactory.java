@@ -197,7 +197,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String helloJSON = Library.makeJSON(-1, "com.appglue", SayHelloService.class.getCanonicalName(),
-                "Hello service",
+                "Hello service", "Hello",
                 "This service says hello.",
                 flags,
                 0,
@@ -217,7 +217,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String appJSON = Library.makeJSON(-1, "com.appglue", LaunchAppService.class.getCanonicalName(),
-                "Launch app",
+                "Launch app", "App",
                 "Launch an app of your choice.",
                 flags,
                 0,
@@ -241,7 +241,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String btJSON = Library.makeJSON(-1, "com.appglue", BluetoothService.class.getCanonicalName(),
-                "Bluetooth",
+                "Bluetooth", "BT",
                 "Turns bluetooth on or off!",
                 flags,
                 0,
@@ -264,7 +264,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String wifiJSON = Library.makeJSON(-1, "com.appglue", WifiService.class.getCanonicalName(),
-                "Set WiFi",
+                "Set WiFi", "WiFi",
                 "Turns wifi on or off!",
                 flags,
                 0,
@@ -285,7 +285,7 @@ public class ServiceFactory {
         int flags = ComposableService.FLAG_MONEY;
 
         String sendSMSJSON = Library.makeJSON(-1, "com.appglue", SendSMSService.class.getCanonicalName(),
-                "Send a SMS", "Send a SMS to someone (limited to 160 characters)",
+                "Send a SMS", "SMS", "Send a SMS to someone (limited to 160 characters)",
                 flags, 0, inputs, null, tags);
 
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, sendSMSJSON);
@@ -329,7 +329,7 @@ public class ServiceFactory {
         int flags = ComposableService.FLAG_MONEY | ComposableService.FLAG_NETWORK | ComposableService.FLAG_DELAY;
 
         String tubeJSON = Library.makeJSON(-1, "com.appglue", TubeService.class.getCanonicalName(),
-                "Tube Status lookup",
+                "Tube Status lookup", "Tube",
                 "This service returns information about problems that occur on the tube. It is accurate to within 10 minutes. It will return information about the line that is affected as well as the problem that is affecting it.",
                 flags, 0,
                 new ArrayList<IODescription>(), outputs, tags);
@@ -348,7 +348,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String pebbleJSON = Library.makeJSON(-1, "com.appglue", PebbleNotification.class.getCanonicalName(),
-                "Pebble Notification",
+                "Pebble Notification", "Pebble",
                 "Outputs notifications to your Pebble",
                 flags, 0, inputs, null, tags);
 
@@ -377,7 +377,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String notificationJSON = Library.makeJSON(-1, "com.appglue", NotificationService.class.getCanonicalName(),
-                "Android Notification",
+                "Android Notification", "Notify",
                 "Outputs Android Notifications into the Notification tray. They normally need a title and some text",
                 flags, 0, inputs, null, tags);
 
@@ -394,7 +394,7 @@ public class ServiceFactory {
         int flags = 0;
 
         String toastJSON = Library.makeJSON(-1, "com.appglue", ToastService.class.getCanonicalName(),
-                "On screen message",
+                "On screen message", "Popup",
                 "Outputs some text to the screen",
                 flags, 0, inputs, null, tags);
 
@@ -417,7 +417,7 @@ public class ServiceFactory {
         int flags = ComposableService.FLAG_DELAY | ComposableService.FLAG_LOCATION;
 
         String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(),
-                "Location lookup",
+                "Location lookup", "Location",
                 "Returns your location",
                 flags, 0, null, getOutputs, tags);
 
@@ -463,7 +463,7 @@ public class ServiceFactory {
         int flags = ComposableService.FLAG_TRIGGER;
 
         String airplaneJSON = Library.makeJSON(-1, "com.appglue", AirplaneTrigger.class.getCanonicalName(),
-                "Airplane mode Trigger",
+                "Airplane mode Trigger", "Airplane",
                 "Fires when airplane mode is turned on or off",
                 flags, 0,
                 null, outputs, tags);
@@ -485,13 +485,15 @@ public class ServiceFactory {
         int flags = ComposableService.FLAG_TRIGGER;
 
         String powerJSON = Library.makeJSON(-1, "com.appglue", PowerTrigger.class.getCanonicalName(),
-                "Power connection",
+                "Power connection", "Power",
                 "Fires when the power is connected or disconnected",
                 flags, 0,
                 null, outputs, tags);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, powerJSON);
     }
+
+    // TODO Need to sort out the sample values for booleans in the filter thing
 
     private String setupBatteryTrigger() {
 
@@ -508,7 +510,7 @@ public class ServiceFactory {
         String[] tags = {"Battery", "Low"};
 
         String batteryTriggerJSON = Library.makeJSON(-1, "com.appglue", BatteryTrigger.class.getCanonicalName(),
-                "Battery Trigger",
+                "Battery Trigger", "-> Battery",
                 "Signals that the state of the battery has changed",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -531,7 +533,7 @@ public class ServiceFactory {
         String[] tags = {"Bluetooth", "Connected", "Disconnected", "On", "Off"};
 
         String bluetoothTriggerJSON = Library.makeJSON(-1, "com.appglue", BluetoothTrigger.class.getCanonicalName(),
-                "Bluetooth Trigger",
+                "Bluetooth Trigger", "-> BT",
                 "Signals that the state of the bluetooth has changed",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -551,7 +553,7 @@ public class ServiceFactory {
         String[] tags = {"SMS", "Text message", "Receive"};
 
         String receiveSMSJSON = Library.makeJSON(-1, "com.appglue", ReceiveSMSTrigger.class.getCanonicalName(),
-                "Receive SMS",
+                "Receive SMS", "-> SMS",
                 "Signals a text has arrived",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -576,7 +578,7 @@ public class ServiceFactory {
         String[] tags = {"Headphone", "Headset", "Plugged", "Unplugged", "Connected", "Disconnected"};
 
         String headphoneTriggerJSON = Library.makeJSON(-1, "com.appglue", HeadphoneTrigger.class.getCanonicalName(),
-                "Headphone Trigger",
+                "Headphone Trigger", "-> HP",
                 "Activated when you plug or unplug the headphones",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -599,7 +601,7 @@ public class ServiceFactory {
 
 
         String startupTriggerJSON = Library.makeJSON(-1, "com.appglue", StartupTrigger.class.getCanonicalName(),
-                "Startup Trigger",
+                "Startup Trigger", "-> Boot",
                 "Activated when your phone has finished turning on, is about to turn off, or has rebooted",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -620,7 +622,7 @@ public class ServiceFactory {
         String[] tags = {"Dock", "Car", "Desk", "Undock", "On", "Off"};
 
         String dockTriggerJSON = Library.makeJSON(-1, "com.appglue", DockedTrigger.class.getCanonicalName(),
-                "Docked Trigger",
+                "Docked Trigger", "-> Dock",
                 "Signals that the phone has been docked or undocked",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -640,7 +642,7 @@ public class ServiceFactory {
         String[] tags = {"Device storage", "SD card"};
 
         String storageTriggerJSON = Library.makeJSON(-1, "com.appglue", DeviceStorageTrigger.class.getCanonicalName(),
-                "Storage Trigger",
+                "Storage Trigger", "-> Storage",
                 "Signals that the storage in the phone has changed",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -662,7 +664,7 @@ public class ServiceFactory {
         String[] tags = {"Screen", "Display", "On", "Off"};
 
         String screenTriggerJSON = Library.makeJSON(-1, "com.appglue", ScreenStateTrigger.class.getCanonicalName(),
-                "Screen Trigger",
+                "Screen Trigger", "-> Screen",
                 "Signals that the screen has gone on or off",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);
@@ -688,7 +690,7 @@ public class ServiceFactory {
         outputs.add(new IODescription(-1, WifiTrigger.NETWORK_SSID, "SSID", text, "The name of the network you've connected to", true, null));
 
         String wifiTriggerJSON = Library.makeJSON(-1, "com.appglue", WifiTrigger.class.getCanonicalName(),
-                "WiFi Trigger",
+                "WiFi Trigger", "-> WiFi",
                 "Signals that wifi has gone on or off",
                 ComposableService.FLAG_TRIGGER,
                 0, null, outputs, tags);

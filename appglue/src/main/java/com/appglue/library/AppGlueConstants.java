@@ -15,6 +15,7 @@ import static com.appglue.Constants.IO_TYPE;
 import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.NAME;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.SAMPLE_VALUE;
@@ -51,7 +52,6 @@ public class AppGlueConstants {
     public static final String TBL_TAG = "tag";
     public static final String TBL_SD_HAS_TAG = "sdhastag";
     public static final String TBL_IO_SAMPLE = "iosamples";
-
 
     // 'dynamic' database tables
     public static final String TBL_COMPOSITE = "composite";
@@ -124,6 +124,7 @@ public class AppGlueConstants {
             {
                     {CLASSNAME, "TEXT PRIMARY KEY"},
                     {NAME, "TEXT"},
+                    { SHORT_NAME, "TEXT"},
                     {PACKAGENAME, "TEXT"},
                     {DESCRIPTION, "TEXT"},
                     {SERVICE_TYPE, "INTEGER"},

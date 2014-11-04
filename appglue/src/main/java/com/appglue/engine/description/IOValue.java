@@ -32,7 +32,6 @@ public class IOValue {
         this.io = io;
         this.filterState = UNFILTERED;
         this.enabled = true;
-        Log.d(TAG, "Creating IOValue " + io);
     }
 
     public IOValue(FilterFactory.FilterValue condition, Object manualValue, ServiceIO io) {

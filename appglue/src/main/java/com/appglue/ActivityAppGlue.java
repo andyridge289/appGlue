@@ -190,6 +190,9 @@ public class ActivityAppGlue extends ActionBarActivity
         if (item.getItemId() == R.id.settings) {
             Intent intent = new Intent(ActivityAppGlue.this, ActivitySettings.class);
             startActivity(intent);
+        } else if (item.getItemId() == R.id.tutorial) {
+            Intent intent = new Intent(ActivityAppGlue.this, ActivityTutorial.class);
+            startActivity(intent);
         } else if (item.getItemId() == R.id.composite_edit) {
             // Show or hide the right pages of the composite page
             homeFragment.setCompositeMode(false);

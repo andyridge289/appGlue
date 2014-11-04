@@ -163,7 +163,6 @@ public class FragmentWiring extends Fragment {
                     } else {
                         Log.d(TAG, "ActivityWiring is dead for choosing component");
                     }
-
                 }
             };
 
