@@ -93,9 +93,33 @@ public class FragmentTutorial extends Fragment {
             case 4:
                 v.addView(createFilter(inflater));
                 break;
+
+            case 5:
+                v.addView(createSchedule(inflater));
+                break;
         }
 
         return v;
+    }
+
+    private View createSchedule(final LayoutInflater inflater) {
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setLayoutParams(new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        TextView tv0 = createTitleView(R.string.tutorial_6_0, R.color.schedule);
+        layout.addView(tv0);
+
+        TextView tv1 = createTextView(R.string.tutorial_6_1);
+        layout.addView(tv1);
+
+        TextView tv10 = createTitleView(R.string.tutorial_6_10, R.color.log);
+        layout.addView(tv10);
+
+        TextView tv11 = createTextView(R.string.tutorial_6_11);
+        layout.addView(tv11);
+
+        return layout;
     }
 
     private View createFilter(final LayoutInflater inflater) {
@@ -649,6 +673,7 @@ public class FragmentTutorial extends Fragment {
         ArrayList<Point> importants = find(s, res.getStringArray(R.array.important_terms));
         ArrayList<Point> filters = find(s, res.getStringArray(R.array.filter_terms));
         ArrayList<Point> schedules = find(s, res.getStringArray(R.array.schedule_terms));
+        ArrayList<Point> logs = find(s, res.getStringArray(R.array.log_terms));
 
         for (Point p : composites) {
             ss.setSpan(new TextAppearanceSpan(getActivity(), R.style.composite_text), p.x, p.x + p.y, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -668,6 +693,10 @@ public class FragmentTutorial extends Fragment {
 
         for (Point p : schedules) {
             ss.setSpan(new TextAppearanceSpan(getActivity(), R.style.schedule_text), p.x, p.x + p.y, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+
+        for (Point p : logs) {
+            ss.setSpan(new TextAppearanceSpan(getActivity(), R.style.log_text), p.x, p.x + p.y, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
 

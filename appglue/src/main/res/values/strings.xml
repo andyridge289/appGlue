@@ -264,4 +264,10 @@
     <string name="tutorial_5_5">And you can have more than one filter for each component</string>
     <string name="tutorial_5_6">Because filters can be a bit of a faff, they are separate and the bar at the top is red</string>
 
+    <string name="tutorial_6_0">Schedule</string>
+    <string name="tutorial_6_1">You can schedule composites to run at particular times of day, or after some interval.</string>
+
+    <string name="tutorial_6_10">Log</string>
+    <string name="tutorial_6_11">The log tells you when your composites have run, and if they don\'t work it should tell you why.</string>
+
 </resources>

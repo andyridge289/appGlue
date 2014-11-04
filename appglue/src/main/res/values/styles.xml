@@ -159,6 +159,10 @@
         <item name="android:textColor">@color/schedule</item>
     </style>
 
+    <style name="log_text" parent="@style/tutorial_text">
+        <item name="android:textColor">@color/log</item>
+    </style>
+
     <style name="overview_component">
         <item name="android:background">@drawable/wiring_indicator_component</item>
         <item name="android:textColor">@color/white</item>

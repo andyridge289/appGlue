@@ -20,7 +20,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,7 +31,6 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
@@ -279,7 +277,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
     }
 
-    private void overviewRedraw2() {
+    private void overviewRedraw() {
 
         if(overviewContainer.getWidth() == 0) {
             overviewDraw();
@@ -309,8 +307,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             // We need to resize the parent based on how many components there are
             overviewParent.setMinimumWidth(width + w + m);
             overviewContainer.setMinimumWidth(width + w + m);
-//            overviewParent.setC/lipBounds(null);
-            Log.d(TAG, "Setting width " + (width + w + m));
+//            Log.d(TAG, "Setting width " + (width + w + m));
             int allLeft = w / 2 + m / 2; //(overviewContainer.getWidth() / 2) - (width / 2) - overviewContainer.getLeft();
 
             for (int i = 0; i < composite.getComponents().size(); i++) {
@@ -349,7 +346,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int pageWidth = displaymetrics.widthPixels;
 
-        Log.d(TAG, "Containers: " + overviewContainer.getWidth() + ", " + overviewParent.getWidth() + " and page width is " + pageWidth);
+//        Log.d(TAG, "Containers: " + overviewContainer.getWidth() + ", " + overviewParent.getWidth() + " and page width is " + pageWidth);
 
         int maxRight = 0;
         int maxLeft = 0 - (width + w + m - pageWidth);
@@ -358,7 +355,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             // Then we are moving left, so we might need to move the container right
             if(overviewPosition + left < pageWidth / 4) {
                 // Then the thing is on the left of the screen
-                Log.d(TAG, "Container should be going right!");
+//                Log.d(TAG, "Container should be going right!");
 
                 int newLeft = Math.min(maxRight, overviewPosition + 3 * (w + m));
                 overviewParent.setX(newLeft);
@@ -369,7 +366,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             // We are moving right, we might need to move the container left
             if(overviewPosition + left > 3 * pageWidth / 4 - w - m) {
                 // Then the thing is on the right of the screen
-                Log.d(TAG, "Container should be going left!");
+//                Log.d(TAG, "Container should be going left!");
                 int newLeft = Math.max(maxLeft, overviewPosition - 3 *  (w + m));
                 overviewParent.setX(newLeft);
                 overviewPosition = newLeft;
@@ -377,24 +374,19 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         lastLeft = left;
-
-        // TODO Try to keep the purple thing on screen
-//        overviewScroll.scrollTo(left, 0);
     }
 
-    // TODO Add schedule and log to the tutorial
+    // TODO Use the overview to be
 
     private void overviewDraw() {
 
-        // TODO What if there are more things than will fit?
         ViewTreeObserver textViewTreeObserver = overviewContainer.getViewTreeObserver();
         textViewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 
             public void onGlobalLayout() {
 
                 // Put the things in
-                Log.d(TAG, "Done! " + overviewContainer.getWidth());
-                overviewRedraw2();
+                overviewRedraw();
 
                 //Do your operations here.
                 if (Build.VERSION.SDK_INT < 16) {
@@ -452,7 +444,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             pageRight.setEnabled(false);
         }
 
-        overviewRedraw2();
+        overviewRedraw();
     }
 
     @Override

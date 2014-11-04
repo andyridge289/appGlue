@@ -380,6 +380,8 @@ public class ActivityAppGlue extends ActionBarActivity
 
             } else {
                 title = "appGlue";
+                menu.setGroupVisible(R.id.composite_done_group, false);
+                menu.setGroupVisible(R.id.composite_edit_group, false);
             }
 
         } else if (currentPage == Page.COMPONENTS.index) {

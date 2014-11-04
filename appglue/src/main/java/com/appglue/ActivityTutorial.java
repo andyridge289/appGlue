@@ -46,7 +46,7 @@ public class ActivityTutorial extends ActionBarActivity implements ViewPager.OnP
 
         fragments = new ArrayList<Fragment>();
         fragments.add(FragmentPrivacy.create());
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 6; i++) {
             fragments.add(FragmentTutorial.create(i));
         }
 

@@ -33,6 +33,12 @@
 
     <array name="schedule_terms">
         <item>schedule</item>
+        <item>green</item>
+    </array>
+
+    <array name="log_terms" >
+        <item>log</item>
+        <item>orange</item>
     </array>
 
 </resources>
