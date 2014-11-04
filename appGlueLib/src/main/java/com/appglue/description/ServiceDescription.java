@@ -550,9 +550,6 @@ public class ServiceDescription {
         return list;
     }
 
-    // TODO Short name needs to go in the equals method
-    // TODO Short name needs to go in the wiring overview
-
     public static ServiceDescription parseFromNewJSON(JSONObject json, AppDescription app) throws JSONException {
         String packageName = json.getString(PACKAGENAME);
         String className = json.getString(CLASSNAME);

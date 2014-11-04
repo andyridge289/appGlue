@@ -1,6 +1,7 @@
 package com.appglue;
 
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -18,6 +20,7 @@ import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.FloatingActionButton;
+import com.appglue.layout.VerticalTextView;
 import com.appglue.layout.WiringMap;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
@@ -81,8 +84,8 @@ public class FragmentWiring extends Fragment {
         wiringMap = (WiringMap) rootView.findViewById(R.id.firstWiringMap);
         wiringMap.setPosition(position);
 
-        TextView firstName = (TextView) rootView.findViewById(R.id.first_name);
-        TextView secondName = (TextView) rootView.findViewById(R.id.second_name);
+        VerticalTextView firstName = (VerticalTextView) rootView.findViewById(R.id.first_name);
+        VerticalTextView secondName = (VerticalTextView) rootView.findViewById(R.id.second_name);
 
         ImageView firstIcon = (ImageView) rootView.findViewById(R.id.first_icon);
         ImageView secondIcon = (ImageView) rootView.findViewById(R.id.second_icon);
@@ -114,7 +117,9 @@ public class FragmentWiring extends Fragment {
 
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (first != null) {
+
             firstName.setText(first.getDescription().getName());
+//            firstName.setRotation(90);
 
             firstName.setVisibility(View.VISIBLE);
             firstIcon.setVisibility(View.VISIBLE);

@@ -33,12 +33,13 @@
                 android:src="@drawable/icon"
                 android:layout_centerInParent="true"/>
 
-            <TextView
+            <com.appglue.layout.VerticalTextView
                 android:id="@+id/first_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/first_icon"
                 android:layout_centerHorizontal="true"
+                app:face_right="true"
                 />
 
             <com.appglue.layout.FloatingActionButton
@@ -80,12 +81,13 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/icon" />
 
-            <TextView
+            <com.appglue.layout.VerticalTextView
                 android:id="@+id/second_name"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:layout_centerHorizontal="true"
                 android:layout_below="@id/second_icon"
+                app:face_right="false"
                 />
 
             <com.appglue.layout.FloatingActionButton
