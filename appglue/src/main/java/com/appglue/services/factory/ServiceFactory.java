@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -34,6 +35,7 @@ import com.appglue.services.triggers.DockedTrigger;
 import com.appglue.services.triggers.HeadphoneTrigger;
 import com.appglue.services.triggers.PowerTrigger;
 import com.appglue.services.triggers.ReceiveSMSTrigger;
+import com.appglue.services.triggers.RingerTrigger;
 import com.appglue.services.triggers.ScreenStateTrigger;
 import com.appglue.services.triggers.StartupTrigger;
 import com.appglue.services.triggers.WifiTrigger;
@@ -128,6 +130,7 @@ public class ServiceFactory {
         services.add(setupDeviceStorageTrigger());
         services.add(setupScreenStateTrigger());
         services.add(setupWifiTrigger());
+        services.add(setupRingerStateTrigger());
 
         String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
@@ -338,7 +341,7 @@ public class ServiceFactory {
         String[] tags = {"Tube", "London", "Underground", "Travel", "tfl"};
         String[] categories = {TRAVEL};
 
-        int flags = ComposableService.FLAG_MONEY | ComposableService.FLAG_NETWORK | ComposableService.FLAG_DELAY;
+        int flags = ComposableService.FLAG_NETWORK | ComposableService.FLAG_DELAY;
 
         String tubeJSON = Library.makeJSON(-1, "com.appglue", TubeService.class.getCanonicalName(),
                 "Tube Status lookup", "Tube",
@@ -726,6 +729,30 @@ public class ServiceFactory {
                 0, null, outputs, tags, cats);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, wifiTriggerJSON);
+    }
+
+    private String setupRingerStateTrigger() {
+
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Loud", AudioManager.RINGER_MODE_NORMAL));
+        samples.add(new SampleValue("Silent", AudioManager.RINGER_MODE_SILENT));
+        samples.add(new SampleValue("Vibrate", AudioManager.RINGER_MODE_VIBRATE));
+
+        outputs.add(new IODescription(-1, RingerTrigger.STATE, "Ringer state", set, "The new state of your ringer - silent, loud, or vibrate", true, samples));
+
+        String[] tags = { "Ringer", "Vibrate", "Silent" };
+        String[] cats = { TRIGGERS, DEVICE_UTILS };
+
+        String ringerJSON = Library.makeJSON(-1, "com.appglue", RingerTrigger.class.getCanonicalName(),
+                "Ringer Trigger", "-> Ringer",
+                "Signals that the ringer has changed",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags, cats);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, ringerJSON);
     }
 
 

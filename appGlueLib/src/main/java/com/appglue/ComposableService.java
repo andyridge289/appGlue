@@ -34,6 +34,7 @@ public abstract class ComposableService extends Service {
     public static final int FLAG_NETWORK = 0x4;
     public static final int FLAG_DELAY = 0x8;
     public static final int FLAG_LOCATION = 0x10;
+    public static final int FLAG_STORAGE = 0x20;
 
     protected String toastMessage = "";
 

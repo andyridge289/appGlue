@@ -7,10 +7,9 @@ import android.os.Bundle;
 
 public class RingerTrigger extends GenericTrigger {
 
+    public static final String STATE = "state";
+
     // TODO Need to create a flag for uses storage one
-    // TODO No schedule menu item if the composite contains a trigger
-    // TODO Need to sort out the logic for composition if it contains a trigger
-    // TODO Editing composite details
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -19,10 +18,13 @@ public class RingerTrigger extends GenericTrigger {
 
         if (action.equals(AudioManager.RINGER_MODE_CHANGED_ACTION)) {
             int extra = intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1);
+            if (extra == AudioManager.RINGER_MODE_NORMAL || extra == AudioManager.RINGER_MODE_SILENT ||
+                                                            extra == AudioManager.RINGER_MODE_VIBRATE) {
+                data.putInt(STATE, extra);
+                super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);
+            }
         } else {
-            // TODO Fail
+            super.fail(context, "Triggered when not in ringer mode");
         }
-
-//        super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);
     }
 }

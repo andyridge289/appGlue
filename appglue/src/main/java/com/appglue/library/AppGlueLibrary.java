@@ -394,5 +394,31 @@ public class AppGlueLibrary {
             iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
             tv.setText("Uses GPS");
         }
+
+        if (sd.hasFlag(ComposableService.FLAG_DELAY)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            // TODO Delay icon
+//            iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
+            tv.setText("Execution delay");
+        }
+
+        if (sd.hasFlag(ComposableService.FLAG_STORAGE)) {
+
+            View vv = vi.inflate(R.layout.component_attribute, null);
+            flagContainer.addView(vv);
+
+            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+
+            // TODO Storage icon
+//            iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
+            tv.setText("Uses GPS");
+        }
     }
 }

@@ -316,6 +316,22 @@ public class Registry {
         }
     }
 
+    public boolean triggerPositionFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData, String message) {
+        // If a component fails, we should tell the user what the input to the component was when it failed
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.TRIGGER_FAIL, 0);
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.TRIGGER_FAIL, message);
+
+        //EngineTest.executeFinished = true;
+
+        if (logComponent && logComposite) {
+            return true;
+        } else {
+            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
+                    executionInstance, component.getDescription().getClassName(), inputData != null));
+            return false;
+        }
+    }
+
     public boolean messageFail(CompositeService composite, long executionInstance, ComponentService component, Bundle inputData) {
         String message = "Failed to send message.";
         boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, inputData, null, LogItem.MESSAGE_FAIL, 0);

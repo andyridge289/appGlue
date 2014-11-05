@@ -208,6 +208,9 @@ public class FragmentLog extends Fragment {
             case LogItem.COMPONENT_FAIL:
                 return "There was an error in the component";
 
+            case LogItem.TRIGGER_FAIL:
+                return "Trigger in the wrong position";
+
             case LogItem.MESSAGE_FAIL:
             case LogItem.ORCH_FAIL:
                 return "An error occurred talking to the component";

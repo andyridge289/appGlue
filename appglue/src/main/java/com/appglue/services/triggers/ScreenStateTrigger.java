@@ -10,8 +10,6 @@ public class ScreenStateTrigger extends GenericTrigger {
     public static final int SCREEN_ON = 0;
     public static final int SCREEN_OFF = 1;
 
-    // TODO Check that all of the services fail properly
-
     @Override
     public void onReceive(Context context, Intent intent) {
 

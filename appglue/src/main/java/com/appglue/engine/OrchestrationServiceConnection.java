@@ -174,6 +174,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             return;
         }
 
+        if (service.getDescription().hasFlag(ComposableService.FLAG_TRIGGER)) {
+            registry.triggerPositionFail(cs, executionInstance, service, messageData, service.getDescription().getName() + " in wrong position");
+            return;
+        }
+
         if (this.index != 0) {
             // Make the composition execution thing take into account the filter values
             ArrayList<Bundle> outputs = messageData.getParcelableArrayList(ComposableService.INPUT);

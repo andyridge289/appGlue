@@ -1,12 +1,11 @@
 package com.appglue.description;
 
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 
 import com.appglue.TST;
-
-import java.util.ArrayList;
 
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.LOG;
@@ -31,7 +30,9 @@ public class Category implements Comparable {
     public void setID(long id) {
         this.id = id;
 
-        // TODO Should probably put it in the id Search
+        if (Factory.idSearch.get(id) == null) {
+            Factory.idSearch.put(id, this);
+        }
     }
 
     public long getID() {
@@ -71,7 +72,7 @@ public class Category implements Comparable {
     }
 
     @Override
-    public int compareTo(Object another) {
+    public int compareTo(@NonNull Object another) {
         if (!(another instanceof Category))
             return 0;
 

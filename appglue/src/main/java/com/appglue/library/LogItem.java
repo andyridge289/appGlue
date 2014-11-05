@@ -9,6 +9,7 @@ public class LogItem {
 
     public static final int FILTER = 0x1;
 
+    public static final int TRIGGER_FAIL = 0x2; // If a trigger is in the composition where it shouldn't be
     public static final int COMPONENT_FAIL = 0x3; // IF the component crashes
     public static final int MESSAGE_FAIL = 0x4; // IF the message passing fails
     public static final int NETWORK_FAIL = 0x5; // If some networking fails somewhere
@@ -17,6 +18,10 @@ public class LogItem {
     public static final int PARAM_STOP = 0x8; // If it stops based on one of the flags
 
     public static final int GENERIC_TRIGGER_FAIL = 0x7; // This is very much a special case
+
+    // TODO Add something to say what killed the composite
+    // TODO Add a specific message to say what killed the component
+    // TODO Put in the start time too
 
     private long id;
     private CompositeService cs;
