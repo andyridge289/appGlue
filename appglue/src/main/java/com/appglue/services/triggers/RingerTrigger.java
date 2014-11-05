@@ -9,8 +9,6 @@ public class RingerTrigger extends GenericTrigger {
 
     public static final String STATE = "state";
 
-    // TODO Need to create a flag for uses storage one
-
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();

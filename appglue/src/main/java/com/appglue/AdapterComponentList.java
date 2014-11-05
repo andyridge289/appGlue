@@ -119,7 +119,7 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         serviceName.setText(sd.getName());
 
         LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
-        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi);
+        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, false);
 
         if (sd.hasInputs()) {
             View inputs = v.findViewById(R.id.comp_item_inputs);

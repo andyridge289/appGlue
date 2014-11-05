@@ -151,7 +151,7 @@ public class FragmentApp extends Fragment {
             serviceName.setText(sd.getName());
 
             LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
-            AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi);
+            AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, false);
 
             if (sd.hasInputs()) {
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);

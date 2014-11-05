@@ -345,80 +345,55 @@ public class AppGlueLibrary {
         return name;
     }
 
-    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi) {
+    private static View makeFlag(LayoutInflater vi, String name, int icon, boolean expand) {
+        View vv = vi.inflate(R.layout.component_attribute, null);
+
+        ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
+        iv.setBackgroundResource(icon);
+
+        TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
+        tv.setText(name);
+        if (expand) {
+            tv.setVisibility(View.VISIBLE);
+        } else {
+            tv.setVisibility(View.GONE);
+        }
+
+        return vv;
+    }
+
+    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi, boolean expand) {
+
         flagContainer.removeAllViews();
+
         if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
-
-            View vv = vi.inflate(R.layout.component_attribute, null);
+            View vv = makeFlag(vi, "Trigger", R.drawable.ic_exit_to_app_white_18dp, expand);
             flagContainer.addView(vv);
-
-            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
-            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
-
-            iv.setBackgroundResource(R.drawable.ic_exit_to_app_white_18dp);
-            tv.setText("Trigger");
         }
 
         if (sd.hasFlag(ComposableService.FLAG_MONEY)) {
-
-            View vv = vi.inflate(R.layout.component_attribute, null);
+            View vv = makeFlag(vi, "Costs money", R.drawable.ic_money, expand);
             flagContainer.addView(vv);
-
-            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
-            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
-
-            iv.setBackgroundResource(R.drawable.ic_money);
-            tv.setText("Costs money");
         }
 
         if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
-
-            View vv = vi.inflate(R.layout.component_attribute, null);
+            View vv = makeFlag(vi, "Uses data", R.drawable.ic_settings_input_antenna_white_18dp, expand);
             flagContainer.addView(vv);
-
-            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
-            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
-
-            iv.setBackgroundResource(R.drawable.ic_settings_input_antenna_white_18dp);
-            tv.setText("Uses data");
         }
 
         if (sd.hasFlag(ComposableService.FLAG_LOCATION)) {
-
-            View vv = vi.inflate(R.layout.component_attribute, null);
+            View vv = makeFlag(vi, "Uses GPS", R.drawable.ic_my_location_white_18dp, expand);
             flagContainer.addView(vv);
-
-            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
-            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
-
-            iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
-            tv.setText("Uses GPS");
         }
 
         if (sd.hasFlag(ComposableService.FLAG_DELAY)) {
-
-            View vv = vi.inflate(R.layout.component_attribute, null);
+            View vv = makeFlag(vi, "Delay", R.drawable.ic_timelapse_white_18dp, expand);
             flagContainer.addView(vv);
-
-            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
-            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
-
-            // TODO Delay icon
-//            iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
-            tv.setText("Execution delay");
         }
 
         if (sd.hasFlag(ComposableService.FLAG_STORAGE)) {
-
-            View vv = vi.inflate(R.layout.component_attribute, null);
+            View vv = makeFlag(vi, "Uses Storage", R.drawable.ic_save_white_18dp, expand);
             flagContainer.addView(vv);
-
-            ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
-            TextView tv = (TextView) vv.findViewById(R.id.component_attribute_text);
-
-            // TODO Storage icon
-//            iv.setBackgroundResource(R.drawable.ic_my_location_white_18dp);
-            tv.setText("Uses GPS");
         }
     }
 }

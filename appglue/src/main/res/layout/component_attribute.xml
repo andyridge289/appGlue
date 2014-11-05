@@ -17,10 +17,11 @@
         android:layout_marginLeft="20dip"
         android:layout_marginStart="20dip"
         android:layout_marginTop="4dip"
-        android:paddingLeft="5dip"
-        android:paddingStart="5dip"
+        android:paddingLeft="8dip"
         android:paddingRight="5dip"
-        android:paddingEnd="5dip" />
+        android:paddingEnd="5dip"
+        android:visibility="gone"
+        />
 
     <RelativeLayout
         android:id="@+id/attr_icon"
@@ -32,7 +33,6 @@
             android:id="@+id/component_attribute_icon"
             android:layout_width="16dip"
             android:layout_height="16dip"
-            android:background="@drawable/ic_trigger"
             android:layout_centerInParent="true" />
 
     </RelativeLayout>

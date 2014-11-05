@@ -7,7 +7,7 @@ public class Bool extends IOType
 	public Bool()
 	{
 		super();
-		this.name = "Bool";
+		this.name = "True / False";
 		this.className = Bool.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
         this.acceptsManual = false;

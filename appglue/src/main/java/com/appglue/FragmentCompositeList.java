@@ -473,6 +473,9 @@ public class FragmentCompositeList extends Fragment {
             return registry.getComposites();
         }
 
+        // TODO Sort out the showing and removing of the plus button
+        // TODO sort out what happens if they close the dailog when they shouldn't, or stop them from doing this
+
         protected void onPostExecute(ArrayList<CompositeService> composites) {
             FragmentCompositeList.this.composites = composites;
             listAdapter = new CompositeListAdapter(getActivity(), composites);

@@ -7,7 +7,7 @@
     
     <RelativeLayout
         style="@style/FillWrap"
-        android:background="@color/ccc">
+        android:background="@color/hexCCC">
 
 	    <TextView
 	        android:id="@+id/param_input_name"

@@ -175,28 +175,19 @@ public class FilterValueView extends LinearLayout {
 
         IOType type = item.getType();
         ArrayList<SampleValue> values = item.getDescription().getSampleValues();
-        if (values == null)
+        if (values == null) {
             values = new ArrayList<SampleValue>();
+        }
         boolean hasValues = values.size() != 0;
 
-        if (type.typeEquals(IOType.Factory.getType(IOType.Factory.TEXT))) {
-            setup(FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
-                    hasValues, values);
-        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.NUMBER))) {
-            setup(FILTER_NUMBER_VALUES, InputType.TYPE_CLASS_NUMBER,
-                    hasValues, values);
-        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.SET))) {
-            setup(FILTER_SET_VALUES, -1,
-                    hasValues, values);
-        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
-            if (values.size() != 0) {
+        if (type.typeEquals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
+            if (values.size() == 0) {
                 // These might need to be hard-coded as acceptable values
                 values = new ArrayList<SampleValue>();
                 values.add(new SampleValue("True", true));
                 values.add(new SampleValue("False", false));
             }
-            setup(FILTER_BOOL_VALUES, InputType.TYPE_CLASS_TEXT,
-                    hasValues, values);
+            setup(FILTER_BOOL_VALUES, type, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
             manualButton.setText("Choose drawable");
             manualButton.setOnClickListener(new OnClickListener() {
@@ -206,7 +197,7 @@ public class FilterValueView extends LinearLayout {
                     di.show();
                 }
             });
-            setup(FILTER_BOOL_VALUES, -1, hasValues, values);
+            setup(FILTER_BOOL_VALUES, type, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
             manualButton.setText("Choose contact");
             manualButton.setOnClickListener(new OnClickListener() {
@@ -218,11 +209,15 @@ public class FilterValueView extends LinearLayout {
                     activity.startActivityForResult(FilterValueView.this, contactPickerIntent, ActivityWiring.CONTACT_PICKER_FILTER);
                 }
             });
-            setup(FILTER_STRING_VALUES, InputType.TYPE_CLASS_PHONE,
-                    hasValues, values);
+            setup(FILTER_STRING_VALUES, type, hasValues, values);
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.NUMBER))) {
+            setup(FILTER_NUMBER_VALUES, type, hasValues, values);
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.SET))) {
+            setup(FILTER_SET_VALUES, type, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.URL))) {
-            setup(FILTER_STRING_VALUES, InputType.TYPE_CLASS_TEXT,
-                    hasValues, values);
+            setup(FILTER_STRING_VALUES, type, hasValues, values);
+        } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.TEXT))) {
+            setup(FILTER_STRING_VALUES, type, hasValues, values);
         } else {
             Log.e(TAG, "Type not implemented");
             // Don't know what happens here
@@ -335,7 +330,7 @@ public class FilterValueView extends LinearLayout {
         }
     }
 
-    private void setup(FilterFactory.FilterValue[] conditions, int type,
+    private void setup(FilterFactory.FilterValue[] conditions, IOType type,
                        boolean hasSamples, ArrayList<SampleValue> values) {
 
         if (conditionSpinner != null) {
@@ -371,9 +366,9 @@ public class FilterValueView extends LinearLayout {
             }
         });
 
-        if (type != -1)
-            manualText.setInputType(type);
-        else {
+        if (type.acceptsManualValues()) {
+            manualText.setInputType(type.getManualEditTextType());
+        } else {
             // Hide the manual aspect
             manualText.setEnabled(false);
 
@@ -474,7 +469,7 @@ public class FilterValueView extends LinearLayout {
      * This is where we go to when we have come back from the IODialog for images
      *
      * @param s
-     * @param res
+     * @param obj
      */
     public void setManualValue(String s, Object obj) {
 

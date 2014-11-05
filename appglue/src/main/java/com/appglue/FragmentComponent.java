@@ -13,12 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
+import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 
@@ -43,6 +45,8 @@ public class FragmentComponent extends Fragment {
 
     private TextView noInputs;
     private TextView noOutputs;
+
+    private LinearLayout flagContainer;
 
     private ServiceDescription sd;
 
@@ -87,6 +91,8 @@ public class FragmentComponent extends Fragment {
 
         noInputs = (TextView) root.findViewById(R.id.component_no_inputs);
         noOutputs = (TextView) root.findViewById(R.id.component_no_outputs);
+
+        flagContainer = (LinearLayout) root.findViewById(R.id.flag_container);
 
         if (sd != null) {
             setupPage();
@@ -146,28 +152,26 @@ public class FragmentComponent extends Fragment {
         sd = registry.getServiceDescription(className);
     }
 
+    // TODO There's a bug where setup page isn't being called
+
     private void setupPage() {
 
         componentName.setText(sd.getName());
         componentDescription.setText(sd.getDescription());
 
-//        developerName.setText(service.app().getDeveloper());
+        LayoutInflater vi = getActivity().getLayoutInflater();
+        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, true);
 
-//        if (sd.getServiceType() != Constants.ServiceType.REMOTE) {
-
-        if (sd.getApp() == null)
+        if (sd.getApp() == null) {
             appName.setText("");
-        else
+        } else {
             appName.setText(sd.getApp().getName());
+        }
 
         if (sd.getApp() != null) {
             appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
             appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
         }
-//        } else {
-//            appName.setVisibility(View.GONE);
-//            appIcon.setVisibility(View.GONE);
-//        }
 
         ArrayList<IODescription> inputs = sd.getInputs();
         if (inputs == null || inputs.size() == 0) {
@@ -205,6 +209,11 @@ public class FragmentComponent extends Fragment {
                 }
             }
         });
+
+        if (sd.getApp().getPackageName().contains("com.appglue")) {
+            launchAppButton.setTextColor(getResources().getColor(R.color.hexCCC));
+            launchAppButton.setEnabled(false);
+        }
 
         viewAppButton.setOnClickListener(new View.OnClickListener() {
             @Override

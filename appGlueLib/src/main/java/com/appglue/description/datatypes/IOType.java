@@ -14,7 +14,10 @@ public abstract class IOType
 	protected String className;
 
     protected Sensitivity sensitivity;
+
     protected boolean acceptsManual;
+    protected int manualEditTextType = -1;
+
     protected boolean manualLookup;
 
     enum Sensitivity {
@@ -23,8 +26,7 @@ public abstract class IOType
         PRIVATE
     }
 
-	public IOType()
-	{
+	public IOType() {
 		this.id = -1;
 		this.name = "";
         this.sensitivity = Sensitivity.NORMAL;
@@ -32,18 +34,17 @@ public abstract class IOType
         this.manualLookup = false;
 	}
 	
-	public IOType(String name, String className, boolean acceptsManual, boolean manualLookup)
-	{
+	public IOType(String name, String className, boolean acceptsManual, boolean manualLookup, int manualEditTextType) {
         this();
 		this.name = name;
         this.className = className;
         this.acceptsManual = acceptsManual;
         this.manualLookup = manualLookup;
+        this.manualEditTextType = manualEditTextType;
 	}
 	
-	public IOType(long id, String name, String className, boolean acceptsManual, boolean manualLookup)
-	{
-		this(name, className, acceptsManual, manualLookup);
+	public IOType(long id, String name, String className, boolean acceptsManual, boolean manualLookup, int manualEditTextType) {
+		this(name, className, acceptsManual, manualLookup, manualEditTextType);
         this.id = id;
 	}
 
@@ -98,6 +99,10 @@ public abstract class IOType
         this.manualLookup = manualLookup;
     }
 
+    public int getManualEditTextType() {
+        return manualEditTextType;
+    }
+
     public boolean typeEquals(IOType t) {
         return className.equals(t.getClassName());
     }
@@ -137,6 +142,11 @@ public abstract class IOType
 
         if (this.acceptsManual != other.acceptsManualValues()) {
             if(LOG) Log.d(TAG, "IOType->Equals: manual accepted - [" + acceptsManual + " :: " + other.acceptsManualValues() + "]");
+            return false;
+        }
+
+        if (this.manualEditTextType != other.getManualEditTextType()) {
+            if(LOG) Log.d(TAG, "IOType->Equals: manual text type - [" + manualEditTextType + " :: " + other.getManualEditTextType() + "]");
             return false;
         }
 

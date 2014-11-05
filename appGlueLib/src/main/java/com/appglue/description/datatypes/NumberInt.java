@@ -1,16 +1,17 @@
 package com.appglue.description.datatypes;
 
 import android.os.Bundle;
+import android.text.InputType;
 
 public class NumberInt extends IOType
 {
-	public NumberInt()
-	{
+	public NumberInt() {
 		super();
 		this.name = "NumberInt";
 		this.className = NumberInt.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
         this.acceptsManual = true;
+        this.manualEditTextType = InputType.TYPE_CLASS_NUMBER;
 	}
 
     @Override

@@ -1,16 +1,17 @@
 package com.appglue.description.datatypes;
 
 import android.os.Bundle;
+import android.text.InputType;
 
 public class Text extends IOType
 {
-	public Text()
-	{
+	public Text() {
 		super();
 		this.name = "Text";
 		this.className = Text.class.getCanonicalName();
         this.sensitivity = Sensitivity.NORMAL;
         this.acceptsManual = true;
+        this.manualEditTextType = InputType.TYPE_CLASS_TEXT;
 	}
 
     @Override
