@@ -13,5 +13,8 @@
     <dimen name="wi_page_width">64dip</dimen>
     <dimen name="wi_pager_width">66dip</dimen>
 
+    <dimen name="category_margin">48dip</dimen>
+    <dimen name="category_height">64dip</dimen>
+
 
 </resources>

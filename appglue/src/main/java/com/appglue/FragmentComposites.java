@@ -101,6 +101,17 @@ public class FragmentComposites extends Fragment {
         super.onDetach();
     }
 
+    public boolean onBackPressed() {
+
+        if (mode == FragmentComposites.MODE_COMPOSITE) {
+            setMode(FragmentComposites.MODE_LIST);
+            redraw();
+            return true;
+        }
+
+        return false;
+    }
+
     public int getMode() {
         return mode;
     }

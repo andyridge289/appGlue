@@ -128,11 +128,21 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void onBackPressed() {
-        if (mode == MODE_CHOOSE && registry.getCurrent(false).size() == 0) {
 
-            super.onBackPressed();
-            return;
-        } else if (mode == MODE_CHOOSE || mode == MODE_FILTER) {
+        if (mode == MODE_CHOOSE) {
+
+            if (componentListFragment.onBackPressed()) {
+                redraw();
+                return;
+            } else if (registry.getCurrent(false).size() > 0) {
+                setMode(MODE_CREATE);
+                redraw();
+                return;
+            }
+            // If there's nothing in the thing then we should leave
+
+        } else if (mode == MODE_FILTER) {
+            // There's nothing special that should happen in the filter fragment I don't think
             setMode(MODE_CREATE);
             redraw();
             return;

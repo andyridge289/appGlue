@@ -105,7 +105,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheCategories();
 
         // Recreate the database every time for now while we are testing
-        recreate();
+//        recreate();
     }
 
     @Override
@@ -1765,7 +1765,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(NAME, t.getName());
 
         long id = db.insertOrThrow(TBL_TAG, null, cv);
-        Log.d(TAG, "Inserting tag [" + id + ": " + t.getName() + "]");
         t.setID(id);
     }
 
@@ -1793,7 +1792,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         c.moveToFirst(); // There better not be more than one...
 
         String name = c.getString(c.getColumnIndex(NAME));
-        Log.d(TAG, "DBUPDATE[getTag]: Creating tag " + id + ": " + name);
 
         return new Tag(id, name);
     }
@@ -1821,9 +1819,87 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         long tagId = c.getLong(c.getColumnIndex(ID));
         t.setID(tagId);
-        Log.d(TAG, "Set ID to " + tagId + " for " + t.getName());
-
         return t;
+    }
+
+    public ArrayList<Category> getCategories() {
+
+        ArrayList<Category> cats = new ArrayList<Category>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor c = db.query(TBL_CATEGORY, null, null, null, null, null, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor: get categories");
+            return cats;
+        }
+
+        if (c.getCount() == 0) {
+            return cats;
+        }
+
+        c.moveToFirst();
+
+        do {
+
+            long id = c.getLong(c.getColumnIndex(ID));
+            String name = c.getString(c.getColumnIndex(NAME));
+            cats.add(new Category(id, name));
+
+        } while (c.moveToNext());
+        c.close();
+
+        return cats;
+    }
+
+    public TST<ArrayList<ServiceDescription>> getSDsAcrossCategories() {
+
+        TST<ArrayList<ServiceDescription>> cats = new TST<ArrayList<ServiceDescription>>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String all = AppGlueLibrary.buildGetAllString(TBL_SD_HAS_CATEGORY, COLS_SD_HAS_CATEGORY);
+        all += ", " + AppGlueLibrary.buildGetAllString(TBL_CATEGORY, COLS_CATEGORY);
+
+        String query = String.format("SELECT %s FROM %s " +
+                        "LEFT JOIN %s on %s.%s = %s.%s",
+                        all, TBL_SD_HAS_CATEGORY,
+                        TBL_CATEGORY, TBL_SD_HAS_CATEGORY, CATEGORY_ID, TBL_CATEGORY, ID
+                );
+
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Dead cursor for getting categories");
+            return cats;
+        }
+
+        if (c.getCount() == 0) {
+            Log.d(TAG, "Empty cursor for getting categories");
+            return cats;
+        }
+
+        c.moveToFirst();
+
+        do {
+
+            String category = c.getString(c.getColumnIndex(TBL_CATEGORY + "_" + NAME));
+            String className = c.getString(c.getColumnIndex(TBL_SD_HAS_CATEGORY + "_" + CLASSNAME));
+            ServiceDescription sd = getServiceDescription(className);
+
+            if (cats.get(category) == null) {
+                ArrayList<ServiceDescription> sds = new ArrayList<ServiceDescription>();
+                sds.add(sd);
+                cats.put(category, sds);
+            } else {
+                cats.get(category).add(sd);
+            }
+
+        } while (c.moveToNext());
+        c.close();
+
+        return cats;
     }
 
     public boolean addCategoriesForSD(ServiceDescription sd) {
@@ -1904,8 +1980,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         long id = c.getLong(c.getColumnIndex(ID));
         cat.setID(id);
-        Log.d(TAG, "set category: [" + id + ": " + cat.getName() + "]");
-
         return cat;
     }
 
@@ -1917,7 +1991,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         long id = db.insertOrThrow(TBL_CATEGORY, null, cv);
         cat.setID(id);
-        Log.d(TAG, "Inserted category: [" + id + ": " + cat.getName() + "]");
     }
 
     public boolean addTagsForSD(ServiceDescription component) {
@@ -2129,7 +2202,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             long componentId = c.getLong(c.getColumnIndex(TBL_COMPONENT + "_" + ID));
             if (componentId < 1) {
-                Log.d(TAG, DatabaseUtils.dumpCurrentRowToString(c));
                 continue;
             }
 
@@ -2616,9 +2688,6 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
                     String sampleName = c.getString(c.getColumnIndex(TBL_IO_SAMPLE + "_" + NAME));
                     String strValue = c.getString(c.getColumnIndex(TBL_IO_SAMPLE + "_" + VALUE));
-
-                    if (sampleName == null)
-                        Log.d(TAG, "Getting sample " + sampleId + ": " + sampleName + DatabaseUtils.dumpCurrentRowToString(c));
 
                     // When we make the sample it might need to be converted to be the right type of object?
                     Object value = currentIO.getType().fromString(strValue);

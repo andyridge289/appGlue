@@ -13,10 +13,11 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.TAG;
 
-public class Category {
+public class Category implements Comparable {
 
-    public long id;
-    public String name;
+    private long id;
+    private String name;
+    public int count = 0;
 
     public Category(String name) {
         this(-1, name);
@@ -67,6 +68,14 @@ public class Category {
         }
 
         return true;
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        if (!(another instanceof Category))
+            return 0;
+
+        return ((Category) another).count - count;
     }
 
     public static class Factory {

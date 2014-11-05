@@ -7,7 +7,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.appglue.ComposableService;
+import com.appglue.TST;
 import com.appglue.description.AppDescription;
+import com.appglue.description.Category;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.Schedule;
 import com.appglue.engine.description.ComponentService;
@@ -361,6 +363,10 @@ public class Registry {
         return dbHandler.getServiceDescriptions(0);
     }
 
+    public TST<ArrayList<ServiceDescription>> getSDsAcrossCategories() {
+        return dbHandler.getSDsAcrossCategories();
+    }
+
     public ArrayList<Schedule> getScheduledComposites() {
         return dbHandler.getScheduledComposites();
     }
@@ -391,5 +397,9 @@ public class Registry {
 
     public Schedule getNextScheduledItem() {
         return dbHandler.getNextScheduledItem();
+    }
+
+    public ArrayList<Category> getCategories() {
+        return dbHandler.getCategories();
     }
 }

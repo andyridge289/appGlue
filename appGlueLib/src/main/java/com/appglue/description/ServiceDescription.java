@@ -351,6 +351,10 @@ public class ServiceDescription {
         }
         ServiceDescription other = (ServiceDescription) o;
 
+        if (!this.className.equals(other.getClassName())) {
+            return false;
+        }
+
         if (!this.name.equals(other.getName())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: name");
             return false;
@@ -363,11 +367,6 @@ public class ServiceDescription {
 
         if (this.flags != other.getFlags()) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
-            return false;
-        }
-
-        if (!this.className.equals(other.getClassName())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: class name");
             return false;
         }
 

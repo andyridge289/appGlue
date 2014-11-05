@@ -21,8 +21,10 @@ public class FragmentComponents extends Fragment {
     public static final int MODE_COMPONENT = 1;
     public static final int MODE_APP = 2;
 
+    FragmentComponentListPager listFragment;
     private FragmentComponent componentFragment;
     private FragmentApp appFragment;
+
 
     private String className = "";
     private String packageName = "";
@@ -103,6 +105,21 @@ public class FragmentComponents extends Fragment {
         super.onDetach();
     }
 
+    public boolean onBackPressed() {
+
+        if (mode == MODE_COMPONENT) {
+            setMode(MODE_LIST);
+            redraw();
+            return true;
+        } else if(mode == MODE_APP) {
+            setMode(MODE_COMPONENT);
+            redraw();
+            return true;
+        } else {
+            return listFragment.onBackPressed();
+        }
+    }
+
     public void setMode(int mode) {
         this.mode = mode;
     }
@@ -135,7 +152,7 @@ public class FragmentComponents extends Fragment {
 
             case MODE_LIST:
             default:
-                FragmentComponentListPager listFragment = (FragmentComponentListPager) FragmentComponentListPager.create(justList);
+                listFragment = (FragmentComponentListPager) FragmentComponentListPager.create(justList);
                 active = listFragment;
                 break;
         }

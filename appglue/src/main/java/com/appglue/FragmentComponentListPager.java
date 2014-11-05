@@ -52,6 +52,10 @@ public class FragmentComponentListPager extends Fragment {
 
         fragments = new ArrayList<FragmentComponentList>();
 
+        FragmentComponentListCategory categoryFragment = new FragmentComponentListCategory();
+        categoryFragment.setName("CATEGORIES");
+        fragments.add(categoryFragment);
+
         FragmentComponentListSearch searchFragment = new FragmentComponentListSearch();
         searchFragment.setName("SEARCH");
         fragments.add(searchFragment);
@@ -93,6 +97,7 @@ public class FragmentComponentListPager extends Fragment {
         adapter = new PagerAdapter(getChildFragmentManager());
         viewPager = (ViewPager) root.findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
+        viewPager.setOnPageChangeListener(adapter);
 
         return root;
     }
@@ -141,40 +146,16 @@ public class FragmentComponentListPager extends Fragment {
         super.onDetach();
     }
 
-//    private boolean justAList;
-//    private int position;
-//
-//    private ArrayList<FragmentComponentList> fragments;
-//
-//    public void onCreate(Bundle icicle) {
-//        super.onCreate(icicle);
-///
-//        Intent intent = this.getIntent();
-//
-//        // This is the stuff for story mode
-//        boolean triggersOnly = intent.getBooleanExtra(TRIGGERS_ONLY, false);
-//        position = intent.getIntExtra(POSITION, -1);
-//        Registry registry = Registry.getInstance(this);
-//
-//        boolean showMatching = false;
-//
-//        if (registry.getService() != null) {
-//            SparseArray<ComponentService> components = registry.getService().getComponents();
-//            showMatching = components.size() != 0;
-//        }
-//
+    public boolean onBackPressed() {
 
-//
-//        if (triggersOnly) {
-//            Bundle args = new Bundle();
-//            args.putBoolean(TRIGGERS_ONLY, true);
-//            FragmentComponentListLocal triggers = new FragmentComponentListLocal();
-//            triggers.setArguments(args);
-//            triggers.setName("TRIGGERS");
-//            fragments.add(triggers);
-//        } else {
-//
-//        viewPager.setCurrentItem(1);
+        Fragment current = adapter.getCurrent();
+
+        if (current instanceof FragmentComponentListCategory) {
+            return ((FragmentComponentListCategory) current).onBackPressed();
+        }
+
+        return false;
+    }
 
     public void showServiceDescription(String className) {
         ((FragmentComponents) getParentFragment()).showServiceDescription(className);
@@ -188,10 +169,12 @@ public class FragmentComponentListPager extends Fragment {
         return justList;
     }
 
-    private class PagerAdapter extends FragmentStatePagerAdapter {
+    private class PagerAdapter extends FragmentStatePagerAdapter implements ViewPager.OnPageChangeListener {
         public PagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
+        private int currentPage = 0;
 
         @Override
         public Fragment getItem(int i) {
@@ -213,5 +196,23 @@ public class FragmentComponentListPager extends Fragment {
             return fragments.get(position).getName();
         }
 
+        @Override
+        public void onPageScrolled(int i, float v, int i2) {
+
+        }
+
+        @Override
+        public void onPageSelected(int i) {
+            currentPage = i;
+        }
+
+        public Fragment getCurrent() {
+            return getItem(currentPage);
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int i) {
+
+        }
     }
 }

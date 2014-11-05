@@ -258,26 +258,16 @@ public class ActivityAppGlue extends ActionBarActivity
     @Override
     public void onBackPressed() {
         if (currentPage == Page.HOME.index) {
-            if (homeFragment.getMode() == FragmentComposites.MODE_COMPOSITE) {
-                homeFragment.setMode(FragmentComposites.MODE_LIST);
-                homeFragment.redraw();
+            if(homeFragment.onBackPressed()) {
                 invalidateOptionsMenu();
                 return;
             }
-        } else {
-            if (currentPage == Page.COMPONENTS.index &&
-                    componentFragment.getMode() != FragmentComponents.MODE_LIST) {
+        } else if (currentPage == Page.COMPONENTS.index) {
 
-                if (componentFragment.getMode() == FragmentComponents.MODE_COMPONENT) {
-                    componentFragment.setMode(FragmentComponents.MODE_LIST);
-                } else { // It should be the app page
-                    componentFragment.setMode(FragmentComponents.MODE_COMPONENT);
-                }
-
-                componentFragment.redraw();
+            if (componentFragment.onBackPressed()) {
                 invalidateOptionsMenu();
                 return;
-            } // If it's on the component list we just want to go back to the home page
+            }
 
             // TODO Find out where "ID is too small" comes from
             // TODO Find out where "JSON string to bundle Fail FUCKSTICKS" comes from
