@@ -571,6 +571,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 return null;
             }
 
+            // TODO The new flags need to be built into the preferences/orchestration
             // TODO Make the failure notification work
             // TODO Put in a check to see which components require what features in a device and don't enable those ones
 
