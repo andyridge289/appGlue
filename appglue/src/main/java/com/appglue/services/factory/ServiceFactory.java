@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -33,6 +34,8 @@ import com.appglue.services.triggers.BluetoothTrigger;
 import com.appglue.services.triggers.DeviceStorageTrigger;
 import com.appglue.services.triggers.DockedTrigger;
 import com.appglue.services.triggers.HeadphoneTrigger;
+import com.appglue.services.triggers.MobileConnectionTrigger;
+import com.appglue.services.triggers.NFCTrigger;
 import com.appglue.services.triggers.PowerTrigger;
 import com.appglue.services.triggers.ReceiveSMSTrigger;
 import com.appglue.services.triggers.RingerTrigger;
@@ -131,6 +134,8 @@ public class ServiceFactory {
         services.add(setupScreenStateTrigger());
         services.add(setupWifiTrigger());
         services.add(setupRingerStateTrigger());
+        services.add(setupMobileConnectionTrigger());
+        services.add(setupNFCTrigger());
 
         String all = setupServiceList(setupComposer(appDescription.iconLocation()), services);
         ArrayList<ServiceDescription> serviceList = ServiceDescription.parseServices(all, context, appDescription);
@@ -517,8 +522,6 @@ public class ServiceFactory {
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, powerJSON);
     }
 
-    // TODO Need to sort out the sample values for booleans in the filter thing
-
     private String setupBatteryTrigger() {
 
         ArrayList<IODescription> outputs = new ArrayList<IODescription>();
@@ -684,11 +687,11 @@ public class ServiceFactory {
     private String setupScreenStateTrigger() {
 
         ArrayList<IODescription> outputs = new ArrayList<IODescription>();
-        IOType set = IOType.Factory.getType(IOType.Factory.SET);
+        IOType set = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
         ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
-        samples.add(new SampleValue("Screen On", ScreenStateTrigger.SCREEN_ON));
-        samples.add(new SampleValue("Screen Off", ScreenStateTrigger.SCREEN_OFF));
+        samples.add(new SampleValue("Screen On", true));
+        samples.add(new SampleValue("Screen Off", false));
 
         outputs.add(new IODescription(-1, ScreenStateTrigger.STATE, "Screen state", set, "Whether the screen is now on or off", true, samples));
 
@@ -755,27 +758,65 @@ public class ServiceFactory {
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, ringerJSON);
     }
 
+    private String setupMobileConnectionTrigger() {
 
-    // Ringer mode
-    //	android.media.RINGER_MODE_CHANGED
-    //	android.media.VIBRATE_SETTING_CHANGED
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.BOOLEAN);
 
-    // Background data/network/whatever
-    //	android.net.conn.BACKGROUND_DATA_SETTING_CHANGED
-    //	android.net.conn.CONNECTIVITY_CHANGE
-    //	android.net.nsd.STATE_CHANGED
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("Connected", true));
+        samples.add(new SampleValue("Disconnected", false));
 
-    // Wifi
-    //	android.net.wifi.NETWORK_IDS_CHANGED
-    //	android.net.wifi.SCAN_RESULTS
-    //	android.net.wifi.STATE_CHANGE,  //	android.net.wifi.WIFI_STATE_CHANGED
+        outputs.add(new IODescription(-1, MobileConnectionTrigger.STATE, "Mobile network state", set, "The new state of the mobile network.", true, samples));
+
+        String[] tags = { "Mobile", "Network", "On", "Off" };
+        String[] cats = { TRIGGERS, NETWORK_UTILS };
+
+        String mobileJSON = Library.makeJSON(-1, "com.appglue", MobileConnectionTrigger.class.getCanonicalName(),
+                "Mobile Network Trigger", "-> Network",
+                "Signals that the mobile network has changed",
+                ComposableService.FLAG_TRIGGER,
+                0, null, outputs, tags, cats);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, mobileJSON);
+    }
+
+    private String setupNFCTrigger() {
+
+        ArrayList<IODescription> outputs = new ArrayList<IODescription>();
+        IOType set = IOType.Factory.getType(IOType.Factory.BOOLEAN);
+
+        ArrayList<SampleValue> samples = new ArrayList<SampleValue>();
+        samples.add(new SampleValue("On", true));
+        samples.add(new SampleValue("Off", false));
+
+        outputs.add(new IODescription(-1, NFCTrigger.STATE, "NFC state", set, "The new state of the NFC thing.", true, samples));
+
+        String[] tags = { "NFC", "On", "Off" };
+        String[] cats = { TRIGGERS, DEVICE_UTILS };
+        int version = Build.VERSION_CODES.JELLY_BEAN_MR2;
+
+        String nfcJSON = Library.makeJSON(-1, "com.appglue", NFCTrigger.class.getCanonicalName(),
+                "NFC Trigger", "-> NFC",
+                "Signals that the NFC thing has changed",
+                ComposableService.FLAG_TRIGGER,
+                version, null, outputs, tags, cats);
+
+        return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, nfcJSON);
+    }
 
     // NFC
-    //	android.nfc.action.ADAPTER_STATE_CHANGED
+    //
+
+    // Activity recognition trigger -- Vehicle,Bicycle,On foot,Still,Tilting
+    // Application launched or closed trigger
+    // Bluetooth connected to... trigger
+    // Call state trigger
+    // Cell tower trigger
+    // Location trigger
+    // Sensor trigger -- Proximity, orientation, accelleration
 
     // Atooma
-    // Phone mode
-    // Silent mode on/off
     // Internet
     // On/off
     // Time
@@ -861,13 +902,4 @@ public class ServiceFactory {
     // Weather tomorrow -> Just notify
     // Traffic problems -> Notification
     // Train problems -> Notification
-
-
-    // Time
-    //	android.intent.action.TIMEZONE_CHANGED
-    //	android.intent.action.TIME_SET
-    //	android.intent.action.TIME_TICK
-
-    // TODO Work out how to do this: file:///Users/andyridge/Code/android-sdk-macosx/docs/reference/android/content/BroadcastReceiver.html#onReceive(android.content.Context, android.content.Intent)
-    // TODO intent filters are here file:///Users/andyridge/Code/android-sdk-macosx/docs/reference/android/content/Intent.html#ACTION_AIRPLANE_MODE_CHANGED
 }

@@ -97,10 +97,10 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.appglue.services.triggers.NewPictureTrigger"
+            android:name=".services.triggers.MobileConnectionTrigger"
             android:exported="true" >
             <intent-filter android:priority="999" >
-                <action android:name="android.hardware.action.NEW_PICTURE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
         <receiver
@@ -177,6 +177,36 @@
                 <action android:name="android.media.RINGER_MODE_CHANGED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="com.appglue.services.triggers.NFCTrigger"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.nfc.action.ADAPTER_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <receiver
             android:name="com.appglue.serviceregistry.AppUninstalledReceiver"
             android:exported="true" >

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.appglue.description.SampleValue;
@@ -37,17 +38,19 @@ import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAGS;
 import static com.appglue.Constants.CATEGORIES;
+import static com.appglue.Constants.MIN_VERSION;
 
 public class Library {
     public static String makeJSON(int id, String packageName, String className, String name, String shortName, String description,
-                                  int flags, int price, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList, String[] tags, String[] categories) {
+                                  int flags, int minVersion, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList,
+                                  String[] tags, String[] categories) {
 
         String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", " +
                         "\"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", " +
-                        "\"%s\":\"%s\", \"%s\": %d, ",
+                        "\"%s\":\"%s\", \"%s\": %d, \"%s\": %d, ",
                 ID, id, PACKAGENAME, packageName,
                 CLASSNAME, className, NAME, name, SHORT_NAME, shortName,
-                DESCRIPTION, description, FLAGS, flags);
+                DESCRIPTION, description, FLAGS, flags, MIN_VERSION, Math.max(minVersion, Build.VERSION_CODES.JELLY_BEAN_MR2));
 
         inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
         outputList = outputList == null ? new ArrayList<IODescription>() : outputList;

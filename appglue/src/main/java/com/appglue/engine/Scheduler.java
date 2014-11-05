@@ -33,6 +33,11 @@ public class Scheduler extends BroadcastReceiver {
     private Registry registry;
     private Context context;
 
+    @SuppressWarnings("UnusedDeclaration")
+    public Scheduler() {
+
+    }
+
     public Scheduler(Context context) {
         this.context = context;
         registry = Registry.getInstance(context);
