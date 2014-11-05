@@ -4,6 +4,7 @@ import android.util.SparseArray;
 
 import java.lang.reflect.Method;
 
+@SuppressWarnings("UnusedDeclaration")
 public class FilterFactory {
     public static SparseArray<FilterValue> filters = new SparseArray<FilterValue>();
 

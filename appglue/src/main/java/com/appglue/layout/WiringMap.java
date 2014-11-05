@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -83,7 +84,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     private View filterFrame;
     private View noFilters;
     private ListView filterList;
-    private View addFilter;
     private TextView filterAndor;
     private FilterAdapter filterAdapter;
 
@@ -184,41 +184,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         this.second = second;
     }
 
-    public void removeConnection(Point p) {
-        for (int i = 0; i < connections.size(); i++) {
-            Point q = connections.get(i);
-
-            if (p.x == q.x && p.y == q.y) {
-                // Remove it and decrement so that we carry on checking. Although we could just return...
-                connections.remove(i);
-                i--;
-            }
-        }
-
-    }
-
-    public ArrayList<Point> getConnectionsOut(int outputIndex) {
-        ArrayList<Point> points = new ArrayList<Point>();
-
-        for (Point connection : connections) {
-            if (connection.x == outputIndex)
-                points.add(connection);
-        }
-
-        return points;
-    }
-
-    public ArrayList<Point> getConnectionsIn(int inputIndex) {
-        ArrayList<Point> points = new ArrayList<Point>();
-
-        for (Point connection : connections) {
-            if (connection.y == inputIndex)
-                points.add(connection);
-        }
-
-        return points;
-    }
-
     private boolean checkConnection(int oIndex, int iIndex) {
 
         for (Point p : connections) {
@@ -282,8 +247,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 } else {
                     filterAndor.setVisibility(View.GONE);
                 }
-            } else {
-//                Log.d(TAG, "Nope, no filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
             }
         } else {
             // There isn't a service here. Hide the list and the text that says NONE
@@ -323,7 +286,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             }
         }
 
-        addFilter = findViewById(R.id.wiring_filter_add);
+        View addFilter = findViewById(R.id.wiring_filter_add);
         addFilter.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -371,7 +334,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     }
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
+    protected void dispatchDraw(@NonNull Canvas canvas) {
         Paint paint = new Paint();
         paint.setDither(true);
         paint.setStyle(Paint.Style.STROKE);
@@ -1143,9 +1106,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 ioName.setVisibility(View.GONE);
                 ioType.setVisibility(View.GONE);
                 ioValue.setVisibility(View.GONE);
-            } else if (this.isExpanded()) {
-                // XXX Might need this
-            } else {
+            } else if (!this.isExpanded()) {
                 ioName.setVisibility(View.VISIBLE);
                 ioType.setVisibility(View.VISIBLE);
                 ioValue.setVisibility(View.VISIBLE);

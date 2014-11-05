@@ -14,7 +14,6 @@ public class AirplaneTrigger extends GenericTrigger
     @SuppressWarnings("deprecation")
     public void onReceive(Context context, Intent intent)
 	{
-		String action = intent.getAction();
 		Bundle data = new Bundle();
 
         if (!intent.getAction().equals(Intent.ACTION_AIRPLANE_MODE_CHANGED)) {
@@ -22,7 +21,7 @@ public class AirplaneTrigger extends GenericTrigger
             return;
         }
 
-        boolean mode = false;
+        boolean mode;
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             // only for gingerbread and newer versions

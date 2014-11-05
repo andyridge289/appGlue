@@ -205,7 +205,7 @@ public class FragmentSchedule extends Fragment {
                 compositeBg.setBackgroundResource(R.color.card_disabled);
             }
 
-            ImageView icon = (ImageView) v.findViewById(R.id.schedule_icon);
+            ImageView icon = (ImageView) v.findViewById(R.id.composite_icon);
             if (item.isEnabled()) {
                 icon.setBackgroundResource(R.drawable.ic_alarm_black_36dp);
             } else {

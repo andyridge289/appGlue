@@ -1,7 +1,6 @@
 package com.appglue;
 
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,15 +9,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
-import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.appglue.description.AppDescription;
 import com.appglue.engine.description.ComponentService;
-import com.appglue.engine.description.CompositeService;
 import com.appglue.layout.FloatingActionButton;
 import com.appglue.layout.VerticalTextView;
 import com.appglue.layout.WiringMap;

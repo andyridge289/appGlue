@@ -1,6 +1,5 @@
 package com.appglue;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -8,7 +7,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
 public class FragmentSettings extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private Activity activity;
 
     public static FragmentSettings create() {
         return new FragmentSettings();

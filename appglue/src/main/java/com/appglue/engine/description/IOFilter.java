@@ -18,7 +18,6 @@ public class IOFilter {
     private ArrayList<ServiceIO> ios; // References to the IOs that are contained within the filter
 
     private TST<ValueNode> values; // References fo the value nodes
-    private ArrayList<ValueNode> valueList; // This is mainly for the debugger to be honest
 
     private boolean enabled;
 
@@ -27,7 +26,6 @@ public class IOFilter {
         this.component = component;
         values = new TST<ValueNode>();
         ios = new ArrayList<ServiceIO>();
-        valueList = new ArrayList<ValueNode>();
         this.enabled = true;
     }
 
@@ -47,7 +45,6 @@ public class IOFilter {
             vn.values.add(value);
             ios.add(io);
             values.put(key, vn);
-            valueList.add(vn);
         } else {
             values.get(key).values.add(value);
         }
@@ -177,7 +174,6 @@ public class IOFilter {
                 ios.add(io);
             }
             values.put(key, vn);
-            valueList.add(vn);
             return vn;
         } else {
             return values.get(key);

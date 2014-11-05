@@ -3,6 +3,7 @@ package com.appglue.layout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
@@ -22,17 +23,9 @@ public class VerticalTextView extends TextView {
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VerticalTextView);
         rightDown = !a.getBoolean(R.styleable.VerticalTextView_face_right, true);
-
-//        if (Gravity.isVertical(gravity) && (gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.BOTTOM) {
-//            setGravity((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) | Gravity.TOP);
-//            rightDown = false;
-//        } else {
-//            rightDown = true;
-//        }
-
-
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(heightMeasureSpec, widthMeasureSpec);
@@ -45,7 +38,7 @@ public class VerticalTextView extends TextView {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         if (rightDown) {
             canvas.translate(getHeight(), 0);
             canvas.rotate(90);

@@ -4,9 +4,6 @@ import android.util.Log;
 
 import com.appglue.IODescription;
 import com.appglue.description.datatypes.IOType;
-import com.appglue.library.FilterFactory;
-
-import java.util.ArrayList;
 
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
@@ -58,12 +55,7 @@ public class ServiceIO {
     }
     public boolean hasValueOrConnection() {
 
-        if(this.value == null && this.connection == null) {
-            return false;
-        } else {
-            // One of them is set
-            return true;
-        }
+        return !(this.value == null && this.connection == null);
     }
 
     /**
@@ -73,14 +65,6 @@ public class ServiceIO {
      */
     public void setValue(IOValue value) {
         this.value = value;
-    }
-
-    public FilterFactory.FilterValue getCondition() {
-        if (this.value == null) {
-            return FilterFactory.NONE;
-        }
-
-        return value.getCondition();
     }
 
     public ServiceIO getConnection() {
@@ -97,10 +81,6 @@ public class ServiceIO {
 
     public IOType getType() {
         return this.getDescription().getType();
-    }
-
-    public String getTypeName() {
-        return getType().getClassName();
     }
 
     public IOValue getValue() {

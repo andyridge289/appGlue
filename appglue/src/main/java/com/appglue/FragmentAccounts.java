@@ -1,30 +1,13 @@
 package com.appglue;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.appglue.description.ServiceDescription;
-import com.appglue.library.LocalStorage;
-import com.appglue.serviceregistry.Registry;
-
-import java.util.ArrayList;
-
-import static com.appglue.Constants.CLASSNAME;
 
 public class FragmentAccounts extends Fragment {
-
-    private Registry registry;
 
     public static Fragment create() {
         return new FragmentAccounts();
@@ -38,8 +21,6 @@ public class FragmentAccounts extends Fragment {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        registry = Registry.getInstance(getActivity());
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {

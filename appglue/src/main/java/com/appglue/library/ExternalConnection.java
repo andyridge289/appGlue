@@ -9,23 +9,15 @@ import java.util.ArrayList;
 public class ExternalConnection {
     private static ExternalConnection external = null;
 
-    private ArrayList<ServiceDescription> externalServices;
-
     private ExternalConnection() {
-        externalServices = new ArrayList<ServiceDescription>();
     }
 
-    public ArrayList<ServiceDescription> getExternalServices() {
-        return externalServices;
-    }
-
+    @SuppressWarnings("UnusedDeclaration")
     class Async extends AsyncTask<String, Void, ArrayList<ServiceDescription>> {
         private final int TYPE_SEARCH = 0;
         private final int TYPE_LOOKUP = 1;
 
-//		private String keyword;
-//		private ServiceDescription description;
-//		private int type;
+
 //		
         public Async(ServiceDescription description) {
 //	/		this.description = description;

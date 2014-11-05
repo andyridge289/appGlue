@@ -369,14 +369,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             results.add(filterTestValue(actualValue, filterValue));
         }
 
-        String s = "";
-        for (boolean b : results) {
-            s += b + " ";
-        }
-        boolean b = conditionCheck(condition, results);
-//        Log.d(TAG, String.format("%s[%s] = %b", condition ? "AND" : "OR", s, b));
-
-        return b;
+        return conditionCheck(condition, results);
     }
 
     private boolean filterTestValue(Object actualValue, IOValue ioValue) throws OrchestrationException {
@@ -401,9 +394,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         try {
             // This returns whether it PASSES the test, so we need to filter it if it doesn't
-            boolean b = ((Boolean) fv.method.invoke(null, actualValue, expectedValue));
-//            Log.d(TAG, String.format("%s(%s, %s)=%b", fv.method.getName(), actualValue, expectedValue, b));
-            return b;
+            return ((Boolean) fv.method.invoke(null, actualValue, expectedValue));
 
         } catch (IllegalArgumentException e) {
             throw new OrchestrationException("Wrong arguments passed to filter method: " +

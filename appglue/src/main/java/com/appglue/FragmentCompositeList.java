@@ -57,6 +57,10 @@ public class FragmentCompositeList extends Fragment {
     private Registry registry;
     private LocalStorage localStorage;
 
+    private View run;
+    private View schedule;
+    private View shortcut;
+
     private ArrayList<CompositeService> composites;
 
     public static Fragment create() {
@@ -99,7 +103,7 @@ public class FragmentCompositeList extends Fragment {
 
         final ActivityAppGlue aag = ((ActivityAppGlue) getActivity());
 
-        View run = root.findViewById(R.id.composite_run);
+        run = root.findViewById(R.id.composite_run);
         run.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,7 +112,7 @@ public class FragmentCompositeList extends Fragment {
             }
         });
 
-        View schedule = root.findViewById(R.id.composite_schedule);
+        schedule = root.findViewById(R.id.composite_schedule);
         schedule.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,7 +130,7 @@ public class FragmentCompositeList extends Fragment {
             }
         });
 
-        View shortcut = root.findViewById(R.id.composite_shortcut);
+        shortcut = root.findViewById(R.id.composite_shortcut);
         shortcut.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,7 +272,7 @@ public class FragmentCompositeList extends Fragment {
             else
                 nameText.setText(item.getName());
 
-            ImageView icon = (ImageView) v.findViewById(R.id.schedule_icon);
+            ImageView icon = (ImageView) v.findViewById(R.id.composite_icon);
             SparseArray<ComponentService> components = item.getComponents();
 
             AppDescription app = components.get(0).getDescription().getApp();
@@ -300,19 +304,7 @@ public class FragmentCompositeList extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (item.isEnabled()) {
-                        if (selectedIndex == -1) {
-                            addFab.hide(true);
-                            selectedIndex = position;
-                            contextToolbar.setVisibility(View.VISIBLE);
-                            contextToolbar.setBackgroundResource(item.getColour(true));
-                        } else if (selectedIndex == position) {
-                            addFab.hide(false);
-                            contextToolbar.setVisibility(View.GONE);
-                            selectedIndex = -1;
-                        } else {
-                            selectedIndex = position;
-                            contextToolbar.setBackgroundResource(item.getColour(true));
-                        }
+                        selectedIndex = showToolbar(selectedIndex, position, item);
                         notifyDataSetChanged();
                     } else {
                         // If they click an unselected one then take everything back
@@ -398,11 +390,7 @@ public class FragmentCompositeList extends Fragment {
             v.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (expanded[position]) {
-                        expanded[position] = false;
-                    } else {
-                        expanded[position] = true;
-                    }
+                    expanded[position] = !expanded[position];
 
                     notifyDataSetChanged();
                     return true;
@@ -419,6 +407,34 @@ public class FragmentCompositeList extends Fragment {
 
             return composites.get(selectedIndex);
         }
+    }
+
+    private int showToolbar(int selectedIndex, int position, CompositeService composite) {
+        if (selectedIndex == -1) {
+            addFab.hide(true);
+            selectedIndex = position;
+            contextToolbar.setVisibility(View.VISIBLE);
+            contextToolbar.setBackgroundResource(composite.getColour(true));
+        } else if (selectedIndex == position) {
+            addFab.hide(false);
+            contextToolbar.setVisibility(View.GONE);
+            selectedIndex = -1;
+        } else {
+            selectedIndex = position;
+            contextToolbar.setBackgroundResource(composite.getColour(true));
+        }
+
+        if (composite.containsTrigger()) {
+            schedule.setVisibility(View.GONE);
+            shortcut.setVisibility(View.GONE);
+            run.setVisibility(View.GONE);
+        } else {
+            schedule.setVisibility(View.VISIBLE);
+            shortcut.setVisibility(View.VISIBLE);
+            run.setVisibility(View.VISIBLE);
+        }
+
+        return selectedIndex;
     }
 
     private class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
@@ -454,8 +470,7 @@ public class FragmentCompositeList extends Fragment {
                 }
             }
 
-            ArrayList<CompositeService> composites = registry.getComposites();
-            return composites;
+            return registry.getComposites();
         }
 
         protected void onPostExecute(ArrayList<CompositeService> composites) {

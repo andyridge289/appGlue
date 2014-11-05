@@ -60,8 +60,7 @@ public class FragmentComposite extends Fragment {
 
     private Registry registry;
     private LocalStorage localStorage;
-
-    private boolean editMode = false;
+    private boolean normalMode = true;
 
     public FragmentComposite() {
 
@@ -104,7 +103,6 @@ public class FragmentComposite extends Fragment {
         compositeDescription = (TextView) root.findViewById(R.id.composite_description);
 
         enabledSwitch = (SwitchCompat) root.findViewById(R.id.enabled_switch);
-        CheckBox runningCheck = (CheckBox) root.findViewById(R.id.composite_running);
 
         contextBar = (LinearLayout) root.findViewById(R.id.context_toolbar);
         runButton = root.findViewById(R.id.composite_run);
@@ -296,10 +294,6 @@ public class FragmentComposite extends Fragment {
         return composite.getName();
     }
 
-    public boolean getEditMode() {
-        return editMode;
-    }
-
     public void setMode(boolean normalMode) {
         if (normalMode) {
             composite.setName(editName.getText().toString());
@@ -323,6 +317,12 @@ public class FragmentComposite extends Fragment {
             nameEditRow.setVisibility(View.VISIBLE);
             editDescription.setVisibility(View.VISIBLE);
         }
+
+        this.normalMode = normalMode;
+    }
+
+    public boolean isEditingComposite() {
+        return !this.normalMode;
     }
 
     private class CompositeComponentAdapter extends ArrayAdapter<ComponentService> {

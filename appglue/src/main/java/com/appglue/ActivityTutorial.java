@@ -8,17 +8,13 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.appglue.engine.description.ComponentService;
-import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 
 import java.util.ArrayList;
@@ -28,9 +24,6 @@ public class ActivityTutorial extends ActionBarActivity implements ViewPager.OnP
 
     private ArrayList<Fragment> fragments;
     private ArrayList<View> navs;
-
-    private Toolbar toolbar;
-    private LinearLayout navContainer;
 
     private int index;
 
@@ -50,7 +43,7 @@ public class ActivityTutorial extends ActionBarActivity implements ViewPager.OnP
             fragments.add(FragmentTutorial.create(i));
         }
 
-        toolbar = (Toolbar) findViewById(R.id.action_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.action_bar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundResource(R.color.hex444);
         toolbar.setTitle("Tutorial & Disclaimer");
@@ -76,8 +69,9 @@ public class ActivityTutorial extends ActionBarActivity implements ViewPager.OnP
         });
 
         navs = new ArrayList<View>();
-        navContainer = (LinearLayout) findViewById(R.id.nav_container);
-        for (int i = 0; i < fragments.size(); i++) {
+        LinearLayout navContainer = (LinearLayout) findViewById(R.id.nav_container);
+        //noinspection UnusedDeclaration
+        for (Fragment fragment : fragments) {
 
             LayoutInflater vi = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View v = vi.inflate(R.layout.nav, null);

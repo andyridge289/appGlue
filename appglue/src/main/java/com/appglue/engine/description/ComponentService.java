@@ -108,9 +108,7 @@ public class ComponentService {
     }
 
     public boolean hasInputs() {
-        if (inputs == null)
-            return false;
-        return inputs.size() > 0;
+        return inputs != null && inputs.size() > 0;
     }
     public ArrayList<ServiceIO> getInputs() {
         return inputs;
@@ -120,9 +118,9 @@ public class ComponentService {
         ArrayList<ServiceIO> in = new ArrayList<ServiceIO>();
 
         // Hopefully this should preserve the order
-        for (int i = 0; i < inputs.size(); i++) {
-            if (inputs.get(i).getConnection() == null && inputs.get(i).getValue() == null) {
-                in.add(inputs.get(i));
+        for (ServiceIO input : inputs) {
+            if (input.getConnection() == null && input.getValue() == null) {
+                in.add(input);
             }
         }
 
@@ -146,9 +144,7 @@ public class ComponentService {
     }
 
     public boolean hasOutputs() {
-        if (outputs == null)
-            return false;
-        return outputs.size() > 0;
+        return outputs != null && outputs.size() > 0;
     }
     public ArrayList<ServiceIO> getOutputs() {
         return outputs;
@@ -158,9 +154,9 @@ public class ComponentService {
         ArrayList<ServiceIO> out = new ArrayList<ServiceIO>();
 
         // Hopefully this should preserve the order
-        for (int i = 0; i < outputs.size(); i++) {
-            if (outputs.get(i).getConnection() == null) {
-                out.add(outputs.get(i));
+        for (ServiceIO output : outputs) {
+            if (output.getConnection() == null) {
+                out.add(output);
             }
         }
 

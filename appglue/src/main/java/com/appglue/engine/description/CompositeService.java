@@ -7,7 +7,6 @@ import android.util.SparseArray;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
-import com.appglue.description.ServiceDescription;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -175,22 +174,6 @@ public class CompositeService {
         this.name = name;
     }
 
-    public void addAtEnd(ComponentService component) {
-
-        this.components.put(components.size(), component);
-        component.setComposite(this);
-        if (LOG)
-            Log.d(TAG, String.format("Adding %s to %s at end (%d)", component.getDescription().getClassName(), name, components.size() - 1));
-    }
-
-    public void addComponent(ServiceDescription sd, int position) {
-        ComponentService component = new ComponentService(sd, position);
-        synchronized (lock) {
-            components.put(position, component);
-            component.setComposite(this);
-        }
-    }
-
     public void addComponent(ComponentService component, int position) {
 
         if (components.get(position) == null) {
@@ -207,10 +190,6 @@ public class CompositeService {
             components.put(position, component);
             addComponent(replacee, position + 1);
         }
-    }
-
-    public boolean containsComponent(long componentId) {
-        return this.getComponent(componentId) != null;
     }
 
     public String getDescription() {
@@ -430,8 +409,8 @@ public class CompositeService {
     public boolean canEnable() {
         ArrayList<ServiceIO> m = this.getMandatoryInputs();
         boolean allSet = true;
-        for (int i = 0; i < m.size(); i++) {
-            if (m.get(i).getValue() == null && m.get(i).getConnection() == null) {
+        for (ServiceIO aM : m) {
+            if (aM.getValue() == null && aM.getConnection() == null) {
                 allSet = false;
                 break;
             }

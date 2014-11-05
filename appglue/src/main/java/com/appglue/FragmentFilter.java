@@ -59,7 +59,7 @@ public class FragmentFilter extends Fragment {
             component = cs.getComponent(getArguments().getLong(COMPONENT_ID));
 
             if (component == null) {
-
+                return;
             }
 
             long filterId = getArguments().getLong(FILTER_ID);
@@ -202,5 +202,9 @@ public class FragmentFilter extends Fragment {
         // Need to remove it from the list of values so that it doesn't get told to redraw
         filterViews.get(io.getID()).remove(v);
         ((LinearLayout) v.getParent()).removeView(v);
+    }
+
+    public boolean onBackPressed() {
+        return false;
     }
 }

@@ -13,7 +13,6 @@ import com.appglue.description.ServiceDescription;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.OrchestrationServiceConnection;
 import com.appglue.engine.Schedule;
-import com.appglue.engine.Scheduler;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
 import com.appglue.library.AppGlueLibrary;
@@ -31,9 +30,6 @@ import java.util.GregorianCalendar;
 import static com.appglue.Constants.TAG;
 
 public class EngineTest extends ServiceTestCase<OrchestrationService> {
-
-    public static boolean executeFinished = false;
-    public static boolean timerFinished = false;
 
     public EngineTest() {
         super(OrchestrationService.class);
@@ -65,9 +61,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         Method invokeMethod = TubeService.class.getDeclaredMethod("processOutput", String.class);
         invokeMethod.setAccessible(true);
         ArrayList<Bundle> tubeData = (ArrayList<Bundle>) invokeMethod.invoke(ts, out);
-
-//        for(Bundle b : tubeData)
-//            Log.d(TAG, AppGlueLibrary.bundleToString(b));
 
         Bundle data = new Bundle();
         data.putParcelableArrayList(ComposableService.INPUT, tubeData);
@@ -269,7 +262,6 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
     public void testSchedule() throws Exception {
 
         Registry registry = Registry.getInstance(getContext());
-        Scheduler sch = new Scheduler(getContext());
 
         CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
         registry.addComposite(fred);

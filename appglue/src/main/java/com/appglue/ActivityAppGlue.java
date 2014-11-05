@@ -1,5 +1,6 @@
 package com.appglue;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ComponentName;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,17 +17,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.appglue.description.ServiceDescription;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
-import com.appglue.serviceregistry.Registry;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -71,7 +70,6 @@ public class ActivityAppGlue extends ActionBarActivity
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
     private static final String PAGE = "page";
-    private static final String COMPOSITE_PAGE_VIEW = "composite_page_view";
     private static final String COMPOSITE_MODE = "composite_mode";
     private static final String COMPONENT_MODE = "component_mode";
 
@@ -84,13 +82,12 @@ public class ActivityAppGlue extends ActionBarActivity
     private CharSequence mTitle;
     private int currentPage;
 
+    @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_app_glue);
-
-        Registry registry = Registry.getInstance(this);
 
         toolbar = (Toolbar) findViewById(R.id.my_awesome_toolbar);
         setSupportActionBar(toolbar);
@@ -312,6 +309,7 @@ public class ActivityAppGlue extends ActionBarActivity
         }
 
         // Return a Dialog to the DialogFragment.
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             return mDialog;
@@ -375,9 +373,9 @@ public class ActivityAppGlue extends ActionBarActivity
         } else if (currentPage == Page.COMPONENTS.index) {
             background = R.color.component;
             if (componentFragment.getMode() == FragmentComponents.MODE_COMPONENT) {
-                ComponentService component = componentFragment.getComponent();
-                if (component != null) {
-                    title = "Component: " + component.getDescription().getName();
+                ServiceDescription sd = componentFragment.getComponent();
+                if (sd != null) {
+                    title = "Component: " + sd.getName();
                 } else {
                     title = "Component";
                 }
@@ -405,45 +403,6 @@ public class ActivityAppGlue extends ActionBarActivity
         }
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_activity_app_glue, container, false);
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((ActivityAppGlue) activity).onSectionAttached(
-                    Page.values()[getArguments().getInt(ARG_SECTION_NUMBER)]);
-        }
     }
 
     void run(CompositeService cs) {

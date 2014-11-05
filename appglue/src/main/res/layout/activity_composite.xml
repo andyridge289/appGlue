@@ -13,7 +13,7 @@
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
-            android:id="@+id/schedule_icon"
+            android:id="@+id/composite_icon"
             android:contentDescription="@string/component_icon_contdesc"
             android:layout_width="48dip"
             android:layout_height="48dip"

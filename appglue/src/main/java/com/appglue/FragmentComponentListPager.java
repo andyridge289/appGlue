@@ -19,7 +19,6 @@ import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 public class FragmentComponentListPager extends Fragment {
 
     private PagerAdapter adapter;
-    private ViewPager viewPager;
 
     private boolean justList = false;
 
@@ -95,7 +94,7 @@ public class FragmentComponentListPager extends Fragment {
         fragments.add(all);
 
         adapter = new PagerAdapter(getChildFragmentManager());
-        viewPager = (ViewPager) root.findViewById(R.id.pager);
+        ViewPager viewPager = (ViewPager) root.findViewById(R.id.pager);
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(adapter);
 
@@ -150,19 +149,12 @@ public class FragmentComponentListPager extends Fragment {
 
         Fragment current = adapter.getCurrent();
 
-        if (current instanceof FragmentComponentListCategory) {
-            return ((FragmentComponentListCategory) current).onBackPressed();
-        }
+        return current instanceof FragmentComponentListCategory && ((FragmentComponentListCategory) current).onBackPressed();
 
-        return false;
     }
 
     public void showServiceDescription(String className) {
         ((FragmentComponents) getParentFragment()).showServiceDescription(className);
-    }
-
-    public Fragment getCurrentFragment() {
-        return adapter.getItem(viewPager.getCurrentItem());
     }
 
     public boolean isJustList() {

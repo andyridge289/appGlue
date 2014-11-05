@@ -235,10 +235,6 @@ public class Schedule {
         return type;
     }
 
-    public int getScheduleIndex() {
-        return type.index;
-    }
-
     public boolean isEnabled() {
         return enabled;
     }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.appglue.description.ServiceDescription;
 import com.appglue.engine.description.ComponentService;
 
 import static com.appglue.Constants.CLASSNAME;
@@ -199,7 +200,7 @@ public class FragmentComponents extends Fragment {
         }
     }
 
-    public ComponentService getComponent() {
+    public ServiceDescription getComponent() {
         if (componentFragment != null) {
             return componentFragment.getComponent();
         }

@@ -47,7 +47,6 @@ public class FragmentComponent extends Fragment {
     private ServiceDescription sd;
 
     private Registry registry;
-    private ComponentService component;
 
     public static Fragment create() {
         return new FragmentComponent();
@@ -213,45 +212,14 @@ public class FragmentComponent extends Fragment {
                 ((FragmentComponents) getParentFragment()).showApp(sd.getApp().getPackageName());
             }
         });
-
-//        final ArrayList<CompositeService> examples = registry.getExamples(service.getClassName());
-//        LayoutInflater inflater = this.getLayoutInflater();
-//
-//        LinearLayout exampleContainer = (LinearLayout) findViewById(R.id.component_eg_container);
-//        for (int i = 0; i < examples.size(); i++) {
-//            View v = inflater.inflate(R.layout.example_composite, exampleContainer);
-//            final int index = i;
-//
-//            if (v != null) {
-//                ((TextView) v.findViewById(R.id.example_name)).setText("Example " + (i + 1));
-//                v.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent intent = new Intent(ActivityComponent.this, AdctivityComposite.class);
-//                        intent.putExtra(ID, examples.get(index).getID());
-//                        startActivity(intent);
-//                    }
-//                });
-//                exampleContainer.addView(v);
-//
-//                if (i < examples.size() - 1) {
-//                    inflater.inflate(R.layout.spacer_horiz, exampleContainer);
-//                }
-//            }
-//        }
-//
-//        if (examples.size() == 0) {
-//            findViewById(R.id.scroll_eg_container).setVisibility(View.GONE);
-//            findViewById(R.id.eg_none).setVisibility(View.VISIBLE);
-//        }
     }
 
     public String getName() {
         return sd.getName();
     }
 
-    public ComponentService getComponent() {
-        return component;
+    public ServiceDescription getComponent() {
+        return sd;
     }
 
     private class IOAdapter extends ArrayAdapter<IODescription> {

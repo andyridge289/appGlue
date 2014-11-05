@@ -6,15 +6,11 @@ import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -27,9 +23,6 @@ import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 
 public class FragmentComponentListCategory extends FragmentComponentList {

@@ -2,10 +2,6 @@ package com.appglue.library;
 
 public class Tuple <A,B> {
 
-    public static <P, Q> Tuple<P, Q> makeTuple(P p, Q q) {
-        return new Tuple<P, Q>(p, q);
-    }
-
     public final A a;
     public final B b;
 
@@ -57,7 +53,7 @@ public class Tuple <A,B> {
         return classA.isInstance(a) && classB.isInstance(b);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "UnusedDeclaration"})
     public static <P, Q> Tuple<P, Q> cast(Tuple<?, ?> Tuple, Class<P> pClass, Class<Q> qClass) {
 
         if (Tuple.isInstance(pClass, qClass)) {

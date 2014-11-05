@@ -36,8 +36,6 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     public AdapterComponentList(Context context, ArrayList<ServiceDescription> items, FragmentComponentListPager parentFragment) {
         super(context, R.layout.list_item_component, items);
 
-        LocalStorage localStorage = LocalStorage.getInstance();
-
         this.parent = (Activity) context;
         this.parentFragment = parentFragment;
 

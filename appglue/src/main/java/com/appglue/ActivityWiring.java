@@ -41,8 +41,6 @@ public class ActivityWiring extends ActionBarActivity {
     public static final int CONTACT_PICKER_VALUE = 1001;
     public static final int CONTACT_PICKER_FILTER = 1002;
 
-    private CharSequence mTitle;
-
     private long componentId = -1;
     private long filterId = -1;
 
@@ -85,10 +83,6 @@ public class ActivityWiring extends ActionBarActivity {
         this.mode = mode;
     }
 
-    public int getMode() {
-        return mode;
-    }
-
     public void redraw() {
         Fragment attach = null;
 
@@ -96,21 +90,17 @@ public class ActivityWiring extends ActionBarActivity {
 
         switch (mode) {
             case MODE_CREATE:
-                mTitle = "Create glued app";
-
                 if (wiringFragment == null)
                     wiringFragment = (FragmentWiringPager) FragmentWiringPager.create(composite.getID(), pagerPosition);
                 attach = wiringFragment;
                 break;
 
             case MODE_CHOOSE:
-                mTitle = "Choose a component";
                 componentListFragment = (FragmentComponentListPager) FragmentComponentListPager.create(false);
                 attach = componentListFragment;
                 break;
 
             case MODE_FILTER:
-                mTitle = "Choose filter values";
                 filterFragment = (FragmentFilter) FragmentFilter.create(componentId, filterId);
                 attach = filterFragment;
                 break;
@@ -143,6 +133,11 @@ public class ActivityWiring extends ActionBarActivity {
 
         } else if (mode == MODE_FILTER) {
             // There's nothing special that should happen in the filter fragment I don't think
+            if (filterFragment.onBackPressed()) {
+                redraw();
+                return;
+            }
+
             setMode(MODE_CREATE);
             redraw();
             return;
@@ -308,14 +303,6 @@ public class ActivityWiring extends ActionBarActivity {
             return new SparseArray<ComponentService>();
     }
 
-    public ArrayList<ComponentService> getComponentsAL() {
-        CompositeService composite = registry.getCurrent(false);
-        if (composite != null)
-            return composite.getComponentsAL();
-        else
-            return new ArrayList<ComponentService>();
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -376,7 +363,7 @@ public class ActivityWiring extends ActionBarActivity {
     }
 
     public void setStatus(String status) {
-
+        // TODO Need to do something with this at some point, or just remove it entirely?
     }
 
     public void chooseComponentFromList(boolean first, int currentPagerPosition) {

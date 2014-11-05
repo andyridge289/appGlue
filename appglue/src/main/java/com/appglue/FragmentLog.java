@@ -62,6 +62,9 @@ public class FragmentLog extends Fragment {
         return root;
     }
 
+    // TODO Do we want to put the time that the component started?
+    // TODO And maybe show them the data that was given if they click on one of the components?
+
     @Override
     public void onActivityCreated(Bundle icicle) {
         super.onActivityCreated(icicle);

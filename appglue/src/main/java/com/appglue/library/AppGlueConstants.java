@@ -71,26 +71,9 @@ public class AppGlueConstants {
     public static final String JUST_A_LIST = "atomic_list";
 
     public static final String TRIGGERS_ONLY = "triggers_only";
-    public static final String NO_TRIGGERS = "no_triggers";
 
     public static final int BASE_ALPHA = 2;
     public static final int FULL_ALPHA = 360;
-
-    // Values for calling activities and such
-    public static final int SERVICE_REQUEST = 100;
-    public static final int PRE_EXEC_PARAMS = 101;
-    public static final int EDIT_PARAMS = 102;
-    public static final int WIRE_COMPONENTS = 103;
-
-    public static final int MARKET_LOOKUP = 104;
-    public static final int SUCCESS = 105;
-    public static final int BACK_PRESSED = 106;
-    public static final int NOT_SET = 107;
-
-    public static final int PLAY_SERVICES = 108;
-    public static final int STORY_MODE = 109;
-
-    public static final String SCHEDULE_ID = "schedule_id";
 
     public static final FilterValue[] FILTER_STRING_VALUES = new FilterValue[]{
             FilterFactory.STR_EQUALS, FilterFactory.STR_NOTEQUALS, FilterFactory.STR_CONTAINS

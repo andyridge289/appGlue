@@ -35,7 +35,6 @@ import static com.appglue.Constants.TAG;
 
 public class DialogSchedule extends AlertDialog {
 
-    private FragmentSchedule fragment;
     private Schedule item;
 
     private View intervalButton;

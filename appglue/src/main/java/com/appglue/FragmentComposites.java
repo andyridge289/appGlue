@@ -189,16 +189,18 @@ public class FragmentComposites extends Fragment {
         return null;
     }
 
-    public boolean isEditingComposite() {
-        if (compositeFragment != null) {
-            return compositeFragment.getEditMode();
-        }
-        return false;
-    }
-
     public void setCompositeMode(boolean normalMode) {
         if (compositeFragment != null) {
             compositeFragment.setMode(normalMode);
         }
     }
+
+    public boolean isEditingComposite() {
+        if (compositeFragment != null) {
+            return compositeFragment.isEditingComposite();
+        }
+        return false;
+    }
+
+    // TODO need to put the on back pressed stuff in here too I guess
 }

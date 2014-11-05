@@ -8,7 +8,6 @@ public class LogItem {
     public static final int SUCCESS = 0x1;
 
     public static final int FILTER = 0x1;
-    public static final int COMPOSITE_STOP = 0x2;
 
     public static final int COMPONENT_FAIL = 0x3; // IF the component crashes
     public static final int MESSAGE_FAIL = 0x4; // IF the message passing fails

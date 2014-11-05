@@ -73,8 +73,4 @@ public class FragmentComponentList extends Fragment {
     public String getName() {
         return name;
     }
-
-    public boolean onBackPressed() {
-        return false;
-    }
 }

@@ -29,14 +29,9 @@ import static com.appglue.library.AppGlueConstants.TEST;
 
 public class Scheduler extends BroadcastReceiver {
 
-    private static Scheduler instance;
 
     private Registry registry;
     private Context context;
-
-    public Scheduler() {
-
-    }
 
     public Scheduler(Context context) {
         this.context = context;

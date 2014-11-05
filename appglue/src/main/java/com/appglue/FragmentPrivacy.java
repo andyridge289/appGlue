@@ -1,20 +1,12 @@
 package com.appglue;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.TextView;
-
-import static com.appglue.Constants.INDEX;
 
 public class FragmentPrivacy extends Fragment {
-
-    private Activity activity;
-
     public static FragmentPrivacy create() {
         return new FragmentPrivacy();
     }

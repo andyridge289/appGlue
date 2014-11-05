@@ -24,7 +24,6 @@ public class TubeService extends ComposableService {
     public static final IOType imageDrawable = IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE);
 
     public static final String TAG_LINES = "lines";
-    public static final String TAG_UPDATE = "update";
     public static final String TAG_NAME = "name";
     public static final String TAG_STATUS = "status";
     public static final String TAG_MESSAGES = "messages";
