@@ -11,8 +11,8 @@ import android.os.Bundle;
 
 public class NFCTrigger extends GenericTrigger {
 
-    // FIXME Need to add version code requirement to the service description and the engine
-    // FIXME Need to add device features to the service description and the engine
+    // FIXME Need to add version code requirement to the  database and the engine
+    // FIXME Need to add device features to the service description, db and the engine
 
     public static final String STATE = "state";
 

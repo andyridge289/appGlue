@@ -2,6 +2,7 @@ package com.appglue.description;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
@@ -32,6 +33,7 @@ import static com.appglue.Constants.JSON_SERVICE_DATA;
 import static com.appglue.Constants.JSON_SERVICE_LIST;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.OUTPUTS;
@@ -66,6 +68,8 @@ public class ServiceDescription {
     // A text description
     private String description = "";
 
+    private int minVersion = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+
     // Inputs and getOutputs to/from the service
     private SparseArray<IODescription> inputs = new SparseArray<IODescription>();
     private SparseArray<IODescription> outputs = new SparseArray<IODescription>();
@@ -84,7 +88,7 @@ public class ServiceDescription {
             String packageName, String className, String name, String shortName,
             String description,
             ArrayList<IODescription> inputs, ArrayList<IODescription> outputs,
-            ServiceType serviceType, int flags) {
+            ServiceType serviceType, int flags, int version) {
         this.name = name;
         this.className = className;
         this.packageName = packageName;
@@ -96,6 +100,7 @@ public class ServiceDescription {
 
 //        this.serviceType = serviceType;
         this.flags = flags;
+        this.minVersion = version;
     }
 
     public ServiceDescription() {
@@ -361,12 +366,18 @@ public class ServiceDescription {
         }
 
         if (!this.shortName.equals(other.getShortName())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: shortname " + shortName + " - " + other.getShortName());
+            if (LOG)
+                Log.d(TAG, "ServiceDescription->Equals: shortname " + shortName + " - " + other.getShortName());
             return false;
         }
 
         if (this.flags != other.getFlags()) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
+            return false;
+        }
+
+        if (this.minVersion != other.getMinVersion()) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: min version");
             return false;
         }
 
@@ -542,9 +553,10 @@ public class ServiceDescription {
 
         int serviceType = c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE));
         int flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
+        int version = c.getInt(c.getColumnIndex(prefix + MIN_VERSION));
 
         return new ServiceDescription(packageName, className, name, shortName, description, null, null,
-                ServiceDescription.getServiceType(serviceType), flags);
+                ServiceDescription.getServiceType(serviceType), flags, version);
     }
 
     // New JSON parsings methods
@@ -588,9 +600,10 @@ public class ServiceDescription {
         String shortName = json.getString(SHORT_NAME);
         String description = json.getString(DESCRIPTION);
         int flags = json.getInt(FLAGS);
+        int version = json.getInt(MIN_VERSION);
         ServiceType serviceType = ServiceType.LOCAL;
 
-        ServiceDescription sd = new ServiceDescription(packageName, className, name, shortName, description, null, null, serviceType, flags);
+        ServiceDescription sd = new ServiceDescription(packageName, className, name, shortName, description, null, null, serviceType, flags, version);
 
         ArrayList<IODescription> inputs = parseIOFromNewJSON(json.getJSONArray(INPUTS), true, sd);
         ArrayList<IODescription> outputs = parseIOFromNewJSON(json.getJSONArray(OUTPUTS), false, sd);
@@ -633,5 +646,9 @@ public class ServiceDescription {
 
     public boolean hasCategories() {
         return categories.size() > 0;
+    }
+
+    public int getMinVersion() {
+        return minVersion;
     }
 }
