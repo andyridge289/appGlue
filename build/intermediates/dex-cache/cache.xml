@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pre-dex-items>
+<items version="2" >
 
     <item
-        dex="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-2e7834f100e4daf029f5c1e2e0dceb4b3ac998da.jar"
-        jar="/Users/andyridge/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
-        jumboMode="false" revision="21.0.1" sha1="dd952e00b99c10d13e610e735f4f08b4c278942b" />
+        jar="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\exploded-aar\appGlue\appGlueLib\unspecified\classes.jar"
+        jumboMode="false"
+        revision="21.0.1"
+        sha1="e5fe88ce7bc931425755011809a87947cbadeab6">
+        <dex dex="C:\Users\andy\Android\AndroidStudio Projects\appGlue\appglue\build\intermediates\pre-dexed\debug\classes-899cb823e7e9266af22bd6f05e25d29eba75356d.jar" />
+    </item>
 
-</pre-dex-items>
+</items>

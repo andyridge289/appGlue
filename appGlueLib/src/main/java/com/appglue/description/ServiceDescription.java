@@ -10,6 +10,7 @@ import android.util.SparseArray;
 
 import com.appglue.Constants.ServiceType;
 import com.appglue.IODescription;
+import com.appglue.SystemFeature;
 import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
 
@@ -613,7 +614,13 @@ public class ServiceDescription {
 
         int flags = json.getInt(FLAGS);
         int version = json.getInt(MIN_VERSION);
-        int features = json.getInt(FEATURES);
+
+        int features = 0;
+        JSONArray jsonFeatures = json.getJSONArray(FEATURES);
+        for (int i = 0; i < jsonFeatures.length(); i++) {
+            String code = jsonFeatures.getString(i);
+            features |= SystemFeature.getFeature(code).index;
+        }
 
         ServiceType serviceType = ServiceType.LOCAL;
 

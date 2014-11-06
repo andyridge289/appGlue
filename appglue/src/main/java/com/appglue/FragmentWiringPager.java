@@ -46,6 +46,9 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private Button csNameSet;
     private TextView status;
 
+    // TODO MAke the overview do navigation
+    // TODO Make the overview do component removal and rearranging
+
     //    private HorizontalScrollView overviewScroll;
     private FrameLayout overviewParent;
     private FrameLayout overviewContainer;

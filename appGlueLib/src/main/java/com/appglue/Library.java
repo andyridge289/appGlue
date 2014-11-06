@@ -117,6 +117,9 @@ public class Library {
         outputBuilder.append("]");
         String outputs = outputBuilder.toString();
 
+        if (tags == null) {
+            tags = new String[] {};
+        }
         StringBuilder tagBuilder = new StringBuilder(String.format(",\"%s\":[", TAGS));
         for (int i = 0; i < tags.length; i++) {
             if (i > 0)
@@ -124,8 +127,11 @@ public class Library {
 
             tagBuilder.append(String.format("\"%s\"", tags[i]));
         }
-        tagBuilder.append("],");
+        tagBuilder.append("]");
 
+        if (categories == null) {
+            categories = new String[] {};
+        }
         StringBuilder categoryBuilder = new StringBuilder(String.format(",\"%s\":[", CATEGORIES));
         for (int i = 0; i < categories.length; i++) {
             if (i > 0)
@@ -133,8 +139,11 @@ public class Library {
 
             categoryBuilder.append(String.format("\"%s\"", categories[i]));
         }
-        categoryBuilder.append("],");
+        categoryBuilder.append("]");
 
+        if (features == null) {
+            features = new String[] {};
+        }
         StringBuilder featureBuilder = new StringBuilder(String.format(",\"%s\":[", FEATURES));
         for (int i = 0; i < features.length; i++) {
             if (i > 0)

@@ -13,7 +13,7 @@ import android.os.Bundle;
 public class NFCTrigger extends GenericTrigger {
 
     // FIXME Need to add android version to the component page
-    // FIXME Need to add device features to the db and the component page
+    // FIXME Need to add device features to the component page
 
     public static final String STATE = "state";
 
