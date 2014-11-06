@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import static com.appglue.Constants.CATEGORIES;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.INPUTS;
 import static com.appglue.Constants.INPUT_DESCRIPTION;
@@ -35,17 +36,16 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.OUTPUTS;
 import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
 import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TAGS;
 
@@ -143,6 +143,7 @@ public class ServiceDescription {
     public int getFlags() {
         return flags;
     }
+
     public void setFlags(int flags) {
         this.flags = flags;
     }
@@ -288,6 +289,7 @@ public class ServiceDescription {
     public void addCategory(Category category) {
         this.categories.add(category);
     }
+
     public void addCategory(String name) {
         this.categories.add(Category.Factory.get(name));
     }
@@ -524,6 +526,7 @@ public class ServiceDescription {
 
 //        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
         this.flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
+        this.minVersion = c.getInt(c.getColumnIndex(prefix + MIN_VERSION));
 
         this.app = new AppDescription();
     }

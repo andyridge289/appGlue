@@ -53,11 +53,12 @@ import static com.appglue.Constants.IO_TYPE;
 import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.SAMPLE_VALUE;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.VALUE;
 import static com.appglue.library.AppGlueConstants.*;
@@ -322,6 +323,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(PACKAGENAME, sd.getPackageName());
         values.put(DESCRIPTION, sd.getDescription());
         values.put(FLAGS, sd.getFlags());
+        values.put(MIN_VERSION, sd.getMinVersion());
 
         int inputSuccess = 0;
         int outputSuccess = 0;
@@ -1864,9 +1866,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         String query = String.format("SELECT %s FROM %s " +
                         "LEFT JOIN %s on %s.%s = %s.%s",
-                        all, TBL_SD_HAS_CATEGORY,
-                        TBL_CATEGORY, TBL_SD_HAS_CATEGORY, CATEGORY_ID, TBL_CATEGORY, ID
-                );
+                all, TBL_SD_HAS_CATEGORY,
+                TBL_CATEGORY, TBL_SD_HAS_CATEGORY, CATEGORY_ID, TBL_CATEGORY, ID
+        );
 
         Cursor c = db.rawQuery(query, null);
 
@@ -1935,7 +1937,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         // Should probably do something clever than just equals - consider lower case too
         Cursor c = db.query(TBL_CATEGORY, null,
-                ID + " = ?", new String[]{ "" + id },
+                ID + " = ?", new String[]{"" + id},
                 null, null, null, null);
 
         if (c == null) {
@@ -1962,7 +1964,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         // Should probably do something clever than just equals - consider lower case too
         Cursor c = db.query(TBL_CATEGORY, null,
-                NAME + " = ?", new String[]{ cat.getName() },
+                NAME + " = ?", new String[]{cat.getName()},
                 null, null, null, null);
 
         if (c == null) {

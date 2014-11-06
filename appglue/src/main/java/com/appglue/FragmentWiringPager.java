@@ -13,6 +13,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -45,7 +46,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private Button csNameSet;
     private TextView status;
 
-//    private HorizontalScrollView overviewScroll;
+    //    private HorizontalScrollView overviewScroll;
     private FrameLayout overviewParent;
     private FrameLayout overviewContainer;
     private View currentPage;
@@ -279,7 +280,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     private void overviewRedraw() {
 
-        if(overviewContainer.getWidth() == 0) {
+        if (overviewContainer.getWidth() == 0) {
             overviewDraw();
             return;
         }
@@ -321,6 +322,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 int left = allLeft + (i * componentOffset);
                 tv.setX(left);
 
+                tv.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        return false;
+                    }
+                });
+
                 overviewContainer.addView(tv);
                 components.add(left);
             }
@@ -346,16 +354,13 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         int pageWidth = displaymetrics.widthPixels;
 
-//        Log.d(TAG, "Containers: " + overviewContainer.getWidth() + ", " + overviewParent.getWidth() + " and page width is " + pageWidth);
-
         int maxRight = 0;
         int maxLeft = 0 - (width + w + m - pageWidth);
 
         if (lastLeft > left) {
             // Then we are moving left, so we might need to move the container right
-            if(overviewPosition + left < pageWidth / 4) {
+            if (overviewPosition + left < pageWidth / 4) {
                 // Then the thing is on the left of the screen
-//                Log.d(TAG, "Container should be going right!");
 
                 int newLeft = Math.min(maxRight, overviewPosition + 3 * (w + m));
                 overviewParent.setX(newLeft);
@@ -364,10 +369,9 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         } else {
             // We are moving right, we might need to move the container left
-            if(overviewPosition + left > 3 * pageWidth / 4 - w - m) {
+            if (overviewPosition + left > 3 * pageWidth / 4 - w - m) {
                 // Then the thing is on the right of the screen
-//                Log.d(TAG, "Container should be going left!");
-                int newLeft = Math.max(maxLeft, overviewPosition - 3 *  (w + m));
+                int newLeft = Math.max(maxLeft, overviewPosition - 3 * (w + m));
                 overviewParent.setX(newLeft);
                 overviewPosition = newLeft;
             }
@@ -375,8 +379,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         lastLeft = left;
     }
-
-    // TODO Add schedule and log to the tutorial
 
     private void overviewDraw() {
 

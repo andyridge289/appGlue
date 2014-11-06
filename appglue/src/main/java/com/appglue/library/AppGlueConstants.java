@@ -14,12 +14,13 @@ import static com.appglue.Constants.IO_INDEX;
 import static com.appglue.Constants.IO_TYPE;
 import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.VALUE;
 
 public class AppGlueConstants {
@@ -109,11 +110,12 @@ public class AppGlueConstants {
             {
                     {CLASSNAME, "TEXT PRIMARY KEY"},
                     {NAME, "TEXT"},
-                    { SHORT_NAME, "TEXT"},
+                    {SHORT_NAME, "TEXT"},
                     {PACKAGENAME, "TEXT"},
                     {DESCRIPTION, "TEXT"},
                     {SERVICE_TYPE, "INTEGER"},
-                    {FLAGS, "INTEGER"}
+                    {FLAGS, "INTEGER"},
+                    {MIN_VERSION, "INTEGER"}
             };
 
     public static final String[][] COLS_IO_DESCRIPTION = new String[][]
@@ -177,17 +179,17 @@ public class AppGlueConstants {
             CLASSNAME, TAG_ID
     };
 
-    public static final String[][] COLS_CATEGORY = new String[][] {
-            { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-            { NAME, "TEXT" }
+    public static final String[][] COLS_CATEGORY = new String[][]{
+            {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+            {NAME, "TEXT"}
     };
 
     public static final String CATEGORY_ID = "category_id";
 
-    public static final String[][] COLS_SD_HAS_CATEGORY = new String[][] {
-            { ID, "INTEGER PRIMARY KEY AUTOINCREMENT" },
-            { CLASSNAME, "TEXT" },
-            { CATEGORY_ID, "INTEGER" }
+    public static final String[][] COLS_SD_HAS_CATEGORY = new String[][]{
+            {ID, "INTEGER PRIMARY KEY AUTOINCREMENT"},
+            {CLASSNAME, "TEXT"},
+            {CATEGORY_ID, "INTEGER"}
     };
 
     // Database - Composite
