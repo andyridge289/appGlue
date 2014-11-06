@@ -43,6 +43,7 @@ import java.util.Set;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
+import static com.appglue.Constants.FEATURES;
 import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ICON;
@@ -53,6 +54,7 @@ import static com.appglue.Constants.IO_TYPE;
 import static com.appglue.Constants.I_OR_O;
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.PACKAGENAME;
@@ -322,6 +324,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         values.put(PACKAGENAME, sd.getPackageName());
         values.put(DESCRIPTION, sd.getDescription());
         values.put(FLAGS, sd.getFlags());
+        values.put(MIN_VERSION, sd.getMinVersion());
+        values.put(FEATURES, sd.getFeaturesRequired());
 
         int inputSuccess = 0;
         int outputSuccess = 0;

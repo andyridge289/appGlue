@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import static com.appglue.Constants.CATEGORIES;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
+import static com.appglue.Constants.FEATURES;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.INPUTS;
 import static com.appglue.Constants.INPUT_DESCRIPTION;
@@ -83,12 +84,13 @@ public class ServiceDescription {
 
     // Representations of the icon of the service
     private AppDescription app = null;
+    private int featuresRequired = 0;
 
     private ServiceDescription(
             String packageName, String className, String name, String shortName,
             String description,
             ArrayList<IODescription> inputs, ArrayList<IODescription> outputs,
-            ServiceType serviceType, int flags, int version) {
+            ServiceType serviceType, int flags, int version, int features) {
         this.name = name;
         this.className = className;
         this.packageName = packageName;
@@ -101,6 +103,7 @@ public class ServiceDescription {
 //        this.serviceType = serviceType;
         this.flags = flags;
         this.minVersion = version;
+        this.featuresRequired = features;
     }
 
     public ServiceDescription() {
@@ -381,6 +384,11 @@ public class ServiceDescription {
             return false;
         }
 
+        if (this.featuresRequired != other.getFeaturesRequired()) {
+            if (LOG) Log.d(TAG, "ServiceDescription->Equals: features required");
+            return false;
+        }
+
         if (!this.packageName.equals(other.getPackageName())) {
             if (LOG) Log.d(TAG, "ServiceDescription->Equals: package name");
             return false;
@@ -524,6 +532,8 @@ public class ServiceDescription {
 
 //        this.serviceType = ServiceDescription.getServiceType(c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE)));
         this.flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
+        this.featuresRequired = c.getInt(c.getColumnIndex(prefix + FEATURES));
+        this.minVersion = c.getInt(c.getColumnIndex(prefix + MIN_VERSION));
 
         this.app = new AppDescription();
     }
@@ -554,9 +564,10 @@ public class ServiceDescription {
         int serviceType = c.getInt(c.getColumnIndex(prefix + SERVICE_TYPE));
         int flags = c.getInt(c.getColumnIndex(prefix + FLAGS));
         int version = c.getInt(c.getColumnIndex(prefix + MIN_VERSION));
+        int features = c.getInt(c.getColumnIndex(prefix + FEATURES));
 
         return new ServiceDescription(packageName, className, name, shortName, description, null, null,
-                ServiceDescription.getServiceType(serviceType), flags, version);
+                ServiceDescription.getServiceType(serviceType), flags, version, features);
     }
 
     // New JSON parsings methods
@@ -599,11 +610,14 @@ public class ServiceDescription {
         String name = json.getString(NAME);
         String shortName = json.getString(SHORT_NAME);
         String description = json.getString(DESCRIPTION);
+
         int flags = json.getInt(FLAGS);
         int version = json.getInt(MIN_VERSION);
+        int features = json.getInt(FEATURES);
+
         ServiceType serviceType = ServiceType.LOCAL;
 
-        ServiceDescription sd = new ServiceDescription(packageName, className, name, shortName, description, null, null, serviceType, flags, version);
+        ServiceDescription sd = new ServiceDescription(packageName, className, name, shortName, description, null, null, serviceType, flags, version, features);
 
         ArrayList<IODescription> inputs = parseIOFromNewJSON(json.getJSONArray(INPUTS), true, sd);
         ArrayList<IODescription> outputs = parseIOFromNewJSON(json.getJSONArray(OUTPUTS), false, sd);
@@ -650,5 +664,9 @@ public class ServiceDescription {
 
     public int getMinVersion() {
         return minVersion;
+    }
+
+    public int getFeaturesRequired() {
+        return featuresRequired;
     }
 }

@@ -88,6 +88,7 @@ public class Constants
 	public static final String SERVICE_TYPE = "service_type";
 	public static final String FLAGS = "flags";
     public static final String MIN_VERSION = "min_version";
+    public static final String FEATURES = "features";
 	
 	public static final String IO_TYPE = "io_type";
 	public static final String FRIENDLY_NAME = "friendly_name";

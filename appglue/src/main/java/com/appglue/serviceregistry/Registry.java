@@ -1,12 +1,14 @@
 package com.appglue.serviceregistry;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.appglue.ComposableService;
+import com.appglue.SystemFeature;
 import com.appglue.TST;
 import com.appglue.description.AppDescription;
 import com.appglue.description.Category;
@@ -373,6 +375,43 @@ public class Registry {
         boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.PARAM_STOP, message);
 
         return logComponent && logComposite;
+    }
+
+    public boolean versionMismatch(CompositeService composite, long executionInstance, ComponentService component) {
+
+        String message = "The component needs a more recent version of Android to operate";
+
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message, null, null, LogItem.VERSION_MISMATCH, 0);
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.VERSION_MISMATCH, message);
+
+        return logComponent && logComposite;
+    }
+
+    public boolean missingFeatures(CompositeService composite, long executionInstance, ComponentService component, int missingFeatures) {
+
+        StringBuilder message = new StringBuilder("Your device doesn't have all the required features: ");
+        ArrayList<String> missing = new ArrayList<String>();
+
+        ArrayList<SystemFeature> fs = SystemFeature.listAllFeatures();
+        for (SystemFeature f: fs) {
+            if ((f.index & missingFeatures) == f.index) {
+                missing.add(f.name);
+            }
+        }
+
+        for (int i = 0; i < missing.size(); i++) {
+            if (i > 0) {
+                message.append(",");
+            }
+
+            message.append(missing.get(i));
+        }
+
+        boolean logComponent = dbHandler.addToLog(composite, executionInstance, component, message.toString(), null, null, LogItem.MISSING_FEATURES, 0);
+        boolean logComposite = dbHandler.terminate(composite, executionInstance, LogItem.MISSING_FEATURES, message.toString());
+
+        return logComponent && logComposite;
+
     }
 
     public ArrayList<ServiceDescription> getAllServiceDescriptions() {

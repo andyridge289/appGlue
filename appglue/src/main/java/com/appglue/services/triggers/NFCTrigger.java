@@ -1,5 +1,6 @@
 package com.appglue.services.triggers;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -11,21 +12,21 @@ import android.os.Bundle;
 
 public class NFCTrigger extends GenericTrigger {
 
-    // FIXME Need to add version code requirement to the  database and the engine
-    // FIXME Need to add device features to the service description, db and the engine
+    // FIXME Need to add android version to the component page
+    // FIXME Need to add device features to the db and the component page
 
     public static final String STATE = "state";
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         Bundle data = new Bundle();
 
-        if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+        // The second condition should never be untrue, but you never know
+        if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION) && android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 
             if (action.equals(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED)) {
-                final int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF);
+                @SuppressLint("InlinedApi") final int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF);
                 switch (state) {
                     case NfcAdapter.STATE_OFF:
                         data.putBoolean(STATE, false);

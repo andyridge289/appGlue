@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -212,7 +213,7 @@ public class ServiceFactory {
                 "This service says hello.",
                 flags,
                 0,
-                new ArrayList<IODescription>(), outputs, tags, categories);
+                new ArrayList<IODescription>(), outputs, tags, categories, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, helloJSON);
     }
@@ -233,7 +234,7 @@ public class ServiceFactory {
                 "Launch an app of your choice.",
                 flags,
                 0,
-                inputs, null, tags, categories);
+                inputs, null, tags, categories, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, appJSON);
     }
@@ -251,6 +252,7 @@ public class ServiceFactory {
 
         String[] tags = {"Bluetooth", "Setting"};
         String[] categories = { NETWORK_UTILS };
+        String[] features = { PackageManager.FEATURE_BLUETOOTH };
 
         int flags = 0;
 
@@ -259,7 +261,7 @@ public class ServiceFactory {
                 "Turns bluetooth on or off!",
                 flags,
                 0,
-                inputs, new ArrayList<IODescription>(), tags, categories);
+                inputs, new ArrayList<IODescription>(), tags, categories, features);
 
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, btJSON);
     }
@@ -276,6 +278,7 @@ public class ServiceFactory {
 
         String[] tags = {"Wifi", "Setting"};
         String[] categories = { NETWORK_UTILS };
+        String[] features = { PackageManager.FEATURE_WIFI };
 
         int flags = 0;
 
@@ -284,7 +287,7 @@ public class ServiceFactory {
                 "Turns wifi on or off!",
                 flags,
                 0,
-                inputs, null, tags, categories);
+                inputs, null, tags, categories, features);
 
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, wifiJSON);
     }
@@ -299,12 +302,13 @@ public class ServiceFactory {
 
         String[] tags = new String[]{"Send SMS"};
         String[] categories = new String[] {DEVICE_UTILS};
+        String[] features = { PackageManager.FEATURE_TELEPHONY };
 
         int flags = ComposableService.FLAG_MONEY;
 
         String sendSMSJSON = Library.makeJSON(-1, "com.appglue", SendSMSService.class.getCanonicalName(),
                 "Send a SMS", "SMS", "Send a SMS to someone (limited to 160 characters)",
-                flags, 0, inputs, null, tags, categories);
+                flags, 0, inputs, null, tags, categories, features);
 
         return String.format("{\"%s\": {\"%s\":%s} }", JSON_SERVICE, JSON_SERVICE_DATA, sendSMSJSON);
     }
@@ -344,7 +348,7 @@ public class ServiceFactory {
         outputs.add(new IODescription(-1, TubeService.LINE_ICON, "Line icon", imageDrawable, "An icon representing the line", false, null));
 
         String[] tags = {"Tube", "London", "Underground", "Travel", "tfl"};
-        String[] categories = {TRAVEL};
+        String[] categories = { TRAVEL };
 
         int flags = ComposableService.FLAG_NETWORK | ComposableService.FLAG_DELAY;
 
@@ -352,7 +356,7 @@ public class ServiceFactory {
                 "Tube Status lookup", "Tube",
                 "This service returns information about problems that occur on the tube. It is accurate to within 10 minutes. It will return information about the line that is affected as well as the problem that is affecting it.",
                 flags, 0,
-                new ArrayList<IODescription>(), outputs, tags, categories);
+                new ArrayList<IODescription>(), outputs, tags, categories, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, tubeJSON);
     }
@@ -365,14 +369,15 @@ public class ServiceFactory {
         inputs.add(new IODescription(-1, PebbleNotification.PEBBLE_NOTIFICATION, "Pebble notification message", text, "the contents of the pebble notification", false, null));
 
         String[] tags = {"Pebble", "Notification", "Watch", "Smart watch"};
-        String[] cats = {WEARABLE};
+        String[] cats = { WEARABLE };
+        String[] features = { PackageManager.FEATURE_BLUETOOTH };
 
         int flags = 0;
 
         String pebbleJSON = Library.makeJSON(-1, "com.appglue", PebbleNotification.class.getCanonicalName(),
                 "Pebble Notification", "Pebble",
                 "Outputs notifications to your Pebble",
-                flags, 0, inputs, null, tags, cats);
+                flags, 0, inputs, null, tags, cats, features);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, pebbleJSON);
     }
@@ -403,7 +408,7 @@ public class ServiceFactory {
         String notificationJSON = Library.makeJSON(-1, "com.appglue", NotificationService.class.getCanonicalName(),
                 "Android Notification", "Notify",
                 "Outputs Android Notifications into the Notification tray. They normally need a title and some text",
-                flags, 0, inputs, null, tags, cats);
+                flags, 0, inputs, null, tags, cats, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, notificationJSON);
     }
@@ -421,7 +426,7 @@ public class ServiceFactory {
         String toastJSON = Library.makeJSON(-1, "com.appglue", ToastService.class.getCanonicalName(),
                 "On screen message", "Popup",
                 "Outputs some text to the screen",
-                flags, 0, inputs, null, tags, cats);
+                flags, 0, inputs, null, tags, cats, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, toastJSON);
     }
@@ -440,13 +445,14 @@ public class ServiceFactory {
 
         String[] tags = new String[]{"Location", "GPS"};
         String[] cats = {DEVICE_UTILS};
+        String[] features = { PackageManager.FEATURE_LOCATION };
 
         int flags = ComposableService.FLAG_DELAY | ComposableService.FLAG_LOCATION;
 
         String locationJSON = Library.makeJSON(-1, "com.appglue", LocationService.class.getCanonicalName(),
                 "Location lookup", "Location",
                 "Returns your location",
-                flags, 0, null, getOutputs, tags, cats);
+                flags, 0, null, getOutputs, tags, cats, features);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, locationJSON);
     }
@@ -494,7 +500,7 @@ public class ServiceFactory {
                 "Airplane mode Trigger", "Airplane",
                 "Fires when airplane mode is turned on or off",
                 flags, 0,
-                null, outputs, tags, cats);
+                null, outputs, tags, cats, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, airplaneJSON);
     }
@@ -517,7 +523,7 @@ public class ServiceFactory {
                 "Power connection", "Power",
                 "Fires when the power is connected or disconnected",
                 flags, 0,
-                null, outputs, tags, cats);
+                null, outputs, tags, cats, null);
 
         return String.format("{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, powerJSON);
     }
@@ -541,7 +547,7 @@ public class ServiceFactory {
                 "Battery Trigger", "-> Battery",
                 "Signals that the state of the battery has changed",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, null);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, batteryTriggerJSON);
     }
@@ -560,12 +566,13 @@ public class ServiceFactory {
 
         String[] tags = {"Bluetooth", "Connected", "Disconnected", "On", "Off"};
         String[] cats = {TRIGGERS, NETWORK_UTILS};
+        String[] features = { PackageManager.FEATURE_BLUETOOTH };
 
         String bluetoothTriggerJSON = Library.makeJSON(-1, "com.appglue", BluetoothTrigger.class.getCanonicalName(),
                 "Bluetooth Trigger", "-> BT",
                 "Signals that the state of the bluetooth has changed",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, features);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, bluetoothTriggerJSON);
 
@@ -581,12 +588,13 @@ public class ServiceFactory {
 
         String[] tags = {"SMS", "Text message", "Receive"};
         String[] cats = {TRIGGERS, DEVICE_UTILS};
+        String[] features = { PackageManager.FEATURE_TELEPHONY};
 
         String receiveSMSJSON = Library.makeJSON(-1, "com.appglue", ReceiveSMSTrigger.class.getCanonicalName(),
                 "Receive SMS", "-> SMS",
                 "Signals a text has arrived",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, features);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, receiveSMSJSON);
     }
@@ -612,7 +620,7 @@ public class ServiceFactory {
                 "Headphone Trigger", "-> HP",
                 "Activated when you plug or unplug the headphones",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, null);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, headphoneTriggerJSON);
     }
@@ -636,7 +644,7 @@ public class ServiceFactory {
                 "Startup Trigger", "-> Boot",
                 "Activated when your phone has finished turning on, is about to turn off, or has rebooted",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, null);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, startupTriggerJSON);
     }
@@ -658,7 +666,7 @@ public class ServiceFactory {
                 "Docked Trigger", "-> Dock",
                 "Signals that the phone has been docked or undocked",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, null);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, dockTriggerJSON);
     }
@@ -679,7 +687,7 @@ public class ServiceFactory {
                 "Storage Trigger", "-> Storage",
                 "Signals that the storage in the phone has changed",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, null);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, storageTriggerJSON);
     }
@@ -702,7 +710,7 @@ public class ServiceFactory {
                 "Screen Trigger", "-> Screen",
                 "Signals that the screen has gone on or off",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, null);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, screenTriggerJSON);
     }
@@ -724,12 +732,13 @@ public class ServiceFactory {
 
         outputs.add(new IODescription(-1, WifiTrigger.NETWORK_SSID, "SSID", text, "The name of the network you've connected to", true, null));
         String[] cats = {TRIGGERS, NETWORK_UTILS};
+        String[] features = { PackageManager.FEATURE_WIFI };
 
         String wifiTriggerJSON = Library.makeJSON(-1, "com.appglue", WifiTrigger.class.getCanonicalName(),
                 "WiFi Trigger", "-> WiFi",
                 "Signals that wifi has gone on or off",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, features);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, wifiTriggerJSON);
     }
@@ -748,12 +757,13 @@ public class ServiceFactory {
 
         String[] tags = { "Ringer", "Vibrate", "Silent" };
         String[] cats = { TRIGGERS, DEVICE_UTILS };
+        String[] features = { PackageManager.FEATURE_TELEPHONY };
 
         String ringerJSON = Library.makeJSON(-1, "com.appglue", RingerTrigger.class.getCanonicalName(),
                 "Ringer Trigger", "-> Ringer",
                 "Signals that the ringer has changed",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, features);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, ringerJSON);
     }
@@ -771,12 +781,13 @@ public class ServiceFactory {
 
         String[] tags = { "Mobile", "Network", "On", "Off" };
         String[] cats = { TRIGGERS, NETWORK_UTILS };
+        String[] features = { PackageManager.FEATURE_TELEPHONY };
 
         String mobileJSON = Library.makeJSON(-1, "com.appglue", MobileConnectionTrigger.class.getCanonicalName(),
                 "Mobile Network Trigger", "-> Network",
                 "Signals that the mobile network has changed",
                 ComposableService.FLAG_TRIGGER,
-                0, null, outputs, tags, cats);
+                0, null, outputs, tags, cats, features);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, mobileJSON);
     }
@@ -795,18 +806,16 @@ public class ServiceFactory {
         String[] tags = { "NFC", "On", "Off" };
         String[] cats = { TRIGGERS, DEVICE_UTILS };
         int version = Build.VERSION_CODES.JELLY_BEAN_MR2;
+        String[] features = { PackageManager.FEATURE_NFC };
 
         String nfcJSON = Library.makeJSON(-1, "com.appglue", NFCTrigger.class.getCanonicalName(),
                 "NFC Trigger", "-> NFC",
                 "Signals that the NFC thing has changed",
                 ComposableService.FLAG_TRIGGER,
-                version, null, outputs, tags, cats);
+                version, null, outputs, tags, cats, features);
 
         return String.format(Locale.US, "{\"%s\": {\"%s\":%s}}", JSON_SERVICE, JSON_SERVICE_DATA, nfcJSON);
     }
-
-    // NFC
-    //
 
     // Activity recognition trigger -- Vehicle,Bicycle,On foot,Still,Tilting
     // Application launched or closed trigger

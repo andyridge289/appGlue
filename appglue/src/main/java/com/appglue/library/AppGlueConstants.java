@@ -5,6 +5,7 @@ import com.appglue.library.FilterFactory.FilterValue;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
+import static com.appglue.Constants.FEATURES;
 import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.ICON;
@@ -21,6 +22,7 @@ import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.VALUE;
+import static com.appglue.Constants.MIN_VERSION;
 
 public class AppGlueConstants {
 
@@ -113,7 +115,9 @@ public class AppGlueConstants {
                     {PACKAGENAME, "TEXT"},
                     {DESCRIPTION, "TEXT"},
                     {SERVICE_TYPE, "INTEGER"},
-                    {FLAGS, "INTEGER"}
+                    {FLAGS, "INTEGER"},
+                    { MIN_VERSION, "INTEGER"},
+                    { FEATURES, "INTEGER" }
             };
 
     public static final String[][] COLS_IO_DESCRIPTION = new String[][]
