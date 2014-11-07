@@ -2,16 +2,11 @@ package com.appglue;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.util.LongSparseArray;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,7 +14,6 @@ import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -33,6 +27,7 @@ import android.widget.TextView;
 
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
+import com.appglue.layout.FloatingActionButton;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
@@ -58,8 +53,15 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private FrameLayout overviewParent;
     private FrameLayout overviewContainer;
     private View currentPage;
+
     private int lastLeft = -1;
     private int overviewPosition = 0;
+    private View overviewOverlay;
+
+    private FloatingActionButton overlayLeft;
+    private FloatingActionButton overlayRight;
+    private FloatingActionButton overlayRemove;
+    private int overviewSelectedIndex = -1;
 
     private ImageView pageLeft;
     private ImageView pageRight;
@@ -106,6 +108,11 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         overviewParent = (FrameLayout) root.findViewById(R.id.overview_parent);
         overviewContainer = (FrameLayout) root.findViewById(R.id.overview_page_container);
         currentPage = root.findViewById(R.id.page_indicator);
+
+        overviewOverlay = root.findViewById(R.id.overview_overlay);
+        overlayLeft = (FloatingActionButton) root.findViewById(R.id.overview_left);
+        overlayRight = (FloatingActionButton) root.findViewById(R.id.overview_right);
+        overlayRemove = (FloatingActionButton) root.findViewById(R.id.overview_remove);
 
         status = (TextView) root.findViewById(R.id.status);
 
@@ -257,6 +264,43 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 }
             }
         });
+
+        overlayLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO Move the component left
+
+                overviewOverlay.setVisibility(View.GONE);
+            }
+        });
+
+        overlayRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO Move the component right
+
+                overviewOverlay.setVisibility(View.GONE);
+            }
+        });
+
+        overlayRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO Remove the component
+
+                overviewOverlay.setVisibility(View.GONE);
+            }
+        });
+
+        overviewOverlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                overviewOverlay.setVisibility(View.GONE);
+            }
+        });
     }
 
     public void redraw(int position) {
@@ -312,7 +356,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             overviewContainer.removeAllViews();
             int componentOffset = w + m;
 
-            overviewParent.setLayoutParams(new LinearLayout.LayoutParams(width + componentOffset, ViewGroup.LayoutParams.MATCH_PARENT));
+            overviewParent.setLayoutParams(new FrameLayout.LayoutParams(width + componentOffset, ViewGroup.LayoutParams.MATCH_PARENT));
             overviewContainer.setLayoutParams(new FrameLayout.LayoutParams(width + componentOffset, ViewGroup.LayoutParams.MATCH_PARENT));
 
             // We need to resize the parent based on how many components there are
@@ -343,8 +387,23 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 tv.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View v) {
-                        OverviewDialog od = new OverviewDialog(getActivity(), index);
-                        od.show();
+
+                        SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
+
+                        if (index == 0 || (index == 1 && components.get(0).getDescription().isTrigger())) {
+                            overlayLeft.setEnabled(false);
+                        } else {
+                            overlayLeft.setEnabled(true);
+                        }
+
+                        if (index == components.size() - 1 || components.get(index).getDescription().isTrigger()) {
+                            overlayRight.setEnabled(false);
+                        } else {
+                            overlayRight.setEnabled(true);
+                        }
+
+                        overviewSelectedIndex = index;
+                        overviewOverlay.setVisibility(View.VISIBLE);
                         return true;
                     }
                 });
@@ -557,63 +616,48 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
     }
 
-    private class OverviewDialog extends AlertDialog {
-
-        protected OverviewDialog(Context context, int index) {
-            super(context);
-
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            View v = inflater.inflate(R.layout.dialog_overview, null);
-
-            TextView left = (TextView) v.findViewById(R.id.overview_left);
-            TextView right = (TextView) v.findViewById(R.id.overview_right);
-            View remove = v.findViewById(R.id.overview_remove);
-
-            if (index == 0) {
-                // Disable left
-                left.setEnabled(false);
-                left.setBackgroundResource(R.color.bg);
-                left.setTextColor(getResources().getColor(R.color.textColor_dim));
-            } else {
-                // Enable left
-                left.setEnabled(true);
-                left.setBackgroundResource(R.drawable.textview_button);
-                left.setTextColor(getResources().getColor(R.color.textColor));
-                left.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Swap this component and the one to its left, then redraw everything
-                    }
-                });
-            }
-
-            SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
-            if (index == components.size() - 1) {
-                // Disable right
-                right.setEnabled(false);
-                right.setBackgroundResource(R.color.bg);
-                right.setTextColor(getResources().getColor(R.color.textColor_dim));
-            } else {
-                // Enable right
-                right.setEnabled(true);
-                right.setBackgroundResource(R.drawable.textview_button);
-                right.setTextColor(getResources().getColor(R.color.textColor));
-                right.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Swap this component and the one to its right, then redraw everything
-                    }
-                });
-            }
-
-            remove.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                }
-            }) ;
-
-            setView(v);
-        }
-    }
+//    private class OverviewDialog extends AlertDialog {
+//
+//        protected OverviewDialog(Context context, int index) {
+//            super(context);
+//
+//            if (index == 0) {
+//                // Disable left
+//                left.setEnabled(false);
+//            } else {
+//                // Enable left
+//                left.setEnabled(true);
+//                left.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // Swap this component and the one to its left, then redraw everything
+//                    }
+//                });
+//            }
+//
+//            SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
+//            if (index == components.size() - 1) {
+//                // Disable right
+//                right.setEnabled(false);
+//            } else {
+//                // Enable right
+//                right.setEnabled(true);
+//                right.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        // Swap this component and the one to its right, then redraw everything
+//                    }
+//                });
+//            }
+//
+//            remove.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                }
+//            }) ;
+//
+//            setView(v);
+//        }
+//    }
 }

@@ -9,6 +9,7 @@ import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.appglue.ComposableService;
 import com.appglue.Constants.ServiceType;
 import com.appglue.IODescription;
 import com.appglue.SystemFeature;
@@ -25,6 +26,7 @@ import static com.appglue.Constants.CATEGORIES;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.FEATURES;
+import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.FRIENDLY_NAME;
 import static com.appglue.Constants.INPUTS;
 import static com.appglue.Constants.INPUT_DESCRIPTION;
@@ -38,17 +40,16 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.OUTPUTS;
 import static com.appglue.Constants.OUTPUT_DESCRIPTION;
 import static com.appglue.Constants.OUTPUT_NAME;
 import static com.appglue.Constants.OUTPUT_TYPE;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.FLAGS;
 import static com.appglue.Constants.SAMPLES;
 import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TAGS;
 
@@ -735,5 +736,9 @@ public class ServiceDescription {
         }
 
         return result;
+    }
+
+    public boolean isTrigger() {
+        return this.hasFlag(ComposableService.FLAG_TRIGGER);
     }
 }

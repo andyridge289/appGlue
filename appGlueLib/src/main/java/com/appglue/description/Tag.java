@@ -10,70 +10,65 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.TAG;
 
-public class Tag 
-{
-	private long id;
-	private String name;
-	
-	public Tag() {
-		this.id = -1;
-		this.name = "";
-	}
-	
-	public Tag(String name) {
-		this.id = -1;
-		this.name = name;
-	}
-	
-	public Tag(long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public long getID() {
-		return id;
-	}
+public class Tag {
+    private long id;
+    private String name;
+
+    public Tag() {
+        this.id = -1;
+        this.name = "";
+    }
+
+    public Tag(String name) {
+        this.id = -1;
+        this.name = name;
+    }
+
+    public Tag(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getID() {
+        return id;
+    }
 
     public void setID(long id) {
         this.id = id;
     }
-	
-	public static Tag createOneFromCursor(Cursor c) {
 
-		long id = c.getLong(c.getColumnIndex(ID));
-		String name = c.getString(c.getColumnIndex(NAME));
-		Log.d(TAG, "Setting tag " + id + ", " + name);
+    public static Tag createOneFromCursor(Cursor c) {
 
-		return new Tag(id, name);
-	}
-	
-	public static ArrayList<Tag> createManyFromCursor(Cursor c)
-	{
-		ArrayList<Tag> tags = new ArrayList<Tag>();
-		
-		// Assume we're already at the first one
-		
-		do
-		{
-			tags.add(createOneFromCursor(c));
-		}
-		while(c.moveToNext());
-		
-		return tags;
-	}
+        long id = c.getLong(c.getColumnIndex(ID));
+        String name = c.getString(c.getColumnIndex(NAME));
+
+        return new Tag(id, name);
+    }
+
+    public static ArrayList<Tag> createManyFromCursor(Cursor c) {
+        ArrayList<Tag> tags = new ArrayList<Tag>();
+
+        // Assume we're already at the first one
+
+        do {
+            tags.add(createOneFromCursor(c));
+        }
+        while (c.moveToNext());
+
+        return tags;
+    }
 
     public boolean equals(Object o) {
 
-        if(o == null) {
-            if(LOG) Log.d(TAG, "Tag->Equals: null");
+        if (o == null) {
+            if (LOG) Log.d(TAG, "Tag->Equals: null");
             return false;
         }
-        if(!(o instanceof Tag)) {
+        if (!(o instanceof Tag)) {
             if (LOG) Log.d(TAG, "Tag->Equals: Not a ServiceDescription");
             return false;
         }
@@ -83,12 +78,12 @@ public class Tag
             Log.d(TAG, "-1 for " + name);
         }
 
-        if(this.id != other.getID()) {
+        if (this.id != other.getID()) {
 //            if (LOG) Log.d(TAG, "Tag->Equals: id: [" + this.id + " - " + other.id() + "]");
             return false;
         }
 
-        if(!this.name.equals(other.getName())) {
+        if (!this.name.equals(other.getName())) {
             if (LOG) Log.d(TAG, "Tag->Equals: name " + name + " - " + other.getName());
             return false;
         }

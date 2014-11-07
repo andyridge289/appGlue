@@ -109,7 +109,7 @@
     <color name="material_deeporange200">#ffab91</color>
 
     <color name="card_disabled">#eeeeee</color>
-    <color name="button_pressed">#88000000</color>
+    <color name="button_pressed">#44000000</color>
 
     <color name="sab_title">#EEE</color>
     <color name="dim_on_dark">#555</color>

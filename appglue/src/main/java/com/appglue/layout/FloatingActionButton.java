@@ -29,10 +29,19 @@ public class FloatingActionButton extends View {
     private Bitmap mBitmap;
     private int mColor;
     private boolean mHidden = false;
-    /** The FAB button's Y position when it is displayed. */
+    /**
+     * The FAB button's Y position when it is displayed.
+     */
     private float mYDisplayed = -1;
-    /** The FAB button's Y position when it is hidden. */
+    /**
+     * The FAB button's Y position when it is hidden.
+     */
     private float mYHidden = -1;
+
+    float radius;
+    float dx;
+    float dy;
+    int shadowColor;
 
     public FloatingActionButton(Context context) {
         this(context, null);
@@ -46,15 +55,17 @@ public class FloatingActionButton extends View {
         super(context, attrs, defStyleAttr);
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FloatingActionButton);
+
         mColor = a.getColor(R.styleable.FloatingActionButton_fabcolor, Color.WHITE);
         mButtonPaint.setStyle(Paint.Style.FILL);
         mButtonPaint.setColor(mColor);
-        float radius, dx, dy;
+
         radius = a.getFloat(R.styleable.FloatingActionButton_shadowRadius, 10.0f);
         dx = a.getFloat(R.styleable.FloatingActionButton_shadowDx, 0.0f);
         dy = a.getFloat(R.styleable.FloatingActionButton_shadowDy, 3.5f);
-        int color = a.getInteger(R.styleable.FloatingActionButton_shadowColor, Color.argb(100, 0, 0, 0));
-        mButtonPaint.setShadowLayer(radius, dx, dy, color);
+
+        shadowColor = a.getInteger(R.styleable.FloatingActionButton_shadowColor, Color.argb(100, 0, 0, 0));
+        mButtonPaint.setShadowLayer(radius, dx, dy, shadowColor);
 
         Drawable drawable = a.getDrawable(R.styleable.FloatingActionButton_fabdrawable);
         if (null != drawable) {
@@ -92,8 +103,23 @@ public class FloatingActionButton extends View {
         }
     }
 
-    @Override protected void onLayout (boolean changed, int left, int top, int right, int bottom)
-    {
+    public void setEnabled(boolean enabled) {
+
+        mButtonPaint.setStyle(Paint.Style.FILL);
+
+        if (enabled) {
+            mButtonPaint.setColor(mColor);
+        } else {
+            mButtonPaint.setColor(getResources().getColor(R.color.hex888));
+        }
+
+        mButtonPaint.setShadowLayer(radius, dx, dy, shadowColor);
+
+        super.setEnabled(enabled);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         // Perform the default behavior
         super.onLayout(changed, left, top, right, bottom);
 
@@ -106,6 +132,11 @@ public class FloatingActionButton extends View {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
+
+        if (!this.isEnabled()) {
+            return false;
+        }
+
         int color;
         if (event.getAction() == MotionEvent.ACTION_UP) {
             color = mColor;

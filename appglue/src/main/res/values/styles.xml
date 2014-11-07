@@ -111,7 +111,7 @@
     </style>
 
     <style name="SelectableItem">
-        <item name="android:background">@drawable/textview_button</item>
+        <item name="android:background">@drawable/view_button</item>
     </style>
 
     <style name="h4">

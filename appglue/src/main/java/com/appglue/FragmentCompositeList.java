@@ -263,8 +263,6 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             }
         }
 
-        // TODO Unhighlight the selected composite when the contextbar is hidden
-
         @SuppressLint("InflateParams")
         public View getView(final int position, View convertView, final ViewGroup parent) {
             View v = convertView;
@@ -322,16 +320,11 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
                     if (item.isEnabled()) {
                         selectedIndex = showToolbar(selectedIndex, position, item);
                         notifyDataSetChanged();
+                    } else if (getParentFragment() != null) {
+                        ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
                     } else {
-                        // If they click an unselected one then take everything back
-//                        selectedIndex = -1;
-//                        addFab.hide(false);
-                        if (getParentFragment() != null) {
-                            ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
-                        } else {
-                            // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
-                            Log.e(TAG, "Parent fragment is null");
-                        }
+                        // TODO Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
+                        Log.e(TAG, "Parent fragment is null");
                     }
                 }
             });
@@ -345,7 +338,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
                     TextView tv = new TextView(getContext());
                     tv.setText(component.getDescription().getName());
 
-                    // XXX In expanded mode we need to add more information about the components
+                    // TODO In expanded mode we need to add more information about the components
 
                     if (item.isEnabled()) {
                         if (position == selectedIndex) {
@@ -407,7 +400,6 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
                 @Override
                 public boolean onLongClick(View v) {
                     expanded[position] = !expanded[position];
-
                     notifyDataSetChanged();
                     return true;
                 }
@@ -430,7 +422,8 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             addFab.hide(true);
             selectedIndex = position;
             contextToolbar.setVisibility(View.VISIBLE);
-            contextToolbar.setBackgroundResource(composite.getColour(true));
+            int color = composite.getColour(true);
+            contextToolbar.setBackgroundResource(color);
         } else if (selectedIndex == position) {
             addFab.hide(false);
             contextToolbar.setVisibility(View.GONE);
