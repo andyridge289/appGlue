@@ -39,18 +39,19 @@ import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAGS;
 import static com.appglue.Constants.CATEGORIES;
 import static com.appglue.Constants.MIN_VERSION;
+import static com.appglue.Constants.FEATURES;
 
 public class Library {
     public static String makeJSON(int id, String packageName, String className, String name, String shortName, String description,
                                   int flags, int minVersion, ArrayList<IODescription> inputList, ArrayList<IODescription> outputList,
-                                  String[] tags, String[] categories) {
+                                  String[] tags, String[] categories, String[] features) {
 
         String first = String.format(Locale.getDefault(), "{\"%s\": %d, \"%s\": \"%s\", " +
                         "\"%s\": \"%s\", \"%s\":\"%s\", \"%s\":\"%s\", " +
                         "\"%s\":\"%s\", \"%s\": %d, \"%s\": %d, ",
                 ID, id, PACKAGENAME, packageName,
                 CLASSNAME, className, NAME, name, SHORT_NAME, shortName,
-                DESCRIPTION, description, FLAGS, flags, MIN_VERSION, Math.max(minVersion, Build.VERSION_CODES.JELLY_BEAN_MR2));
+                DESCRIPTION, description, FLAGS, flags, MIN_VERSION, Math.max(minVersion, Build.VERSION_CODES.ICE_CREAM_SANDWICH));
 
         inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
         outputList = outputList == null ? new ArrayList<IODescription>() : outputList;
@@ -116,6 +117,9 @@ public class Library {
         outputBuilder.append("]");
         String outputs = outputBuilder.toString();
 
+        if (tags == null) {
+            tags = new String[] {};
+        }
         StringBuilder tagBuilder = new StringBuilder(String.format(",\"%s\":[", TAGS));
         for (int i = 0; i < tags.length; i++) {
             if (i > 0)
@@ -125,6 +129,9 @@ public class Library {
         }
         tagBuilder.append("]");
 
+        if (categories == null) {
+            categories = new String[] {};
+        }
         StringBuilder categoryBuilder = new StringBuilder(String.format(",\"%s\":[", CATEGORIES));
         for (int i = 0; i < categories.length; i++) {
             if (i > 0)
@@ -134,7 +141,19 @@ public class Library {
         }
         categoryBuilder.append("]");
 
-        return first + inputs + outputs + tagBuilder.toString() + categoryBuilder.toString() + "}";
+        if (features == null) {
+            features = new String[] {};
+        }
+        StringBuilder featureBuilder = new StringBuilder(String.format(",\"%s\":[", FEATURES));
+        for (int i = 0; i < features.length; i++) {
+            if (i > 0)
+                featureBuilder.append(",");
+
+            featureBuilder.append(String.format("\"%s\"", features[i]));
+        }
+        featureBuilder.append("]");
+
+        return first + inputs + outputs + tagBuilder.toString() + categoryBuilder.toString() + featureBuilder.toString() + "}";
     }
 
     public static String printBundle(Bundle bundle) {

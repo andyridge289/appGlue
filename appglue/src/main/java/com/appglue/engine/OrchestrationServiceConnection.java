@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,6 +31,7 @@ import com.appglue.ActivityAppGlue;
 import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
+import com.appglue.SystemFeature;
 import com.appglue.Test;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
@@ -168,6 +171,17 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             return;
         }
 
+        if (!versionCheck(service)) {
+            registry.versionMismatch(cs, executionInstance, service);
+            return;
+        }
+
+        int missingFeatures = deviceFeatures(service);
+        if (missingFeatures > 0) {
+            registry.missingFeatures(cs, executionInstance, service, missingFeatures);
+            return;
+        }
+
         int execStatus = canExecute(service);
         if (execStatus != 0) {
             registry.cantExecute(cs, executionInstance, service, execStatus);
@@ -271,6 +285,51 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         }
 
         return new Pair<ArrayList<Bundle>, ArrayList<Bundle>>(retained, removed);
+    }
+
+    // TODO This won't work for triggers
+
+    private boolean versionCheck(ComponentService component) {
+
+        return android.os.Build.VERSION.SDK_INT >= component.getDescription().getMinVersion();
+    }
+
+    private int deviceFeatures(ComponentService component) {
+
+        PackageManager packageManager = context.getPackageManager();
+
+        int f = component.getDescription().getFeaturesRequired();
+
+        // Get all the possible features
+        ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
+        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
+
+        // Get the objects representing the features that the component supports
+        for (SystemFeature feature : features) {
+            if ((f & feature.index) == feature.index) {
+                componentFeatures.add(feature);
+            }
+        }
+
+        int result = 0;
+
+        // And now check that each of these is available
+        for (SystemFeature feature : componentFeatures) {
+
+            // Put any that aren't available in the result
+            if (!packageManager.hasSystemFeature(feature.code)) {
+                result |= feature.index;
+            }
+        }
+
+        if (component.getDescription().hasFlag(ComposableService.FLAG_NETWORK)) {
+            if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) &&
+                !packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI)) {
+                result |= SystemFeature.getFeature(SystemFeature.INTERNET).index;
+            }
+        }
+
+        return result;
     }
 
     private int canExecute(ComponentService component) {

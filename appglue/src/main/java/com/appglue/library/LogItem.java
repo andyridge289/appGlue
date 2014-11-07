@@ -16,8 +16,10 @@ public class LogItem {
     public static final int OTHER_FAIL = 0x6; // Derp
     public static final int ORCH_FAIL = 0x7; // If the orchestrator fails
     public static final int PARAM_STOP = 0x8; // If it stops based on one of the flags
+    public static final int VERSION_MISMATCH = 0x9; // The component needs newer Android
+    public static final int MISSING_FEATURES = 0xA; // If the device doesn't have features
 
-    public static final int GENERIC_TRIGGER_FAIL = 0x7; // This is very much a special case
+    public static final int GENERIC_TRIGGER_FAIL = 0x10; // This is very much a special case
 
     // TODO Add something to say what killed the composite
     // TODO Add a specific message to say what killed the component
