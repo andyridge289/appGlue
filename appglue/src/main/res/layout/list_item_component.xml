@@ -47,17 +47,32 @@
 
             </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/component_app_icon"
+            <FrameLayout
+                android:id="@+id/component_app_icon_container"
                 android:layout_width="24dip"
                 android:layout_height="24dip"
-                android:layout_marginRight="5dip"
-                android:layout_marginEnd="5dip"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/icon" />
+                android:layout_marginRight="5dip"
+                android:layout_marginEnd="5dip"
+                >
 
+                <ImageView
+                    android:id="@+id/component_app_icon"
+                    android:layout_width="24dip"
+                    android:layout_height="24dip"
+                    android:src="@drawable/icon"
+                    />
+
+                <TextView
+                    android:id="@+id/version_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/service_name"
@@ -66,8 +81,8 @@
                 android:text="@string/service_name"
                 android:layout_toRightOf="@id/component_icon_container"
                 android:layout_toEndOf="@id/component_icon_container"
-                android:layout_toLeftOf="@id/component_app_icon"
-                android:layout_toStartOf="@id/component_app_icon"
+                android:layout_toLeftOf="@id/component_app_icon_container"
+                android:layout_toStartOf="@id/component_app_icon_container"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

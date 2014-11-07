@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -44,7 +45,7 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
-public class FragmentCompositeList extends Fragment {
+public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
     private ListView compositeList;
     private CompositeListAdapter listAdapter;
@@ -231,6 +232,16 @@ public class FragmentCompositeList extends Fragment {
             listAdapter.notifyDataSetChanged();
             listAdapter.selectedIndex = -1;
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "appGlue";
     }
 
     private class CompositeListAdapter extends ArrayAdapter<CompositeService> {

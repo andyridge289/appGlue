@@ -9,13 +9,17 @@
         android:title="Help"
         />
     <group
-        android:id="@+id/composite_edit_group">
+        android:id="@+id/composite_edit_group"
+        android:visible="false"
+        >
         <item
             android:id="@+id/composite_edit"
             android:title="Edit" />
     </group>
     <group
-        android:id="@+id/composite_done_group">
+        android:id="@+id/composite_done_group"
+        android:visible="false"
+        >
         <item
             android:id="@+id/composite_done"
             android:title="Done" />

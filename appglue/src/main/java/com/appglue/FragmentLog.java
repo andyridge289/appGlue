@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -22,10 +23,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class FragmentLog extends Fragment {
+public class FragmentLog extends Fragment implements AppGlueFragment {
     private Registry registry;
 
-    public static Fragment create() {
+    public static FragmentLog create() {
         return new FragmentLog();
     }
 
@@ -107,6 +108,16 @@ public class FragmentLog extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "Log";
     }
 
     private class LogAdapter extends ArrayAdapter<LogItem> {

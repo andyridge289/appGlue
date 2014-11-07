@@ -16,7 +16,7 @@ public class ImageDrawableResource extends IOType {
 
     @Override
     public Object getFromBundle(Bundle bundle, String key, Object defaultValue) {
-        return bundle.getInt(key, R.drawable.ic_launcher);
+        return bundle.getInt(key, R.drawable.ic_help_black_24dp);
     }
 
     @Override

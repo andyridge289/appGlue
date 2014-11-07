@@ -345,8 +345,15 @@ public class AppGlueLibrary {
         return name;
     }
 
-    private static View makeFlag(LayoutInflater vi, String name, int icon, boolean expand) {
+    private static View makeFlag(LayoutInflater vi, String name, int icon, boolean expand, boolean enabled) {
         View vv = vi.inflate(R.layout.component_attribute, null);
+
+        View bg = vv.findViewById(R.id.attr_icon);
+        if (enabled) {
+            bg.setBackgroundResource(R.drawable.component_attribute_icon);
+        } else {
+            bg.setBackgroundResource(R.drawable.component_attribute_icon_off);
+        }
 
         ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
         iv.setBackgroundResource(icon);
@@ -362,38 +369,84 @@ public class AppGlueLibrary {
         return vv;
     }
 
-    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi, boolean expand) {
+    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi, boolean expand, boolean enabled) {
 
         flagContainer.removeAllViews();
 
         if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
-            View vv = makeFlag(vi, "Trigger", R.drawable.ic_exit_to_app_white_18dp, expand);
+            View vv = makeFlag(vi, "Trigger", R.drawable.ic_exit_to_app_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_MONEY)) {
-            View vv = makeFlag(vi, "Costs money", R.drawable.ic_money, expand);
+            View vv = makeFlag(vi, "Costs money", R.drawable.ic_money, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
-            View vv = makeFlag(vi, "Uses data", R.drawable.ic_settings_input_antenna_white_18dp, expand);
+            View vv = makeFlag(vi, "Uses data", R.drawable.ic_settings_input_antenna_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_LOCATION)) {
-            View vv = makeFlag(vi, "Uses GPS", R.drawable.ic_my_location_white_18dp, expand);
+            View vv = makeFlag(vi, "Uses GPS", R.drawable.ic_my_location_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_DELAY)) {
-            View vv = makeFlag(vi, "Delay", R.drawable.ic_timelapse_white_18dp, expand);
+            View vv = makeFlag(vi, "Delay", R.drawable.ic_timelapse_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_STORAGE)) {
-            View vv = makeFlag(vi, "Uses Storage", R.drawable.ic_save_white_18dp, expand);
+            View vv = makeFlag(vi, "Uses Storage", R.drawable.ic_save_white_18dp, expand, enabled);
             flagContainer.addView(vv);
+        }
+    }
+
+    public static String getVersionName(int sdk) {
+
+        switch(sdk) {
+            case 1:
+                return "1.0";
+            case 2:
+                return "1.1";
+            case 3:
+                return "1.5";
+            case 4:
+                return "1.6";
+            case 5:
+                return "2.0";
+            case 6:
+                return "2.0.1";
+            case 7:
+                return "2.1";
+            case 8:
+                return "2.2";
+            case 9:
+                return "2.3";
+            case 10:
+                return "2.3.3";
+            case 11:
+                return "3.0";
+            case 12:
+                return "3.1";
+            case 13:
+                return "3.2";
+            case 14:
+                return "4.0";
+            case 15:
+                return "4.0.3";
+            case 16:
+                return "4.1";
+            case 17:
+                return "4.2";
+            case 18:
+                return "4.3";
+            case 19:
+                return "4.4";
+            default:
+                return "5.0";
         }
     }
 }

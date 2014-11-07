@@ -305,7 +305,9 @@ public class ActivityWiring extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.wiring, menu);
 
         int background = R.color.composite;
         String title = "";
@@ -316,23 +318,21 @@ public class ActivityWiring extends ActionBarActivity {
                     return true;
                 }
 
-                inflater.inflate(R.menu.wiring, menu);
                 background = R.color.composite;
-                title = "Connect components";
+                title = wiringFragment.onCreateOptionsMenu(menu);
                 break;
 
             case MODE_FILTER:
                 if (wiringFragment == null) {
                     return true;
                 }
-                inflater.inflate(R.menu.wiring_filter, menu);
                 background = R.color.filter;
-                title = "Add filter";
+                title = filterFragment.onCreateOptionsMenu(menu);
                 break;
 
             case MODE_CHOOSE:
                 background = R.color.component;
-                title = "Choose component";
+                title = componentListFragment.onCreateOptionsMenu(menu);
                 break;
         }
 

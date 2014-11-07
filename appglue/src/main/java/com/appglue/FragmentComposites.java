@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,7 +16,7 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.MODE;
 
-public class FragmentComposites extends Fragment {
+public class FragmentComposites extends Fragment implements AppGlueFragment {
 
     private int mode = -1;
     public static final int MODE_LIST = 0;
@@ -101,6 +102,7 @@ public class FragmentComposites extends Fragment {
         super.onDetach();
     }
 
+    @Override
     public boolean onBackPressed() {
 
         if (mode == FragmentComposites.MODE_COMPOSITE) {
@@ -110,6 +112,20 @@ public class FragmentComposites extends Fragment {
         }
 
         return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+
+        String title = "appGlue";
+
+        if (mode == FragmentComposites.MODE_COMPOSITE) {
+            title = compositeFragment.onCreateOptionsMenu(menu);
+        } else if(mode == FragmentComposites.MODE_LIST) {
+            title = listFragment.onCreateOptionsMenu(menu);
+        }
+
+        return title;
     }
 
     public int getMode() {

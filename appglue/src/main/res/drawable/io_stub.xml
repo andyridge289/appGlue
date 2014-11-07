@@ -5,9 +5,9 @@
     android:visible="true"
     >
     <solid
-        android:color="@color/eee"
+        android:color="@color/hexEEE"
         />
    	<stroke
-       android:color="@color/eee"
+       android:color="@color/hexEEE"
        />
 </shape>

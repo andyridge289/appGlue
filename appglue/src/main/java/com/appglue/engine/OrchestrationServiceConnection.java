@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -182,7 +181,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             return;
         }
 
-        int execStatus = canExecute(service);
+        int execStatus = paramTest(service.getDescription(), context);
         if (execStatus != 0) {
             registry.cantExecute(cs, executionInstance, service, execStatus);
             return;
@@ -296,31 +295,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
     private int deviceFeatures(ComponentService component) {
 
+        int result = component.getDescription().missingFeaturesMask(context);
         PackageManager packageManager = context.getPackageManager();
-
-        int f = component.getDescription().getFeaturesRequired();
-
-        // Get all the possible features
-        ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
-        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
-
-        // Get the objects representing the features that the component supports
-        for (SystemFeature feature : features) {
-            if ((f & feature.index) == feature.index) {
-                componentFeatures.add(feature);
-            }
-        }
-
-        int result = 0;
-
-        // And now check that each of these is available
-        for (SystemFeature feature : componentFeatures) {
-
-            // Put any that aren't available in the result
-            if (!packageManager.hasSystemFeature(feature.code)) {
-                result |= feature.index;
-            }
-        }
 
         if (component.getDescription().hasFlag(ComposableService.FLAG_NETWORK)) {
             if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) &&
@@ -332,13 +308,12 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         return result;
     }
 
-    private int canExecute(ComponentService component) {
+    public static int paramTest(ServiceDescription sd, Context context) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int result = 0;
 
         Resources res = context.getResources();
-        ServiceDescription sd = component.getDescription();
         if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
             if (!prefs.getBoolean(res.getString(R.string.prefs_cost), true)) {
                 result |= ComposableService.FLAG_MONEY;

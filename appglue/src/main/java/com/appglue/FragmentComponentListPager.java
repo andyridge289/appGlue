@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,7 +17,7 @@ import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
 import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
-public class FragmentComponentListPager extends Fragment {
+public class FragmentComponentListPager extends Fragment implements AppGlueFragment {
 
     private PagerAdapter adapter;
 
@@ -150,7 +151,11 @@ public class FragmentComponentListPager extends Fragment {
         Fragment current = adapter.getCurrent();
 
         return current instanceof FragmentComponentListCategory && ((FragmentComponentListCategory) current).onBackPressed();
+    }
 
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "Components";
     }
 
     public void showServiceDescription(String className) {

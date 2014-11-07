@@ -11,6 +11,6 @@
         />
     <stroke
         android:width="4dip"
-        android:color="@color/eee"
+        android:color="@color/hexEEE"
         />
 </shape>

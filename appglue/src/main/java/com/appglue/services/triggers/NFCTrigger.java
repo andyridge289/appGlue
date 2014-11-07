@@ -12,6 +12,7 @@ import android.os.Bundle;
 
 public class NFCTrigger extends GenericTrigger {
 
+    // FIXME The component list needs to distinguish between ones that can be used and ones that can't
     // FIXME Need to add android version to the component page
     // FIXME Need to add device features to the component page
 

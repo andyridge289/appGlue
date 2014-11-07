@@ -5,10 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -18,7 +20,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
+import com.appglue.engine.OrchestrationServiceConnection;
 import com.appglue.engine.description.ComponentService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
@@ -29,7 +33,7 @@ import java.util.ArrayList;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.TAG;
 
-public class FragmentComponent extends Fragment {
+public class FragmentComponent extends Fragment implements AppGlueFragment {
 
     private TextView componentName;
     private TextView componentDescription;
@@ -47,6 +51,11 @@ public class FragmentComponent extends Fragment {
     private TextView noOutputs;
 
     private LinearLayout flagContainer;
+
+    private View warning;
+    private LinearLayout warningVersion;
+    private LinearLayout warningFeatures;
+    private LinearLayout warningPrefs;
 
     private ServiceDescription sd;
 
@@ -93,6 +102,11 @@ public class FragmentComponent extends Fragment {
         noOutputs = (TextView) root.findViewById(R.id.component_no_outputs);
 
         flagContainer = (LinearLayout) root.findViewById(R.id.flag_container);
+
+        warning = root.findViewById(R.id.component_warning);
+        warningVersion = (LinearLayout) root.findViewById(R.id.warning_version);
+        warningFeatures = (LinearLayout) root.findViewById(R.id.warning_features);
+        warningPrefs = (LinearLayout) root.findViewById(R.id.warning_prefs);
 
         if (sd != null) {
             setupPage();
@@ -160,7 +174,7 @@ public class FragmentComponent extends Fragment {
         componentDescription.setText(sd.getDescription());
 
         LayoutInflater vi = getActivity().getLayoutInflater();
-        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, true);
+        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, true, true);
 
         if (sd.getApp() == null) {
             appName.setText("");
@@ -221,6 +235,47 @@ public class FragmentComponent extends Fragment {
                 ((FragmentComponents) getParentFragment()).showApp(sd.getApp().getPackageName());
             }
         });
+
+        ArrayList<SystemFeature> missingFeatures = sd.missingFeatures(getActivity());
+        String bullet = getResources().getString(R.string.bullet);
+
+        warningVersion.removeAllViews();
+        warningFeatures.removeAllViews();
+        warningPrefs.removeAllViews();
+        warning.setVisibility(View.GONE);
+
+        if (!sd.matchesVersion()) {
+
+            String version = AppGlueLibrary.getVersionName(sd.getMinVersion());
+
+            TextView tv = new TextView(getActivity());
+            tv.setText(String.format("%s Android version %s required.", bullet, version));
+            warningVersion.addView(tv);
+            warning.setVisibility(View.VISIBLE);
+
+        } else if (missingFeatures.size() > 0) {
+
+            for (SystemFeature feature : missingFeatures) {
+
+                TextView tv = new TextView(getActivity());
+                tv.setText(String.format("Your device doesn't support %s", feature.name));
+                tv.setCompoundDrawables(getResources().getDrawable(feature.icon), null, null, null);
+                warningFeatures.addView(tv);
+
+            }
+
+            warning.setVisibility(View.VISIBLE);
+
+        }
+
+        int paramStatus = OrchestrationServiceConnection.paramTest(sd, getActivity());
+        if (paramStatus != 0) {
+
+            TextView tv = new TextView(getActivity());
+            tv.setText(String.format("%s Your preferences have disallowed it.", bullet));
+            warningPrefs.addView(tv);
+            warning.setVisibility(View.VISIBLE);
+        }
     }
 
     public String getName() {
@@ -229,6 +284,16 @@ public class FragmentComponent extends Fragment {
 
     public ServiceDescription getComponent() {
         return sd;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+          return sd.getName();
     }
 
     private class IOAdapter extends ArrayAdapter<IODescription> {
