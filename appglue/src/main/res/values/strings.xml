@@ -269,5 +269,6 @@
 
     <string name="tutorial_6_10">Log</string>
     <string name="tutorial_6_11">The log tells you when your composites have run, and if they don\'t work it should tell you why.</string>
+    <string name="component_warning">This component has been turned off:</string>
 
 </resources>

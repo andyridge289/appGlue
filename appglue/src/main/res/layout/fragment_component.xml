@@ -7,6 +7,45 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/component_warning"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/component_warning"
+        android:layout_margin="5dip"
+        android:padding="5dip"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/component_warning"
+            />
+
+        <LinearLayout
+            android:id="@+id/warning_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            />
+
+        <LinearLayout
+            android:id="@+id/warning_features"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            />
+
+        <LinearLayout
+            android:id="@+id/warning_prefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
