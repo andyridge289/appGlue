@@ -345,8 +345,15 @@ public class AppGlueLibrary {
         return name;
     }
 
-    private static View makeFlag(LayoutInflater vi, String name, int icon, boolean expand) {
+    private static View makeFlag(LayoutInflater vi, String name, int icon, boolean expand, boolean enabled) {
         View vv = vi.inflate(R.layout.component_attribute, null);
+
+        View bg = vv.findViewById(R.id.attr_icon);
+        if (enabled) {
+            bg.setBackgroundResource(R.drawable.component_attribute_icon);
+        } else {
+            bg.setBackgroundResource(R.drawable.component_attribute_icon_off);
+        }
 
         ImageView iv = (ImageView) vv.findViewById(R.id.component_attribute_icon);
         iv.setBackgroundResource(icon);
@@ -362,37 +369,37 @@ public class AppGlueLibrary {
         return vv;
     }
 
-    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi, boolean expand) {
+    public static void addFlagsToLayout(LinearLayout flagContainer, ServiceDescription sd, LayoutInflater vi, boolean expand, boolean enabled) {
 
         flagContainer.removeAllViews();
 
         if (sd.hasFlag(ComposableService.FLAG_TRIGGER)) {
-            View vv = makeFlag(vi, "Trigger", R.drawable.ic_exit_to_app_white_18dp, expand);
+            View vv = makeFlag(vi, "Trigger", R.drawable.ic_exit_to_app_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_MONEY)) {
-            View vv = makeFlag(vi, "Costs money", R.drawable.ic_money, expand);
+            View vv = makeFlag(vi, "Costs money", R.drawable.ic_money, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
-            View vv = makeFlag(vi, "Uses data", R.drawable.ic_settings_input_antenna_white_18dp, expand);
+            View vv = makeFlag(vi, "Uses data", R.drawable.ic_settings_input_antenna_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_LOCATION)) {
-            View vv = makeFlag(vi, "Uses GPS", R.drawable.ic_my_location_white_18dp, expand);
+            View vv = makeFlag(vi, "Uses GPS", R.drawable.ic_my_location_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_DELAY)) {
-            View vv = makeFlag(vi, "Delay", R.drawable.ic_timelapse_white_18dp, expand);
+            View vv = makeFlag(vi, "Delay", R.drawable.ic_timelapse_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
 
         if (sd.hasFlag(ComposableService.FLAG_STORAGE)) {
-            View vv = makeFlag(vi, "Uses Storage", R.drawable.ic_save_white_18dp, expand);
+            View vv = makeFlag(vi, "Uses Storage", R.drawable.ic_save_white_18dp, expand, enabled);
             flagContainer.addView(vv);
         }
     }

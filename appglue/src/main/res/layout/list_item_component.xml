@@ -48,6 +48,7 @@
             </RelativeLayout>
 
             <FrameLayout
+                android:id="@+id/component_app_icon_container"
                 android:layout_width="24dip"
                 android:layout_height="24dip"
                 android:layout_centerVertical="true"
@@ -61,7 +62,7 @@
                     android:id="@+id/component_app_icon"
                     android:layout_width="24dip"
                     android:layout_height="24dip"
-                    android:background="@drawable/icon"
+                    android:src="@drawable/icon"
                     />
 
                 <TextView
@@ -80,8 +81,8 @@
                 android:text="@string/service_name"
                 android:layout_toRightOf="@id/component_icon_container"
                 android:layout_toEndOf="@id/component_icon_container"
-                android:layout_toLeftOf="@id/component_app_icon"
-                android:layout_toStartOf="@id/component_app_icon"
+                android:layout_toLeftOf="@id/component_app_icon_container"
+                android:layout_toStartOf="@id/component_app_icon_container"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

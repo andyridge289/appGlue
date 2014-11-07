@@ -147,11 +147,13 @@ public class FragmentApp extends Fragment {
 //                icon.setImageResource(R.drawable.ic_menu_upload);
 //            }
 
+            // TODO OnBackPressed with drawer open -> close drawer
+
             TextView serviceName = (TextView) v.findViewById(R.id.service_name);
             serviceName.setText(sd.getName());
 
             LinearLayout flagContainer = (LinearLayout) v.findViewById(R.id.flag_container);
-            AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, false);
+            AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, false, true);
 
             if (sd.hasInputs()) {
                 v.findViewById(R.id.comp_item_inputs).setBackgroundResource(R.drawable.has_io);

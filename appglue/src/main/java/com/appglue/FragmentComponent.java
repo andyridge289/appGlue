@@ -160,7 +160,7 @@ public class FragmentComponent extends Fragment {
         componentDescription.setText(sd.getDescription());
 
         LayoutInflater vi = getActivity().getLayoutInflater();
-        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, true);
+        AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, true, true);
 
         if (sd.getApp() == null) {
             appName.setText("");

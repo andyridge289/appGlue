@@ -181,7 +181,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             return;
         }
 
-        int execStatus = canExecute(service);
+        int execStatus = paramTest(service.getDescription(), context);
         if (execStatus != 0) {
             registry.cantExecute(cs, executionInstance, service, execStatus);
             return;
@@ -308,13 +308,12 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         return result;
     }
 
-    private int canExecute(ComponentService component) {
+    public static int paramTest(ServiceDescription sd, Context context) {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         int result = 0;
 
         Resources res = context.getResources();
-        ServiceDescription sd = component.getDescription();
         if (sd.hasFlag(ComposableService.FLAG_NETWORK)) {
             if (!prefs.getBoolean(res.getString(R.string.prefs_cost), true)) {
                 result |= ComposableService.FLAG_MONEY;

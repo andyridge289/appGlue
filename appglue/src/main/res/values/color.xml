@@ -3,21 +3,20 @@
 
     <!-- Lazy hex colours -->
     <!--<color name="fff">#FFF</color>-->
-    <color name="eee">#EEE</color>
+    <color name="hexEEE">#EEE</color>
     <!--<color name="ddd">#DDD</color>-->
     <color name="hexCCC">#CCC</color>
     <!--<color name="bbb">#BBB</color>-->
     <color name="hexAAA">#AAA</color>
     <!--<color name="hex999">#999</color>-->
     <color name="hex888">#888</color>
-    <!--<color name="hex777">#777</color>-->
-    <!--<color name="hex666">#666</color>-->
-    <!--<color name="hex555">#555</color>-->
+    <color name="hex777">#777</color>
+    <color name="hex666">#666</color>
+    <color name="hex555">#555</color>
     <color name="hex444">#444</color>
-    <!--<color name="hex333">#333</color>-->
-    <!--<color name="hex222">#222</color>-->
-    <!--<color name="hex111">#111</color>-->
-    <!--<color name="hex000">#000</color>-->
+    <color name="hex333">#333</color>
+    <color name="hex222">#222</color>
+    <color name="hex111">#111</color>
     <color name="white_a">#AAFFFFFF</color>
 
     <color name="colorPrimaryDark">#ff522385</color>
