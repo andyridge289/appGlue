@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -31,7 +32,7 @@ import java.util.GregorianCalendar;
 
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
-public class FragmentSchedule extends Fragment {
+public class FragmentSchedule extends Fragment implements AppGlueFragment {
 
     private Registry registry;
     private Schedule current;
@@ -45,7 +46,7 @@ public class FragmentSchedule extends Fragment {
 
     public String[] monthDays = new String[28];
 
-    public static Fragment create(long id) {
+    public static FragmentSchedule create(long id) {
         FragmentSchedule f = new FragmentSchedule();
         Bundle b = new Bundle();
         b.putLong(COMPOSITE_ID, id);
@@ -175,6 +176,16 @@ public class FragmentSchedule extends Fragment {
             scheduleList.setVisibility(View.GONE);
             noSchedule.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "Schedule";
     }
 
     private class ScheduleAdapter extends ArrayAdapter<Schedule> {

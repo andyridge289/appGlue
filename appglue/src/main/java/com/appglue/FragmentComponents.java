@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,7 +16,7 @@ import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
-public class FragmentComponents extends Fragment {
+public class FragmentComponents extends Fragment implements AppGlueFragment {
 
     private int mode;
     public static final int MODE_LIST = 0;
@@ -119,6 +120,21 @@ public class FragmentComponents extends Fragment {
         } else {
             return listFragment.onBackPressed();
         }
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        String title = "Components";
+
+        if (mode == FragmentComponents.MODE_COMPONENT) {
+            title = componentFragment.onCreateOptionsMenu(menu);
+        } else if (mode == FragmentComponents.MODE_LIST) {
+            title = listFragment.onCreateOptionsMenu(menu);
+        } else if (mode == FragmentComponents.MODE_APP) {
+            title = appFragment.onCreateOptionsMenu(menu);
+        }
+
+        return title;
     }
 
     public void setMode(int mode) {

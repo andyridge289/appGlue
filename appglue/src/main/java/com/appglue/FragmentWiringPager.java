@@ -13,6 +13,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
-public class FragmentWiringPager extends Fragment implements ViewPager.OnPageChangeListener {
+public class FragmentWiringPager extends Fragment implements ViewPager.OnPageChangeListener,  AppGlueFragment {
 
     private ViewPager wiringPager;
     private WiringPagerAdapter adapter;
@@ -485,6 +486,17 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     public void setPageIndex(int pagerPosition) {
         wiringPager.setCurrentItem(pagerPosition);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        menu.setGroupVisible(R.id.wiring_group, true);
+        return "Create composite";
     }
 
     private class WiringPagerAdapter extends FragmentStatePagerAdapter {

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import static com.appglue.Constants.CLASSNAME;
 import static com.appglue.Constants.TAG;
 
-public class FragmentComponent extends Fragment {
+public class FragmentComponent extends Fragment implements AppGlueFragment {
 
     private TextView componentName;
     private TextView componentDescription;
@@ -283,6 +284,16 @@ public class FragmentComponent extends Fragment {
 
     public ServiceDescription getComponent() {
         return sd;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+          return sd.getName();
     }
 
     private class IOAdapter extends ArrayAdapter<IODescription> {

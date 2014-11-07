@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -25,7 +26,7 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.FILTER_ID;
 
-public class FragmentFilter extends Fragment {
+public class FragmentFilter extends Fragment implements AppGlueFragment {
 
     private ComponentService component;
 
@@ -206,5 +207,10 @@ public class FragmentFilter extends Fragment {
 
     public boolean onBackPressed() {
         return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "Create Filter";
     }
 }

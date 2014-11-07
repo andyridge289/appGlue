@@ -5,6 +5,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
 
-public class FragmentComponentList extends Fragment {
+public class FragmentComponentList extends Fragment implements AppGlueFragment {
     protected ListView serviceListView;
     protected TextView noneFound;
     protected ImageView loader;
@@ -72,5 +73,15 @@ public class FragmentComponentList extends Fragment {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "Components";
     }
 }

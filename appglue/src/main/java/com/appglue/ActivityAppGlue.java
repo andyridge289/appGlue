@@ -52,8 +52,7 @@ public class ActivityAppGlue extends ActionBarActivity
         COMPONENTS(1, "Component List"),
         SCHEDULE(2, "Schedule"),
         LOG(3, "Log"),
-        ACCOUNTS(4, "Connect accounts"),
-        PRIVACY(5, "Privacy");
+        ACCOUNTS(4, "Connect accounts");
 
         public int index;
         public String name;
@@ -77,6 +76,9 @@ public class ActivityAppGlue extends ActionBarActivity
 
     private FragmentComposites homeFragment;
     private FragmentComponents componentFragment;
+    private FragmentSchedule scheduleFragment;
+    private FragmentLog logFragment;
+    private FragmentAccounts accountFragment;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -223,21 +225,22 @@ public class ActivityAppGlue extends ActionBarActivity
         } else if (position == Page.SCHEDULE.index) {
             background = R.color.schedule;
             if (scheduledComposite != null) {
-                f = FragmentSchedule.create(scheduledComposite.getID());
+                scheduleFragment = FragmentSchedule.create(scheduledComposite.getID());
                 scheduledComposite = null;
             } else {
-                f = FragmentSchedule.create(-1);
+                scheduleFragment = FragmentSchedule.create(-1);
             }
+
+            f = scheduleFragment;
 
         } else if (position == Page.LOG.index) {
             background = R.color.material_green;
-            f = FragmentLog.create();
-        } else if (position == Page.PRIVACY.index) {
-            background = R.color.black;
-            f = FragmentPrivacy.create();
+            logFragment = FragmentLog.create();
+            f = logFragment;
         } else if (position == Page.ACCOUNTS.index) {
             background = R.color.black;
-            f = FragmentAccounts.create();
+            accountFragment = FragmentAccounts.create();
+            f = accountFragment;
         }
 
         currentPage = position;
@@ -343,8 +346,6 @@ public class ActivityAppGlue extends ActionBarActivity
         }
     }
 
-    // FIXME Saving the phone number also didn't work
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -355,52 +356,19 @@ public class ActivityAppGlue extends ActionBarActivity
 
         if (currentPage == Page.HOME.index) {
             background = R.color.composite;
-            if (homeFragment.getMode() == FragmentComposites.MODE_COMPOSITE) {
-                CompositeService composite = homeFragment.getComposite();
-                if (composite != null) {
-                    title = composite.getName();
-                } else {
-                    title = "Composite";
-                }
-
-                if (homeFragment.isEditingComposite()) {
-                    menu.setGroupVisible(R.id.composite_done_group, true);
-                    menu.setGroupVisible(R.id.composite_edit_group, false);
-                } else {
-                    menu.setGroupVisible(R.id.composite_done_group, false);
-                    menu.setGroupVisible(R.id.composite_edit_group, true);
-                }
-
-            } else {
-                title = "appGlue";
-                menu.setGroupVisible(R.id.composite_done_group, false);
-                menu.setGroupVisible(R.id.composite_edit_group, false);
-            }
-
+            title = homeFragment.onCreateOptionsMenu(menu);
         } else if (currentPage == Page.COMPONENTS.index) {
             background = R.color.component;
-            if (componentFragment.getMode() == FragmentComponents.MODE_COMPONENT) {
-                ServiceDescription sd = componentFragment.getComponent();
-                if (sd != null) {
-                    title = "Component: " + sd.getName();
-                } else {
-                    title = "Component";
-                }
-            } else {
-                title = "Components";
-            }
+            title = componentFragment.onCreateOptionsMenu(menu);
         } else if (currentPage == Page.SCHEDULE.index) {
             background = R.color.schedule;
-            title = "Schedule";
+            title = scheduleFragment.onCreateOptionsMenu(menu);
         } else if (currentPage == Page.LOG.index) {
             background = R.color.log;
-            title = "Log";
+            title = logFragment.onCreateOptionsMenu(menu);
         } else if (currentPage == Page.ACCOUNTS.index) {
             background = R.color.settings;
-            title = "Connect accounts";
-        } else if (currentPage == Page.PRIVACY.index) {
-            background = R.color.settings;
-            title = "Privacy";
+            title = accountFragment.onCreateOptionsMenu(menu);
         }
 
         if (toolbar != null) {

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
-public class FragmentComposite extends Fragment {
+public class FragmentComposite extends Fragment implements AppGlueFragment {
 
     private ImageView compositeIcon;
 
@@ -322,6 +323,30 @@ public class FragmentComposite extends Fragment {
 
     public boolean isEditingComposite() {
         return !this.normalMode;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+
+        String title = "Composite";
+        if (composite != null) {
+            title = composite.getName();
+        }
+
+        if (this.normalMode) {
+            menu.setGroupVisible(R.id.composite_done_group, false);
+            menu.setGroupVisible(R.id.composite_edit_group, true);
+        } else { // They are editing
+            menu.setGroupVisible(R.id.composite_done_group, true);
+            menu.setGroupVisible(R.id.composite_edit_group, false);
+        }
+
+        return title;
     }
 
     private class CompositeComponentAdapter extends ArrayAdapter<ComponentService> {

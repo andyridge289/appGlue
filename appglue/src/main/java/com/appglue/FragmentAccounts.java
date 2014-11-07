@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FragmentAccounts extends Fragment {
+public class FragmentAccounts extends Fragment implements AppGlueFragment {
 
-    public static Fragment create() {
+    public static FragmentAccounts create() {
         return new FragmentAccounts();
     }
 
@@ -74,5 +75,15 @@ public class FragmentAccounts extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return "Connect Accounts";
     }
 }

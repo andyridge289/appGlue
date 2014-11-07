@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.PACKAGENAME;
 
-public class FragmentApp extends Fragment {
+public class FragmentApp extends Fragment implements AppGlueFragment {
 
     private AppDescription app;
     private Registry registry;
@@ -111,6 +112,16 @@ public class FragmentApp extends Fragment {
             registry = Registry.getInstance(getActivity());
 
         app = registry.getApp(packageName);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
+    public String onCreateOptionsMenu(Menu menu) {
+        return app.getName();
     }
 
     private class AppComponentAdapter extends ArrayAdapter<ServiceDescription> {
