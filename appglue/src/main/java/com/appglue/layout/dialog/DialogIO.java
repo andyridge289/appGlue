@@ -371,9 +371,9 @@ public class DialogIO extends AlertDialog {
                 }
 
                 if (position != selectedIndex) {
-                    v.setBackgroundResource(R.drawable.textview_button);
+                    v.setBackgroundResource(R.color.bg);
                 } else {
-                    v.setBackgroundResource(R.drawable.textview_button_focused);
+                    v.setBackgroundResource(R.color.android_blue_half);
                 }
 
                 v.setOnClickListener(new View.OnClickListener() {
@@ -521,9 +521,9 @@ public class DialogIO extends AlertDialog {
                 }
 
                 if (position != selectedIndex) {
-                    v.setBackgroundResource(R.drawable.textview_button);
+                    v.setBackgroundResource(R.color.bg);
                 } else {
-                    v.setBackgroundResource(R.drawable.textview_button_focused);
+                    v.setBackgroundResource(R.color.android_blue_half);
                 }
 
                 final ApplicationInfo app = values.get(position);

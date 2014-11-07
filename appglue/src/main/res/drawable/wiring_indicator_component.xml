@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- This is the broder -->
-    <item>
-
-        <shape
-            android:shape="rectangle"
-            >
-            <stroke
-                android:color="@color/component"
-                android:width="2dip"
-                />
-            <solid
-                android:color="@color/component_light"
-                />
-            <corners
-                android:radius="2dip"
-                />
-        </shape>
-    </item>
-
-</layer-list>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:state_pressed="true" android:drawable="@drawable/wiring_indicator_component_down" />
+    <item android:state_focused="true" android:drawable="@drawable/wiring_indicator_component_down" />
+    <item android:drawable="@drawable/wiring_indicator_component_up" />
+</selector> 

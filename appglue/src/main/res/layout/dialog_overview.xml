@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/white_a">
+
+    <com.appglue.layout.FloatingActionButton
+        android:id="@+id/overview_left"
+        android:layout_width="48dip"
+        android:layout_height="48dip"
+        app:fabcolor="@color/component_light"
+        android:gravity="start|center_vertical"
+        app:fabdrawable="@drawable/ic_reply_all_white_36dp"
+        />
+
+    <com.appglue.layout.FloatingActionButton
+        android:id="@+id/overview_remove"
+        android:layout_width="48dip"
+        android:layout_height="48dip"
+        app:fabcolor="@color/material_red"
+        android:gravity="center"
+        app:fabdrawable="@drawable/ic_reply_all_white_36dp"
+
+        />
+
+    <com.appglue.layout.FloatingActionButton
+        android:id="@+id/overview_right"
+        android:layout_width="48dip"
+        android:layout_height="48dip"
+        app:fabcolor="@color/component_light"
+        android:gravity="end|center_vertical"
+        app:fabdrawable="@drawable/ic_reply_all_white_36dp"
+        />
+
+    <!--<TextView-->
+
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/bar_height"-->
+        <!--android:text="Move left"-->
+        <!--android:gravity="center"-->
+        <!--android:layout_marginBottom="1dip"-->
+        <!--style="@style/SelectableItem"-->
+        <!--/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/overview_right"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/bar_height"-->
+        <!--android:text="Move right"-->
+        <!--android:gravity="center"-->
+        <!--style="@style/SelectableItem"-->
+        <!--android:layout_marginBottom="1dip"-->
+        <!--/>-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/overview_remove"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/bar_height"-->
+        <!--android:text="Remove"-->
+        <!--android:gravity="center"-->
+        <!--style="@style/SelectableItem"-->
+        <!--/>-->
+
+</LinearLayout>

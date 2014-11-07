@@ -115,7 +115,6 @@ public class FragmentWiring extends Fragment {
         if (first != null) {
 
             firstName.setText(first.getDescription().getName());
-//            firstName.setRotation(90);
 
             firstName.setVisibility(View.VISIBLE);
             firstIcon.setVisibility(View.VISIBLE);

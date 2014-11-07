@@ -109,7 +109,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             @Override
             public void onClick(View v) {
                 aag.run(listAdapter.getCurrentComposite());
-                contextToolbar.setVisibility(View.GONE);
+                hideToolbar();
             }
         });
 
@@ -118,7 +118,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             @Override
             public void onClick(View v) {
                 aag.schedule(listAdapter.getCurrentComposite());
-                contextToolbar.setVisibility(View.GONE);
+                hideToolbar();
             }
         });
 
@@ -127,7 +127,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             @Override
             public void onClick(View v) {
                 aag.edit(listAdapter.getCurrentComposite());
-                contextToolbar.setVisibility(View.GONE);
+                hideToolbar();
             }
         });
 
@@ -136,7 +136,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             @Override
             public void onClick(View v) {
                 aag.createShortcut(listAdapter.getCurrentComposite());
-                contextToolbar.setVisibility(View.GONE);
+                hideToolbar();
             }
         });
 
@@ -160,10 +160,15 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
                                 listAdapter.remove(cs);
                                 listAdapter.notifyDataSetChanged();
+                                hideToolbar();
                             }
                         })
-                        .setNegativeButton("No", null).show();
-                contextToolbar.setVisibility(View.GONE);
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                hideToolbar();
+                            }
+                        }).show();
             }
         });
 
@@ -446,6 +451,13 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         }
 
         return selectedIndex;
+    }
+
+    private void hideToolbar() {
+        contextToolbar.setVisibility(View.GONE);
+        addFab.hide(false);
+        listAdapter.selectedIndex = -1;
+        listAdapter.notifyDataSetChanged();
     }
 
     private class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
