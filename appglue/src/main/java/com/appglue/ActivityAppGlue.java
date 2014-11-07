@@ -73,6 +73,8 @@ public class ActivityAppGlue extends ActionBarActivity
     private static final String COMPOSITE_MODE = "composite_mode";
     private static final String COMPONENT_MODE = "component_mode";
 
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+
     private FragmentComposites homeFragment;
     private FragmentComponents componentFragment;
 
@@ -95,7 +97,7 @@ public class ActivityAppGlue extends ActionBarActivity
         /*
       Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
-        NavigationDrawerFragment mNavigationDrawerFragment = (NavigationDrawerFragment)
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
@@ -248,12 +250,17 @@ public class ActivityAppGlue extends ActionBarActivity
         invalidateOptionsMenu();
     }
 
-    // TODO Categories for component list
+    // TODO Sort the menus out
     // TODO Test rotations on every page
     // TOdO Look up that error about doing fragment things after saved instance state
 
     @Override
     public void onBackPressed() {
+        if (mNavigationDrawerFragment.isDrawerOpen()) {
+            mNavigationDrawerFragment.close();
+            return;
+        }
+
         if (currentPage == Page.HOME.index) {
             if(homeFragment.onBackPressed()) {
                 invalidateOptionsMenu();
