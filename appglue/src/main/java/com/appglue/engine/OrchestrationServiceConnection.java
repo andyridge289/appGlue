@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -296,31 +295,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
     private int deviceFeatures(ComponentService component) {
 
+        int result = component.getDescription().missingFeaturesMask(context);
         PackageManager packageManager = context.getPackageManager();
-
-        int f = component.getDescription().getFeaturesRequired();
-
-        // Get all the possible features
-        ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
-        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
-
-        // Get the objects representing the features that the component supports
-        for (SystemFeature feature : features) {
-            if ((f & feature.index) == feature.index) {
-                componentFeatures.add(feature);
-            }
-        }
-
-        int result = 0;
-
-        // And now check that each of these is available
-        for (SystemFeature feature : componentFeatures) {
-
-            // Put any that aren't available in the result
-            if (!packageManager.hasSystemFeature(feature.code)) {
-                result |= feature.index;
-            }
-        }
 
         if (component.getDescription().hasFlag(ComposableService.FLAG_NETWORK)) {
             if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) &&

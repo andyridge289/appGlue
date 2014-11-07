@@ -85,20 +85,37 @@ class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
             return v;
 
         ImageView appIcon = (ImageView) v.findViewById(R.id.component_app_icon);
+        TextView versionText = (TextView) v.findViewById(R.id.version_text);
+        versionText.setVisibility(View.GONE);
 
-        AppDescription app = sd.getApp();
-        if (app != null) {
-            String iconLocation = app.getIconLocation();
-            LocalStorage ls = LocalStorage.getInstance();
-            Bitmap bmp = ls.readIcon(iconLocation);
-            if (bmp == null) {
-                appIcon.setImageResource(R.drawable.icon);
-            } else {
-                appIcon.setImageBitmap(bmp);
-            }
+        ArrayList<SystemFeature> missingFeatures = sd.missingFeatures(getContext());
+        if (!sd.matchesVersion()) {
+
+            String version = AppGlueLibrary.getVersionName(sd.getMinVersion());
+            appIcon.setBackgroundResource(R.drawable.ic_android_black_24dp);
+            versionText.setText(version);
+            versionText.setVisibility(View.VISIBLE);
+
+        } else if (missingFeatures.size() > 0) {
+
+            // Just use the first one for now
+            appIcon.setBackgroundResource(missingFeatures.get(0).icon);
+
         } else {
-            // Just use our icon as the default
-            appIcon.setImageResource(R.drawable.icon);
+            AppDescription app = sd.getApp();
+            if (app != null) {
+                String iconLocation = app.getIconLocation();
+                LocalStorage ls = LocalStorage.getInstance();
+                Bitmap bmp = ls.readIcon(iconLocation);
+                if (bmp == null) {
+                    appIcon.setImageResource(R.drawable.icon);
+                } else {
+                    appIcon.setImageBitmap(bmp);
+                }
+            } else {
+                // Just use our icon as the default
+                appIcon.setImageResource(R.drawable.icon);
+            }
         }
 
         Resources res = getContext().getResources();

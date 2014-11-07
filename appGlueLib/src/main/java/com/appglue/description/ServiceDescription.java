@@ -1,6 +1,7 @@
 package com.appglue.description;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -672,8 +673,67 @@ public class ServiceDescription {
     public int getMinVersion() {
         return minVersion;
     }
+    public boolean matchesVersion() {
+        return minVersion <= Build.VERSION.SDK_INT;
+    }
 
     public int getFeaturesRequired() {
         return featuresRequired;
+    }
+
+    public ArrayList<SystemFeature> missingFeatures(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+
+        // Get all the possible features
+        ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
+        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
+
+        // Get the objects representing the features that the component supports
+        for (SystemFeature feature : features) {
+            if ((featuresRequired & feature.index) == feature.index) {
+                componentFeatures.add(feature);
+            }
+        }
+
+        ArrayList<SystemFeature> missingFeatures = new ArrayList<SystemFeature>();
+
+        // And now check that each of these is available
+        for (SystemFeature feature : componentFeatures) {
+
+            // Put any that aren't available in the result
+            if (!packageManager.hasSystemFeature(feature.code)) {
+                missingFeatures.add(feature);
+            }
+        }
+
+        return missingFeatures;
+    }
+
+    public int missingFeaturesMask(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+
+        // Get all the possible features
+        ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
+        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
+
+        // Get the objects representing the features that the component supports
+        for (SystemFeature feature : features) {
+            if ((featuresRequired & feature.index) == feature.index) {
+                componentFeatures.add(feature);
+            }
+        }
+
+        int result = 0;
+
+        // And now check that each of these is available
+        for (SystemFeature feature : componentFeatures) {
+
+            // Put any that aren't available in the result
+            if (!packageManager.hasSystemFeature(feature.code)) {
+                result |= feature.index;
+            }
+        }
+
+        return result;
     }
 }
