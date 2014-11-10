@@ -323,16 +323,6 @@ public class CompositeService {
         this.description = c.getString(c.getColumnIndex(prefix + DESCRIPTION));
 
         this.enabled = c.getInt(c.getColumnIndex(prefix + ENABLED)) == 1;
-//        this.numeral = c.getInt(c.getColumnIndex(prefix + NUMERAL));
-
-//        int intervalValue = c.getInt(c.getColumnIndex(prefix + INTERVAL));
-//        this.interval = Interval.values()[intervalValue];
-
-//        int scheduleValue = c.getInt(c.getColumnIndex(prefix + SCHEDULED));
-//        this.scheduleMode = Schedule.values()[scheduleValue];
-
-//        this.hours = c.getInt(c.getColumnIndex(prefix + HOUR));
-//        this.minutes = c.getInt(c.getColumnIndex(prefix + MINUTE));
     }
 
     public int size() {
@@ -340,6 +330,9 @@ public class CompositeService {
     }
 
     public void swap(int a, int b) {
+
+        Log.d(TAG, String.format("Pre-swap: %s -> %s", components.get(a).getDescription().getName(),
+                                                       components.get(b).getDescription().getName()));
 
         ComponentService ath = components.get(a);
         ComponentService bth = components.get(b);
@@ -349,6 +342,9 @@ public class CompositeService {
 
         components.put(a, bth);
         components.put(b, ath);
+
+        Log.d(TAG, String.format("Post-swap: %s -> %s", components.get(a).getDescription().getName(),
+                components.get(b).getDescription().getName()));
     }
 
     public boolean equals(Object o) {

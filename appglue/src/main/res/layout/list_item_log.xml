@@ -68,17 +68,43 @@
                 android:layout_below="@id/composite_name"
                 android:layout_toRightOf="@id/log_icon_container"
                 android:layout_toEndOf="@id/log_icon_container"
+                android:textStyle="bold"
                 android:layout_marginLeft="5dip"
                 android:layout_marginStart="5dip" />
 
             <TextView
-                android:id="@+id/log_time"
+                android:id="@+id/log_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thursday 30th October 2014 19:31:34"
+                android:text="A Sample message"
                 android:layout_below="@id/composite_name"
                 android:layout_toRightOf="@id/log_status"
                 android:layout_toEndOf="@id/log_status"
+                android:layout_marginLeft="5dip"
+                android:layout_marginStart="5dip" />
+
+            <TextView
+                android:id="@+id/log_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30th October 2014 19:31:34"
+                android:layout_below="@id/log_status"
+                android:layout_toRightOf="@id/log_icon_container"
+                android:layout_toEndOf="@id/log_icon_container"
+                android:layout_marginLeft="5dip"
+                android:layout_marginStart="5dip" />
+
+            <TextView
+                android:id="@+id/log_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="in 100.00s"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/log_status"
+                android:layout_toRightOf="@id/log_start_time"
+                android:layout_toEndOf="@id/log_start_time"
                 android:layout_marginLeft="5dip"
                 android:layout_marginStart="5dip" />
 
@@ -87,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_below="@id/log_time"
+                android:layout_below="@id/log_start_time"
                 android:layout_toRightOf="@id/log_icon_container"
                 android:layout_toEndOf="@id/log_icon_container" />
 

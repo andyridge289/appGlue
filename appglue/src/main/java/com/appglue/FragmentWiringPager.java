@@ -276,12 +276,15 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
                 if ((first == 0 && second == 0) || (first == CompositeService.FILTERS && second == CompositeService.FILTERS)) {
                     cs.swap(overviewSelectedIndex - 1, overviewSelectedIndex);
+                    registry.updateCurrent();
                 } else {
                     Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
                     // TODO Can they remove connections?
                 }
 
+                // TODO See if we can animate these changes to make it more obvious what's going on?
                 overviewOverlay.setVisibility(View.GONE);
+                overviewSelectedIndex = -1;
                 redrawAll();
             }
         });
@@ -296,11 +299,14 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
                 if ((first == 0 && second == 0) || (first == CompositeService.FILTERS && second == CompositeService.FILTERS)) {
                     cs.swap(overviewSelectedIndex, overviewSelectedIndex + 1);
+                    registry.updateCurrent();
                 } else {
                     Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
                 }
 
+
                 overviewOverlay.setVisibility(View.GONE);
+                overviewSelectedIndex = -1;
                 redrawAll();
             }
         });
@@ -309,9 +315,19 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
 
+                // TODO The second one isn't being removed.
+
                 // Remove the component
                 cs.remove(overviewSelectedIndex);
+                registry.updateCurrent();
                 overviewOverlay.setVisibility(View.GONE);
+                overviewSelectedIndex = -1;
+                if (cs.getComponents().size() == 0) {
+                    // TODO Make this automatically make them choose something else?
+                    getActivity().finish();
+                } else if (FragmentWiringPager.this.position > cs.getComponents().size() - 1) {
+                    FragmentWiringPager.this.position = cs.getComponents().size() - 1;
+                }
                 redrawAll();
             }
         });
@@ -331,8 +347,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             registry = Registry.getInstance(getActivity());
         }
 
-        CompositeService cs = registry.getCurrent(true);
-
+        registry.getCurrent(true);
         if (wiringPager != null) {
 
             for (int i = 0; i < adapter.getCount(); i++) {
@@ -456,7 +471,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         }
 
         int offset = w / 2 + m / 2;
-        int left = 0;
+        int left;
 
         if (position == components.size()) {
             // Go right of the last one
@@ -513,6 +528,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
                 //Do your operations here.
                 if (Build.VERSION.SDK_INT < 16) {
+                    //noinspection deprecation
                     overviewContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 } else {
                     overviewContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -575,34 +591,8 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
     }
 
-    public void setWiringMode(int wiringMode) {
-        FragmentWiring fw = adapter.getItem(wiringPager.getCurrentItem());
-        if (fw == null) {
-            Log.e(TAG, "Current fragment is dead");
-        } else {
-            fw.setWiringMode(wiringMode);
-        }
-    }
-
-    public int getCurrentWiringMode() {
-        if (adapter == null) {
-            return FragmentWiring.MODE_DEAD;
-        }
-
-        FragmentWiring fw = adapter.getItem(wiringPager.getCurrentItem());
-        if (fw == null) {
-            return FragmentWiring.MODE_DEAD;
-        } else {
-            return fw.getWiringMode();
-        }
-    }
-
     public FragmentWiring getCurrentFragment() {
         return adapter.getItem(position);
-    }
-
-    public void setPageIndex(int pagerPosition) {
-        wiringPager.setCurrentItem(pagerPosition);
     }
 
     @Override
@@ -657,49 +647,4 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 return components == null ? 0 : components.size();
         }
     }
-
-//    private class OverviewDialog extends AlertDialog {
-//
-//        protected OverviewDialog(Context context, int index) {
-//            super(context);
-//
-//            if (index == 0) {
-//                // Disable left
-//                left.setEnabled(false);
-//            } else {
-//                // Enable left
-//                left.setEnabled(true);
-//                left.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        // Swap this component and the one to its left, then redraw everything
-//                    }
-//                });
-//            }
-//
-//            SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
-//            if (index == components.size() - 1) {
-//                // Disable right
-//                right.setEnabled(false);
-//            } else {
-//                // Enable right
-//                right.setEnabled(true);
-//                right.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        // Swap this component and the one to its right, then redraw everything
-//                    }
-//                });
-//            }
-//
-//            remove.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                }
-//            }) ;
-//
-//            setView(v);
-//        }
-//    }
 }

@@ -525,7 +525,7 @@ public class FragmentTutorial extends Fragment {
         View vv1 = inflater.inflate(R.layout.component_attribute, null);
         vv1.setLayoutParams(lp1);
         layout.addView(vv1);
-        vv1.findViewById(R.id.component_attribute_icon).setBackgroundResource(R.drawable.ic_money);
+        vv1.findViewById(R.id.component_attribute_icon).setBackgroundResource(R.drawable.ic_money_18dp);
         ((TextView) vv1.findViewById(R.id.component_attribute_text)).setText("Costs money");
 
         View vv2 = inflater.inflate(R.layout.component_attribute, null);

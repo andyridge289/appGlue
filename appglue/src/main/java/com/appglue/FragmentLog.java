@@ -153,14 +153,18 @@ public class FragmentLog extends Fragment implements AppGlueFragment {
 
             ImageView icon = (ImageView) v.findViewById(R.id.log_icon);
             TextView logStatus = (TextView) v.findViewById(R.id.log_status);
+            TextView logMessage = (TextView) v.findViewById(R.id.log_message);
+
             if (item.getStatus() == LogItem.SUCCESS) {
                 icon.setBackgroundResource(R.drawable.ic_assignment_turned_in_white_36dp);
                 logStatus.setText("Success");
                 logStatus.setTextColor(getResources().getColor(R.color.material_green));
+                logMessage.setText("");
             } else {
                 icon.setBackgroundResource(R.drawable.ic_assignment_late_white_36dp);
                 logStatus.setText("Fail");
                 logStatus.setTextColor(getResources().getColor(R.color.material_red));
+                logMessage.setText(getCompositeMessage(item.getStatus()));
             }
 
             if (item.getComposite() == null) {
@@ -173,12 +177,16 @@ public class FragmentLog extends Fragment implements AppGlueFragment {
             nameText.setTextColor(getResources().getColor(R.color.textColor));
             nameText.setText(item.getComposite().getName());
 
-            TextView logTime = (TextView) v.findViewById(R.id.log_time);
+            TextView logTime = (TextView) v.findViewById(R.id.log_start_time);
+            TextView duration = (TextView) v.findViewById(R.id.log_duration);
 
             Calendar cal = new GregorianCalendar();
-            cal.setTimeInMillis(item.getEndTime());
-            SimpleDateFormat sdf = new SimpleDateFormat("cccc d MMMM yyyy   HH:mm:ss");
+            cal.setTimeInMillis(item.getStartTime());
+            SimpleDateFormat sdf = new SimpleDateFormat("ccc d MMMM yyyy   HH:mm:ss");
             logTime.setText(sdf.format(cal.getTime()));
+
+            long time = (item.getEndTime() - item.getStartTime()) / 1000;
+            duration.setText("in " + time + "s");
 
             LinearLayout componentContainer = (LinearLayout) v.findViewById(R.id.log_component_list);
             componentContainer.removeAllViews();
@@ -202,7 +210,7 @@ public class FragmentLog extends Fragment implements AppGlueFragment {
                 TextView componentTime = (TextView) vv.findViewById(R.id.log_component_time);
                 TextView componentStatus = (TextView) vv.findViewById(R.id.log_component_status);
 
-                componentStatus.setText(getMessage(componentItem.getStatus()));
+                componentStatus.setText(getComponentMessage(componentItem.getStatus()));
                 cal.setTimeInMillis(componentItem.getTime());
                 componentTime.setText(sdf.format(cal.getTime()));
 
@@ -214,7 +222,33 @@ public class FragmentLog extends Fragment implements AppGlueFragment {
 
     }
 
-    private String getMessage(int logStatus) {
+    private String getCompositeMessage(int logStatus) {
+        switch (logStatus) {
+            case LogItem.COMPONENT_FAIL:
+                return "There was an error in a component";
+
+            case LogItem.TRIGGER_FAIL:
+                return "Trigger in the wrong position";
+
+            case LogItem.MESSAGE_FAIL:
+            case LogItem.ORCH_FAIL:
+                return "An error occurred talking to a component";
+
+            case LogItem.NETWORK_FAIL:
+                return "There was an error with the network";
+
+            case LogItem.OTHER_FAIL:
+                return "Something bad happened";
+
+            case LogItem.PARAM_STOP:
+                return "User parameters stopped a component";
+
+            default: // I think this is the only case left over
+                return "";
+        }
+    }
+
+    private String getComponentMessage(int logStatus) {
         switch (logStatus) {
             case LogItem.COMPONENT_FAIL:
                 return "There was an error in the component";

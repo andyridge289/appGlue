@@ -845,8 +845,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 }
             });
 
-             // TODO Need to make some more sized versions of ic_money
-
             if (item.hasValue()) {
                 setButton.setImageResource(R.drawable.ic_settings_black_48dp);
             } else {

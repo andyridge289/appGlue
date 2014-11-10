@@ -21,10 +21,6 @@ public class LogItem {
 
     public static final int GENERIC_TRIGGER_FAIL = 0x10; // This is very much a special case
 
-    // TODO Add something to say what killed the composite
-    // TODO Add a specific message to say what killed the component
-    // TODO Put in the start time too
-
     private long id;
     private CompositeService cs;
     private long startTime;

@@ -455,4 +455,8 @@ public class Registry {
     public ArrayList<Category> getCategories() {
         return dbHandler.getCategories();
     }
+
+    public void updateCurrent() {
+        this.updateComposite(this.composite);
+    }
 }
