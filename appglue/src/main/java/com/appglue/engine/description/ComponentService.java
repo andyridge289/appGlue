@@ -108,7 +108,14 @@ public class ComponentService {
     }
 
     public boolean hasInputs() {
-        return inputs != null && inputs.size() > 0;
+
+        for (int i = 0; i < this.inputs.size(); i++) {
+            if (inputs.get(i).hasConnection()) {
+                return true;
+            }
+        }
+
+        return false;
     }
     public ArrayList<ServiceIO> getInputs() {
         return inputs;
@@ -144,7 +151,14 @@ public class ComponentService {
     }
 
     public boolean hasOutputs() {
-        return outputs != null && outputs.size() > 0;
+
+        for (int i = 0; i < this.outputs.size(); i++) {
+            if (outputs.get(i).hasConnection()) {
+                return true;
+            }
+        }
+
+        return false;
     }
     public ArrayList<ServiceIO> getOutputs() {
         return outputs;
@@ -216,6 +230,10 @@ public class ComponentService {
     public void removeFilter(IOFilter filter) {
         this.filters.remove(filter);
         this.filterSearch.remove(filter.getID());
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public void setFilterCondition(boolean and) {

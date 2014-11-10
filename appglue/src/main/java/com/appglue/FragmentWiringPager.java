@@ -24,6 +24,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.appglue.engine.description.ComponentService;
 import com.appglue.engine.description.CompositeService;
@@ -269,9 +270,19 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
 
-                // TODO Move the component left
+                // Move the component right
+                int first = cs.isMovable(overviewSelectedIndex - 1);
+                int second = cs.isMovable(overviewSelectedIndex);
+
+                if ((first == 0 && second == 0) || (first == CompositeService.FILTERS && second == CompositeService.FILTERS)) {
+                    cs.swap(overviewSelectedIndex - 1, overviewSelectedIndex);
+                } else {
+                    Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
+                    // TODO Can they remove connections?
+                }
 
                 overviewOverlay.setVisibility(View.GONE);
+                redrawAll();
             }
         });
 
@@ -279,9 +290,18 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
 
-                // TODO Move the component right
+                // Move the component right
+                int first = cs.isMovable(overviewSelectedIndex);
+                int second = cs.isMovable(overviewSelectedIndex + 1);
+
+                if ((first == 0 && second == 0) || (first == CompositeService.FILTERS && second == CompositeService.FILTERS)) {
+                    cs.swap(overviewSelectedIndex, overviewSelectedIndex + 1);
+                } else {
+                    Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
+                }
 
                 overviewOverlay.setVisibility(View.GONE);
+                redrawAll();
             }
         });
 
@@ -289,9 +309,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
 
-                // TODO Remove the component
-
+                // Remove the component
+                cs.remove(overviewSelectedIndex);
                 overviewOverlay.setVisibility(View.GONE);
+                redrawAll();
             }
         });
 
@@ -303,7 +324,25 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         });
     }
 
-    public void redraw(int position) {
+    public void redrawAll() {
+
+        if (registry == null) {
+            // It hasn't called create yet. There's no point trying to do anything at all.
+            registry = Registry.getInstance(getActivity());
+        }
+
+        CompositeService cs = registry.getCurrent(true);
+
+        if (wiringPager != null) {
+
+            for (int i = 0; i < adapter.getCount(); i++) {
+                redraw(i, false);
+            }
+        }
+
+    }
+
+    public void redraw(int position, boolean overlay) {
 
         if (registry == null) {
             // It hasn't called create yet. There's no point trying to do anything at all.
@@ -314,7 +353,10 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         // Tell all the fragments to redraw...
         if (wiringPager != null) {
-            overviewDraw();
+
+            if (overlay) {
+                overviewDraw();
+            }
 
             adapter = new WiringPagerAdapter(getFragmentManager(), true, cs);
             adapter.notifyDataSetChanged();

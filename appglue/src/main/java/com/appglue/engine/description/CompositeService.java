@@ -143,7 +143,36 @@ public class CompositeService {
         return components.get(position);
     }
 
-    public void removeComponent(ComponentService component) {
+    public static final int PRE_CONNECTIONS = 0x1;
+    public static final int POST_CONNECTIONS = 0x2;
+    public static final int FILTERS = 0x4;
+
+    public int isMovable(int index) {
+
+        int result = 0;
+
+        ComponentService component = components.get(index);
+
+        if (component.hasInputs()) {
+            result |= PRE_CONNECTIONS;
+        }
+
+        if (component.hasOutputs()) {
+            result |= POST_CONNECTIONS;
+        }
+
+        if (component.hasFilters()) {
+            result |= FILTERS;
+        }
+
+        return result;
+    }
+
+    public void remove(int index) {
+        remove(components.get(index));
+    }
+
+    public void remove(ComponentService component) {
         this.components.remove(component.getPosition());
         this.componentSearch.remove(component.getID());
 
@@ -308,6 +337,18 @@ public class CompositeService {
 
     public int size() {
         return components.size();
+    }
+
+    public void swap(int a, int b) {
+
+        ComponentService ath = components.get(a);
+        ComponentService bth = components.get(b);
+
+        bth.setPosition(a);
+        ath.setPosition(b);
+
+        components.put(a, bth);
+        components.put(b, ath);
     }
 
     public boolean equals(Object o) {

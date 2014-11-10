@@ -159,7 +159,7 @@ public class DBTest extends AndroidTestCase {
         tubeComponent.removeFilter(filter);
 
         // Remove the last component we added
-        fred.removeComponent(tubeComponent);
+        fred.remove(tubeComponent);
 
         // Update
         registry.updateComposite(fred);

@@ -28,7 +28,8 @@
 
     <array name="filter_terms">
         <item>filter</item>
-        <item> red</item>
+        <item>red</item>
+        <item>filtering</item>
     </array>
 
     <array name="schedule_terms">
@@ -36,7 +37,7 @@
         <item>green</item>
     </array>
 
-    <array name="log_terms" >
+    <array name="log_terms">
         <item>log</item>
         <item>orange</item>
     </array>

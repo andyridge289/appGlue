@@ -24,8 +24,6 @@ import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
 
-import java.util.ArrayList;
-
 import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
@@ -113,7 +111,7 @@ public class ActivityWiring extends ActionBarActivity {
         invalidateOptionsMenu();
 
         if (wiringFragment != null) {
-            wiringFragment.redraw(pagerPosition);
+            wiringFragment.redraw(pagerPosition, true);
         }
     }
 
