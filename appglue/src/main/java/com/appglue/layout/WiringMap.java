@@ -677,6 +677,25 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
         return position;
     }
 
+    public void removeConnections() {
+        // This can only happen if both of them exist
+        if (first != null && second != null) {
+            for (int i = 0; i < first.getOutputs().size(); i++) {
+                first.getOutputs().get(i).setConnection(null);
+            }
+
+            for (int i = 0; i < second.getInputs().size(); i++) {
+                second.getInputs().get(i).setConnection(null);
+            }
+        }
+
+        // Need to also clear the arraylist of connections
+        connections.clear();
+
+        registry.updateCurrent();
+        redraw(true);
+    }
+
     private class InputAdapter extends WiringIOAdapter {
 
         public InputAdapter(Context parent, ArrayList<ServiceIO> items) {
@@ -757,7 +776,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                         iSelected = item;
                         iIndex = position;
-//                        activity.setStatus("Selected " + iod.getName());
+                        activity.setStatus("Selected " + iod.getName());
                     } else if (oSelected != null && oSelected.getDescription().getType().equals(iod.getType()) && iSelected == null) {
                         if (LOG) Log.d(TAG, "Input " + position + " We have a match");
 
@@ -769,7 +788,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                         iSelected = item;
                         iIndex = position;
-//                        activity.setStatus("Selected " + iod.getName());
+                        activity.setStatus("Selected " + iod.getName());
 
                         // This one
                         b.setBackgroundColor(
@@ -981,8 +1000,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             // Change the filter button image if a filter is selected
             endpoint.setVisibility(View.VISIBLE);
-
-            // tOdo update references when we add components to fragment wiring
 
             endpoint.setOnClickListener(new OnClickListener() {
                 @Override
@@ -1259,7 +1276,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                         valueText.setText(io.getType().toString("\"" + value.getManualValue()) + "\"");
                     } else if (value.getFilterState() == IOValue.SAMPLE) {
                         valueText.setText(io.getType().toString("\"" + value.getSampleValue().getValue() + "\""));
-                        // todo  the sample value is null, it might be a quirk with the booleans
                     }
 
                     subRow.addView(valueText);
@@ -1268,9 +1284,6 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             return convertView;
         }
-
-        // TODO So the temp is probably being executed when the app starts, we need to ensure the temp can't be triggered
-
     }
 
     private class PathColour {

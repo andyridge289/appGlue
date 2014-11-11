@@ -8,6 +8,10 @@
             android:title="@string/wiring_auto"
             app:showAsAction="never"
             />
+        <item android:id="@+id/wiring_remove"
+            android:title="Remove connections"
+            android:showAsAction="ifRoom"
+            />
         <item
             android:id="@+id/wiring_done"
             android:title="@string/wiring_done"

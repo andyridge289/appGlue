@@ -355,6 +355,9 @@ public class ActivityWiring extends ActionBarActivity {
         } else if (item.getItemId() == R.id.wiring_auto) {
             // We must be on a wiring page or we wouldn't be able to see this menu item
             wiringFragment.getCurrentFragment().autoConnect();
+        } else if (item.getItemId() == R.id.wiring_remove) {
+            // Ditto to the above
+            wiringFragment.getCurrentFragment().removeConnections();
         }
 
         return true;

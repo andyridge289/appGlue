@@ -1,5 +1,6 @@
 package com.appglue.serviceregistry;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -107,7 +108,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cacheCategories();
 
         // Recreate the database every time for now while we are testing
-//        recreate();
+        recreate();
     }
 
     @Override
@@ -123,6 +124,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     /**
      * Indicate the database should be created again
      */
+    @SuppressLint("CommitPrefEdits")
     public void recreate() {
         SQLiteDatabase db = this.getWritableDatabase();
         onCreate(db);

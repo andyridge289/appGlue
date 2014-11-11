@@ -48,9 +48,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private Button csNameSet;
     private TextView status;
 
-    // TODO MAke the overview do navigation
-    // TODO Make the overview do component removal and rearranging
-
     private FrameLayout overviewParent;
     private FrameLayout overviewContainer;
     private View currentPage;
@@ -279,7 +276,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                     registry.updateCurrent();
                 } else {
                     Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
-                    // TODO Can they remove connections?
                 }
 
                 // TODO See if we can animate these changes to make it more obvious what's going on?

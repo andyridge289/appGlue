@@ -322,4 +322,8 @@ public class FragmentWiring extends Fragment {
         }
         redraw();
     }
+
+    public void removeConnections() {
+        wiringMap.removeConnections();
+    }
 }
