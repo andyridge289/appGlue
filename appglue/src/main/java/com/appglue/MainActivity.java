@@ -231,7 +231,6 @@ public class MainActivity extends AppGlueActivity
             } else {
                 scheduleFragment = FragmentSchedule.create(-1);
             }
-
             f = scheduleFragment;
 
         } else if (position == Page.LOG.index) {

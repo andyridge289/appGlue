@@ -19,6 +19,7 @@ import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 
 public class CompositeService {
+
     private long id;
     private String name;
     private String description;
@@ -33,15 +34,14 @@ public class CompositeService {
     private LongSparseArray<ComponentService> componentSearch;
     private final Object mComponentLock = new Object();
 
-    private final Object lock = new Object();
-
     private ArrayList<Observer> mObservers;
     private final Object mObserverLock = new Object();
 
     public interface Observer {
         public void onComponentAdded(ComponentService component, int position);
         public void onComponentRemoved(ComponentService component);
-        public void onComponentsSwapped(ComponentService first, ComponentService second, int firstNewPosition, int secondNewPosition);
+        public void onComponentsSwapped(ComponentService first, ComponentService second,
+                                        int firstNewPosition, int secondNewPosition);
         public void onStartExecute();
         public void onStopExecute();
     }
@@ -72,19 +72,16 @@ public class CompositeService {
         this.components = new SparseArray<ComponentService>();
 
         if (services != null) {
-            synchronized (mComponentLock) {
-                for (int i = 0; i < services.size(); i++) {
-                    components.put(i, services.get(i));
-                    services.get(i).setComposite(this);
-                }
+            for (int i = 0; i < services.size(); i++) {
+                components.put(i, services.get(i));
+                services.get(i).setComposite(this);
+            }
 
-                for (ComponentService comps : services) {
-                    this.componentSearch.put(comps.getID(), comps);
-                }
+            for (ComponentService comps : services) {
+                this.componentSearch.put(comps.getID(), comps);
             }
         }
     }
-
 
     public CompositeService(long id, String name, String description, boolean enabled) {
         this(false);
@@ -103,12 +100,10 @@ public class CompositeService {
         this.enabled = enabled;
 
         if (services != null) {
-            synchronized (mComponentLock) {
-                for (int i = 0; i < services.size(); i++) {
-                    ComponentService component = services.valueAt(i);
-                    componentSearch.put(component.getID(), component);
-                    services.get(i).setComposite(this);
-                }
+            for (int i = 0; i < services.size(); i++) {
+                ComponentService component = services.valueAt(i);
+                componentSearch.put(component.getID(), component);
+                services.get(i).setComposite(this);
             }
         }
     }
@@ -120,19 +115,18 @@ public class CompositeService {
         this.name = "Random Service";
 
         if (services != null) {
-            synchronized (mComponentLock) {
-                this.components = new SparseArray<ComponentService>();
-                for (int i = 0; i < services.size(); i++) {
-                    ComponentService cs = services.get(i);
-                    components.put(i, cs);
-                    cs.setComposite(this);
-                    this.componentSearch.put(cs.getID(), cs);
-                }
+            this.components = new SparseArray<ComponentService>();
+            for (int i = 0; i < services.size(); i++) {
+                ComponentService cs = services.get(i);
+                components.put(i, cs);
+                cs.setComposite(this);
+                this.componentSearch.put(cs.getID(), cs);
             }
         }
 
         this.enabled = false;
     }
+
     public void addObserver(Observer o) {
         synchronized (mObserverLock) {
             if (!mObservers.contains(o)) {
@@ -140,7 +134,6 @@ public class CompositeService {
             }
         }
     }
-
     public void removeObserver(Observer o) {
         synchronized (mObserverLock) {
             if (mObservers.contains(o)) {
@@ -169,7 +162,6 @@ public class CompositeService {
             return this.componentSearch.get(id);
         }
     }
-
     public ComponentService getComponent(int position) {
         synchronized (mComponentLock) {
             if (this.components == null) {
@@ -212,7 +204,6 @@ public class CompositeService {
     public void remove(int index) {
         remove(components.get(index));
     }
-
     public void remove(ComponentService component) {
         synchronized (mComponentLock) {
             this.components.remove(component.getPosition());
@@ -247,7 +238,6 @@ public class CompositeService {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
