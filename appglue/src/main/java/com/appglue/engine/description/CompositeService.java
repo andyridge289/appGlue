@@ -169,12 +169,15 @@ public class CompositeService {
     }
 
     public void remove(int index) {
+
+
         remove(components.get(index));
     }
 
     public void remove(ComponentService component) {
-        this.components.remove(component.getPosition());
-        this.componentSearch.remove(component.getID());
+
+        int position = component.getPosition();
+
 
         // Remove all of the connections for this and others
         for (ServiceIO input : component.getInputs()) {
@@ -193,6 +196,16 @@ public class CompositeService {
                 output.setConnection(null);
             }
         }
+
+        for (int i = position + 1; i < components.size(); i++) {
+            ComponentService toMove = components.get(i);
+            components.put(i - 1, components.get(i));
+            toMove.setPosition(i - 1);
+            Log.d(TAG, "Putting " + (i) + " in " + (i - 1));
+        }
+
+        this.components.remove(position);
+        this.componentSearch.remove(component.getID());
     }
 
     public String getName() {

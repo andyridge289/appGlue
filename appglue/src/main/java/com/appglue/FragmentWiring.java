@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -96,7 +97,7 @@ public class FragmentWiring extends Fragment {
         filterButton = (Button) rootView.findViewById(R.id.filter_button_all);
         valueButton = (Button) rootView.findViewById(R.id.value_button_all);
 
-        ArrayList<ComponentService> components = registry.getCurrent(false).getComponentsAL();
+        SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
 
         if (components.size() == 0) {
             first = null;
@@ -110,6 +111,8 @@ public class FragmentWiring extends Fragment {
         wiringMap.set(first, second, wiringMode);
 
         LocalStorage localStorage = LocalStorage.getInstance();
+
+        // FIXME IT doesn't appear to be very happy when you remove the first one, but I'm not sure that's anything to do with the moving that I've just added in for animation
 
         // Set the icon of either to be the big purple plus if there's not a component in that position
         if (first != null) {
