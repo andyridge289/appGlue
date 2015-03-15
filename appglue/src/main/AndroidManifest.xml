@@ -34,7 +34,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.appglue.ActivityAppGlue"
+            android:name=".MainActivity"
             android:label="@string/application_name"
             android:theme="@style/Theme.AppGlue" >
             <intent-filter>
@@ -44,11 +44,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.appglue.ActivityWiring"
+            android:name=".WiringActivity"
             android:label="@string/application_name"
             android:theme="@style/Theme.AppGlue" />
         <activity
-            android:name="com.appglue.ActivitySettings"
+            android:name=".SettingsActivity"
             android:label="appGlue"
             android:theme="@style/Theme.AppGlue" />
         <activity android:name="com.appglue.ShortcutActivity" >
@@ -59,7 +59,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.appglue.ActivityTutorial"
+            android:name=".TutorialActivity"
             android:label="@string/disclaimer_tutorial"
             android:theme="@style/Theme.AppGlue" />
 

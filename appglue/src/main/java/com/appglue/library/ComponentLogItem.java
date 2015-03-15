@@ -2,7 +2,7 @@ package com.appglue.library;
 
 import android.os.Bundle;
 
-import com.appglue.engine.description.ComponentService;
+import com.appglue.engine.model.ComponentService;
 
 public class ComponentLogItem
 {

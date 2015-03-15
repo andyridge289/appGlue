@@ -2,7 +2,7 @@ package com.appglue.engine;
 
 import android.util.Log;
 
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.CompositeService;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

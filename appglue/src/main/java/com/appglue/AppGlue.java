@@ -6,12 +6,10 @@ import android.app.Application;
 
 public class AppGlue extends Application
 {
-	
+
 	@Override
-	public void onCreate()
-	{
+	public void onCreate() {
 		super.onCreate();
-		
 		FilterFactory.filterFactory();
-	}	
+    }
 }

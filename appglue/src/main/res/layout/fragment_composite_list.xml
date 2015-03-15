@@ -48,7 +48,7 @@
         android:background="@drawable/loader"
         />
 
-    <com.appglue.layout.FloatingActionButton
+    <com.appglue.layout.view.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="72dip"
         android:layout_height="72dip"

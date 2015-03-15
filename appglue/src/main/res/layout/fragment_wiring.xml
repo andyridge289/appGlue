@@ -33,7 +33,7 @@
                 android:src="@drawable/icon"
                 android:layout_centerInParent="true"/>
 
-            <com.appglue.layout.VerticalTextView
+            <com.appglue.layout.view.VerticalTextView
                 android:id="@+id/first_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 app:face_right="true"
                 />
 
-            <com.appglue.layout.FloatingActionButton
+            <com.appglue.layout.view.FloatingActionButton
                 android:id="@+id/first_add"
                 android:layout_width="48dip"
                 android:layout_height="48dip"
@@ -60,7 +60,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="8" >
 
-            <com.appglue.layout.WiringMap
+            <com.appglue.layout.view.WiringMap
                 android:id="@+id/firstWiringMap"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent" />
@@ -81,7 +81,7 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/icon" />
 
-            <com.appglue.layout.VerticalTextView
+            <com.appglue.layout.view.VerticalTextView
                 android:id="@+id/second_name"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
@@ -90,7 +90,7 @@
                 app:face_right="false"
                 />
 
-            <com.appglue.layout.FloatingActionButton
+            <com.appglue.layout.view.FloatingActionButton
                 android:id="@+id/second_add"
                 android:layout_width="48dip"
                 android:layout_height="48dip"

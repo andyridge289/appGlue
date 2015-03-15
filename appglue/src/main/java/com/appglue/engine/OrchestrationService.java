@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;

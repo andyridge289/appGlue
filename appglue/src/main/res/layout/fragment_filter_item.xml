@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="@color/filter_light">
 
-        <com.appglue.layout.FloatingActionButton
+        <com.appglue.layout.view.FloatingActionButton
             android:id="@+id/filter_add_button"
             android:layout_width="48dip"
             android:layout_height="48dip"

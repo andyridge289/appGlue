@@ -19,11 +19,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.appglue.FragmentSchedule;
+import com.appglue.layout.FragmentSchedule;
 import com.appglue.R;
 import com.appglue.engine.Schedule;
 import com.appglue.engine.Scheduler;
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;

@@ -26,7 +26,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.appglue.ActivityAppGlue;
+import com.appglue.MainActivity;
 import com.appglue.ComposableService;
 import com.appglue.Library;
 import com.appglue.R;
@@ -34,11 +34,11 @@ import com.appglue.SystemFeature;
 import com.appglue.Test;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
-import com.appglue.engine.description.ComponentService;
-import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.description.IOFilter;
-import com.appglue.engine.description.IOValue;
-import com.appglue.engine.description.ServiceIO;
+import com.appglue.engine.model.ComponentService;
+import com.appglue.engine.model.CompositeService;
+import com.appglue.engine.model.IOFilter;
+import com.appglue.engine.model.IOValue;
+import com.appglue.engine.model.ServiceIO;
 import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.library.LogItem;
 import com.appglue.library.err.OrchestrationException;
@@ -673,7 +673,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
 
                         // TODO Tell the main activity what to do when we start with given intent things?
-                        Intent intent = new Intent(context, ActivityAppGlue.class);
+                        Intent intent = new Intent(context, MainActivity.class);
                         intent.putExtra(LOG_EXECUTION_INSTANCE, executionInstance);
                         PendingIntent pendingIntent = PendingIntent.getActivity(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_ONE_SHOT);
 

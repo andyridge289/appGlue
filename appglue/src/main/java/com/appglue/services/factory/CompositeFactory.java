@@ -3,9 +3,9 @@ package com.appglue.services.factory;
 import android.content.Context;
 
 import com.appglue.description.ServiceDescription;
-import com.appglue.engine.description.ComponentService;
-import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.description.ServiceIO;
+import com.appglue.engine.model.ComponentService;
+import com.appglue.engine.model.CompositeService;
+import com.appglue.engine.model.ServiceIO;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.NotificationService;
 import com.appglue.services.TubeService;

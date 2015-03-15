@@ -1,7 +1,6 @@
 package com.appglue.serviceregistry;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
 import android.util.Log;
@@ -14,8 +13,8 @@ import com.appglue.description.AppDescription;
 import com.appglue.description.Category;
 import com.appglue.description.ServiceDescription;
 import com.appglue.engine.Schedule;
-import com.appglue.engine.description.ComponentService;
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.ComponentService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
 

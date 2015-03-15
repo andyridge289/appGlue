@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center">
 
-                <com.appglue.layout.FloatingActionButton
+                <com.appglue.layout.view.FloatingActionButton
                     android:id="@+id/overview_left"
                     android:layout_width="48dip"
                     android:layout_height="48dip"
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center">
 
-                <com.appglue.layout.FloatingActionButton
+                <com.appglue.layout.view.FloatingActionButton
                     android:id="@+id/overview_remove"
                     android:layout_width="48dip"
                     android:layout_height="48dip"
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center">
 
-                <com.appglue.layout.FloatingActionButton
+                <com.appglue.layout.view.FloatingActionButton
                     android:id="@+id/overview_right"
                     android:layout_width="48dip"
                     android:layout_height="48dip"

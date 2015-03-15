@@ -87,7 +87,7 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
 
-        ActivityAppGlue.Page[] aPages = ActivityAppGlue.Page.values();
+        MainActivity.Page[] aPages = MainActivity.Page.values();
         String[] pages = new String[aPages.length];
         for (int i = 0; i < aPages.length; i++) {
             pages[i] = aPages[i].name;

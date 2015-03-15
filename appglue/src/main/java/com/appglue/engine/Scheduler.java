@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.serviceregistry.Registry;
 
 import java.text.SimpleDateFormat;

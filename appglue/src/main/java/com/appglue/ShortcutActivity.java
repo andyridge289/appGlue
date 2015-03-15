@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 
@@ -18,7 +18,6 @@ import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.Constants.DURATION;
-import static com.appglue.Constants.RUN_NOW;
 import static com.appglue.library.AppGlueConstants.TEST;
 
 public class ShortcutActivity extends Activity

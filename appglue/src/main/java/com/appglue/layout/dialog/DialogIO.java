@@ -27,15 +27,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.appglue.ActivityWiring;
+import com.appglue.WiringActivity;
 import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.description.SampleValue;
 import com.appglue.description.datatypes.IOType;
-import com.appglue.engine.description.CompositeService;
-import com.appglue.engine.description.IOValue;
-import com.appglue.engine.description.ServiceIO;
-import com.appglue.layout.FilterValueView;
+import com.appglue.engine.model.IOValue;
+import com.appglue.engine.model.ServiceIO;
+import com.appglue.layout.view.FilterValueView;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.library.FilterFactory;
 import com.appglue.serviceregistry.Registry;
@@ -49,7 +48,7 @@ import static com.appglue.Constants.TAG;
 
 public class DialogIO extends AlertDialog {
 
-    private ActivityWiring activity;
+    private WiringActivity activity;
     private IODescription description;
 
     private ServiceIO item;
@@ -61,7 +60,7 @@ public class DialogIO extends AlertDialog {
 
     private DialogContactView dcv;
 
-    public DialogIO(ActivityWiring context, final ServiceIO io, final FilterValueView filterValueView) {
+    public DialogIO(WiringActivity context, final ServiceIO io, final FilterValueView filterValueView) {
         super(context);
 
         this.activity = context;
@@ -241,7 +240,7 @@ public class DialogIO extends AlertDialog {
                     // Look up the contact
                     Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
                             ContactsContract.Contacts.CONTENT_URI);
-                    activity.startActivityForResult(DialogIO.this, contactPickerIntent, ActivityWiring.CONTACT_PICKER_VALUE);
+                    activity.startActivityForResult(DialogIO.this, contactPickerIntent, WiringActivity.CONTACT_PICKER_VALUE);
                 }
             });
         }

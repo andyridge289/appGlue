@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.appglue.engine.description.ComponentService;
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.ComponentService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
 

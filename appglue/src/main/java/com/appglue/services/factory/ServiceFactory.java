@@ -18,7 +18,7 @@ import com.appglue.description.AppDescription;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
-import com.appglue.engine.description.CompositeService;
+import com.appglue.engine.model.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.LaunchAppService;

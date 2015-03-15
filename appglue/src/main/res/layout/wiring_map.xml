@@ -85,7 +85,7 @@
             android:layout_alignParentTop="true"
             android:paddingTop="5dip" />
 
-        <com.appglue.layout.FloatingActionButton
+        <com.appglue.layout.view.FloatingActionButton
             android:id="@+id/wiring_filter_add"
             android:layout_width="48dip"
             android:layout_height="48dip"
