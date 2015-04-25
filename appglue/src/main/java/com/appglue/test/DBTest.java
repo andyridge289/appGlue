@@ -23,6 +23,34 @@ import java.util.ArrayList;
 
 public class DBTest extends AndroidTestCase {
 
+    @MediumTest
+    public void testCompositeComponentRemove() throws Exception {
+
+        Registry registry = Registry.getInstance(getContext());
+        CompositeService fred = TestLib.createAComposite(registry, getContext(), "Fred");
+        registry.addComposite(fred);
+
+        CompositeService fred2 = registry.getComposite(fred.getID());
+
+        ServiceDescription notificationService =  TestLib.getService(registry, getContext(), "setupNotificationService");
+        ComponentService notificationComponent = new ComponentService(notificationService, 2);
+
+        fred.addComponent(notificationComponent, 2);
+
+
+
+//        if (fred.equals(fred2)) {
+//            assertEquals(1, 1);
+//        } else {
+//            assertEquals(1, 2);
+//        }
+    }
+
+    @MediumTest
+    public void testCompositeComponentSwap() throws Exception {
+
+    }
+
     @LargeTest
     public void testServiceDescriptions() throws Exception {
 

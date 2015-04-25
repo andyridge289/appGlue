@@ -2,6 +2,7 @@ package com.appglue.layout;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,7 @@ import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.layout.view.FloatingActionButton;
 import com.appglue.library.AppGlueLibrary;
+import com.appglue.library.Tuple;
 import com.appglue.serviceregistry.Registry;
 
 import java.util.ArrayList;
@@ -63,6 +65,9 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
     private FloatingActionButton overlayRight;
     private FloatingActionButton overlayRemove;
     private int overviewSelectedIndex = -1;
+
+    private ArrayList<Tuple<Integer, View>> componentPositions;
+    private Tuple<Integer, Integer> moved;
 
     private ImageView pageLeft;
     private ImageView pageRight;
@@ -281,7 +286,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                     Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
                 }
 
-                // TODO See if we can animate these changes to make it more obvious what's going on?
+                moved = new Tuple<Integer, Integer>(overviewSelectedIndex - 1, overviewSelectedIndex);
                 overviewOverlay.setVisibility(View.GONE);
                 overviewSelectedIndex = -1;
                 redrawAll();
@@ -303,7 +308,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                     Toast.makeText(getActivity(), "This component or the one next to it has connections, you should remove these before swapping them over", Toast.LENGTH_SHORT).show();
                 }
 
-
+                moved = new Tuple<Integer, Integer>(overviewSelectedIndex, overviewSelectedIndex + 1);
                 overviewOverlay.setVisibility(View.GONE);
                 overviewSelectedIndex = -1;
                 redrawAll();
@@ -314,19 +319,18 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
             @Override
             public void onClick(View v) {
 
-                // TODO The second one isn't being removed.
-
                 // Remove the component
                 cs.remove(overviewSelectedIndex);
                 registry.updateCurrent();
                 overviewOverlay.setVisibility(View.GONE);
+                moved = new Tuple<Integer, Integer>(overviewSelectedIndex, -1);
                 overviewSelectedIndex = -1;
                 if (cs.getComponents().size() == 0) {
-                    // TODO Make this automatically make them choose something else?
                     getActivity().finish();
                 } else if (FragmentWiringPager.this.position > cs.getComponents().size() - 1) {
                     FragmentWiringPager.this.position = cs.getComponents().size() - 1;
                 }
+
                 redrawAll();
             }
         });
@@ -401,14 +405,11 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
 
         int w = (int) getActivity().getResources().getDimension(R.dimen.wi_page_width);
         int m = (int) AppGlueLibrary.dpToPx(getActivity().getResources(), 2);
-
-        ArrayList<Integer> components = new ArrayList<Integer>();
         final CompositeService composite = registry.getCurrent(false);
-
         int width = (w + m) * composite.getComponents().size();
 
-        if (components.size() != composite.getComponents().size()) {
-
+        if (moved == null) {
+            componentPositions = new ArrayList<Tuple<Integer, View>>();
             overviewContainer.removeAllViews();
             int componentOffset = w + m;
 
@@ -465,21 +466,75 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 });
 
                 overviewContainer.addView(tv);
-                components.add(left);
+                componentPositions.add(new Tuple<Integer, View>(left, tv));
             }
+
+        } else {
+            // They have moved something, so the values in componentPositions should be okay
+
+            if (moved.b == -1) {
+                // TODO Then they have deleted the thing at [a], so move everything higher than that to the position to the left
+                Tuple<Integer, View> removed = componentPositions.get(moved.a);
+                ((ViewGroup) removed.b.getParent()).removeView(removed.b);
+
+                int index = componentPositions.size() - 2; // The second to last one
+
+                while(index >= moved.a) {
+
+                    Tuple<Integer, View> first = componentPositions.get(index);
+                    Tuple<Integer, View> second = componentPositions.get(index + 1);
+
+                    // Sort out the values in the arraylist so we can do this again in future
+                    Tuple<Integer, View> third = new Tuple<Integer, View>(first.a, second.b);
+                    componentPositions.remove(index + 1);
+                    componentPositions.add(index + 1, third);
+
+                    ObjectAnimator animator = ObjectAnimator.ofFloat(third.b, "X", third.a);
+                    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                    animator.start();
+//                    Log.d(TAG, "Moving " + index + " to " + third.a + "px");
+//                    third.b.setX(third.a);
+                    index--;
+                }
+            } else {
+                // TODO Swap the things at a and b
+                Tuple<Integer, View> first = componentPositions.get(moved.a);
+                Tuple<Integer, View> second = componentPositions.get(moved.b);
+
+                ObjectAnimator animator = ObjectAnimator.ofFloat(first.b, "X", second.a);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.start();
+
+                ObjectAnimator animator2 = ObjectAnimator.ofFloat(second.b, "X", second.a);
+                animator2.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator2.start();
+
+                int temp = first.a;
+                first = new Tuple<Integer, View>(second.a, first.b);
+                second = new Tuple<Integer, View>(temp, second.b);
+
+                componentPositions.remove((int) moved.b);
+                componentPositions.remove((int) moved.a);
+                componentPositions.add(moved.a, second);
+                componentPositions.add(moved.b, first);
+            }
+
+            moved = null;
         }
 
         int offset = w / 2 + m / 2;
         int left;
 
-        if (position == components.size()) {
+        if (position == componentPositions.size()) {
             // Go right of the last one
-            left = components.get(components.size() - 1) + offset;
+            left = componentPositions.get(componentPositions.size() - 1).a + offset;
 
         } else {
             // Go left of the ith one
-            left = components.get(position) - offset;
+            left = componentPositions.get(position).a - offset;
         }
+
+        // FIXME Need to do some tests for moving the components around and then updating them
 
         ObjectAnimator animator = ObjectAnimator.ofFloat(currentPage, "X", left);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -525,7 +580,6 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                 // Put the things in
                 overviewRedraw();
 
-                //Do your operations here.
                 if (Build.VERSION.SDK_INT < 16) {
                     //noinspection deprecation
                     overviewContainer.getViewTreeObserver().removeGlobalOnLayoutListener(this);
