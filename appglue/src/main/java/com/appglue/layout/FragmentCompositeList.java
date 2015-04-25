@@ -1,40 +1,31 @@
 package com.appglue.layout;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appglue.AppGlueFragment;
 import com.appglue.MainActivity;
 import com.appglue.R;
 import com.appglue.WiringActivity;
-import com.appglue.description.AppDescription;
-import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.CompositeService;
+import com.appglue.layout.adapter.CompositeListAdapter;
 import com.appglue.layout.view.FloatingActionButton;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
@@ -194,7 +185,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
     @Override
     public void onResume() {
         super.onResume();
-        BackgroundCompositeLoader bcl = new BackgroundCompositeLoader();
+        BackgroundCompositeLoader bcl = new BackgroundCompositeLoader(this);
         bcl.execute();
     }
 
@@ -239,7 +230,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
-            listAdapter.selectedIndex = -1;
+            listAdapter.setSelectedIndex(-1);
         }
     }
 
@@ -253,175 +244,9 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         return "appGlue";
     }
 
-    private class CompositeListAdapter extends ArrayAdapter<CompositeService> {
 
-        int selectedIndex = -1;
-        private Boolean[] expanded;
 
-        public CompositeListAdapter(Context context, ArrayList<CompositeService> items) {
-            // TODO java.lang.NullPointerException: Attempt to invoke virtual method 'java.lang.Object android.content.Context.getSystemService(java.lang.String)' on a null object reference
-            super(context, R.layout.list_item_composite, items);
-            expanded = new Boolean[items.size()];
-            for (int i = 0; i < expanded.length; i++) {
-                expanded[i] = false;
-            }
-        }
-
-        @SuppressLint("InflateParams")
-        public View getView(final int position, View convertView, final ViewGroup parent) {
-            View v = convertView;
-
-            if (v == null) {
-                LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.list_item_composite, null);
-            }
-
-            final CompositeService item = composites.get(position);
-
-            if (v == null)
-                return null;
-
-            TextView nameText = (TextView) v.findViewById(R.id.composite_name);
-            if (nameText == null) // This way it doesn't die, but this way of fixing it doesn't seem to be a problem...
-                return v;
-
-            if (item.getName().equals(""))
-                nameText.setText("Temp ");
-            else
-                nameText.setText(item.getName());
-
-            ImageView icon = (ImageView) v.findViewById(R.id.composite_icon);
-            SparseArray<ComponentService> components = item.getComponents();
-
-            AppDescription app = components.get(0).getDescription().getApp();
-            if (app == null || app.iconLocation() == null) {
-                icon.setBackgroundResource(R.drawable.icon);
-            } else {
-                String iconLocation = app.iconLocation();
-                Bitmap b = localStorage.readIcon(iconLocation);
-                if (b != null) {
-                    icon.setImageBitmap(b);
-                } else {
-                    icon.setBackgroundResource(R.drawable.icon);
-                }
-            }
-
-            v.findViewById(R.id.info_button).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (getParentFragment() != null) {
-                        ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
-                    } else {
-                        // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
-                        Log.e(TAG, "Parent fragment is null");
-                    }
-                }
-            });
-
-            v.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (item.isEnabled()) {
-                        selectedIndex = showToolbar(selectedIndex, position, item);
-                        notifyDataSetChanged();
-                    } else if (getParentFragment() != null) {
-                        ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
-                    } else {
-                        // TODO Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
-                        Log.e(TAG, "Parent fragment is null");
-                    }
-                }
-            });
-
-            LinearLayout componentContainer = (LinearLayout) v.findViewById(R.id.composite_components);
-            componentContainer.removeAllViews();
-
-            if (expanded[position]) {
-                for (int i = 0; i < item.getComponents().size(); i++) {
-                    ComponentService component = item.getComponents().get(i);
-                    TextView tv = new TextView(getContext());
-                    tv.setText(component.getDescription().getName());
-
-                    // TODO In expanded mode we need to add more information about the components
-
-                    if (item.isEnabled()) {
-                        if (position == selectedIndex) {
-                            tv.setTextColor(getResources().getColor(R.color.textColor));
-                        } else {
-                            tv.setTextColor(getResources().getColor(R.color.textColor_dim));
-                        }
-                    } else {
-                        tv.setTextColor(getResources().getColor(R.color.textColor_dimmer));
-                    }
-
-                    componentContainer.addView(tv);
-                }
-            } else {
-                for (int i = 0; i < item.getComponents().size(); i++) {
-                    ComponentService component = item.getComponents().get(i);
-                    TextView tv = new TextView(getContext());
-                    tv.setText(component.getDescription().getName());
-
-                    if (item.isEnabled()) {
-                        if (position == selectedIndex) {
-                            tv.setTextColor(getResources().getColor(R.color.textColor));
-                        } else {
-                            tv.setTextColor(getResources().getColor(R.color.textColor_dim));
-                        }
-                    } else {
-                        tv.setTextColor(getResources().getColor(R.color.textColor_dimmer));
-                    }
-
-                    componentContainer.addView(tv);
-                }
-            }
-
-            View backgroundView = v.findViewById(R.id.composite_item_bg);
-            if (item.isEnabled()) {
-                // The text needs to be brighter
-                if (position == selectedIndex) {
-                    // This is selected so it should be bright
-                    backgroundView.setBackgroundResource(item.getColour(true));
-                    nameText.setTextColor(getResources().getColor(R.color.textColorInverse));
-                } else {
-                    backgroundView.setBackgroundResource(item.getColour(false));
-                    nameText.setTextColor(getResources().getColor(R.color.textColor));
-                }
-
-                // The image needs to be in colour
-                icon.setColorFilter(null);
-            } else {
-                backgroundView.setBackgroundResource(item.getColour(false));
-                nameText.setTextColor(getResources().getColor(R.color.textColorInverse_dim));
-
-                ColorMatrix matrix = new ColorMatrix();
-                matrix.setSaturation(0);
-                ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
-                icon.setColorFilter(filter);
-            }
-
-            v.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    expanded[position] = !expanded[position];
-                    notifyDataSetChanged();
-                    return true;
-                }
-            });
-
-            return v;
-        }
-
-        private CompositeService getCurrentComposite() {
-            if (selectedIndex == -1) {
-                return null;
-            }
-
-            return composites.get(selectedIndex);
-        }
-    }
-
-    private int showToolbar(int selectedIndex, int position, CompositeService composite) {
+    public int showToolbar(int selectedIndex, int position, CompositeService composite) {
         if (selectedIndex == -1) {
             addFab.hide(true);
             selectedIndex = position;
@@ -453,27 +278,38 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
     private void hideToolbar() {
         contextToolbar.setVisibility(View.GONE);
         addFab.hide(false);
-        listAdapter.selectedIndex = -1;
+        listAdapter.setSelectedIndex(-1);
         listAdapter.notifyDataSetChanged();
     }
 
-    private class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
+    public static class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
+
+        private FragmentCompositeList mFragment;
+
+        public BackgroundCompositeLoader(FragmentCompositeList fragment) {
+            mFragment = fragment;
+        }
 
         @Override
         protected ArrayList<CompositeService> doInBackground(Void... arg0) {
+
+            Activity activity = mFragment.getActivity();
+            Registry registry = Registry.getInstance(activity);
+
             try {
-                ServiceFactory sf = ServiceFactory.getInstance(registry, getActivity());
+
+                ServiceFactory sf = ServiceFactory.getInstance(registry, activity);
                 sf.setupServices();
 
             } catch (JSONException e) {
                 Log.e(TAG, "JSONException - Failed to create services (CompositeListActivity) " + e.getMessage());
             }
 
-            if (getActivity() == null) {
+            if (activity == null) {
                 return new ArrayList<CompositeService>();
             }
 
-            ActivityManager manager = (ActivityManager) getActivity().getSystemService(Activity.ACTIVITY_SERVICE);
+            ActivityManager manager = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
 
             if (manager != null) {
                 boolean registryRunning = false;
@@ -485,30 +321,35 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
                 }
 
                 if (!registryRunning) {
-                    Intent registryIntent = new Intent(getActivity(), RegistryService.class);
-                    getActivity().startService(registryIntent);
+                    Intent registryIntent = new Intent(activity, RegistryService.class);
+                    activity.startService(registryIntent);
                 }
             }
 
             return registry.getComposites();
         }
 
+        @Override
+        protected void onProgressUpdate(Void... values) {
+
+        }
+
         // TODO Sort out the showing and removing of the plus button
-        // TODO sort out what happens if they close the dailog when they shouldn't, or stop them from doing this
+        // TODO sort out what happens if they close the dialog when they shouldn't, or stop them from doing this
 
         protected void onPostExecute(ArrayList<CompositeService> composites) {
-            FragmentCompositeList.this.composites = composites;
-            listAdapter = new CompositeListAdapter(getActivity(), composites);
-            compositeList.setAdapter(listAdapter);
+            mFragment.composites = composites;
+            mFragment.listAdapter = new CompositeListAdapter(mFragment.getActivity(), mFragment, composites);
+            mFragment.compositeList.setAdapter(mFragment.listAdapter);
 
-            loader.setVisibility(View.GONE);
+            mFragment.loader.setVisibility(View.GONE);
 
             if (composites.size() > 0) {
-                compositeList.setVisibility(View.VISIBLE);
-                noComposites.setVisibility(View.GONE);
+                mFragment.compositeList.setVisibility(View.VISIBLE);
+                mFragment.noComposites.setVisibility(View.GONE);
             } else {
-                noComposites.setVisibility(View.VISIBLE);
-                compositeList.setVisibility(View.GONE);
+                mFragment.noComposites.setVisibility(View.VISIBLE);
+                mFragment.compositeList.setVisibility(View.GONE);
             }
         }
     }
