@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +27,6 @@ import com.appglue.WiringActivity;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.layout.adapter.CompositeListAdapter;
 import com.appglue.layout.view.FloatingActionButton;
-import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
 import com.appglue.services.factory.ServiceFactory;
@@ -41,8 +41,8 @@ import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
 public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
-    private RecyclerView compositeList;
-    private CompositeListAdapter listAdapter;
+    private RecyclerView mCompositeList;
+    private CompositeListAdapter mListAdapter;
 
     private ImageView loader;
     private View noComposites;
@@ -50,13 +50,12 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
     private LinearLayout contextToolbar;
 
     private Registry registry;
-    private LocalStorage localStorage;
 
     private View run;
     private View schedule;
     private View shortcut;
 
-    private ArrayList<CompositeService> composites;
+    private ArrayList<CompositeService> mComposites;
 
     public static Fragment create() {
         return new FragmentCompositeList();
@@ -72,7 +71,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         super.onCreate(icicle);
 
         registry = Registry.getInstance(getActivity());
-        localStorage = LocalStorage.getInstance();
+        mComposites = new ArrayList<CompositeService>();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle icicle) {
@@ -81,7 +80,11 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         noComposites = root.findViewById(R.id.no_composites);
         contextToolbar = (LinearLayout) root.findViewById(R.id.context_toolbar);
         contextToolbar.setVisibility(View.GONE);
-        compositeList = (RecyclerView) root.findViewById(R.id.composite_list);
+
+        mCompositeList = (RecyclerView) root.findViewById(R.id.composite_list);
+        mCompositeList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mListAdapter = new CompositeListAdapter(this, mComposites);
+        mCompositeList.setAdapter(mListAdapter);
 
         addFab = (FloatingActionButton) root.findViewById(R.id.fab_add);
         if (addFab != null) {
@@ -102,7 +105,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         run.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                aag.run(listAdapter.getCurrentComposite());
+//                aag.run(mListAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -111,7 +114,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         schedule.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                aag.schedule(listAdapter.getCurrentComposite());
+//                aag.schedule(mListAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -120,7 +123,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         edit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                aag.edit(listAdapter.getCurrentComposite());
+//                aag.edit(mListAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -129,7 +132,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         shortcut.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                aag.createShortcut(listAdapter.getCurrentComposite());
+//                aag.createShortcut(mListAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -138,7 +141,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                final CompositeService cs = listAdapter.getCurrentComposite();
+//                final CompositeService cs = mListAdapter.getCurrentComposite();
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Delete")
@@ -152,8 +155,8 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 //                                    Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
 //                                }
 //
-//                                listAdapter.remove(cs);
-//                                listAdapter.notifyDataSetChanged();
+//                                mListAdapter.remove(cs);
+//                                mListAdapter.notifyDataSetChanged();
                                 hideToolbar();
                             }
                         })
@@ -222,14 +225,14 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             return;
         }
 
-        composites = registry.getComposites();
+        mComposites = registry.getComposites();
 
         addFab.hide(false);
         contextToolbar.setVisibility(View.GONE);
 
-        if (listAdapter != null) {
-            listAdapter.notifyDataSetChanged();
-//            listAdapter.setSelectedIndex(-1);
+        if (mListAdapter != null) {
+            mListAdapter.notifyDataSetChanged();
+//            mListAdapter.setSelectedIndex(-1);
         }
     }
 
@@ -277,8 +280,8 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
     private void hideToolbar() {
         contextToolbar.setVisibility(View.GONE);
         addFab.hide(false);
-//        listAdapter.setSelectedIndex(-1);
-        listAdapter.notifyDataSetChanged();
+//        mListAdapter.setSelectedIndex(-1);
+        mListAdapter.notifyDataSetChanged();
     }
 
     public static class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
@@ -337,19 +340,23 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         // TODO sort out what happens if they close the dialog when they shouldn't, or stop them from doing this
 
         protected void onPostExecute(ArrayList<CompositeService> composites) {
-            mFragment.composites = composites;
-            mFragment.listAdapter = new CompositeListAdapter(mFragment, composites);
-            mFragment.compositeList.setAdapter(mFragment.listAdapter);
+            for (int i = 0; i < composites.size(); i++) {
+                Log.d(TAG, "Adding composite " + composites.get(i).getName());
+                mFragment.mComposites.add(composites.get(i));
+            }
 
+            mFragment.mListAdapter.notifyDataSetChanged();
             mFragment.loader.setVisibility(View.GONE);
 
             if (composites.size() > 0) {
-                mFragment.compositeList.setVisibility(View.VISIBLE);
+                mFragment.mCompositeList.setVisibility(View.VISIBLE);
                 mFragment.noComposites.setVisibility(View.GONE);
             } else {
                 mFragment.noComposites.setVisibility(View.VISIBLE);
-                mFragment.compositeList.setVisibility(View.GONE);
+                mFragment.mCompositeList.setVisibility(View.GONE);
             }
         }
+
+
     }
 }
