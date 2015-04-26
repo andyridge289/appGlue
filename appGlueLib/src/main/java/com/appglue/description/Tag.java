@@ -63,13 +63,12 @@ public class Tag {
     }
 
     public boolean equals(Object o) {
-
         if (o == null) {
             if (LOG) Log.d(TAG, "Tag->Equals: null");
             return false;
         }
         if (!(o instanceof Tag)) {
-            if (LOG) Log.d(TAG, "Tag->Equals: Not a ServiceDescription");
+            if (LOG) Log.d(TAG, "Tag->Equals: Not a Tag");
             return false;
         }
         Tag other = (Tag) o;
@@ -78,15 +77,13 @@ public class Tag {
             Log.d(TAG, "-1 for " + name);
         }
 
-        if (this.id != other.getID()) {
-//            if (LOG) Log.d(TAG, "Tag->Equals: id: [" + this.id + " - " + other.id() + "]");
-            return false;
-        }
-
-        if (!this.name.equals(other.getName())) {
-            if (LOG) Log.d(TAG, "Tag->Equals: name " + name + " - " + other.getName());
-            return false;
-        }
+//        if (this.id != other.getID()) {
+//            return false;
+//        }
+//
+//        if (!this.name.equals(other.getName())) {
+//            return false;
+//        }
 
         return true;
     }

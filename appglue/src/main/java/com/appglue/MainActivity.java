@@ -342,6 +342,7 @@ public class MainActivity extends AppGlueActivity
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(mTitle);
         }
     }

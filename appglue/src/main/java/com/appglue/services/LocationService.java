@@ -4,19 +4,22 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.appglue.ComposableService;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationService extends ComposableService implements GooglePlayServicesClient.ConnectionCallbacks,
-																  GooglePlayServicesClient.OnConnectionFailedListener
+import static com.appglue.Constants.TAG;
+
+public class LocationService extends ComposableService implements GoogleApiClient.ConnectionCallbacks,
+																  GoogleApiClient.OnConnectionFailedListener
 {
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
@@ -25,13 +28,19 @@ public class LocationService extends ComposableService implements GooglePlayServ
 	public static final String LOCALITY_NAME = "locality_name";
     public static final String ROAD_NAME = "road_name";
 	
-	private LocationClient lc;
+	private GoogleApiClient mApiClient;
 	
 	@Override
 	public ArrayList<Bundle> performService(Bundle o)
 	{
-		lc = new LocationClient(this, this, this);
-		lc.connect();
+		mApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+
+		mApiClient.connect();
 		
 		wait = true;
 		
@@ -48,7 +57,7 @@ public class LocationService extends ComposableService implements GooglePlayServ
 	
 	public void onConnected(Bundle bundle)
 	{
-		Location loc = lc.getLastLocation();
+		Location loc = LocationServices.FusedLocationApi.getLastLocation(mApiClient);
 		double latitude = -1;
 		double longitude = -1;
 		
@@ -71,7 +80,7 @@ public class LocationService extends ComposableService implements GooglePlayServ
 			if(addresses == null || addresses.size() == 0)
 			{
                 super.fail("I can't find your address, try again later");
-			    lc.disconnect();
+			    mApiClient.disconnect();
 				super.send  (null);
 				return;
 			}
@@ -90,15 +99,9 @@ public class LocationService extends ComposableService implements GooglePlayServ
             locationBundle.putString(ROAD_NAME, "Unknown");
 		}
 		
-		lc.disconnect();
+		mApiClient.disconnect();
 		super.send(locationBundle);
     }
-
-	@Override
-	public void onDisconnected()
-	{
-		// Shouldn't need to do anything
-	}
 
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0)
@@ -106,5 +109,9 @@ public class LocationService extends ComposableService implements GooglePlayServ
         super.fail("I can't find my location, maybe GPS is off?");
 		super.send(null);
 	}
+
+    public void onConnectionSuspended(int cause) {
+        Log.d(TAG, "Connection suspended");
+    }
 
 }

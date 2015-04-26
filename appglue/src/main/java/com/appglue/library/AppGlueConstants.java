@@ -109,16 +109,20 @@ public class AppGlueConstants {
 
     public static final String[][] COLS_SD = new String[][]
             {
-                    {CLASSNAME, "TEXT PRIMARY KEY"},
-                    {NAME, "TEXT"},
+                    { CLASSNAME, "TEXT PRIMARY KEY"},
+                    { NAME, "TEXT"},
                     { SHORT_NAME, "TEXT"},
-                    {PACKAGENAME, "TEXT"},
-                    {DESCRIPTION, "TEXT"},
-                    {SERVICE_TYPE, "INTEGER"},
-                    {FLAGS, "INTEGER"},
+                    { PACKAGENAME, "TEXT"},
+                    { DESCRIPTION, "TEXT"},
+                    { SERVICE_TYPE, "INTEGER"},
+                    { FLAGS, "INTEGER"},
                     { MIN_VERSION, "INTEGER"},
                     { FEATURES, "INTEGER" }
             };
+    public static final String IX_SD = "index_servicedescription";
+    public static final String[] INDEX_SD = new String[] {
+            PACKAGENAME
+    };
 
     public static final String[][] COLS_IO_DESCRIPTION = new String[][]
             {

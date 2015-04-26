@@ -71,11 +71,7 @@ public class DBTest extends AndroidTestCase {
         registry.addComposite(fred);
 
         CompositeService fred2 = registry.getComposite(fred.getID());
-        if (fred.equals(fred2)) {
-            assertEquals(1, 1);
-        } else {
-            assertEquals(1, 2);
-        }
+        assertEquals (fred, fred2);
     }
 
     @SmallTest

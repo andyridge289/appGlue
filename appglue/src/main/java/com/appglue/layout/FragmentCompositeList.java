@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,8 +18,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.appglue.AppGlueFragment;
 import com.appglue.MainActivity;
@@ -42,7 +41,7 @@ import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
 public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
-    private ListView compositeList;
+    private RecyclerView compositeList;
     private CompositeListAdapter listAdapter;
 
     private ImageView loader;
@@ -82,7 +81,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         noComposites = root.findViewById(R.id.no_composites);
         contextToolbar = (LinearLayout) root.findViewById(R.id.context_toolbar);
         contextToolbar.setVisibility(View.GONE);
-        compositeList = (ListView) root.findViewById(R.id.composite_list);
+        compositeList = (RecyclerView) root.findViewById(R.id.composite_list);
 
         addFab = (FloatingActionButton) root.findViewById(R.id.fab_add);
         if (addFab != null) {
@@ -103,7 +102,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         run.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                aag.run(listAdapter.getCurrentComposite());
+//                aag.run(listAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -112,7 +111,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         schedule.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                aag.schedule(listAdapter.getCurrentComposite());
+//                aag.schedule(listAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -121,7 +120,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         edit.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                aag.edit(listAdapter.getCurrentComposite());
+//                aag.edit(listAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -130,7 +129,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         shortcut.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                aag.createShortcut(listAdapter.getCurrentComposite());
+//                aag.createShortcut(listAdapter.getCurrentComposite());
                 hideToolbar();
             }
         });
@@ -139,22 +138,22 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         delete.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final CompositeService cs = listAdapter.getCurrentComposite();
+//                final CompositeService cs = listAdapter.getCurrentComposite();
                 new AlertDialog.Builder(getActivity())
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Delete")
-                        .setMessage(String.format("Are you sure you want to delete %s?", cs.getName()))
+//                        .setMessage(String.format("Are you sure you want to delete %s?", cs.getName()))
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (registry.delete(cs)) {
-                                    Toast.makeText(getActivity(), String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
-                                }
-
-                                listAdapter.remove(cs);
-                                listAdapter.notifyDataSetChanged();
+//                                if (registry.delete(cs)) {
+//                                    Toast.makeText(getActivity(), String.format("\"%s\" deleted successfully", cs.getName()), Toast.LENGTH_SHORT).show();
+//                                } else {
+//                                    Toast.makeText(getActivity(), String.format("Failed to delete \"%s\"", cs.getName()), Toast.LENGTH_SHORT).show();
+//                                }
+//
+//                                listAdapter.remove(cs);
+//                                listAdapter.notifyDataSetChanged();
                                 hideToolbar();
                             }
                         })
@@ -230,7 +229,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
         if (listAdapter != null) {
             listAdapter.notifyDataSetChanged();
-            listAdapter.setSelectedIndex(-1);
+//            listAdapter.setSelectedIndex(-1);
         }
     }
 
@@ -278,7 +277,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
     private void hideToolbar() {
         contextToolbar.setVisibility(View.GONE);
         addFab.hide(false);
-        listAdapter.setSelectedIndex(-1);
+//        listAdapter.setSelectedIndex(-1);
         listAdapter.notifyDataSetChanged();
     }
 
@@ -339,7 +338,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
         protected void onPostExecute(ArrayList<CompositeService> composites) {
             mFragment.composites = composites;
-            mFragment.listAdapter = new CompositeListAdapter(mFragment.getActivity(), mFragment, composites);
+            mFragment.listAdapter = new CompositeListAdapter(mFragment, composites);
             mFragment.compositeList.setAdapter(mFragment.listAdapter);
 
             mFragment.loader.setVisibility(View.GONE);

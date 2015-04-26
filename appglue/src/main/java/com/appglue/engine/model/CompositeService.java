@@ -257,18 +257,25 @@ public class CompositeService {
 
     public void addComponent(ComponentService component, int position) {
 
+        Log.d(TAG, String.format("Add component %s at %d", component.getDescription().getName(),
+                   position));
+
         synchronized (mComponentLock) {
             if (components.get(position) == null) {
                 // If there isn't a component at that position, then add one
                 components.put(position, component);
                 component.setComposite(this);
-                if (component.getID() != -1)
+                if (component.getID() != -1) {
                     componentSearch.put(component.getID(), component);
+                    Log.d(TAG, String.format("Add component %s to search", component.getDescription().getName(),
+                            position));
+                }
 
             } else {
                 // If there is a component at that position, we need to move everything back
                 ComponentService replacee = components.get(position);
                 components.put(position, component);
+                componentSearch.put(component.getID(), component);
                 addComponent(replacee, position + 1);
             }
         }
@@ -448,7 +455,15 @@ public class CompositeService {
 
         for (int i = 0; i < components.size(); i++) {
             ComponentService component = components.valueAt(i);
-            if (!component.equals(other.getComponent(component.getID()))) {
+            ComponentService otherComponent = other.getComponent(component.getID());
+
+            if (otherComponent == null) {
+                if (LOG)
+                    Log.d(TAG, "CompositeService->Equals: other component null " + component.getID() +
+                               ": " + i + "(" + component.getDescription().getClassName() + ")");
+            }
+
+            if (!component.equals(otherComponent)) {
                 if (LOG)
                     Log.d(TAG, "CompositeService->Equals: component " + component.getID() + ": " + i);
                 return false;

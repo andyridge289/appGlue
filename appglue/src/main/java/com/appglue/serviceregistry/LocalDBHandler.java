@@ -217,6 +217,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SCHEDULE));
         db.execSQL(AppGlueLibrary.createTableString(TBL_SCHEDULE, COLS_SCHEDULE, null));
 
+        db.execSQL(AppGlueLibrary.createIndexString(TBL_SD, IX_SD, INDEX_SD));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_SERVICEIO, IX_SERVICEIO, INDEX_SERVICEIO));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IOCONNECTION, IX_IOCONNECTION, INDEX_IOCONNECTION));
         db.execSQL(AppGlueLibrary.createIndexString(TBL_IO_DESCRIPTION, IX_IO_DESCRIPTION, INDEX_IO_DESCRIPTION));

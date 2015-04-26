@@ -19,7 +19,7 @@
 	   	android:layout_marginTop="5dip"
 	    /> <!-- Bottom margin tto make sure the scroll kicks in at the right time -->
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:visibility="gone"
         android:id="@+id/composite_list"
         android:layout_width="fill_parent"
