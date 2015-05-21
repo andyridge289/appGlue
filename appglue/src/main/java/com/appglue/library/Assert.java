@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.appglue.BuildConfig;
 
+import java.util.List;
+
 import static com.appglue.Constants.TAG;
 
 /**
@@ -38,7 +40,21 @@ public class Assert {
 
         String caller = getCaller();
         String message = String.format("Assert failed, object doesn't exist. Called by %s", caller);
+        return fail(message);
+    }
 
+    public static boolean exists(List l, int position) {
+        boolean ret = Assert.exists(l);
+        if (l == null) {
+            return true;
+        }
+
+        if (l.size() > position) {
+            return true;
+        }
+
+        String caller = getCaller();
+        String message = String.format("Assert failed, index %d doesn't exist. Called by %s", position, caller);
         return fail(message);
     }
 

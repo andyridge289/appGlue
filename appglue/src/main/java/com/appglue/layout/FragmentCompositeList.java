@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.appglue.AppGlueFragment;
 import com.appglue.MainActivity;
@@ -27,6 +28,7 @@ import com.appglue.WiringActivity;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.layout.adapter.CompositeListAdapter;
 import com.appglue.layout.view.FloatingActionButton;
+import com.appglue.library.Assert;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
 import com.appglue.services.factory.ServiceFactory;
@@ -246,6 +248,13 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         return "appGlue";
     }
 
+    public CompositeService getComposite(int position) {
+        if (Assert.exists(mComposites, position)) {
+            return null;
+        }
+
+        return mComposites.get(position);
+    }
 
 
     public int showToolbar(int selectedIndex, int position, CompositeService composite) {
@@ -284,7 +293,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         mListAdapter.notifyDataSetChanged();
     }
 
-    public static class BackgroundCompositeLoader extends AsyncTask<Void, Void, ArrayList<CompositeService>> {
+    public static class BackgroundCompositeLoader extends AsyncTask<Void, CompositeService, Boolean> {
 
         private FragmentCompositeList mFragment;
 
@@ -293,7 +302,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
         }
 
         @Override
-        protected ArrayList<CompositeService> doInBackground(Void... arg0) {
+        protected Boolean doInBackground(Void... arg0) {
 
             Activity activity = mFragment.getActivity();
             Registry registry = Registry.getInstance(activity);
@@ -308,7 +317,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
             }
 
             if (activity == null) {
-                return new ArrayList<CompositeService>();
+                return false;
             }
 
             ActivityManager manager = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
@@ -328,33 +337,48 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
                 }
             }
 
-            return registry.getComposites();
+            ArrayList<Long> ids = registry.getCompositeIds();
+
+            for (long id :ids) {
+                CompositeService composite = registry.getComposite(id);
+                publishProgress(composite);
+            }
+
+            return true;
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
+        protected void onProgressUpdate(CompositeService... composites) {
 
+            CompositeService composite = composites[0];
+            if (composite != null) {
+                return;
+            }
+
+            mFragment.mComposites.add(composite);
+            mFragment.mListAdapter.notifyDataSetChanged();
+            mFragment.loader.setVisibility(View.GONE);
+
+//            if (composites.size() > 0) {
+//                mFragment.mCompositeList.setVisibility(View.VISIBLE);
+//                mFragment.noComposites.setVisibility(View.GONE);
+//            } else {
+//                mFragment.noComposites.setVisibility(View.VISIBLE);
+//                mFragment.mCompositeList.setVisibility(View.GONE);
+//            }
         }
 
         // TODO Sort out the showing and removing of the plus button
         // TODO sort out what happens if they close the dialog when they shouldn't, or stop them from doing this
 
-        protected void onPostExecute(ArrayList<CompositeService> composites) {
-            for (int i = 0; i < composites.size(); i++) {
-                Log.d(TAG, "Adding composite " + composites.get(i).getName());
-                mFragment.mComposites.add(composites.get(i));
-            }
-
-            mFragment.mListAdapter.notifyDataSetChanged();
-            mFragment.loader.setVisibility(View.GONE);
-
-            if (composites.size() > 0) {
-                mFragment.mCompositeList.setVisibility(View.VISIBLE);
-                mFragment.noComposites.setVisibility(View.GONE);
-            } else {
-                mFragment.noComposites.setVisibility(View.VISIBLE);
-                mFragment.mCompositeList.setVisibility(View.GONE);
-            }
+        protected void onPostExecute(Boolean success) {
+//            for (int i = 0; i < composites.size(); i++) {
+//                Log.d(TAG, "Adding composite " + composites.get(i).getName());
+//                mFragment.mComposites.add(composites.get(i));
+//            }
+//            if (success) {
+//                Toast.makeText()
+//            }
         }
 
 

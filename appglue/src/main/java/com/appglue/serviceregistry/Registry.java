@@ -185,6 +185,10 @@ public class Registry {
         }
     }
 
+    public ArrayList<Long> getCompositeIds() {
+        return dbHandler.getCompositeIds();
+    }
+
     public ArrayList<CompositeService> getComposites() {
         ArrayList<CompositeService> composites = dbHandler.getComposites(null, false);
 

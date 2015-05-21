@@ -2132,6 +2132,34 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      * ****************
      */
 
+    public ArrayList<Long> getCompositeIds() {
+
+        ArrayList<Long> ids = new ArrayList<Long>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = String.format("SELECT %s from %s", ID, TBL_COMPOSITE);
+        Cursor c = db.rawQuery(query, null);
+
+        if (c == null) {
+            Log.e(TAG, "Cursor is null for getting composite ids: " + query);
+            return ids;
+        }
+
+        if (c.getCount() == 0) {
+            return ids;
+        }
+
+        c.moveToFirst();
+
+        do {
+            ids.add(c.getLong(c.getColumnIndex(ID)));
+        } while (c.moveToNext());
+
+        c.close();
+
+        return ids;
+    }
+
     /**
      * Get all the composites that have been created in the application - but not the temp.
      *
