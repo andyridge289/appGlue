@@ -1,6 +1,3 @@
-.gradle
-/local.properties
-/.idea/**
-/build/**
-/grade/**
-.DS_Store
+buid/
+gradle/
+appGlue/.idea/
