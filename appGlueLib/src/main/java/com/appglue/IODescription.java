@@ -1,10 +1,24 @@
 package com.appglue;
 
+import android.database.Cursor;
+import android.support.v4.util.LongSparseArray;
+import android.util.Log;
+
+import com.appglue.description.SampleValue;
+import com.appglue.description.ServiceDescription;
+import com.appglue.description.datatypes.IOType;
+import com.appglue.description.datatypes.Text;
+
+import static com.appglue.Constants.*;
+
+import java.util.ArrayList;
+
 /**
- * Created by andy on 20/06/2015.
+ * Description of the inputs and outputs of a component
  */
 
-public class IODescription {
+public class IODescription
+{
     private long id;
 
     // The index of the IO in the list of IOs for the SD
@@ -38,8 +52,8 @@ public class IODescription {
         this.parent = null;
         this.mandatory = false;
 
-        this.sampleValues = new ArrayList<SampleValue>();
-        this.sampleSearch = new LongSparseArray<SampleValue>();
+        this.sampleValues = new ArrayList<>();
+        this.sampleSearch = new LongSparseArray<>();
     }
 
     public IODescription(long id) {
@@ -244,7 +258,7 @@ public class IODescription {
     }
 
     public void setSampleValues(ArrayList<SampleValue> values) {
-        this.sampleSearch = new LongSparseArray<SampleValue>();
+        this.sampleSearch = new LongSparseArray<>();
 
         for (SampleValue v : values) {
             this.sampleSearch.put(v.getID(), v);
@@ -254,12 +268,12 @@ public class IODescription {
 
     public void addSampleValue(SampleValue value) {
         if (sampleSearch == null)
-            sampleSearch = new LongSparseArray<SampleValue>();
+            sampleSearch = new LongSparseArray<>();
 
         sampleSearch.put(value.getID(), value);
 
         if (sampleValues == null)
-            sampleValues = new ArrayList<SampleValue>();
+            sampleValues = new ArrayList<>();
 
         sampleValues.add(value);
     }
