@@ -50,7 +50,7 @@ public class Tag {
     }
 
     public static ArrayList<Tag> createManyFromCursor(Cursor c) {
-        ArrayList<Tag> tags = new ArrayList<Tag>();
+        ArrayList<Tag> tags = new ArrayList<>();
 
         // Assume we're already at the first one
 

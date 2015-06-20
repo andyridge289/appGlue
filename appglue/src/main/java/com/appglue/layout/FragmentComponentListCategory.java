@@ -70,12 +70,9 @@ public class FragmentComponentListCategory extends FragmentComponentList {
         ComponentLoaderTask bl = new ComponentLoaderTask();
         bl.execute();
 
-        serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View v, int index, long id) {
-                if (!homeParent)
-                    ((WiringActivity) getActivity()).chooseItem(services.get(index).getClassName());
-            }
+        serviceListView.setOnItemClickListener((adapterView, v1, index, id) -> {
+            if (!homeParent)
+                ((WiringActivity) getActivity()).chooseItem(services.get(index).getClassName());
         });
 
         return v;
@@ -126,13 +123,10 @@ public class FragmentComponentListCategory extends FragmentComponentList {
             TextView catCount = (TextView) v.findViewById(R.id.category_count);
             catCount.setText("" + item.count);
 
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    categoryList.setVisibility(View.GONE);
-                    serviceListView.setAdapter(new AdapterComponentList(getContext(), tst.get(item.getName()), (FragmentComponentListPager) getParentFragment()));
-                    serviceListView.setVisibility(View.VISIBLE);
-                }
+            v.setOnClickListener(v1 -> {
+                categoryList.setVisibility(View.GONE);
+                serviceListView.setAdapter(new AdapterComponentList(getContext(), tst.get(item.getName()), (FragmentComponentListPager) getParentFragment()));
+                serviceListView.setVisibility(View.VISIBLE);
             });
 
             return v;
@@ -165,7 +159,7 @@ public class FragmentComponentListCategory extends FragmentComponentList {
 
             Collections.sort(cats);
 
-            return new Tuple<ArrayList<Category> ,TST<ArrayList<ServiceDescription>>>(cats, tst);
+            return new Tuple<>(cats, tst);
         }
 
         @Override

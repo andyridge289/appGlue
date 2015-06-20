@@ -53,8 +53,8 @@ public class Library {
                 CLASSNAME, className, NAME, name, SHORT_NAME, shortName,
                 DESCRIPTION, description, FLAGS, flags, MIN_VERSION, Math.max(minVersion, Build.VERSION_CODES.ICE_CREAM_SANDWICH));
 
-        inputList = inputList == null ? new ArrayList<IODescription>() : inputList;
-        outputList = outputList == null ? new ArrayList<IODescription>() : outputList;
+        inputList = inputList == null ? new ArrayList<>() : inputList;
+        outputList = outputList == null ? new ArrayList<>() : outputList;
 
         StringBuilder inputBuilder = new StringBuilder();
         inputBuilder.append(String.format("\"%s\": [", INPUTS));

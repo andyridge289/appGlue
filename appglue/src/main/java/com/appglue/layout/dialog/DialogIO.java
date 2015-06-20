@@ -107,21 +107,14 @@ public class DialogIO extends AlertDialog {
 
         setView(v);
 
-        negativeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                cancel();
-            }
-        });
+        negativeButton.setOnClickListener(v1 -> cancel());
 
-        neutralButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Put this back
-                // Shouldn't this be clearing the value that is set?
-                item.clearValue();
-                registry.updateComposite(registry.getCurrent(false));
-                cancel();
-            }
+        neutralButton.setOnClickListener(v1 -> {
+            // Put this back
+            // Shouldn't this be clearing the value that is set?
+            item.clearValue();
+            registry.updateComposite(registry.getCurrent(false));
+            cancel();
         });
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
@@ -180,68 +173,56 @@ public class DialogIO extends AlertDialog {
 
             manualText.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-            positiveButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positiveButton.setOnClickListener(v1 -> {
 
-                    Object objectValue = description.getType().fromString(manualText.getText().toString());
+                Object objectValue = description.getType().fromString(manualText.getText().toString());
 
-                    // Set the value to be the image that has been selected
-                    if (item.getDescription().isInput()) {
-                        if (item.hasValue()) {
-                            item.getValue().setManualValue(objectValue);
+                // Set the value to be the image that has been selected
+                if (item.getDescription().isInput()) {
+                    if (item.hasValue()) {
+                        item.getValue().setManualValue(objectValue);
 
-                        } else {
-                            // Create one
-                            IOValue value = new IOValue(FilterFactory.NONE, objectValue, item);
-                            value.setManualValue(objectValue);
-                            item.setValue(value);
-                        }
                     } else {
-                        if (filterValueView != null) {
-                            filterValueView.setManualValue("Change contact", objectValue);
-                        }
-                        dismiss();
-                        return;
+                        // Create one
+                        IOValue value = new IOValue(FilterFactory.NONE, objectValue, item);
+                        value.setManualValue(objectValue);
+                        item.setValue(value);
                     }
-
-                    // This can't just use the one in the registry because we've sodded off and now we're back and I think they are different objects...?
-                    registry.updateComposite(item.getComponent().getComposite());
-                    activity.redraw();
+                } else {
+                    if (filterValueView != null) {
+                        filterValueView.setManualValue("Change contact", objectValue);
+                    }
                     dismiss();
+                    return;
+                }
+
+                // This can't just use the one in the registry because we've sodded off and now we're back and I think they are different objects...?
+                registry.updateComposite(item.getComponent().getComposite());
+                activity.redraw();
+                dismiss();
+            });
+
+            sampleRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    sampleButton.setEnabled(true);
+                    manualText.setEnabled(false);
+                    manualRadio.setChecked(false);
                 }
             });
 
-            sampleRadio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        sampleButton.setEnabled(true);
-                        manualText.setEnabled(false);
-                        manualRadio.setChecked(false);
-                    }
+            manualRadio.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    sampleButton.setEnabled(false);
+                    manualText.setEnabled(true);
+                    sampleRadio.setChecked(false);
                 }
             });
 
-            manualRadio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        sampleButton.setEnabled(false);
-                        manualText.setEnabled(true);
-                        sampleRadio.setChecked(false);
-                    }
-                }
-            });
-
-            sampleButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Look up the contact
-                    Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
-                            ContactsContract.Contacts.CONTENT_URI);
-                    activity.startActivityForResult(DialogIO.this, contactPickerIntent, WiringActivity.CONTACT_PICKER_VALUE);
-                }
+            sampleButton.setOnClickListener(v1 -> {
+                // Look up the contact
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                        ContactsContract.Contacts.CONTENT_URI);
+                activity.startActivityForResult(DialogIO.this, contactPickerIntent, WiringActivity.CONTACT_PICKER_VALUE);
             });
         }
     }
@@ -279,13 +260,13 @@ public class DialogIO extends AlertDialog {
 
             final Class<R.drawable> c = R.drawable.class;
             final Field[] fields = c.getDeclaredFields();
-            ArrayList<Integer> resList = new ArrayList<Integer>();
+            ArrayList<Integer> resList = new ArrayList<>();
 
-            for (int i = 0, max = fields.length; i < max; i++) {
+            for (Field field : fields) {
                 try {
-                    resList.add(fields[i].getInt(null));
+                    resList.add(field.getInt(null));
                 } catch (Exception e) {
-                    continue;
+                    Log.d(TAG, "Field access exception");
                 }
             }
 
@@ -301,8 +282,7 @@ public class DialogIO extends AlertDialog {
                         int resId = (Integer) value.getManualValue();
 
                         if (resId != -1) {
-                            int position = adapter.getPosition(resId);
-                            adapter.selectedIndex = position;
+                            adapter.selectedIndex = adapter.getPosition(resId);
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -313,43 +293,39 @@ public class DialogIO extends AlertDialog {
                     if (value != null) {
                         if (value.getManualValue() != null) {
                             int res = (Integer) value.getManualValue();
-                            int pos = adapter.getPosition(res);
-                            adapter.selectedIndex = pos;
+                            adapter.selectedIndex = adapter.getPosition(res);
                             adapter.notifyDataSetChanged();
                         }
                     }
                 }
             }
 
-            positiveButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positiveButton.setOnClickListener(v1 -> {
 
-                    int res = adapter.getSelected();
+                int res = adapter.getSelected();
 
-                    // Set the value to be the image that has been selected
-                    if (item.getDescription().isInput()) {
-                        if (item.hasValue()) {
-                            item.getValue().setManualValue(res);
+                // Set the value to be the image that has been selected
+                if (item.getDescription().isInput()) {
+                    if (item.hasValue()) {
+                        item.getValue().setManualValue(res);
 
-                        } else {
-                            // Create one
-                            IOValue value = new IOValue(FilterFactory.NONE, res, item);
-                            value.setManualValue(res);
-                            item.setValue(value);
-                        }
                     } else {
-                        if (filterValueView != null) {
-                            filterValueView.setManualValue("Change image", res);
-                        }
-                        dismiss();
-                        return;
+                        // Create one
+                        IOValue value = new IOValue(FilterFactory.NONE, res, item);
+                        value.setManualValue(res);
+                        item.setValue(value);
                     }
-
-                    registry.updateComposite(registry.getCurrent(false));
-                    activity.redraw();
+                } else {
+                    if (filterValueView != null) {
+                        filterValueView.setManualValue("Change image", res);
+                    }
                     dismiss();
+                    return;
                 }
+
+                registry.updateComposite(registry.getCurrent(false));
+                activity.redraw();
+                dismiss();
             });
         }
 
@@ -375,12 +351,10 @@ public class DialogIO extends AlertDialog {
                     v.setBackgroundResource(R.color.android_blue_half);
                 }
 
-                v.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        // De-select everything
-                        selectedIndex = selectedIndex == position ? -1 : position;
-                        notifyDataSetChanged();
-                    }
+                v.setOnClickListener(v1 -> {
+                    // De-select everything
+                    selectedIndex = selectedIndex == position ? -1 : position;
+                    notifyDataSetChanged();
                 });
 
                 final Integer item = values.get(position);
@@ -437,32 +411,29 @@ public class DialogIO extends AlertDialog {
 
             appGrid.setAdapter(adapter);
 
-            positiveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (adapter.selectedIndex == -1) {
-                        if (LOG) Log.d(TAG, "No selected index");
-                        cancel();
-                        return;
-                    }
-
-                    // The app they want to load is selectedApp.packageName
-                    ApplicationInfo selected = packages.get(adapter.selectedIndex);
-                    if (selected == null) {
-                        if (LOG) Log.d(TAG, "No selected app info");
-                        cancel();
-                        return;
-                    }
-
-                    if (LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
-
-                    IOValue value = new IOValue(FilterFactory.NONE, selected.packageName, item);
-                    item.setValue(value);
-
-                    registry.updateComposite(registry.getCurrent(false));
-                    activity.redraw();
-                    dismiss();
+            positiveButton.setOnClickListener(v1 -> {
+                if (adapter.selectedIndex == -1) {
+                    if (LOG) Log.d(TAG, "No selected index");
+                    cancel();
+                    return;
                 }
+
+                // The app they want to load is selectedApp.packageName
+                ApplicationInfo selected = packages.get(adapter.selectedIndex);
+                if (selected == null) {
+                    if (LOG) Log.d(TAG, "No selected app info");
+                    cancel();
+                    return;
+                }
+
+                if (LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
+
+                IOValue value = new IOValue(FilterFactory.NONE, selected.packageName, item);
+                item.setValue(value);
+
+                registry.updateComposite(registry.getCurrent(false));
+                activity.redraw();
+                dismiss();
             });
 
             if (item.hasValue()) {
@@ -534,12 +505,10 @@ public class DialogIO extends AlertDialog {
                 appName.setText(app.loadLabel(pm));
                 appIcon.setImageDrawable(app.loadIcon(pm));
 
-                v.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        // De-select everything
-                        selectedIndex = selectedIndex == position ? -1 : position;
-                        notifyDataSetChanged();
-                    }
+                v.setOnClickListener(v1 -> {
+                    // De-select everything
+                    selectedIndex = selectedIndex == position ? -1 : position;
+                    notifyDataSetChanged();
                 });
 
                 return v;
@@ -593,12 +562,12 @@ public class DialogIO extends AlertDialog {
             final IOType type = description.getType();
             ArrayList<SampleValue> values = description.getSampleValues();
             if (values == null)
-                values = new ArrayList<SampleValue>();
+                values = new ArrayList<>();
 
             final boolean hasSamples = values.size() != 0;
 
             if (!hasSamples) {
-                values = new ArrayList<SampleValue>();
+                values = new ArrayList<>();
                 values.add(new SampleValue("No samples", ""));
             }
 
@@ -627,44 +596,38 @@ public class DialogIO extends AlertDialog {
                 radioGroup.setEnabled(false);
             }
 
-            positiveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Get the value they entered - not sure what happens
-                    if (manualRadio.isChecked()) {
-                        // Then look up the text value
-                        Object objectValue = description.getType().fromString(manualText.getText().toString());
-                        IOValue value = new IOValue(FilterFactory.NONE, objectValue, io);
-                        item.setValue(value);
-                    } else if (sampleRadio.isChecked()) {
-                        // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
-                        SampleValue sampleValue = (SampleValue) sampleSpinner.getSelectedItem();
-                        IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
-                        item.setValue(value);
-                    } else {
-                        Log.d(TAG, "Ummm");
-                    }
-
-                    // The setting of the list values needs to move to the creating of the list. Do an invalidate
-                    registry.updateComposite(registry.getCurrent(false));
-                    DialogIO.this.activity.redraw();
-                    dismiss();
+            positiveButton.setOnClickListener(v1 -> {
+                // Get the value they entered - not sure what happens
+                if (manualRadio.isChecked()) {
+                    // Then look up the text value
+                    Object objectValue = description.getType().fromString(manualText.getText().toString());
+                    IOValue value = new IOValue(FilterFactory.NONE, objectValue, io);
+                    item.setValue(value);
+                } else if (sampleRadio.isChecked()) {
+                    // Then look up the index of the spinner that's selected - shouldn't need to worry about data types
+                    SampleValue sampleValue = (SampleValue) sampleSpinner.getSelectedItem();
+                    IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
+                    item.setValue(value);
+                } else {
+                    Log.d(TAG, "Ummm");
                 }
+
+                // The setting of the list values needs to move to the creating of the list. Do an invalidate
+                registry.updateComposite(registry.getCurrent(false));
+                DialogIO.this.activity.redraw();
+                dismiss();
             });
 
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
+            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 
-                    // enable or disable the relevant item
-                    // Set the condition of the ValueNode
-                    if (checkedId == R.id.filter_radio_manual) {
-                        sampleSpinner.setEnabled(false);
-                        manualText.setEnabled(true);
-                    } else { // It must be filter_radio_sample
-                        sampleSpinner.setEnabled(true);
-                        manualText.setEnabled(false);
-                    }
+                // enable or disable the relevant item
+                // Set the condition of the ValueNode
+                if (checkedId == R.id.filter_radio_manual) {
+                    sampleSpinner.setEnabled(false);
+                    manualText.setEnabled(true);
+                } else { // It must be filter_radio_sample
+                    sampleSpinner.setEnabled(true);
+                    manualText.setEnabled(false);
                 }
             });
 

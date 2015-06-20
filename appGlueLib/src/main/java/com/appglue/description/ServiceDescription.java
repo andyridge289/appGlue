@@ -75,15 +75,15 @@ public class ServiceDescription {
     private int minVersion = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
 
     // Inputs and getOutputs to/from the service
-    private SparseArray<IODescription> inputs = new SparseArray<IODescription>();
-    private SparseArray<IODescription> outputs = new SparseArray<IODescription>();
-    private LongSparseArray<IODescription> idSearchInputs = new LongSparseArray<IODescription>();
-    private LongSparseArray<IODescription> idSearchOutputs = new LongSparseArray<IODescription>();
-    private TST<IODescription> nameSearchInputs = new TST<IODescription>();
-    private TST<IODescription> nameSearchOutputs = new TST<IODescription>();
+    private SparseArray<IODescription> inputs = new SparseArray<>();
+    private SparseArray<IODescription> outputs = new SparseArray<>();
+    private LongSparseArray<IODescription> idSearchInputs = new LongSparseArray<>();
+    private LongSparseArray<IODescription> idSearchOutputs = new LongSparseArray<>();
+    private TST<IODescription> nameSearchInputs = new TST<>();
+    private TST<IODescription> nameSearchOutputs = new TST<>();
 
-    private ArrayList<Tag> tags = new ArrayList<Tag>();
-    private ArrayList<Category> categories = new ArrayList<Category>();
+    private ArrayList<Tag> tags = new ArrayList<>();
+    private ArrayList<Category> categories = new ArrayList<>();
 
     // Representations of the icon of the service
     private AppDescription app = null;
@@ -115,8 +115,8 @@ public class ServiceDescription {
         this.packageName = "";
         this.description = "";
 
-        this.inputs = new SparseArray<IODescription>();
-        this.outputs = new SparseArray<IODescription>();
+        this.inputs = new SparseArray<>();
+        this.outputs = new SparseArray<>();
 
 //        this.serviceType = ServiceType.ANY;
         this.flags = 0;
@@ -172,7 +172,7 @@ public class ServiceDescription {
     }
 
     public ArrayList<IODescription> getInputs() {
-        ArrayList<IODescription> in = new ArrayList<IODescription>();
+        ArrayList<IODescription> in = new ArrayList<>();
 
         for (int i = 0; i < inputs.size(); i++) {
             in.add(inputs.get(i));
@@ -183,7 +183,7 @@ public class ServiceDescription {
 
 
     public ArrayList<IODescription> getOutputs() {
-        ArrayList<IODescription> out = new ArrayList<IODescription>();
+        ArrayList<IODescription> out = new ArrayList<>();
 
         for (int i = 0; i < outputs.size(); i++) {
             out.add(outputs.get(i));
@@ -225,9 +225,9 @@ public class ServiceDescription {
     }
 
     public void setInputs(ArrayList<IODescription> inputs) {
-        this.inputs = new SparseArray<IODescription>();
-        this.idSearchInputs = new LongSparseArray<IODescription>();
-        this.nameSearchInputs = new TST<IODescription>();
+        this.inputs = new SparseArray<>();
+        this.idSearchInputs = new LongSparseArray<>();
+        this.nameSearchInputs = new TST<>();
 
         if (inputs == null)
             return;
@@ -249,8 +249,8 @@ public class ServiceDescription {
     }
 
     public void setOutputs(ArrayList<IODescription> outputs) {
-        this.outputs = new SparseArray<IODescription>();
-        this.idSearchOutputs = new LongSparseArray<IODescription>();
+        this.outputs = new SparseArray<>();
+        this.idSearchOutputs = new LongSparseArray<>();
 
         if (outputs == null)
             return;
@@ -489,7 +489,7 @@ public class ServiceDescription {
 
 
     public static ArrayList<ServiceDescription> parseServices(String jsonString, Context context, AppDescription appDescription) throws JSONException {
-        ArrayList<ServiceDescription> services = new ArrayList<ServiceDescription>();
+        ArrayList<ServiceDescription> services = new ArrayList<>();
 
         JSONObject json = new JSONObject(jsonString);
 
@@ -575,7 +575,7 @@ public class ServiceDescription {
 
     // New JSON parsings methods
     private static ArrayList<IODescription> parseIOFromNewJSON(JSONArray ioArray, boolean input, ServiceDescription sd) throws JSONException {
-        ArrayList<IODescription> list = new ArrayList<IODescription>();
+        ArrayList<IODescription> list = new ArrayList<>();
 
         for (int i = 0; i < ioArray.length(); i++) {
             JSONObject io = ioArray.getJSONObject(i);
@@ -590,7 +590,7 @@ public class ServiceDescription {
 
             // Get the sample values for the thing
             JSONArray samples = io.getJSONArray(SAMPLES);
-            ArrayList<SampleValue> sampleValues = new ArrayList<SampleValue>();
+            ArrayList<SampleValue> sampleValues = new ArrayList<>();
 
             for (int j = 0; j < samples.length(); j++) {
                 JSONObject obj = samples.getJSONObject(j);
@@ -687,7 +687,7 @@ public class ServiceDescription {
 
         // Get all the possible features
         ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
-        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
+        ArrayList<SystemFeature> componentFeatures = new ArrayList<>();
 
         // Get the objects representing the features that the component supports
         for (SystemFeature feature : features) {
@@ -696,7 +696,7 @@ public class ServiceDescription {
             }
         }
 
-        ArrayList<SystemFeature> missingFeatures = new ArrayList<SystemFeature>();
+        ArrayList<SystemFeature> missingFeatures = new ArrayList<>();
 
         // And now check that each of these is available
         for (SystemFeature feature : componentFeatures) {
@@ -715,7 +715,7 @@ public class ServiceDescription {
 
         // Get all the possible features
         ArrayList<SystemFeature> features = SystemFeature.listAllFeatures();
-        ArrayList<SystemFeature> componentFeatures = new ArrayList<SystemFeature>();
+        ArrayList<SystemFeature> componentFeatures = new ArrayList<>();
 
         // Get the objects representing the features that the component supports
         for (SystemFeature feature : features) {

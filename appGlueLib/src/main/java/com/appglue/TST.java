@@ -9,7 +9,7 @@ public class TST<E> {
     private ArrayList<String> keys;
 
     public TST() {
-        keys = new ArrayList<String>();
+        keys = new ArrayList<>();
     }
 
     public boolean contains(String key) {

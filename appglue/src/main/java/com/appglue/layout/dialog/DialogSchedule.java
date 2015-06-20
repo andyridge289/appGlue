@@ -44,7 +44,7 @@ public class DialogSchedule extends AlertDialog {
 
     private Activity activity;
 
-    public static enum WeekDay {
+    public enum WeekDay {
         MON(Calendar.MONDAY, "Monday"),
         TUE(Calendar.TUESDAY, "Tuesday"),
         WED(Calendar.WEDNESDAY, "Wednesday"),
@@ -121,18 +121,8 @@ public class DialogSchedule extends AlertDialog {
         intervalContainer = root.findViewById(R.id.interval_container);
         timeContainer = root.findViewById(R.id.time_container);
 
-        intervalButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectorClick(false);
-            }
-        });
-        timeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectorClick(true);
-            }
-        });
+        intervalButton.setOnClickListener(v -> selectorClick(false));
+        timeButton.setOnClickListener(v -> selectorClick(true));
         if (item.getScheduleType() == Schedule.ScheduleType.INTERVAL) {
             selectorClick(false);
         } else {
@@ -236,56 +226,44 @@ public class DialogSchedule extends AlertDialog {
         });
         timePeriodSpinner.setSelection(((TimePeriodAdapter) timePeriodSpinner.getAdapter()).getPosition(item.getTimePeriod()));
 
-        minuteEdit.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                // This needs to make sure what is entered is between 0 and 59 inclusive
-                String contents = minuteEdit.getText().toString();
-                int value = Integer.parseInt(contents);
-                if (value > 59) {
-                    Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
-                    value = 59;
-                    minuteEdit.setText("59");
-                }
-                item.setMinute(value);
-                return false;
+        minuteEdit.setOnKeyListener((v, keyCode, event) -> {
+            // This needs to make sure what is entered is between 0 and 59 inclusive
+            String contents = minuteEdit.getText().toString();
+            int value = Integer.parseInt(contents);
+            if (value > 59) {
+                Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
+                value = 59;
+                minuteEdit.setText("59");
             }
+            item.setMinute(value);
+            return false;
         });
         minuteEdit.setTextColor(context.getResources().getColor(R.color.textColor));
         minuteEdit.setText("" + item.getMinute());
 
         final TextView timeTextTime = (TextView) root.findViewById(R.id.time_text_time);
         Button setTimeButton = (Button) root.findViewById(R.id.time_button);
-        setTimeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePickerDialog tpd = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String hh = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
-                        String mm = minute < 10 ? "0" + minute : "" + minute;
-                        timeTextTime.setText(hh + ":" + mm);
+        setTimeButton.setOnClickListener(v -> {
+            TimePickerDialog tpd = new TimePickerDialog(activity, (view, hourOfDay, minute) -> {
+                String hh = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
+                String mm = minute < 10 ? "0" + minute : "" + minute;
+                timeTextTime.setText(hh + ":" + mm);
 
-                        item.setHour(hourOfDay);
-                        item.setMinute(minute);
+                item.setHour(hourOfDay);
+                item.setMinute(minute);
 
-                    }
-                }, 12, 0, true);
-                tpd.show();
-            }
+            }, 12, 0, true);
+            tpd.show();
         });
         String hh = item.getHour() < 10 ? "0" + item.getHour() : "" + item.getHour();
         String mm = item.getMinute() < 10 ? "0" + item.getMinute() : "" + item.getMinute();
         timeTextTime.setText(hh + ":" + mm);
 
         final EditText numeralEdit = (EditText) root.findViewById(R.id.numeral_edit);
-        numeralEdit.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                int num = Integer.parseInt(numeralEdit.getText().toString());
-                item.setNumeral(num);
-                return false;
-            }
+        numeralEdit.setOnKeyListener((v, keyCode, event) -> {
+            int num = Integer.parseInt(numeralEdit.getText().toString());
+            item.setNumeral(num);
+            return false;
         });
         numeralEdit.setText("" + item.getNumeral());
 
@@ -313,19 +291,16 @@ public class DialogSchedule extends AlertDialog {
         final TextView intervalTimeText = (TextView) root.findViewById(R.id.interval_time_text);
         final Button nowButton = (Button) root.findViewById(R.id.now_button);
         final Button intervalStartButton = (Button) root.findViewById(R.id.interval_settime);
-        nowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long now = System.currentTimeMillis();
-                Calendar cal = new GregorianCalendar();
-                cal.setTimeInMillis(now);
-                String hh = "" + cal.get(Calendar.HOUR_OF_DAY);
-                String mm = "" + cal.get(Calendar.MINUTE);
-                hh = hh.length() == 1 ? "0" + hh : hh;
-                mm = mm.length() == 1 ? "0" + mm : mm;
-                intervalTimeText.setText(hh + ":" + mm);
-                item.setLastExecuteTime(now);
-            }
+        nowButton.setOnClickListener(v -> {
+            long now = System.currentTimeMillis();
+            Calendar cal = new GregorianCalendar();
+            cal.setTimeInMillis(now);
+            String hh1 = "" + cal.get(Calendar.HOUR_OF_DAY);
+            String mm1 = "" + cal.get(Calendar.MINUTE);
+            hh1 = hh1.length() == 1 ? "0" + hh1 : hh1;
+            mm1 = mm1.length() == 1 ? "0" + mm1 : mm1;
+            intervalTimeText.setText(hh1 + ":" + mm1);
+            item.setLastExecuteTime(now);
         });
         Calendar cal = new GregorianCalendar();
         cal.setTimeInMillis(item.getLastExecuted());
@@ -336,39 +311,31 @@ public class DialogSchedule extends AlertDialog {
         intervalTimeText.setText(hh + ":" + mm);
 
 
-        intervalStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TimePickerDialog tpd = new TimePickerDialog(activity, new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String hh = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
-                        String mm = minute < 10 ? "0" + minute : "" + minute;
-                        intervalTimeText.setText(hh + ":" + mm);
-                        Calendar cal = new GregorianCalendar();
-                        cal.setTimeInMillis(System.currentTimeMillis());
-                        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                        cal.set(Calendar.MINUTE, minute);
-                        cal.set(Calendar.SECOND, 0);
-                        cal.set(Calendar.MILLISECOND, 0);
-                    }
-                }, 12, 0, true);
-                tpd.show();
-            }
+        intervalStartButton.setOnClickListener(v -> {
+            TimePickerDialog tpd = new TimePickerDialog(activity, (TimePicker view, int hourOfDay, int minute) -> {
+                    String hh1 = hourOfDay < 10 ? "0" + hourOfDay : "" + hourOfDay;
+                    String mm1 = minute < 10 ? "0" + minute : "" + minute;
+                    intervalTimeText.setText(hh1 + ":" + mm1);
+                    Calendar cal1 = new GregorianCalendar();
+                    cal1.setTimeInMillis(System.currentTimeMillis());
+                    cal1.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    cal1.set(Calendar.MINUTE, minute);
+                    cal1.set(Calendar.SECOND, 0);
+                    cal1.set(Calendar.MILLISECOND, 0);
+            }, 12, 0, true);
+            tpd.show();
         });
 
         View doneButton = root.findViewById(R.id.dialog_io_positive);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        doneButton.setOnClickListener(v -> {
 
-                Scheduler scheduler = new Scheduler(activity);
+            Scheduler scheduler = new Scheduler(activity);
 
-                if (item.getID() == -1) {
+            if (item.getID() == -1) {
 //                    item.calculateNextExecute(System.currentTimeMillis());
-                    registry.add(item);
+                registry.add(item);
 //                    scheduler.schedule(item);
-                } else {
+            } else {
 
 //                    long oldTime = item.getNextExecute();
 //                    item.calculateNextExecute(System.currentTimeMillis());
@@ -378,37 +345,29 @@ public class DialogSchedule extends AlertDialog {
 //                        scheduler.schedule(item);
 //                    }
 //
-                    // Update it in the database
-                    registry.update(item);
-                }
-
-                if (item.isEnabled()) {
-                    Schedule s = registry.getSchedule(item.getID());
-                    item.calculateNextExecute(System.currentTimeMillis());
-                    item.setExecutionNum(s.getExecutionNum() + 1);
-                    scheduler.schedule(item);
-                }
-
-                fragment.dialogDone();
-                dismiss();
+                // Update it in the database
+                registry.update(item);
             }
+
+            if (item.isEnabled()) {
+                Schedule s = registry.getSchedule(item.getID());
+                item.calculateNextExecute(System.currentTimeMillis());
+                item.setExecutionNum(s.getExecutionNum() + 1);
+                scheduler.schedule(item);
+            }
+
+            fragment.dialogDone();
+            dismiss();
         });
 
         View negativeButton = root.findViewById(R.id.dialog_io_negative);
-        negativeButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                cancel();
-            }
-        });
+        negativeButton.setOnClickListener(v -> cancel());
 
         View deleteButton = root.findViewById(R.id.dialog_io_neutral);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registry.delete(item);
-                fragment.dialogDone();
-                dismiss();
-            }
+        deleteButton.setOnClickListener(v -> {
+            registry.delete(item);
+            fragment.dialogDone();
+            dismiss();
         });
     }
 

@@ -133,38 +133,29 @@ public class FilterValueView extends LinearLayout {
             topBorder.setVisibility(View.VISIBLE);
         }
 
-        enableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setChildrenEnabled(isChecked);
-                value.setEnabled(isChecked);
-            }
+        enableSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setChildrenEnabled(isChecked);
+            value.setEnabled(isChecked);
         });
 
-        andor.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // This needs to change the andor-ness of the filter
-                if (filter.getCondition(item)) {
-                    filter.setCondition(item, OR);
-                } else {
-                    filter.setCondition(item, AND);
-                }
-
-                // We need to tell all of the other andors to change
-                ff.setAndors(item);
+        andor.setOnClickListener(v1 -> {
+            // This needs to change the andor-ness of the filter
+            if (filter.getCondition(item)) {
+                filter.setCondition(item, OR);
+            } else {
+                filter.setCondition(item, AND);
             }
+
+            // We need to tell all of the other andors to change
+            ff.setAndors(item);
         });
 
         final View remove = v.findViewById(R.id.filter_remove_button);
-        remove.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // We'll probably need to kill the value somehow
-                filter.getValues(item).remove(value);
-                value = null;
-                ff.remove(item, FilterValueView.this);
-            }
+        remove.setOnClickListener(v1 -> {
+            // We'll probably need to kill the value somehow
+            filter.getValues(item).remove(value);
+            value = null;
+            ff.remove(item, FilterValueView.this);
         });
 
         // At this point we probably need to check if the things have been set and give up if they haven't
@@ -175,38 +166,32 @@ public class FilterValueView extends LinearLayout {
         IOType type = item.getType();
         ArrayList<SampleValue> values = item.getDescription().getSampleValues();
         if (values == null) {
-            values = new ArrayList<SampleValue>();
+            values = new ArrayList<>();
         }
         boolean hasValues = values.size() != 0;
 
         if (type.typeEquals(IOType.Factory.getType(IOType.Factory.BOOLEAN))) {
             if (values.size() == 0) {
                 // These might need to be hard-coded as acceptable values
-                values = new ArrayList<SampleValue>();
+                values = new ArrayList<>();
                 values.add(new SampleValue("True", true));
                 values.add(new SampleValue("False", false));
             }
             setup(FILTER_BOOL_VALUES, type, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.IMAGE_DRAWABLE))) {
             manualButton.setText("Choose drawable");
-            manualButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DialogIO di = new DialogIO(activity, item, FilterValueView.this);
-                    di.show();
-                }
+            manualButton.setOnClickListener(v1 -> {
+                DialogIO di = new DialogIO(activity, item, FilterValueView.this);
+                di.show();
             });
             setup(FILTER_BOOL_VALUES, type, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.PHONE_NUMBER))) {
             manualButton.setText("Choose contact");
-            manualButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Look up the contact
-                    Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
-                            ContactsContract.Contacts.CONTENT_URI);
-                    activity.startActivityForResult(FilterValueView.this, contactPickerIntent, WiringActivity.CONTACT_PICKER_FILTER);
-                }
+            manualButton.setOnClickListener(v1 -> {
+                // Look up the contact
+                Intent contactPickerIntent = new Intent(Intent.ACTION_PICK,
+                        ContactsContract.Contacts.CONTENT_URI);
+                activity.startActivityForResult(FilterValueView.this, contactPickerIntent, WiringActivity.CONTACT_PICKER_FILTER);
             });
             setup(FILTER_STRING_VALUES, type, hasValues, values);
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.NUMBER))) {
@@ -336,31 +321,28 @@ public class FilterValueView extends LinearLayout {
             conditionSpinner.setAdapter(new WiringFilterAdapter(activity, conditions));
         }
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 
-                // enable or disable the relevant item
-                // Set the condition of the ValueNode
-                if (checkedId == R.id.filter_radio_manual) {
-                    sampleSpinner.setEnabled(false);
-                    manualText.setEnabled(true);
+            // enable or disable the relevant item
+            // Set the condition of the ValueNode
+            if (checkedId == R.id.filter_radio_manual) {
+                sampleSpinner.setEnabled(false);
+                manualText.setEnabled(true);
 
-                    if (item.getType().supportsManualLookup()) {
-                        manualButton.setEnabled(true);
-                    }
-
-                    if (value != null) {
-                        value.setFilterState(IOValue.MANUAL);
-                    }
-                } else { // It must be filter_radio_sample
-                    sampleSpinner.setEnabled(true);
+                if (item.getType().supportsManualLookup()) {
                     manualButton.setEnabled(true);
-                    manualText.setEnabled(false);
+                }
 
-                    if (value != null) {
-                        value.setFilterState(IOValue.SAMPLE);
-                    }
+                if (value != null) {
+                    value.setFilterState(IOValue.MANUAL);
+                }
+            } else { // It must be filter_radio_sample
+                sampleSpinner.setEnabled(true);
+                manualButton.setEnabled(true);
+                manualText.setEnabled(false);
+
+                if (value != null) {
+                    value.setFilterState(IOValue.SAMPLE);
                 }
             }
         });
@@ -436,14 +418,11 @@ public class FilterValueView extends LinearLayout {
         }
 
         // Just update the manual value every time they enter a key.
-        manualText.setOnKeyListener(new OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (value != null) {
-                    value.setManualValue(manualText.getText().toString());
-                }
-                return false; // I'm not sure if we need to consume the event or not
+        manualText.setOnKeyListener((v, keyCode, event) -> {
+            if (value != null) {
+                value.setManualValue(manualText.getText().toString());
             }
+            return false; // I'm not sure if we need to consume the event or not
         });
 
         if (value.getManualValue() != null) {
@@ -467,8 +446,8 @@ public class FilterValueView extends LinearLayout {
     /**
      * This is where we go to when we have come back from the IODialog for images
      *
-     * @param s
-     * @param obj
+     * @param s The name of the value
+     * @param obj The value of the value
      */
     public void setManualValue(String s, Object obj) {
 

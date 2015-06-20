@@ -55,28 +55,22 @@ public class FragmentComponentListSearch extends FragmentComponentList {
         ComponentLoaderTask bl = new ComponentLoaderTask();
         bl.execute();
 
-        serviceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View v, int index, long id) {
-                if (!homeParent)
-                    ((WiringActivity) getActivity()).chooseItem(services.get(index).getClassName());
-            }
+        serviceListView.setOnItemClickListener((adapterView, v1, index, id) -> {
+            if (!homeParent)
+                ((WiringActivity) getActivity()).chooseItem(services.get(index).getClassName());
         });
 
         // Setup the search bar
         EditText searchEdit = (EditText) v.findViewById(R.id.component_search);
-        searchEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                EditText et = (EditText) v;
-                if (hasFocus) {
-                    if (et.getText().toString().equals("Search")) {
-                        et.setText("");
-                    }
-                } else {
-                    if (et.getText().toString().equals("")) {
-                        et.setText("Search");
-                    }
+        searchEdit.setOnFocusChangeListener((v1, hasFocus) -> {
+            EditText et = (EditText) v1;
+            if (hasFocus) {
+                if (et.getText().toString().equals("Search")) {
+                    et.setText("");
+                }
+            } else {
+                if (et.getText().toString().equals("")) {
+                    et.setText("Search");
                 }
             }
         });

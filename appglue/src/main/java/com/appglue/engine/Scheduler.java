@@ -80,7 +80,7 @@ public class Scheduler extends BroadcastReceiver {
 
     private void run(CompositeService composite) {
         Intent serviceIntent = new Intent(context, OrchestrationService.class);
-        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
+        ArrayList<Bundle> intentData = new ArrayList<>();
         Bundle b = new Bundle();
 
         b.putLong(COMPOSITE_ID, composite.getID());

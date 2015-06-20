@@ -89,12 +89,7 @@ public class RegistryService extends Service
 					String filename = storage.writeIcon(app.getPackageName(), icon);
 					app.setIconLocation(filename);
 				}
-				catch (FileNotFoundException e) 
-				{
-					Log.e(TAG, "File not found!!!!");
-					e.printStackTrace();
-				}
-				catch (IOException e) 
+				catch (IOException e)
 				{
 					Log.e(TAG, "File not found!!!!");
 					e.printStackTrace();

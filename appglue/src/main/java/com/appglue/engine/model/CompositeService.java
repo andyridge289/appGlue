@@ -38,12 +38,12 @@ public class CompositeService {
     private final Object mObserverLock = new Object();
 
     public interface Observer {
-        public void onComponentAdded(ComponentService component, int position);
-        public void onComponentRemoved(ComponentService component);
-        public void onComponentsSwapped(ComponentService first, ComponentService second,
+        void onComponentAdded(ComponentService component, int position);
+        void onComponentRemoved(ComponentService component);
+        void onComponentsSwapped(ComponentService first, ComponentService second,
                                         int firstNewPosition, int secondNewPosition);
-        public void onStartExecute();
-        public void onStopExecute();
+        void onStartExecute();
+        void onStopExecute();
     }
 
     public CompositeService() {
@@ -51,9 +51,9 @@ public class CompositeService {
         this.name = "";
         this.description = "";
         this.enabled = true;
-        this.components = new SparseArray<ComponentService>();
-        this.componentSearch = new LongSparseArray<ComponentService>();
-        mObservers = new ArrayList<Observer>();
+        this.components = new SparseArray<>();
+        this.componentSearch = new LongSparseArray<>();
+        mObservers = new ArrayList<>();
     }
 
     public CompositeService(boolean temp) {
@@ -69,7 +69,7 @@ public class CompositeService {
         this(false);
         this.name = name;
         this.description = description;
-        this.components = new SparseArray<ComponentService>();
+        this.components = new SparseArray<>();
 
         if (services != null) {
             for (int i = 0; i < services.size(); i++) {
@@ -115,7 +115,7 @@ public class CompositeService {
         this.name = "Random Service";
 
         if (services != null) {
-            this.components = new SparseArray<ComponentService>();
+            this.components = new SparseArray<>();
             for (int i = 0; i < services.size(); i++) {
                 ComponentService cs = services.get(i);
                 components.put(i, cs);
@@ -267,7 +267,7 @@ public class CompositeService {
                 component.setComposite(this);
                 if (component.getID() != -1) {
                     componentSearch.put(component.getID(), component);
-                    Log.d(TAG, String.format("Add component %s to search", component.getDescription().getName(),
+                    Log.d(TAG, String.format("Add component %s to search [%d]", component.getDescription().getName(),
                             position));
                 }
 
@@ -311,7 +311,7 @@ public class CompositeService {
             comps[k] = v;
         }
 
-        return new ArrayList<ComponentService>(Arrays.asList(comps));
+        return new ArrayList<>(Arrays.asList(comps));
     }
 
     public SparseArray<ComponentService> getComponents() {
@@ -320,7 +320,7 @@ public class CompositeService {
 
     public ArrayList<ServiceIO> getMandatoryInputs() {
 
-        ArrayList<ServiceIO> mandatories = new ArrayList<ServiceIO>();
+        ArrayList<ServiceIO> mandatories = new ArrayList<>();
 
         for (int i = 0; i < components.size(); i++) {
             ComponentService component = components.valueAt(i);
@@ -336,7 +336,7 @@ public class CompositeService {
     }
 
     public ArrayList<ComponentService> getComponents(String className) {
-        ArrayList<ComponentService> matching = new ArrayList<ComponentService>();
+        ArrayList<ComponentService> matching = new ArrayList<>();
         for (int i = 0; i < components.size(); i++) {
             ComponentService component = components.valueAt(i);
             if (component.getDescription().getClassName().equals(className))

@@ -147,7 +147,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
         ComponentService none = TestLib.createComponentForFilterSample(sd, new IODescription[]{}, new String[]{}, new FilterFactory.FilterValue[]{}, false);
 
-        ArrayList<ComponentService> testComponents = new ArrayList<ComponentService>();
+        ArrayList<ComponentService> testComponents = new ArrayList<>();
         testComponents.add(isBakerlooComponent);
         testComponents.add(isntBakerlooComponent);
         testComponents.add(minorDelaysComponent);
@@ -179,7 +179,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         String[] noneKept = new String[]{TubeService.BAKERLOO, TubeService.DLR, TubeService.METROPOLITAN, TubeService.PICCADILLY};
         String[] noneRemoved = new String[]{};
 
-        ArrayList<String[]> testKept = new ArrayList<String[]>();
+        ArrayList<String[]> testKept = new ArrayList<>();
         testKept.add(keptNames);
         testKept.add(removedNames);
         testKept.add(mdKept);
@@ -187,7 +187,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         testKept.add(npcKept);
         testKept.add(noneKept);
 
-        ArrayList<String[]> testRemoved = new ArrayList<String[]>();
+        ArrayList<String[]> testRemoved = new ArrayList<>();
         testRemoved.add(removedNames);
         testRemoved.add(keptNames);
         testRemoved.add(mdRemoved);
@@ -195,7 +195,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         testRemoved.add(npcRemoved);
         testRemoved.add(noneRemoved);
 
-        ArrayList<String> filterParameters = new ArrayList<String>();
+        ArrayList<String> filterParameters = new ArrayList<>();
         filterParameters.add(TubeService.LINE_NAME);
         filterParameters.add(TubeService.LINE_NAME);
         filterParameters.add(TubeService.LINE_NAME);

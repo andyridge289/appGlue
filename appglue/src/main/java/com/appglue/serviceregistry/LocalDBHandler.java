@@ -92,16 +92,16 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         this.context = context;
 
-        appMap = new TST<AppDescription>();
-        componentMap = new TST<ServiceDescription>();
+        appMap = new TST<>();
+        componentMap = new TST<>();
 
-        lIOMap = new LongSparseArray<IODescription>();
-        sIOMap = new TST<IODescription>();
-        lTypeMap = new LongSparseArray<IOType>();
-        sTypeMap = new TST<IOType>();
+        lIOMap = new LongSparseArray<>();
+        sIOMap = new TST<>();
+        lTypeMap = new LongSparseArray<>();
+        sTypeMap = new TST<>();
 
-        tagMap = new LongSparseArray<Tag>();
-        categoryMap = new LongSparseArray<Category>();
+        tagMap = new LongSparseArray<>();
+        categoryMap = new LongSparseArray<>();
 
         cacheIOTypes();
         cacheTags();
@@ -484,7 +484,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     public ArrayList<ServiceDescription> getComponentsForApp(String packageName) {
-        ArrayList<ServiceDescription> components = new ArrayList<ServiceDescription>();
+        ArrayList<ServiceDescription> components = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -511,7 +511,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     private ArrayList<IODescription> getServiceIOs(ServiceDescription sd, boolean input) {
-        ArrayList<IODescription> ios = new ArrayList<IODescription>();
+        ArrayList<IODescription> ios = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
         String textInput = input ? "1" : "0";
@@ -540,7 +540,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             IOType type = getIOType(c.getLong(c.getColumnIndex(IO_TYPE)));
             String description = c.getString(c.getColumnIndex(DESCRIPTION));
 
-            IODescription io = new IODescription(id, name, friendlyName, index, type, description, sd, mandatory, new ArrayList<SampleValue>(), input);
+            IODescription io = new IODescription(id, name, friendlyName, index, type, description, sd, mandatory, new ArrayList<>(), input);
             getSampleValues(io);
 
             ios.add(io);
@@ -1489,7 +1489,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     public synchronized ArrayList<CompositeService> getExamples(String componentName) {
         // Implement some examples of composites that can be used
         // Implement this?
-        return new ArrayList<CompositeService>();
+        return new ArrayList<>();
     }
 
 
@@ -1609,7 +1609,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public ArrayList<LogItem> getLog() {
 
-        ArrayList<LogItem> logs = new ArrayList<LogItem>();
+        ArrayList<LogItem> logs = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
         String compositeLogCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_EXECUTION_LOG, COLS_COMPOSITE_EXECUTION_LOG);
@@ -1687,7 +1687,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public ArrayList<LogItem> getLog(CompositeService cs) {
 
-        ArrayList<LogItem> logs = new ArrayList<LogItem>();
+        ArrayList<LogItem> logs = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
         String compositeLogCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE_EXECUTION_LOG, COLS_COMPOSITE_EXECUTION_LOG);
@@ -1831,7 +1831,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public ArrayList<Category> getCategories() {
 
-        ArrayList<Category> cats = new ArrayList<Category>();
+        ArrayList<Category> cats = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1862,7 +1862,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public TST<ArrayList<ServiceDescription>> getSDsAcrossCategories() {
 
-        TST<ArrayList<ServiceDescription>> cats = new TST<ArrayList<ServiceDescription>>();
+        TST<ArrayList<ServiceDescription>> cats = new TST<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1896,7 +1896,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             ServiceDescription sd = getServiceDescription(className);
 
             if (cats.get(category) == null) {
-                ArrayList<ServiceDescription> sds = new ArrayList<ServiceDescription>();
+                ArrayList<ServiceDescription> sds = new ArrayList<>();
                 sds.add(sd);
                 cats.put(category, sds);
             } else {
@@ -2028,7 +2028,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public ArrayList<Tag> getTagsForComponent(String className) {
         SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<Tag> tags = new ArrayList<Tag>();
+        ArrayList<Tag> tags = new ArrayList<>();
 
         Cursor c = db.query(TBL_SD_HAS_TAG, null,
                 CLASSNAME + " = ?", new String[]{className},
@@ -2059,8 +2059,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     public ArrayList<ServiceDescription> getMatchingForIOs(ServiceDescription component, boolean inputs) {
         ArrayList<IODescription> ios = inputs ? component.getInputs() : component.getOutputs();
 
-        HashMap<String, ServiceDescription> components = new HashMap<String, ServiceDescription>();
-        HashMap<String, Long> types = new HashMap<String, Long>();
+        HashMap<String, ServiceDescription> components = new HashMap<>();
+        HashMap<String, Long> types = new HashMap<>();
         for (IODescription io : ios) {
             IOType type = io.getType();
             if (!types.containsKey(type.getClassName()))
@@ -2087,7 +2087,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             }
         }
 
-        ArrayList<ServiceDescription> c = new ArrayList<ServiceDescription>();
+        ArrayList<ServiceDescription> c = new ArrayList<>();
         keys = components.keySet();
         for (String s : keys) {
             c.add(components.get(s));
@@ -2098,7 +2098,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private ArrayList<String> getComponentIdsForType(long id, boolean inputs) {
         SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<String> ioIds = new ArrayList<String>();
+        ArrayList<String> ioIds = new ArrayList<>();
 
         int ioNum = inputs ? 1 : 0;
 
@@ -2134,7 +2134,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public ArrayList<Long> getCompositeIds() {
 
-        ArrayList<Long> ids = new ArrayList<Long>();
+        ArrayList<Long> ids = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = String.format("SELECT %s from %s", ID, TBL_COMPOSITE);
@@ -2167,7 +2167,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
      */
     public synchronized ArrayList<CompositeService> getComposites(long[] ids, boolean includeTemp) {
 
-        ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
+        ArrayList<CompositeService> composites = new ArrayList<>();
 
         String compositeCols = AppGlueLibrary.buildGetAllString(TBL_COMPOSITE, COLS_COMPOSITE);
         String compositeComponentCols = AppGlueLibrary.buildGetAllString(TBL_COMPONENT, COLS_COMPONENT);
@@ -2358,7 +2358,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     public synchronized ArrayList<CompositeService> componentAtPosition(String className, int position) {
         SQLiteDatabase db = this.getReadableDatabase();
-        ArrayList<CompositeService> composites = new ArrayList<CompositeService>();
+        ArrayList<CompositeService> composites = new ArrayList<>();
 
         String sql = String.format("SELECT DISTINCT %s FROM %s WHERE %s = '%s' AND %s = %s AND %s <> %d",
                 COMPOSITE_ID, TBL_COMPONENT,
@@ -2407,7 +2407,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         c.moveToFirst();
 
-        ArrayList<ComponentService> components = new ArrayList<ComponentService>();
+        ArrayList<ComponentService> components = new ArrayList<>();
 
         do {
 
@@ -2494,7 +2494,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
     private ArrayList<IOFilter> getFilters(ComponentService component) {
 
-        ArrayList<IOFilter> filters = new ArrayList<IOFilter>();
+        ArrayList<IOFilter> filters = new ArrayList<>();
 
         String filterString = AppGlueLibrary.buildGetAllString(TBL_IOFILTER, COLS_IOFILTER);
         String filterValueString = AppGlueLibrary.buildGetAllString(TBL_VALUENODE, COLS_VALUENODE);
@@ -2868,7 +2868,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(query, null);
-        ArrayList<ServiceDescription> components = new ArrayList<ServiceDescription>();
+        ArrayList<ServiceDescription> components = new ArrayList<>();
 
         if (c == null) {
             Log.e(TAG, "Cursor dead " + query);
@@ -3196,7 +3196,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     public ArrayList<Schedule> getSchedules(long scheduleId) {
-        ArrayList<Schedule> scheduledComposites = new ArrayList<Schedule>();
+        ArrayList<Schedule> scheduledComposites = new ArrayList<>();
 
         String where = scheduleId == -1 ? "" : " WHERE " + ID + " = " + scheduleId;
         String query = String.format("SELECT * FROM %s%s", TBL_SCHEDULE, where);

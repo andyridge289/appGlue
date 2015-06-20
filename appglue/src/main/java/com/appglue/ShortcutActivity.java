@@ -36,7 +36,7 @@ public class ShortcutActivity extends Activity
 			CompositeService cs = registry.getComposite(id);
 
             Intent serviceIntent = new Intent(this, OrchestrationService.class);
-            ArrayList<Bundle> intentData = new ArrayList<Bundle>();
+            ArrayList<Bundle> intentData = new ArrayList<>();
             Bundle data = new Bundle();
             data.putLong(COMPOSITE_ID, cs.getID());
             data.putInt(INDEX, 0);

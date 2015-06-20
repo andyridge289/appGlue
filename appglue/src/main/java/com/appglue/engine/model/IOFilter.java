@@ -24,8 +24,8 @@ public class IOFilter {
     public IOFilter(ComponentService component) {
         this.id = -1;
         this.component = component;
-        values = new TST<ValueNode>();
-        ios = new ArrayList<ServiceIO>();
+        values = new TST<>();
+        ios = new ArrayList<>();
         this.enabled = true;
     }
 
@@ -69,7 +69,7 @@ public class IOFilter {
 
         if (vn == null) {
             Log.d(TAG, "Null for " + key);
-            return new ArrayList<IOValue>();
+            return new ArrayList<>();
         }
 
         return vn.values;
@@ -201,7 +201,7 @@ public class IOFilter {
             this.id = -1;
             condition = OR; // Default to OR
             this.io = io;
-            this.values = new ArrayList<IOValue>();
+            this.values = new ArrayList<>();
             this.filter = filter;
         }
 
@@ -288,6 +288,11 @@ public class IOFilter {
 
         public IOFilter getFilter() {
             return filter;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[%d]: %b filter(%s) IO(%s)", id, condition, filter, io);
         }
     }
 }

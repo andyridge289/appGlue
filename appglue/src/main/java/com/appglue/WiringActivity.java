@@ -167,21 +167,17 @@ public class WiringActivity extends ActionBarActivity {
                 keepTemp.setMessage("You have a saved draft, do you want to carry on with it, or start again?");
                 keepTemp.setCancelable(true);
                 keepTemp.setPositiveButton("Keep draft",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                registry.setCurrent(registry.getTemp());
-                                setMode(MODE_CREATE);
-                                redraw();
-                            }
+                        (dialog, id) -> {
+                            registry.setCurrent(registry.getTemp());
+                            setMode(MODE_CREATE);
+                            redraw();
                         });
 
                 keepTemp.setNegativeButton("Start new",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                registry.setCurrent(registry.resetTemp());
-                                setMode(MODE_CHOOSE);
-                                redraw();
-                            }
+                        (dialog, id) -> {
+                            registry.setCurrent(registry.resetTemp());
+                            setMode(MODE_CHOOSE);
+                            redraw();
                         });
             } else {
                 // There isn't stuff in the temp, just use that
@@ -200,23 +196,19 @@ public class WiringActivity extends ActionBarActivity {
                 keepTemp.setMessage("You have a saved draft, do you want to keep it?");
                 keepTemp.setCancelable(true);
                 keepTemp.setPositiveButton("Save draft",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                saveDialog("Saved draft", true);
-                                registry.resetTemp();
-                                registry.setCurrent(compositeId);
-                                setMode(MODE_CREATE);
-                                redraw();
-                            }
+                        (dialog, id) -> {
+                            saveDialog("Saved draft", true);
+                            registry.resetTemp();
+                            registry.setCurrent(compositeId);
+                            setMode(MODE_CREATE);
+                            redraw();
                         });
                 keepTemp.setNegativeButton("Discard draft",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                registry.resetTemp();
-                                registry.setCurrent(compositeId);
-                                setMode(MODE_CREATE);
-                                redraw();
-                            }
+                        (dialog, id) -> {
+                            registry.resetTemp();
+                            registry.setCurrent(compositeId);
+                            setMode(MODE_CREATE);
+                            redraw();
                         });
             } else {
                 registry.setCurrent(compositeId);
@@ -301,7 +293,7 @@ public class WiringActivity extends ActionBarActivity {
         if (registry != null)
             return composite.getComponents();
         else
-            return new SparseArray<ComponentService>();
+            return new SparseArray<>();
     }
 
     @Override

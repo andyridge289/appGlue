@@ -84,7 +84,7 @@ public abstract class ComposableService extends Service {
     public void send(Bundle b) {
         Message returnMessage = isList ? Message.obtain(null, MSG_LIST, 0, 0) : Message.obtain(null, MSG_OBJECT, 0, 0);
         Bundle newMessageData = new Bundle();
-        ArrayList<Bundle> o = new ArrayList<Bundle>();
+        ArrayList<Bundle> o = new ArrayList<>();
         o.add(b);
         newMessageData.putParcelableArrayList(INPUT, o);
         returnMessage.setData(newMessageData);
@@ -155,7 +155,7 @@ public abstract class ComposableService extends Service {
             if (fail) {
                 returnMessage = Message.obtain(null, MSG_FAIL, 0, 0);
                 Bundle b = new Bundle();
-                ArrayList<Bundle> bs = new ArrayList<Bundle>();
+                ArrayList<Bundle> bs = new ArrayList<>();
                 bs.add(failureBundle);
                 b.putParcelableArrayList(ComposableService.INPUT, bs);
                 returnMessage.setData(b);
@@ -166,7 +166,7 @@ public abstract class ComposableService extends Service {
 
             if (o == null) {
                 // If this is the case don't send the response back yet
-                o = new ArrayList<Bundle>();
+                o = new ArrayList<>();
                 Bundle input = new Bundle();
                 input.putBundle(ComposableService.TEXT, new Bundle());
                 o.add(input);

@@ -134,7 +134,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         message.replyTo = messageReceiver;
 
-        ArrayList<Bundle> input = new ArrayList<Bundle>();
+        ArrayList<Bundle> input = new ArrayList<>();
         input.add(data);
 
         Bundle stuff = new Bundle();
@@ -272,8 +272,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     // Combine with condition applied to the value node
     private Pair<ArrayList<Bundle>, ArrayList<Bundle>> filter2(ArrayList<Bundle> messageData, ComponentService component) throws OrchestrationException {
 
-        ArrayList<Bundle> retained = new ArrayList<Bundle>();
-        ArrayList<Bundle> removed = new ArrayList<Bundle>();
+        ArrayList<Bundle> retained = new ArrayList<>();
+        ArrayList<Bundle> removed = new ArrayList<>();
 
         for (Bundle bundle : messageData) {
             if (filterTestFilters(bundle, component.getFilterCondition(), component.getFilters())) {
@@ -283,7 +283,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             }
         }
 
-        return new Pair<ArrayList<Bundle>, ArrayList<Bundle>>(retained, removed);
+        return new Pair<>(retained, removed);
     }
 
     // TODO This won't work for triggers
@@ -344,7 +344,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             return true;
 
         // It needs to match all of the elements in the filter
-        ArrayList<Boolean> results = new ArrayList<Boolean>();
+        ArrayList<Boolean> results = new ArrayList<>();
         for (IOFilter filter : filters) {
             results.add(filterTestFilter(datum, filter));
         }
@@ -402,7 +402,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
     private boolean filterTestValues(Object actualValue, boolean condition, ArrayList<IOValue> filterValues) throws OrchestrationException {
 
-        ArrayList<Boolean> results = new ArrayList<Boolean>();
+        ArrayList<Boolean> results = new ArrayList<>();
 
         for (IOValue filterValue : filterValues) {
             results.add(filterTestValue(actualValue, filterValue));
@@ -455,11 +455,11 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         // Get the inputs of the component to be mapped to and set up the other array lists
         ArrayList<ServiceIO> inputs = service.getInputs();
-        ArrayList<Bundle> inputList = new ArrayList<Bundle>();
+        ArrayList<Bundle> inputList = new ArrayList<>();
 
         if (bundle != null && bundle.get(ComposableService.INPUT) != null) {
 
-            ArrayList<Bundle> outputList = new ArrayList<Bundle>();
+            ArrayList<Bundle> outputList = new ArrayList<>();
             Object o = bundle.get(ComposableService.INPUT);
 
             // This gives us a list of bundles to iterate through to process

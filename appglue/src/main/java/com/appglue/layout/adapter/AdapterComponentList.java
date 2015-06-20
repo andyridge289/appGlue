@@ -46,7 +46,7 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
     }
 
     private void cloneItems() {
-        originalItems = new ArrayList<ServiceDescription>();
+        originalItems = new ArrayList<>();
 
         for (ServiceDescription item : items) {
             originalItems.add(item);
@@ -157,30 +157,16 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
         if (enabled && !parentFragment.isJustList()) {
 
             // If it's not a list and it's enabled then choose it
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    chooseClick(sd2);
-                }
-            });
+            v.setOnClickListener(v1 -> chooseClick(sd2));
 
-            v.setOnLongClickListener(new View.OnLongClickListener() {
-
-                @Override
-                public boolean onLongClick(View v) {
-                    viewClick(sd2);
-                    return true;
-                }
+            v.setOnLongClickListener(v1 -> {
+                viewClick(sd2);
+                return true;
             });
         } else { // It's either just a list or the component is disabled
 
             // If it's not a list and its disable
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    viewClick(sd2);
-                }
-            });
+            v.setOnClickListener(v1 -> viewClick(sd2));
         }
 
         if (enabled) {

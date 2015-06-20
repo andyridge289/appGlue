@@ -101,8 +101,8 @@ public class Category implements Comparable {
 
         private static void create() {
 
-            nameSearch = new TST<Category>();
-            idSearch = new LongSparseArray<Category>();
+            nameSearch = new TST<>();
+            idSearch = new LongSparseArray<>();
 
             nameSearch.put(TRIGGERS, new Category(TRIGGERS));
             nameSearch.put(DEVICE_UTILS, new Category(DEVICE_UTILS));

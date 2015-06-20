@@ -38,7 +38,7 @@ public class TutorialActivity extends AppGlueActivity implements ViewPager.OnPag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
 
-        fragments = new ArrayList<Fragment>();
+        fragments = new ArrayList<>();
         fragments.add(FragmentPrivacy.create());
         for(int i = 0; i < 6; i++) {
             fragments.add(FragmentTutorial.create(i));
@@ -51,25 +51,19 @@ public class TutorialActivity extends AppGlueActivity implements ViewPager.OnPag
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
 
         next = (ImageView) findViewById(R.id.tutorial_next);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (index < fragments.size() - 1) {
-                    setIndex(index + 1);
-                }
+        next.setOnClickListener(v -> {
+            if (index < fragments.size() - 1) {
+                setIndex(index + 1);
             }
         });
         previous = (ImageView) findViewById(R.id.tutorial_previous);
-        previous.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (index > 0) {
-                    setIndex(index - 1);
-                }
+        previous.setOnClickListener(v -> {
+            if (index > 0) {
+                setIndex(index - 1);
             }
         });
 
-        navs = new ArrayList<View>();
+        navs = new ArrayList<>();
         LinearLayout navContainer = (LinearLayout) findViewById(R.id.nav_container);
         //noinspection UnusedDeclaration
         for (Fragment fragment : fragments) {

@@ -57,10 +57,10 @@ public class SystemFeature {
 
     private static void create() {
 
-        codeSearch = new TST<SystemFeature>();
-        indexSearch = new SparseArray<SystemFeature>();
+        codeSearch = new TST<>();
+        indexSearch = new SparseArray<>();
 
-        features = new ArrayList<SystemFeature>();
+        features = new ArrayList<>();
 
         features.add(new SystemFeature(0x1, PackageManager.FEATURE_BLUETOOTH, "Bluetooth", R.drawable.ic_bluetooth_black_24dp));
         features.add(new SystemFeature(0x2, PackageManager.FEATURE_CAMERA, "Rear camera", R.drawable.ic_camera_alt_black_24dp));

@@ -109,7 +109,6 @@ public class MainActivity extends AppGlueActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-
         if (savedInstanceState == null) {
 
             // Generate default values for all of the things
@@ -388,7 +387,7 @@ public class MainActivity extends AppGlueActivity
         }
 
         Intent serviceIntent = new Intent(this, OrchestrationService.class);
-        ArrayList<Bundle> intentData = new ArrayList<Bundle>();
+        ArrayList<Bundle> intentData = new ArrayList<>();
         Bundle b = new Bundle();
 
         b.putLong(COMPOSITE_ID, cs.getID());

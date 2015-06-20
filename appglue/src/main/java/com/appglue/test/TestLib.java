@@ -54,7 +54,7 @@ public class TestLib {
         ComponentService tubeComponent = new ComponentService(tubeService, 0);
         ComponentService notificationComponent = new ComponentService(notificationService, 1);
 
-        ArrayList<ComponentService> components = new ArrayList<ComponentService>();
+        ArrayList<ComponentService> components = new ArrayList<>();
         components.add(tubeComponent);
         components.add(notificationComponent);
 

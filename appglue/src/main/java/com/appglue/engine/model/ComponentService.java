@@ -37,31 +37,31 @@ public class ComponentService {
     private final Object mObserverLock = new Object();
 
     public interface Observer {
-        public void onComponentPositionChanged(int oldPosition, int newPosition);
-        public void onFilterAdded(IOFilter filter);
-        public void onFilterRemoved(IOFilter filer);
+        void onComponentPositionChanged(int oldPosition, int newPosition);
+        void onFilterAdded(IOFilter filter);
+        void onFilterRemoved(IOFilter filer);
     }
 
     public ComponentService() {
 
-        this.inputs = new ArrayList<ServiceIO>();
-        this.outputs = new ArrayList<ServiceIO>();
+        this.inputs = new ArrayList<>();
+        this.outputs = new ArrayList<>();
 
         this.id = -1;
         this.description = null;
         this.composite = null;
         this.mPosition = -1;
 
-        this.inputSearch = new LongSparseArray<ServiceIO>();
-        this.outputSearch = new LongSparseArray<ServiceIO>();
+        this.inputSearch = new LongSparseArray<>();
+        this.outputSearch = new LongSparseArray<>();
 
-        this.inputNameSearch = new TST<ServiceIO>();
-        this.outputNameSearch = new TST<ServiceIO>();
+        this.inputNameSearch = new TST<>();
+        this.outputNameSearch = new TST<>();
 
-        this.mFilters = new ArrayList<IOFilter>();
-        this.mFilterSearch = new LongSparseArray<IOFilter>();
+        this.mFilters = new ArrayList<>();
+        this.mFilterSearch = new LongSparseArray<>();
 
-        mObservers = new ArrayList<Observer>();
+        mObservers = new ArrayList<>();
     }
 
     public ComponentService(ServiceDescription description, int position) {
@@ -149,7 +149,7 @@ public class ComponentService {
     }
 
     public ArrayList<ServiceIO> getDisconnectedInputs() {
-        ArrayList<ServiceIO> in = new ArrayList<ServiceIO>();
+        ArrayList<ServiceIO> in = new ArrayList<>();
 
         // Hopefully this should preserve the order
         for (ServiceIO input : inputs) {
@@ -192,7 +192,7 @@ public class ComponentService {
     }
 
     public ArrayList<ServiceIO> getDisconnectedOutputs() {
-        ArrayList<ServiceIO> out = new ArrayList<ServiceIO>();
+        ArrayList<ServiceIO> out = new ArrayList<>();
 
         // Hopefully this should preserve the order
         for (ServiceIO output : outputs) {
@@ -376,8 +376,8 @@ public class ComponentService {
 
     public void rebuildSearch() {
 
-        inputNameSearch = new TST<ServiceIO>();
-        outputNameSearch = new TST<ServiceIO>();
+        inputNameSearch = new TST<>();
+        outputNameSearch = new TST<>();
 
         inputSearch.clear();
         outputSearch.clear();
