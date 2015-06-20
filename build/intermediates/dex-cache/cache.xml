@@ -2,214 +2,39 @@
 <items version="2" >
 
     <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-analytics/7.0.0/classes.jar"
+        jar="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/jars/classes.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="29fd6d3794b71491c2789708cd8d03c71feb8954">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-07e10021845337d8c904f3a15863ab3958ba7563.jar" />
+        revision="22.0.1"
+        sha1="bf6d01304e9341036542668c4c895da1063f23ac">
+        <dex dex="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-761f5761d294a11ccd87c8930e088b3e5d7cca4c.jar" />
     </item>
     <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-gcm/7.0.0/classes.jar"
+        jar="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.jakewharton.hugo/hugo-runtime/1.2.1/jars/classes.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="9224bc4c54ba95147c7eabd874573763c07cb6be">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ab4ea5c67cad9e2fe13dab278fa9fa6ebc2a28b2.jar" />
+        revision="22.0.1"
+        sha1="2bac9385ea008561a30419c09e9230a8681b3e09">
+        <dex dex="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-6aa33464c4112ac8d784397ea17240856fdf758f.jar" />
     </item>
     <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-safetynet/7.0.0/classes.jar"
+        jar="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/exploded-aar/com.orhanobut/logger/1.10/jars/classes.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="c976518693e89ad44fbfccfc654941eaec198d08">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-c35a24174857e36f132a9c616c3c62654059720c.jar" />
+        revision="22.0.1"
+        sha1="52723f7afc22f9a07045b861fa08e7f094ed9f66">
+        <dex dex="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-413b1060eb0a6125e63bd94bcde8638ae58907c2.jar" />
     </item>
     <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-drive/7.0.0/classes.jar"
+        jar="/Users/andy/.gradle/caches/modules-2/files-2.1/com.jakewharton.hugo/hugo-annotations/1.2.1/b01150795c5cdca1eb7e501bf00f105ff0e31501/hugo-annotations-1.2.1.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="41b3870cbe5fa546d8095b5b89d42cb69f3dd175">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-b53e6fa1085119619a9f4cb35a6d1a4598f76a75.jar" />
+        revision="22.0.1"
+        sha1="b01150795c5cdca1eb7e501bf00f105ff0e31501">
+        <dex dex="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/hugo-annotations-1.2.1-2d14fcd9aa561d060d36c2eca652814479cc7db2.jar" />
     </item>
     <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-cast/7.0.0/classes.jar"
+        jar="/Users/andy/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjrt/1.8.5/39a8ff2d1f79267907f5573c090b342b040b9682/aspectjrt-1.8.5.jar"
         jumboMode="false"
-        revision="21.1.2"
-        sha1="4cd0b093824b3228fffc21ea369b98d0b1db6566">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-8895fdbcb66deccc17955ccb607b3e827e857c5a.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-games/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="055783146ba9654a725442563be78cad303aad1f">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ddcb04dacb018f92dbd5d962e7fd43fd71daf57d.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-fitness/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="3c0b099f9de16b265ecd6122fcb603e7d0d29f90">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-1d7f65bfd2a1b98a1b48e0344bb78571daae5da9.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v13/20.0.0/libs/internal_impl-20.0.0.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="27bbd3982cdfe4468a9bf99c8c773734a9049e33">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/internal_impl-20.0.0-4fb00f0a364102ab513f28039d9d62e74f32652c.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/22.1.1/support-annotations-22.1.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="01d051a6bfb1218b1db2d3a5af0480ac2c25c42a">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/support-annotations-22.1.1-c0ed40d7ccb9f01a3bbc2ba7f841341bbba0010c.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="4c93d99d454c975536bbe3b42283eee847f03ea3">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-ff0832acc44901280acdf3fda4c8dd6e497558b5.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-panorama/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="1c5a76debf0c2857ccad422c4a80ed785982f8df">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-8d6044d49933fc2bb31bd4ed8d2afb37dc5383d2.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="a131319fb26ffdd8927dcbb7be23515baddb789d">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-6d18a21803e6642e0ef3f811a2e29e2fdffd8d10.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="c95ba8152923e4872e86a82cfcba9a51c0214328">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-d75268fdfbd2d1057c68bc8588c5e8e208935148.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="fb04b12526b0073c7fb1ebb70c5842d82ee95596">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-46fb99af905d240c8f1dc02678b3c8ad6fa48d72.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-ads/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="e3d791b42eaa90416cd0b2d2e608092794a3baa4">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-f4288dd083c391c0c85ed5dcc4cf077f7947936e.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="0e8228b4bc69c6a2c8d7c18498a77e53417d2574">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-9f8a80e4e077afb376265fa6521ff6cf46d0e2c6.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="73ccb92b70112f2e463e415ef8d7275de7da6516">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-904c3a118edb4608970c86ba6b65bed4df7cfc5b.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v13/20.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="e128103d5281ddd26195a7f980b36d0d005a4e56">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-86c48a9ff0d86b78e9957230628d536ba2be8971.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-wearable/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="3033cc3a2c68dff3e5b646d6d084bdbdf7d00b25">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-700000b2048a4e45048a74260c0f681049ab45f3.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.1.1/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="a3ff3c506644c820eb2bdf06e8339f72be578551">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-3e0709ea4b320d68f13a56f1359d1866d8aa7cd3.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-wallet/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="a96b762bde4139de855735f175ec4d17dca55a6d">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-dc525be50b4ad889f52f4fa81c82c9501744c443.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/appGlue/appGlueLib/unspecified/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="53266a755a1750686cb6d8d389e10a04fdbed0c7">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-6d18a21803e6642e0ef3f811a2e29e2fdffd8d10.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="17f8750d5c0749e44dd7c54aa390d9c937803825">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-d638971398cf96ef96f3228766135301e85bd2dd.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/gridlayout-v7/20.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="e5531cb41e35c81a051a274945542f6b31e4c97e">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-b640a2bd463ae6da51ac72899438b9adadf1f87f.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/cardview-v7/21.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.0.1"
-        sha1="7d2525cba8ed61fff102977caed964fc22061e34">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-64495dd234de212c1c97b054e03b5a29daaf6e17.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-appstate/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="7ff613bf78ab057293892fdbd4169eda899c89b9">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-680445ed8d204cb1bb7812bf359e052b6da13987.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.1.1/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="e0b0c35d02308b270015a74cada4887e2e49b889">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-b978cae44442307a0225b5afa624fe4b565eb86e.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="a08d65794b844d8e7540bf9a33859bf3b2482d7f">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-5699a1967d86dbd57492eaa4b3f4305a7177e526.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.google.android.gms/play-services-nearby/7.0.0/classes.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="ef5f051e7308febe289dc93c67c5f32785b4260a">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/classes-2890dd8380506b6bb790a95a7895fcbfa21fa21d.jar" />
-    </item>
-    <item
-        jar="/Users/andyridge/appGlue/appglue/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/libs/internal_impl-22.1.1.jar"
-        jumboMode="false"
-        revision="21.1.2"
-        sha1="9e070ad32b2700b0343e8e0cccc437733d91ba3a">
-        <dex dex="/Users/andyridge/appGlue/appglue/build/intermediates/pre-dexed/debug/internal_impl-22.1.1-ae97140a4eff028e6cfa6e17810b47f294376ba0.jar" />
+        revision="22.0.1"
+        sha1="39a8ff2d1f79267907f5573c090b342b040b9682">
+        <dex dex="/Users/andy/AndroidStudioProjects/appGlue/appglue/build/intermediates/pre-dexed/debug/aspectjrt-1.8.5-396e3889982a82b1ed8250104c1ea74ce1f34d09.jar" />
     </item>
 
 </items>

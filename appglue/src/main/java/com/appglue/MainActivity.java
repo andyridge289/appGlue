@@ -32,6 +32,8 @@ import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
+import hugo.weaving.DebugLog;
+
 import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
