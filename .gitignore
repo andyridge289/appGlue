@@ -1,3 +1,9 @@
-buid/
+build/
 gradle/
 appGlue/.idea/
+.DS_Store
+.gradle/
+.idea/
+appglueLib/build
+.gitignore~
+local.properties
