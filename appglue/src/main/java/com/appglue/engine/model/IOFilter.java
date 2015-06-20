@@ -1,13 +1,10 @@
 package com.appglue.engine.model;
 
-import android.util.Log;
-
 import com.appglue.TST;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.OR;
 
 public class IOFilter {
@@ -68,7 +65,7 @@ public class IOFilter {
         ValueNode vn = values.get(key);
 
         if (vn == null) {
-            Log.d(TAG, "Null for " + key);
+            Logger.d("Null for " + key);
             return new ArrayList<>();
         }
 
@@ -105,27 +102,27 @@ public class IOFilter {
     public boolean equals(Object o) {
 
         if (o == null) {
-            if (LOG) Log.d(TAG, "IOFilter->Equals: null");
+           Logger.d("IOFilter->Equals: null");
             return false;
         }
         if (!(o instanceof IOFilter)) {
-            if (LOG) Log.d(TAG, "IOFilter->Equals: Not a ComponentService");
+           Logger.d("IOFilter->Equals: Not a ComponentService");
             return false;
         }
         IOFilter other = (IOFilter) o;
 
         if (this.id != other.getID()) {
-            if (LOG) Log.d(TAG, "IOFilter->Equals: id");
+           Logger.d("IOFilter->Equals: id");
             return false;
         }
 
         if (this.component.getID() != other.getComponent().getID()) {
-            if (LOG) Log.d(TAG, "IOFilter->Equals: component");
+           Logger.d("IOFilter->Equals: component");
             return false;
         }
 
         if (this.ios.size() != other.getIOs().size()) {
-            if (LOG) Log.d(TAG, "IOFilter->Equals: ios size: " + ios.size() + " -- " + other.getIOs().size());
+           Logger.d("IOFilter->Equals: ios size: " + ios.size() + " -- " + other.getIOs().size());
             return false;
         }
 
@@ -140,13 +137,13 @@ public class IOFilter {
             }
 
             if (!found) {
-                if (LOG) Log.d(TAG, "IOFilter->Equals: Can't find IO: " + i);
+               Logger.d("IOFilter->Equals: Can't find IO: " + i);
                 return false;
             }
         }
 
         if (values.size() != other.getValues().size()) {
-            if (LOG) Log.d(TAG, "IOFilter->Equals: value nodes size: " + values.size() + " -- " + other.getValues().size());
+           Logger.d("IOFilter->Equals: value nodes size: " + values.size() + " -- " + other.getValues().size());
             return false;
         }
 
@@ -154,7 +151,7 @@ public class IOFilter {
         for (String key : keys) {
             ValueNode vn = values.get(key);
             if (!vn.equals(other.getValues().get(key))) {
-                if (LOG) Log.d(TAG, "ComponentService->Equals: value node " + key);
+               Logger.d("ComponentService->Equals: value node " + key);
                 return false;
             }
         }
@@ -213,44 +210,44 @@ public class IOFilter {
 
         public boolean equals(Object o) {
             if (o == null) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: null");
+               Logger.d("ValueNode->Equals: null");
                 return false;
             }
             if (!(o instanceof ValueNode)) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: Not a ComponentService");
+               Logger.d("ValueNode->Equals: Not a ComponentService");
                 return false;
             }
             ValueNode other = (ValueNode) o;
 
             if (this.id != other.id) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: id");
+               Logger.d("ValueNode->Equals: id");
                 return false;
             }
 
             if (this.condition != other.condition) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: id");
+               Logger.d("ValueNode->Equals: id");
                 return false;
             }
 
             if (this.filter.getID() != other.getFilter().getID()) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: filter");
+               Logger.d("ValueNode->Equals: filter");
                 return false;
             }
 
             if (this.io.getID() != other.getIO().getID()) {
-                if (LOG) Log.d(TAG, "ValueNode->Equals: io");
+               Logger.d("ValueNode->Equals: io");
                 return false;
             }
 
             if (this.values.size() != other.getValues().size()) {
-                if (LOG) Log.d(TAG, "ValueNode[" + id + "]->Equals: value size " + values.size() + " -- " + other.getValues().size());
+               Logger.d("ValueNode[" + id + "]->Equals: value size " + values.size() + " -- " + other.getValues().size());
                 return false;
             }
 
             for (int i = 0; i < values.size(); i++) {
                 IOValue value = values.get(i);
                 if (!other.getValues().contains(value)) {
-                    if (LOG) Log.d(TAG, "ValueNode->Equals: value " + i + " not found in other");
+                   Logger.d("ValueNode->Equals: value " + i + " not found in other");
                     return false;
                 }
             }

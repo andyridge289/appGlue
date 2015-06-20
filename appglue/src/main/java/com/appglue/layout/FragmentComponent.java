@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -28,11 +27,11 @@ import com.appglue.engine.OrchestrationServiceConnection;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
 import static com.appglue.Constants.CLASSNAME;
-import static com.appglue.Constants.TAG;
 
 public class FragmentComponent extends Fragment implements AppGlueFragment {
 
@@ -217,10 +216,10 @@ public class FragmentComponent extends Fragment implements AppGlueFragment {
                         getActivity().startActivity(i);
                     } else {
                         // Do something?
-                        Log.e(TAG, "Couldn't launch app because the package manager is null: " + sd.getApp().getPackageName());
+                        Logger.e("Couldn't launch app because the package manager is null: " + sd.getApp().getPackageName());
                     }
                 } catch (Exception e) {
-                    Log.e(TAG, "Trying to launch app? " + e.getMessage());
+                    Logger.e("Trying to launch app? " + e.getMessage());
                 }
             }
         });

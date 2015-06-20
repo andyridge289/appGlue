@@ -2,14 +2,10 @@ package com.appglue;
 
 public class Constants 
 {
-    public static final boolean LOG = true;
-
     // Broadcast receive-y thing
 	public static final String ACTION_COMPOSABLE = "com.appglue.IM_A_COMPOSABLE_SERVICE";
 	public static final String ACTION_TRIGGER = "com.appglue.TRIGGER_A_SERVICE_PLEASE";
-	
-	public static final String TAG = "appGlue";
-	
+
 	public static final String SERVICE_LIST = "service_list";
 	public static final String SERVICE_RETURN = "service_return";
 	public static final String SERVICE_CONVERTER = "service_converter";

@@ -1,11 +1,11 @@
 package com.appglue.services.triggers;
 
-import static com.appglue.Constants.TAG;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.util.Log;
+
+import com.orhanobut.logger.Logger;
 
 public class ReceiveSMSTrigger extends GenericTrigger
 {
@@ -37,7 +37,7 @@ public class ReceiveSMSTrigger extends GenericTrigger
                 } else if (sms.getOriginatingAddress().equals(number)) {
                     message += sms.getDisplayMessageBody();
                 } else {
-                    Log.e(TAG, "Not really expecting this to happen to be honest (SMS list not from same person)");
+                    Logger.e("Not really expecting this to happen to be honest (SMS list not from same person)");
                 }
             }
         }

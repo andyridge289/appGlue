@@ -3,14 +3,12 @@ package com.appglue.description;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 
 import com.appglue.TST;
+import com.orhanobut.logger.Logger;
 
 import static com.appglue.Constants.ID;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.TAG;
 
 public class Category implements Comparable {
 
@@ -52,19 +50,19 @@ public class Category implements Comparable {
 
     public boolean equals(Object o) {
         if(o == null)  {
-            if(LOG) Log.d(TAG, "Category->Equals: null");
+            Logger.d("Category->Equals: null");
             return false;
         }
 
         if(!(o instanceof Category)) {
-            if(LOG) Log.d(TAG, "Category->Equals: not ServiceIO");
+            Logger.d("Category->Equals: not ServiceIO");
             return false;
         }
 
         Category other = (Category) o;
 
         if(!name.equals(other.getName())) {
-            if(LOG) Log.d(TAG, "Category->Equals: name - [" + name + " :: " + other.getName() + "]");
+            Logger.d("Category->Equals: name - [" + name + " :: " + other.getName() + "]");
             return false;
         }
 

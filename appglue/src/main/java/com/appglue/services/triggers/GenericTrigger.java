@@ -10,6 +10,7 @@ import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.engine.OrchestrationService;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,6 @@ import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.TAG;
 
 public abstract class GenericTrigger extends BroadcastReceiver 
 {
@@ -81,11 +81,11 @@ public abstract class GenericTrigger extends BroadcastReceiver
             intentData.add(b);
         }
 		
-//		Log.w(TAG, "Started service " + services.get(i).name() + " " + System.currentTimeMillis());
+//		Logger.w("Started service " + services.get(i).name() + " " + System.currentTimeMillis());
 		serviceIntent.putParcelableArrayListExtra(DATA, intentData);
 		
 		context.startService(serviceIntent);
 		
-		Log.w(TAG, "Done triggering " + this.getClass().getCanonicalName() + " " + System.currentTimeMillis());
+		Logger.w("Done triggering " + this.getClass().getCanonicalName() + " " + System.currentTimeMillis());
 	}
 }

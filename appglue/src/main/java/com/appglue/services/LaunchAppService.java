@@ -1,15 +1,12 @@
 package com.appglue.services;
 
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
-
-import java.util.ArrayList;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.appglue.ComposableService;
+import com.orhanobut.logger.Logger;
+
+import java.util.ArrayList;
 
 public class LaunchAppService extends ComposableService 
 {
@@ -18,7 +15,7 @@ public class LaunchAppService extends ComposableService
 	@Override
 	public ArrayList<Bundle> performService(Bundle o)
 	{
-		if(LOG) Log.d(TAG, "Launching app");
+		Logger.d("Launching app");
 		 
 		String packageName = o.getString(APP_PACKAGE);
 		
@@ -29,7 +26,7 @@ public class LaunchAppService extends ComposableService
 		}
 		catch (Exception e) 
 		{
-			Log.e(TAG, "Tried and failed to launch app to launch app? " + e.getMessage());
+			Logger.e("Tried and failed to launch app to launch app? " + e.getMessage());
 		}
 		
 		return null;

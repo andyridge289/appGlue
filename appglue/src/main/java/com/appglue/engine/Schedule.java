@@ -1,14 +1,10 @@
 package com.appglue.engine;
 
-import android.util.Log;
-
 import com.appglue.engine.model.CompositeService;
+import com.orhanobut.logger.Logger;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 public class Schedule {
 
@@ -246,94 +242,94 @@ public class Schedule {
     public boolean equals(Object o) {
 
         if (o == null) {
-            if (LOG) Log.d(TAG, "Schedule->Equals: null");
+            Logger.d("Schedule->Equals: null");
             return false;
         }
         if (!(o instanceof Schedule)) {
-            if (LOG) Log.d(TAG, "Schedule->Equals: Not a ComponentService");
+            Logger.d("Schedule->Equals: Not a ComponentService");
             return false;
         }
         Schedule other = (Schedule) o;
 
         if (this.id != other.getID()) {
-            if (LOG) Log.d(TAG, "Schedule->Equals: id: " + this.id + " - " + other.getID());
+            Logger.d("Schedule->Equals: id: " + this.id + " - " + other.getID());
             return false;
         }
 
         if (this.composite.getID() != other.getComposite().getID()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: composite: " + this.composite.getID() + " - " + other.getComposite().getID());
+
+            Logger.d("Schedule->Equals: composite: " + this.composite.getID() + " - " + other.getComposite().getID());
             return false;
         }
 
         if (this.numeral != other.getNumeral()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: numeral: " + this.numeral + " - " + other.getNumeral());
+
+            Logger.d("Schedule->Equals: numeral: " + this.numeral + " - " + other.getNumeral());
             return false;
         }
 
         if (this.interval.index != other.getInterval().index) {
-            if (LOG) Log.d(TAG, "Schedule->Equals: interval: " + this.interval.index + " - " +
+            Logger.d("Schedule->Equals: interval: " + this.interval.index + " - " +
                     other.getInterval().index);
             return false;
         }
 
         if (this.enabled != other.isEnabled()) {
-            if (LOG) Log.d(TAG, "Schedule->Equals: enabled");
+            Logger.d("Schedule->Equals: enabled");
             return false;
         }
 
         if (!this.type.equals(other.getScheduleType())) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: schedule " + type.name + " - " + other.getScheduleType().name);
+
+            Logger.d("Schedule->Equals: schedule " + type.name + " - " + other.getScheduleType().name);
             return false;
         }
 
         if (this.lastExecuted != other.getLastExecuted()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: last time executed: " + this.lastExecuted + " - " + other.getLastExecuted());
+
+            Logger.d("Schedule->Equals: last time executed: " + this.lastExecuted + " - " + other.getLastExecuted());
             return false;
         }
 
         if (!this.timePeriod.equals(other.getTimePeriod())) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: time period: " + this.timePeriod + " - " + other.getTimePeriod());
+
+            Logger.d("Schedule->Equals: time period: " + this.timePeriod + " - " + other.getTimePeriod());
             return false;
         }
 
         if (this.minute != other.getMinute()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: minute: " + this.minute + " - " + other.getMinute());
+
+            Logger.d("Schedule->Equals: minute: " + this.minute + " - " + other.getMinute());
             return false;
         }
 
         if (this.hour != other.getHour()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: hour: " + this.hour + " - " + other.getHour());
+
+            Logger.d("Schedule->Equals: hour: " + this.hour + " - " + other.getHour());
             return false;
         }
 
         if (this.dayOfWeek != other.getDayOfWeek()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: dayOfWeek: " + this.dayOfWeek + " - " + other.getDayOfWeek());
+
+            Logger.d("Schedule->Equals: dayOfWeek: " + this.dayOfWeek + " - " + other.getDayOfWeek());
             return false;
         }
 
         if (this.nextExecute != other.getNextExecute()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: next execute: " + this.nextExecute + " - " + other.getNextExecute());
+
+            Logger.d("Schedule->Equals: next execute: " + this.nextExecute + " - " + other.getNextExecute());
             return false;
         }
 
         if (this.executionNum != other.getExecutionNum()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: execution num: " + this.executionNum + " - " + other.getExecutionNum());
+
+            Logger.d("Schedule->Equals: execution num: " + this.executionNum + " - " + other.getExecutionNum());
             return false;
         }
 
         if (this.scheduled != other.isScheduled()) {
-            if (LOG)
-                Log.d(TAG, "Schedule->Equals: is scheduled: " + this.scheduled + " - " + other.isScheduled());
+
+            Logger.d("Schedule->Equals: is scheduled: " + this.scheduled + " - " + other.isScheduled());
             return false;
         }
 

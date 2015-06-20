@@ -45,6 +45,7 @@ import com.appglue.services.triggers.StartupTrigger;
 import com.appglue.services.triggers.WifiTrigger;
 import com.appglue.services.util.BluetoothService;
 import com.appglue.services.util.WifiService;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,7 +64,6 @@ import static com.appglue.Constants.JSON_SERVICE_DATA;
 import static com.appglue.Constants.JSON_SERVICE_LIST;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.PREFS_HIDDEN;
 import static com.appglue.library.AppGlueConstants.RUN_BEFORE;
 
@@ -99,10 +99,10 @@ public class ServiceFactory {
             String filename = storage.writeIcon(appDescription.getPackageName(), iconString);
             appDescription.setIconLocation(filename);
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "Icon creating - File not found!!!!");
+            Logger.e("Icon creating - File not found!!!!");
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e(TAG, "Icon creating - IOException other than file not found!!!!");
+            Logger.e("Icon creating - IOException other than file not found!!!!");
             e.printStackTrace();
         }
     }
@@ -145,7 +145,7 @@ public class ServiceFactory {
             ServiceDescription atomicId = registry.addServiceDescription(sd);
 
             if (atomicId == null) {
-                Log.d(TAG, "The atomic ID is -1, apparently this is bad");
+                Logger.d("The atomic ID is -1, apparently this is bad");
             }
         }
 

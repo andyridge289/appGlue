@@ -2,15 +2,12 @@ package com.appglue.engine.model;
 
 
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 
 import com.appglue.TST;
 import com.appglue.description.ServiceDescription;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 public class ComponentService {
     private long id;
@@ -290,75 +287,75 @@ public class ComponentService {
     public boolean equals(Object o) {
 
         if(o == null) {
-            if(LOG) Log.d(TAG, "ComponentService->Equals: null");
+            Logger.d("ComponentService->Equals: null");
             return false;
         }
         if(!(o instanceof ComponentService)) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: Not a ComponentService");
+            Logger.d("ComponentService->Equals: Not a ComponentService");
             return false;
         }
         ComponentService other = (ComponentService) o;
 
         if(this.id != other.getID()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: id");
+            Logger.d("ComponentService->Equals: id");
             return false;
         }
 
         if(!this.description.equals(other.getDescription())) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: description");
+            Logger.d("ComponentService->Equals: description");
             return false;
         }
 
         if(this.composite.getID() != other.getComposite().getID()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: composite");
+            Logger.d("ComponentService->Equals: composite");
             return false;
         }
 
         if(this.mPosition != other.getPosition()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: mPosition");
+            Logger.d("ComponentService->Equals: mPosition");
             return false;
         }
 
         if(this.inputs.size() != other.getInputs().size()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: num inputs -- " + inputs.size() + " - " + other.getInputs().size());
+            Logger.d("ComponentService->Equals: num inputs -- " + inputs.size() + " - " + other.getInputs().size());
             return false;
         }
 
         for(int i = 0; i < inputs.size(); i++) {
             ServiceIO io = this.inputs.get(i);
             if(!io.equals(other.getInput(io.getID()))) {
-                if (LOG) Log.d(TAG, "ComponentService->Equals: input " + i);
+                Logger.d("ComponentService->Equals: input " + i);
                 return false;
             }
         }
 
         if(this.outputs.size() != other.getOutputs().size()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: num outputs " + outputs.size() + " - " + other.getOutputs().size());
+            Logger.d("ComponentService->Equals: num outputs " + outputs.size() + " - " + other.getOutputs().size());
             return false;
         }
 
         for(int i = 0; i < outputs.size(); i++) {
             ServiceIO io = this.outputs.get(i);
             if(!io.equals(other.getOutput(io.getID()))) {
-                if (LOG) Log.d(TAG, "ComponentService->Equals: output " + i);
+                Logger.d("ComponentService->Equals: output " + i);
                 return false;
             }
         }
 
         if (this.and != other.getFilterCondition()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: filter condition (and) -- " + this.and + other.getFilterCondition());
+            Logger.d("ComponentService->Equals: filter condition (and) -- " + this.and + other.getFilterCondition());
             return false;
         }
 
         if (this.mFilters.size() != other.getFilters().size()) {
-            if (LOG) Log.d(TAG, "ComponentService->Equals: num mFilters -- " + mFilters.size() + " - " + other.getFilters().size());
+            Logger.d("ComponentService->Equals: num mFilters -- " + mFilters.size() + " - " + other.getFilters().size());
             return false;
         }
 
         for (int i = 0; i < mFilters.size(); i++) {
             IOFilter f = other.getFilter(mFilters.get(i).getID());
             if(!mFilters.get(i).equals(f)) {
-                if (LOG) Log.d(TAG, "ComponentService->Equals: filter " + i);
+                Logger.d("ComponentService->Equals: filter " + i);
                 return false;
             }
         }

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
@@ -15,6 +14,7 @@ import com.appglue.IODescription;
 import com.appglue.SystemFeature;
 import com.appglue.TST;
 import com.appglue.description.datatypes.IOType;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +36,6 @@ import static com.appglue.Constants.JSON_APP;
 import static com.appglue.Constants.JSON_SERVICE;
 import static com.appglue.Constants.JSON_SERVICE_DATA;
 import static com.appglue.Constants.JSON_SERVICE_LIST;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
@@ -50,7 +49,6 @@ import static com.appglue.Constants.SAMPLE_NAME;
 import static com.appglue.Constants.SAMPLE_VALUE;
 import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.SHORT_NAME;
-import static com.appglue.Constants.TAG;
 import static com.appglue.Constants.TAGS;
 
 public class ServiceDescription {
@@ -353,11 +351,11 @@ public class ServiceDescription {
     public boolean equals(Object o) {
 
         if (o == null) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: null");
+            Logger.d("ServiceDescription->Equals: null");
             return false;
         }
         if (!(o instanceof ServiceDescription)) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: Not a ServiceDescription");
+            Logger.d("ServiceDescription->Equals: Not a ServiceDescription");
             return false;
         }
         ServiceDescription other = (ServiceDescription) o;
@@ -367,75 +365,75 @@ public class ServiceDescription {
         }
 
         if (!this.name.equals(other.getName())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: name");
+            Logger.d("ServiceDescription->Equals: name");
             return false;
         }
 
         if (!this.shortName.equals(other.getShortName())) {
-            if (LOG)
-                Log.d(TAG, "ServiceDescription->Equals: shortname " + shortName + " - " + other.getShortName());
+
+                Logger.d("ServiceDescription->Equals: shortname " + shortName + " - " + other.getShortName());
             return false;
         }
 
         if (this.flags != other.getFlags()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: process type");
+            Logger.d("ServiceDescription->Equals: process type");
             return false;
         }
 
         if (this.minVersion != other.getMinVersion()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: min version");
+            Logger.d("ServiceDescription->Equals: min version");
             return false;
         }
 
         if (this.featuresRequired != other.getFeaturesRequired()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: features required");
+            Logger.d("ServiceDescription->Equals: features required");
             return false;
         }
 
         if (!this.packageName.equals(other.getPackageName())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: package name");
+            Logger.d("ServiceDescription->Equals: package name");
             return false;
         }
 
         if (!this.description.equals(other.getDescription())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: description");
+            Logger.d("ServiceDescription->Equals: description");
             return false;
         }
 
         if (!this.app.equals(other.getApp())) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: app");
+            Logger.d("ServiceDescription->Equals: app");
             return false;
         }
 
         if (this.inputs.size() != other.getInputs().size()) {
-            if (LOG)
-                Log.d(TAG, "ServiceDescription->Equals: Inputs size -- " + inputs.size() + " - " + other.getInputs().size());
+
+                Logger.d("ServiceDescription->Equals: Inputs size -- " + inputs.size() + " - " + other.getInputs().size());
             return false;
         }
 
         for (int i = 0; i < inputs.size(); i++) {
             if (!inputs.valueAt(i).equals(other.getInput(inputs.valueAt(i).getID()))) {
-                if (LOG) Log.d(TAG, "ServiceDescription->Equals: input " + i);
+                Logger.d("ServiceDescription->Equals: input " + i);
                 return false;
             }
         }
 
         if (this.outputs.size() != other.getOutputs().size()) {
-            if (LOG)
-                Log.d(TAG, "ServiceDescription->Equals: Outputs size -- " + outputs.size() + " - " + other.getOutputs().size());
+
+                Logger.d("ServiceDescription->Equals: Outputs size -- " + outputs.size() + " - " + other.getOutputs().size());
             return false;
         }
 
         for (int i = 0; i < outputs.size(); i++) {
             if (!outputs.valueAt(i).equals(other.getOutput(outputs.valueAt(i).getID()))) {
-                if (LOG) Log.d(TAG, "ServiceDescription->Equals: output " + i);
+                Logger.d("ServiceDescription->Equals: output " + i);
                 return false;
             }
         }
 
         ArrayList<Tag> otherTags = other.getTags();
         if (tags.size() != otherTags.size()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag sizes don't match");
+            Logger.d("ServiceDescription->Equals: tag sizes don't match");
             return false;
         }
 
@@ -450,7 +448,7 @@ public class ServiceDescription {
             }
 
             if (!found) {
-                if (LOG) Log.d(TAG, "ServiceDescription->Equals: tag " + i);
+                Logger.d("ServiceDescription->Equals: tag " + i);
                 return false;
             }
         }
@@ -458,7 +456,7 @@ public class ServiceDescription {
         // Need to do equals for categories
         ArrayList<Category> otherCategories = other.getCategories();
         if (categories.size() != otherCategories.size()) {
-            if (LOG) Log.d(TAG, "ServiceDescription->Equals: category sizes don't match");
+            Logger.d("ServiceDescription->Equals: category sizes don't match");
             return false;
         }
 
@@ -473,7 +471,7 @@ public class ServiceDescription {
             }
 
             if (!found) {
-                if (LOG) Log.d(TAG, "ServiceDescription->Equals: category " + i);
+                Logger.d("ServiceDescription->Equals: category " + i);
                 return false;
             }
         }

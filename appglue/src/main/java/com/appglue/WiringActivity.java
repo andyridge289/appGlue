@@ -1,14 +1,12 @@
 package com.appglue;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,13 +20,12 @@ import com.appglue.engine.model.ServiceIO;
 import com.appglue.layout.FragmentComponentListPager;
 import com.appglue.layout.FragmentFilter;
 import com.appglue.layout.FragmentWiringPager;
-import com.appglue.layout.view.FilterValueView;
 import com.appglue.layout.dialog.DialogIO;
+import com.appglue.layout.view.FilterValueView;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
@@ -216,7 +213,7 @@ public class WiringActivity extends ActionBarActivity {
                 redraw();
             }
         } else {
-            Log.d(TAG, "They aren't creating a new one or editing, we shouldn't need the dialog");
+            Logger.d("They aren't creating a new one or editing, we shouldn't need the dialog");
         }
 
         createNew = false;
@@ -246,7 +243,7 @@ public class WiringActivity extends ActionBarActivity {
             registry.saveTempAsComposite(name, enabled);
         } else if (cs.getID() == -1) {
             // It's not the temp, but we're still saving a new one (I'm not really sure how this has happened)
-            if (LOG) Log.d(TAG, "the CS is -1, this might be bad.");
+           Logger.d("the CS is -1, this might be bad.");
         } else {
             // We're just updating one that already exists
             registry.updateComposite(cs);
@@ -264,7 +261,7 @@ public class WiringActivity extends ActionBarActivity {
         if (resultCode == RESULT_OK) {
 
             if (callbackView == null) {
-                Log.e(TAG, "Tried to do lookup callback on dead reference");
+                Logger.e("Tried to do lookup callback on dead reference");
                 return;
             }
 
@@ -284,7 +281,7 @@ public class WiringActivity extends ActionBarActivity {
 
         } else {
             // gracefully handle failure
-            Log.w(TAG, "Warning: activity result not ok");
+            Logger.w("Warning: activity result not ok");
         }
     }
 
@@ -388,7 +385,7 @@ public class WiringActivity extends ActionBarActivity {
             registry.getCurrent(false).addComponent(component, componentPosition);
         } else {
             Toast.makeText(this, "Failed to add component \"" + className + "\" for some reason.", Toast.LENGTH_LONG).show();
-            Log.e(TAG, "Failed to add component");
+            Logger.e("Failed to add component");
         }
 
         setMode(MODE_CREATE);

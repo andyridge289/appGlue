@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.appglue.AppGlueFragment;
 import com.appglue.MainActivity;
@@ -32,12 +30,12 @@ import com.appglue.library.Assert;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.serviceregistry.RegistryService;
 import com.appglue.services.factory.ServiceFactory;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.CREATE_NEW;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 
@@ -313,7 +311,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
                 sf.setupServices();
 
             } catch (JSONException e) {
-                Log.e(TAG, "JSONException - Failed to create services (CompositeListActivity) " + e.getMessage());
+                Logger.e("JSONException - Failed to create services (CompositeListActivity) " + e.getMessage());
             }
 
             if (activity == null) {
@@ -373,7 +371,7 @@ public class FragmentCompositeList extends Fragment implements AppGlueFragment {
 
         protected void onPostExecute(Boolean success) {
 //            for (int i = 0; i < composites.size(); i++) {
-//                Log.d(TAG, "Adding composite " + composites.get(i).getName());
+//                Logger.d("Adding composite " + composites.get(i).getName());
 //                mFragment.mComposites.add(composites.get(i));
 //            }
 //            if (success) {

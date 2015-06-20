@@ -17,6 +17,7 @@ import com.appglue.serviceregistry.Registry;
 import com.appglue.services.NotificationService;
 import com.appglue.services.factory.ServiceFactory;
 import com.appglue.services.TubeService;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONObject;
 
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 
 import static com.appglue.Constants.JSON_SERVICE;
 import static com.appglue.Constants.JSON_SERVICE_DATA;
-import static com.appglue.Constants.TAG;
 
 public class TestLib {
 
@@ -112,7 +112,7 @@ public class TestLib {
                 }
             }
             if (chosenSample == null) {
-                Log.d(TAG, "chosen sample not found");
+                Logger.d("chosen sample not found");
             }
 
             ServiceIO filterOnIO = component.getIO(filterOn.getName());

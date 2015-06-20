@@ -34,10 +34,10 @@ import com.appglue.layout.adapter.WiringFilterAdapter;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.FilterFactory;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.AND;
 import static com.appglue.library.AppGlueConstants.FILTER_BOOL_VALUES;
 import static com.appglue.library.AppGlueConstants.FILTER_NUMBER_VALUES;
@@ -203,7 +203,7 @@ public class FilterValueView extends LinearLayout {
         } else if (type.typeEquals(IOType.Factory.getType(IOType.Factory.TEXT))) {
             setup(FILTER_STRING_VALUES, type, hasValues, values);
         } else {
-            Log.e(TAG, "Type not implemented");
+            Logger.e("Type not implemented");
             // Don't know what happens here
         }
 
@@ -268,7 +268,7 @@ public class FilterValueView extends LinearLayout {
 
     public void redraw() {
         if (andor == null) {
-            Log.e(TAG, "For some reason redraw is being called on a dead component");
+            Logger.e("For some reason redraw is being called on a dead component");
             return;
         }
 
@@ -399,9 +399,9 @@ public class FilterValueView extends LinearLayout {
                 FilterFactory.FilterValue fv = (FilterFactory.FilterValue) conditionSpinner.getSelectedItem();
                 if (value != null) {
                     value.setCondition(fv);
-                    Log.d(TAG, "Setting condition spinner " + position);
+                    Logger.d("Setting condition spinner " + position);
                 } else {
-                    Log.e(TAG, "Can't do that, value is null");
+                    Logger.e("Can't do that, value is null");
                 }
             }
 

@@ -4,10 +4,9 @@ package com.appglue;
 import java.util.ArrayList;
 
 import android.os.Bundle;
-import android.util.Log;
 
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
+import com.orhanobut.logger.Logger;
+
 
 public class Test 
 {	
@@ -17,7 +16,7 @@ public class Test
 		
 		if(!bundle.containsKey(ComposableService.DESCRIPTION) && sending)
 		{
-			Log.e(TAG, "Bundle error: Doesn't have DESCRIPTION (" + index + ", " + sending + ")");
+			Logger.e("Bundle error: Doesn't have DESCRIPTION (" + index + ", " + sending + ")");
 			return false;
 		}
 		
@@ -29,7 +28,7 @@ public class Test
 		}
 		else if(!bundle.containsKey(ComposableService.INPUT))
 		{
-			Log.e(TAG, "Bundle error: Doesn't have INPUT (" + index + ", " + sending + ")");
+			Logger.e("Bundle error: Doesn't have INPUT (" + index + ", " + sending + ")");
 			return false;
 		}
 		
@@ -39,7 +38,7 @@ public class Test
 		
 		if(index == 0)
 		{
-            if(LOG) Log.d(TAG, "The index is zero");
+            Logger.d("The index is zero");
 			// Do nothing?
 		}
 		if (className.equals(Bundle.class))
@@ -59,20 +58,20 @@ public class Test
 //			{
 //				if(!getInputs.get(i).containsKey(ComposableService.TEXT))
 //				{
-//					Log.e(TAG, String.format("Bundle error: Input [%s] doesn't have TEXT (" + index + ", " + sending + ")", "" + i));
+//					Logger.e(String.format("Bundle error: Input [%s] doesn't have TEXT (" + index + ", " + sending + ")", "" + i));
 //					return false;
 //				}
 //			}
 		}
 		else
 		{
-			Log.e(TAG, String.format("Class name is %s, this shouldn't have happened (" + index + ", " + sending + ")", className.getCanonicalName()));
+			Logger.e(String.format("Class name is %s, this shouldn't have happened (" + index + ", " + sending + ")", className.getCanonicalName()));
 			return false;
 		}
 		
 		if(!result)
 		{
-			if(LOG) Log.d(TAG, String.format("Orch Sending [%s]: %s", "" + index, Library.printBundle(bundle)));
+			Logger.d(String.format("Orch Sending [%s]: %s", "" + index, Library.printBundle(bundle)));
 		}
 		
 		return result;

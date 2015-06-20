@@ -22,13 +22,12 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.util.Pair;
 import android.widget.Toast;
 
-import com.appglue.MainActivity;
 import com.appglue.ComposableService;
 import com.appglue.Library;
+import com.appglue.MainActivity;
 import com.appglue.R;
 import com.appglue.SystemFeature;
 import com.appglue.Test;
@@ -43,12 +42,11 @@ import com.appglue.library.FilterFactory.FilterValue;
 import com.appglue.library.LogItem;
 import com.appglue.library.err.OrchestrationException;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.LOG_EXECUTION_INSTANCE;
 
 public class OrchestrationServiceConnection implements ServiceConnection {
@@ -70,8 +68,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     private long executionInstance = -1L; // Initialise this to -1
 
     public OrchestrationServiceConnection(Context context, CompositeService cs, boolean test) {
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection() " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection() " + System.currentTimeMillis());
         this.registry = Registry.getInstance(context);
         this.context = context;
 
@@ -88,8 +86,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
     @Override
     public void onServiceConnected(ComponentName className, final IBinder service) {
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.onServiceConnected() " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection.onServiceConnected() " + System.currentTimeMillis());
         Messenger messageSender = new Messenger(service);
 
         try {
@@ -110,8 +108,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     }
 
     public void start() {
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.start() " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection.start() " + System.currentTimeMillis());
 
         // We can't send a list the first time, but I'm not sure it matters to say that we're not sending anything
         message = Message.obtain(null, ComposableService.MSG_OBJECT);
@@ -122,8 +120,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     }
 
     public void startAtPosition(int position, boolean isList, Bundle data) {
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.startAtPosition(" + position + ") " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection.startAtPosition(" + position + ") " + System.currentTimeMillis());
         this.index = position;
 
         if (isList) {
@@ -143,7 +141,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         message.setData(stuff);
 
         if (position >= cs.size()) {
-            Log.e(TAG, String.format("Tried Executing %d (%s) at position %d [size %d]",
+            Logger.e(String.format("Tried Executing %d (%s) at position %d [size %d]",
                     cs.getID(), cs.getName(), position, cs.size()));
             return;
         }
@@ -161,8 +159,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
      */
     private void doBindService(ComponentService service) {
 
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doBindService(" + service.getDescription().getName() + ") " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection.doBindService(" + service.getDescription().getName() + ") " + System.currentTimeMillis());
         Bundle messageData = message.getData();
         Library.printBundle(messageData);
 
@@ -251,16 +249,16 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         Intent intent = new Intent();
         intent.setClassName(description.getPackageName(), description.getClassName());
 
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": Sending data -- " + Library.printBundle(messageData) + "  " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": Sending data -- " + Library.printBundle(messageData) + "  " + System.currentTimeMillis());
         message.setData(messageData);
 
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": Binding service -- " + description.getPackageName() + " ; " + description.getClassName() + "  " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": Binding service -- " + description.getPackageName() + " ; " + description.getClassName() + "  " + System.currentTimeMillis());
         context.bindService(intent, this, Context.BIND_AUTO_CREATE);
 
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + "Sent to " + description.getClassName() + " " + System.currentTimeMillis());
         isBound = true;
     }
 
@@ -300,7 +298,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         if (component.getDescription().hasFlag(ComposableService.FLAG_NETWORK)) {
             if (!packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) &&
-                !packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI)) {
+                    !packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI)) {
                 result |= SystemFeature.getFeature(SystemFeature.INTERNET).index;
             }
         }
@@ -385,14 +383,14 @@ public class OrchestrationServiceConnection implements ServiceConnection {
             // Get the actual value for that node
             Object actualValue = datum.get(io.getDescription().getName());
 
-//            Log.d(TAG, String.format("%s - %s", io.getDescription().getName(), actualValue));
+//            Logger.d(String.format("%s - %s", io.getDescription().getName(), actualValue));
 
             if (!filterTestValues(actualValue, filter.getCondition(io), filter.getValues(io))) {
-                if (LOG) Log.d(TAG, "\tfail");
+                Logger.d("\tfail");
                 fail = true;
                 break;
             } else {
-                if (LOG) Log.d(TAG, "\tsuccess");
+                Logger.d("\tsuccess");
             }
         }
 
@@ -422,12 +420,12 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         }
 
         if (ioValue == null) {  // Something has gone very very wrong
-            Log.e(TAG, "Filter value is dead, you've done something rather stupid");
+            Logger.e("Filter value is dead, you've done something rather stupid");
             return false;
         }
 
         if (actualValue == null) {
-            Log.e(TAG, "No value from the component... What have you done...");
+            Logger.e("No value from the component... What have you done...");
             return false;
         }
 
@@ -450,8 +448,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     private Bundle mapOutputs(Bundle bundle, ComponentService service) throws OrchestrationException {
         // Get the description of the component to be mapped to
         ServiceDescription sd = service.getDescription();
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.mapOutputs(to " + sd.getName() + ") " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection.mapOutputs(to " + sd.getName() + ") " + System.currentTimeMillis());
 
         // Get the inputs of the component to be mapped to and set up the other array lists
         ArrayList<ServiceIO> inputs = service.getInputs();
@@ -486,7 +484,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     // Find the thing
                     Object thing = outputBundle.get(output.getDescription().getName());
                     if (thing == null) {
-                        Log.e(TAG, "Thing dead " + output.getDescription().getName());
+                        Logger.e("Thing dead " + output.getDescription().getName());
                         continue;
                     }
 
@@ -502,7 +500,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
         for (ServiceIO input : inputs) {
             if (input.hasValue()) {
 
-                Log.d(TAG, "Should be getting value for " + input.getDescription().getFriendlyName());
+                Logger.d("Should be getting value for " + input.getDescription().getFriendlyName());
 
                 // Then add it to the input list
                 String name = input.getDescription().getName();
@@ -529,8 +527,8 @@ public class OrchestrationServiceConnection implements ServiceConnection {
     }
 
     public void doUnbindService() {
-        if (LOG)
-            Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationServiceConnection.doUnbindService() " + System.currentTimeMillis());
+
+        Logger.d(Thread.currentThread().getName() + ": OrchestrationServiceConnection.doUnbindService() " + System.currentTimeMillis());
         if (isBound) {
             // Detach our existing connection.
             context.unbindService(OrchestrationServiceConnection.this);
@@ -556,9 +554,9 @@ public class OrchestrationServiceConnection implements ServiceConnection {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.w(TAG, Thread.currentThread().getName() + ": IncomingHandler.handleMessage() " + System.currentTimeMillis());
-            if (LOG)
-                Log.d(TAG, String.format("Orchestration received [%d] - %d: %s", osc.index, msg.what, Library.printBundle(msg.getData())));
+            Logger.w(Thread.currentThread().getName() + ": IncomingHandler.handleMessage() " + System.currentTimeMillis());
+
+            Logger.d(String.format("Orchestration received [%d] - %d: %s", osc.index, msg.what, Library.printBundle(msg.getData())));
 
             ReceiverTask rt = osc.new ReceiverTask(osc);
             Message m = Message.obtain();
@@ -614,7 +612,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     // Got a single object back from a service, send it on to the next one
                     osc.doUnbindService();
                     registry.componentSuccess(osc.cs, executionInstance, components.get(osc.index), "Success", null);
-                    Log.d(TAG, "Unbinding for object " + components.get(osc.index).getDescription().getName());
+                    Logger.d("Unbinding for object " + components.get(osc.index).getDescription().getName());
 
                     osc.incrementIndex();
                     ComponentService next = components.get(osc.index);
@@ -630,7 +628,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 break;
 
                 case ComposableService.MSG_LIST: {
-                    Log.d(TAG, "Unbinding for list " + components.get(osc.index).getDescription().getName());
+                    Logger.d("Unbinding for list " + components.get(osc.index).getDescription().getName());
                     // Then we need to make it so that it sends one message to register, and then sends another to start processing the list (one object at a time)
                     registry.componentSuccess(osc.cs, executionInstance, components.get(osc.index), "Success", null);
                     osc.doUnbindService();
@@ -648,7 +646,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                 break;
 
                 case ComposableService.MSG_WAIT:
-                    if (LOG) Log.d(TAG, "WAAAAAAAAIIIIIIIIT");
+                    Logger.d("WAAAAAAAAIIIIIIIIT");
                     // I'm not sure if I actually need to do anything here
                     break;
 
@@ -698,7 +696,7 @@ public class OrchestrationServiceConnection implements ServiceConnection {
                     break;
 
                 default:
-                    if (LOG) Log.d(TAG, "DEFAULT");
+                    Logger.d("DEFAULT");
             }
             return null;
         }

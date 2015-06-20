@@ -20,14 +20,13 @@ import com.appglue.library.FilterFactory;
 import com.appglue.serviceregistry.Registry;
 import com.appglue.services.NotificationService;
 import com.appglue.services.TubeService;
+import com.orhanobut.logger.Logger;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import static com.appglue.Constants.TAG;
 
 public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
@@ -76,9 +75,9 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
         ArrayList<Bundle> mappedList = ((Bundle) mapMethod.invoke(osc, data, current)).getParcelableArrayList(ComposableService.INPUT);
         assertEquals(mappedList.size(), tubeData.size());
 
-        Log.d(TAG, AppGlueLibrary.bundleToString(answers));
+        Logger.d(AppGlueLibrary.bundleToString(answers));
         for (Bundle mapped : mappedList)
-            Log.d(TAG, AppGlueLibrary.bundleToString(mapped));
+            Logger.d(AppGlueLibrary.bundleToString(mapped));
 
         int firstFail = -1;
 
@@ -210,22 +209,22 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             ArrayList<Bundle> removed = filterResults.second;
 
             if (!keptCheck(testKept.get(i), kept, filterParameters.get(i))) {
-                Log.d(TAG, "Kept fail " + i);
+                Logger.d("Kept fail " + i);
                 String keptText = "";
                 for (Bundle b : kept) {
                     keptText += b.getString(filterParameters.get(i)) + " ";
                 }
-                Log.d(TAG, "Kept: " + keptText);
+                Logger.d("Kept: " + keptText);
                 assertEquals(1, 2);
             }
 
             if (!keptCheck(testRemoved.get(i), removed, filterParameters.get(i))) {
-                Log.d(TAG, "Removed fail" + i);
+                Logger.d("Removed fail" + i);
                 String removedText = "";
                 for (Bundle b : removed) {
                     removedText += b.getString(filterParameters.get(i)) + " ";
                 }
-                Log.d(TAG, "Removed: " + removedText);
+                Logger.d("Removed: " + removedText);
                 assertEquals(1, 2);
             }
         }
@@ -236,7 +235,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
 
     private boolean keptCheck(String[] names, ArrayList<Bundle> things, String key) {
         if (names.length != things.size()) {
-            Log.d(TAG, "Size mis-match: " + names.length + " -- " + things.size());
+            Logger.d("Size mis-match: " + names.length + " -- " + things.size());
             return false;
         }
 
@@ -251,7 +250,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             }
 
             if (!found) {
-                Log.d(TAG, "Didn't find " + s);
+                Logger.d("Didn't find " + s);
                 foundAll = false;
             }
         }
@@ -332,7 +331,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             String got = sdf.format(cal.getTime());
             cal.setTimeInMillis(calTime);
 
-            Log.d(TAG, String.format("HOUR: Expected %s, got %s", exp, got));
+            Logger.d(String.format("HOUR: Expected %s, got %s", exp, got));
         }
         assertEquals(s.getNextExecute(), cal.getTimeInMillis());
 
@@ -358,7 +357,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             String got = sdf.format(cal.getTime());
             cal.setTimeInMillis(calTime);
 
-            Log.d(TAG, String.format("DAY: Expected %s, got %s", exp, got));
+            Logger.d(String.format("DAY: Expected %s, got %s", exp, got));
         }
         assertEquals(s.getNextExecute(), cal.getTimeInMillis());
 
@@ -401,7 +400,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             String got = sdf.format(cal.getTime());
             cal.setTimeInMillis(calTime);
 
-            Log.d(TAG, String.format("WEEK: Expected %s, got %s", exp, got));
+            Logger.d(String.format("WEEK: Expected %s, got %s", exp, got));
         }
         assertEquals(s.getNextExecute(), cal.getTimeInMillis());
 
@@ -427,7 +426,7 @@ public class EngineTest extends ServiceTestCase<OrchestrationService> {
             String got = sdf.format(cal.getTime());
             cal.setTimeInMillis(calTime);
 
-            Log.d(TAG, String.format("MONTH: Expected %s, got %s", exp, got));
+            Logger.d(String.format("MONTH: Expected %s, got %s", exp, got));
         }
         assertEquals(s.getNextExecute(), cal.getTimeInMillis());
     }

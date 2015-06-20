@@ -1,7 +1,8 @@
 package com.appglue.description;
 
 import android.database.Cursor;
-import android.util.Log;
+
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,10 +10,8 @@ import org.json.JSONObject;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.ICON;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
-import static com.appglue.Constants.TAG;
 
 public class AppDescription {
     private String name;
@@ -92,38 +91,38 @@ public class AppDescription {
     public boolean equals(Object o) {
 
         if(o == null)  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: null");
+            Logger.d("AppDescription->Equals: null");
             return false;
         }
 
         if(!(o instanceof AppDescription))  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: not AppDescription");
+            Logger.d("AppDescription->Equals: not AppDescription");
             return false;
         }
         AppDescription other = (AppDescription) o;
 
         if(!name.equals(other.getName()))  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: name");
+            Logger.d("AppDescription->Equals: name");
             return false;
         }
 
         if(!packageName.equals(other.getPackageName()))  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: package name");
+            Logger.d("AppDescription->Equals: package name");
             return false;
         }
 
         if(!developer.equals(other.getDeveloper()))  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: developer");
+            Logger.d("AppDescription->Equals: developer");
             return false;
         }
 
         if(!iconLocation.equals(other.iconLocation()))  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: icon location");
+            Logger.d("AppDescription->Equals: icon location");
             return false;
         }
 
         if(!description.equals(other.getDescription()))  {
-            if(LOG) Log.d(TAG, "AppDescription->Equals: description");
+            Logger.d("AppDescription->Equals: description");
             return false;
         }
 

@@ -133,7 +133,7 @@ public class CompositeHolder extends RecyclerView.ViewHolder
 //                                        ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
 //                                    } else {
 //                                        // Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
-//                                                Log.e(TAG, "Parent fragment is null");
+//                                                Logger.e("Parent fragment is null");
 //                                    }
 //                            }
 //                    });
@@ -216,7 +216,7 @@ public class CompositeHolder extends RecyclerView.ViewHolder
 //                                        ((FragmentComposites) getParentFragment()).viewComposite(item.getID());
 //                                    } else {
 //                                        // TODO Not sure why this would happen, it seems that android might have killed it. Maybe because there's not a reference to it?
-//                                                Log.e(TAG, "Parent fragment is null");
+//                                                Logger.e("Parent fragment is null");
 //                                    }
 //                            }
     }

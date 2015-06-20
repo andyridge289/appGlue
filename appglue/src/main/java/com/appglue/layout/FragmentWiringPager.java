@@ -2,7 +2,6 @@ package com.appglue.layout;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -36,11 +34,11 @@ import com.appglue.layout.view.FloatingActionButton;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.Tuple;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 
 public class FragmentWiringPager extends Fragment implements ViewPager.OnPageChangeListener, AppGlueFragment {
@@ -145,14 +143,14 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
         if (getArguments() != null) {
             if (position == -1) {
                 position = getArguments().getInt(POSITION, -1);
-                Log.d(TAG, "Setting position " + position);
+                Logger.d("Setting position " + position);
             }
             long compositeId = getArguments().getLong(COMPOSITE_ID);
             if (compositeId != -1) {
                 registry.setCurrent(compositeId);
             }
         } else {
-            Log.e(TAG, "Arguments null");
+            Logger.e("Arguments null");
             return;
         }
 
@@ -492,7 +490,7 @@ public class FragmentWiringPager extends Fragment implements ViewPager.OnPageCha
                     ObjectAnimator animator = ObjectAnimator.ofFloat(third.b, "X", third.a);
                     animator.setInterpolator(new AccelerateDecelerateInterpolator());
                     animator.start();
-//                    Log.d(TAG, "Moving " + index + " to " + third.a + "px");
+//                    Logger.d("Moving " + index + " to " + third.a + "px");
 //                    third.b.setX(third.a);
                     index--;
                 }

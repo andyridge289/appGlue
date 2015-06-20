@@ -4,9 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class BluetoothTrigger extends GenericTrigger {
     public static final String STATE = "state";
@@ -32,7 +31,7 @@ public class BluetoothTrigger extends GenericTrigger {
                 data.putInt(STATE, state);
             }
 
-            Log.w(TAG, "Bluetooth on/off triggered " + System.currentTimeMillis());
+            Logger.w("Bluetooth on/off triggered " + System.currentTimeMillis());
             super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);
 
             // XXX Do we need to implement other bluetooth states?

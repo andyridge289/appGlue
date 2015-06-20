@@ -3,9 +3,8 @@ package com.appglue.serviceregistry;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class AppUninstalledReceiver extends BroadcastReceiver
 {
@@ -19,7 +18,7 @@ public class AppUninstalledReceiver extends BroadcastReceiver
             return;
         }
 
-        Log.d(TAG, "Package removed");
+        Logger.d("Package removed");
 
 		/*Bundle b = intent.getExtras();
 		int uid = b.getInt(Intent.EXTRA_UID);

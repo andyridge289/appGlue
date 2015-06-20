@@ -1,10 +1,8 @@
 package com.appglue.description.datatypes;
 
 import android.os.Bundle;
-import android.util.Log;
 
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public abstract class IOType
 {
@@ -114,39 +112,39 @@ public abstract class IOType
 	public boolean equals(Object o) {
 
         if(o == null)  {
-            if(LOG) Log.d(TAG, "IOType->Equals: null");
+            Logger.d("IOType->Equals: null");
             return false;
         }
 
         if(!(o instanceof IOType)) {
-            if(LOG) Log.d(TAG, "IOType->Equals: not ServiceIO");
+            Logger.d("IOType->Equals: not ServiceIO");
             return false;
         }
 
         IOType other = (IOType) o;
 
         if(!name.equals(other.getName())) {
-            if(LOG) Log.d(TAG, "IOType->Equals: name - [" + name + " :: " + other.getName() + "]");
+            Logger.d("IOType->Equals: name - [" + name + " :: " + other.getName() + "]");
             return false;
         }
 
         if(!className.equals(other.getClassName())) {
-            if(LOG) Log.d(TAG, "IOType->Equals: class name - [" + className + " :: " + other.getClassName() + "]");
+            Logger.d("IOType->Equals: class name - [" + className + " :: " + other.getClassName() + "]");
             return false;
         }
 
         if(sensitivity != other.getSensitivity()) {
-            if(LOG) Log.d(TAG, "IOType->Equals: sensitivity - [" + sensitivity + " :: " + other.getSensitivity() + "]");
+            Logger.d("IOType->Equals: sensitivity - [" + sensitivity + " :: " + other.getSensitivity() + "]");
             return false;
         }
 
         if (this.acceptsManual != other.acceptsManualValues()) {
-            if(LOG) Log.d(TAG, "IOType->Equals: manual accepted - [" + acceptsManual + " :: " + other.acceptsManualValues() + "]");
+            Logger.d("IOType->Equals: manual accepted - [" + acceptsManual + " :: " + other.acceptsManualValues() + "]");
             return false;
         }
 
         if (this.manualEditTextType != other.getManualEditTextType()) {
-            if(LOG) Log.d(TAG, "IOType->Equals: manual text type - [" + manualEditTextType + " :: " + other.getManualEditTextType() + "]");
+            Logger.d("IOType->Equals: manual text type - [" + manualEditTextType + " :: " + other.getManualEditTextType() + "]");
             return false;
         }
 
@@ -208,7 +206,7 @@ public abstract class IOType
             else if(name.equals(PASSWORD))
                 return new Password();
             else
-                Log.e(TAG, "Fail to find type " + name);
+                Logger.e("Fail to find type " + name);
 
 			return null;
 		}

@@ -1,12 +1,8 @@
 package com.appglue.engine.model;
 
-import android.util.Log;
-
 import com.appglue.description.SampleValue;
 import com.appglue.library.FilterFactory;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class IOValue {
 
@@ -110,44 +106,44 @@ public class IOValue {
 
     public boolean equals(Object o) {
         if (o == null) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: null");
+            Logger.d("IOValue->Equals: null");
             return false;
         }
         if (!(o instanceof IOValue)) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: Not an IOValue");
+            Logger.d("IOValue->Equals: Not an IOValue");
             return false;
         }
         IOValue other = (IOValue) o;
 
         if (this.id != other.getID()) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: id");
+            Logger.d("IOValue->Equals: id");
             return false;
         }
 
         if (this.filterState != other.getFilterState()) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: filter state");
+            Logger.d("IOValue->Equals: filter state");
             return false;
         }
 
         if (this.condition != other.getCondition()) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: condition");
+            Logger.d("IOValue->Equals: condition");
             return false;
         }
         if (this.enabled != other.isEnabled()) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: enabled");
+            Logger.d("IOValue->Equals: enabled");
             return false;
         }
 
         if (this.manualValue != null) {
             if (!this.manualValue.equals(other.getManualValue())) {
-                if (LOG) Log.d(TAG, "IOValue->Equals: manual value");
+                Logger.d("IOValue->Equals: manual value");
                 return false;
             }
         }
 
         if (this.sampleValue != null) {
             if (this.sampleValue.getID() != other.getSampleValue().getID()) {
-                if (LOG) Log.d(TAG, "IOValue->Equals: sample value");
+                Logger.d("IOValue->Equals: sample value");
                 return false;
             }
         }
@@ -158,7 +154,7 @@ public class IOValue {
     public boolean isEnabled() {
         return enabled;
     }
-    
+
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }

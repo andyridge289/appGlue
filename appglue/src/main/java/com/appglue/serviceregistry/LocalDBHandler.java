@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
@@ -33,6 +32,7 @@ import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.ComponentLogItem;
 import com.appglue.library.FilterFactory;
 import com.appglue.library.LogItem;
+import com.orhanobut.logger.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,15 +53,13 @@ import static com.appglue.Constants.INSTALLED;
 import static com.appglue.Constants.IO_INDEX;
 import static com.appglue.Constants.IO_TYPE;
 import static com.appglue.Constants.I_OR_O;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.MANDATORY;
 import static com.appglue.Constants.MIN_VERSION;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.PACKAGENAME;
 import static com.appglue.Constants.POSITION;
 import static com.appglue.Constants.SAMPLE_VALUE;
-import static com.appglue.Constants.TAG;
+import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.VALUE;
 import static com.appglue.library.AppGlueConstants.*;
 
@@ -262,7 +260,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         cv.put(ENABLED, 1);
         long id = db.insertOrThrow(TBL_COMPOSITE, null, cv);
         if (id != 1) {
-            Log.e(TAG, "The temp has been inserted somewhere that isn't 1. This is a problem");
+            Logger.e("The temp has been inserted somewhere that isn't 1. This is a problem");
         }
     }
 
@@ -298,15 +296,15 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         // Deleting components *should* delete everything
         int num = db.delete(TBL_COMPONENT, COMPOSITE_ID + " = ?", new String[]{"" + CompositeService.TEMP_ID});
-        if (LOG) Log.d(TAG, "Reset temp: " + num + " deleted from component");
+       Logger.d("Reset temp: " + num + " deleted from component");
 
-        if (LOG) Log.d(TAG, "DBUPDATE[resetTemp] deleted " + num + " from other tables");
+       Logger.d("DBUPDATE[resetTemp] deleted " + num + " from other tables");
 
         // Reset the composite table too in case we disabled it
         ContentValues cv = new ContentValues();
         cv.put(ENABLED, 1);
         num = db.update(TBL_COMPOSITE, cv, ID + " = ?", new String[]{"" + CompositeService.TEMP_ID});
-        if (LOG) Log.d(TAG, "DBUPDATE[resetTemp] updated " + num + " in composite table");
+       Logger.d("DBUPDATE[resetTemp] updated " + num + " in composite table");
 
         return getComposite(CompositeService.TEMP_ID);
     }
@@ -372,10 +370,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (inputSuccess == -1)
-            Log.e(TAG, "Failed to add getInputs for " + sd.getClassName());
+            Logger.e("Failed to add getInputs for " + sd.getClassName());
 
         if (outputSuccess == -1)
-            Log.e(TAG, "Failed to add getOutputs for " + sd.getClassName());
+            Logger.e("Failed to add getOutputs for " + sd.getClassName());
 
         return sd;
     }
@@ -461,12 +459,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
 
         if (c == null) {
-            Log.e(TAG, "Unable to get io value: " + io.getFriendlyName());
+            Logger.e("Unable to get io value: " + io.getFriendlyName());
             return null;
         }
 
         if (c.getCount() == 0) {
-            Log.e(TAG, "No rows for that id: " + sampleValue + " .... How have you managed that?");
+            Logger.e("No rows for that id: " + sampleValue + " .... How have you managed that?");
             return null;
         }
 
@@ -520,7 +518,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, String.format("getServiceIO() %s %s: Cursor dead", sd.getClassName(), "" + input));
+            Logger.e(String.format("getServiceIO() %s %s: Cursor dead", sd.getClassName(), "" + input));
             return null;
         }
 
@@ -558,7 +556,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(q, null);
 
         if (c == null) {
-            Log.e(TAG, "Getting sample values fail, or there aren't any...");
+            Logger.e("Getting sample values fail, or there aren't any...");
             return;
         }
 
@@ -671,7 +669,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(sql, null);
 
         if (c == null) {
-            Log.e(TAG, String.format("getIOType() %d: Cursor dead", ioId));
+            Logger.e(String.format("getIOType() %d: Cursor dead", ioId));
             return null;
         }
 
@@ -704,7 +702,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 new String[]{"" + inputClassName}, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, String.format("getIOType() %s: Cursor dead", inputClassName));
+            Logger.e(String.format("getIOType() %s: Cursor dead", inputClassName));
             return null;
         }
 
@@ -763,7 +761,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         boolean connectionSuccess = addIOConnections(cs);
 
         if (!connectionSuccess) {
-            Log.e(TAG, "Failed at connecting all of the service IOs for " + cs.getID() + ": " + cs.getName());
+            Logger.e("Failed at connecting all of the service IOs for " + cs.getID() + ": " + cs.getName());
         }
 
         return cs;
@@ -819,9 +817,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             int ret = db.update(TBL_COMPOSITE, values, ID + " = ?", new String[]{"" + composite.getID()});
             if (ret == 1) {
-                Log.d(TAG, "Updated " + ret + " values for " + composite.getID() + " (" + composite.getName() + ")");
+                Logger.d("Updated " + ret + " values for " + composite.getID() + " (" + composite.getName() + ")");
             } else {
-                Log.e(TAG, "Bad update (" + ret + ") for " + composite.getID() + " (" + composite.getName() + ")");
+                Logger.e("Bad update (" + ret + ") for " + composite.getID() + " (" + composite.getName() + ")");
             }
 
 
@@ -844,7 +842,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = %d", ID, TBL_COMPONENT, COMPOSITE_ID, composite.getID()), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor for getting dead components for composite " + composite.getID());
+            Logger.e("Dead cursor for getting dead components for composite " + composite.getID());
             return;
         }
 
@@ -859,7 +857,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long componentId = c.getLong(c.getColumnIndex(ID));
             if (composite.getComponent(componentId) == null) {
                 int count = deleteComponent(componentId);
-                Log.d(TAG, "Deleted " + count + " components from " + composite.getID() + " (" + composite.getName() + ")");
+                Logger.d("Deleted " + count + " components from " + composite.getID() + " (" + composite.getName() + ")");
             }
 
         } while (c.moveToNext());
@@ -872,7 +870,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(String.format("SELECT %s FROM %s WHERE %s = %d", ID, TBL_IOFILTER, COMPONENT_ID, component.getID()), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor for getting filters for component " + component.getID());
+            Logger.e("Dead cursor for getting filters for component " + component.getID());
             return;
         }
 
@@ -887,7 +885,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long filterId = c.getLong(c.getColumnIndex(ID));
             if (component.getFilter(filterId) == null) {
                 int count = deleteFilter(filterId);
-                Log.d(TAG, "DBUPDATE [removeDeadFilters] Deleted " + count + " from component " + component.getID() + "(" + component.getDescription().getName() + ")");
+                Logger.d("DBUPDATE [removeDeadFilters] Deleted " + count + " from component " + component.getID() + "(" + component.getDescription().getName() + ")");
             }
 
         } while (c.moveToNext());
@@ -905,7 +903,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_VALUENODE, FILTER_ID, filter.getID()), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor for getting values for filter " + filter.getID());
+            Logger.e("Dead cursor for getting values for filter " + filter.getID());
             return;
         }
 
@@ -937,8 +935,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             if (!found) {
                 int count = deleteIOValue(valueId);
-                if (LOG)
-                    Log.d(TAG, "DBUPDATE [removeDeadFilterValues] Deleted " + count + " from filter " +
+
+                    Logger.d("DBUPDATE [removeDeadFilterValues] Deleted " + count + " from filter " +
                             filter.getID() + "(" + filter.getComponent().getDescription().getName() + ")");
             }
 
@@ -955,7 +953,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
     }
 
     private synchronized int deleteIOValue(long id) {
-        Log.d(TAG, String.format("Deleting IOValue %d", id));
+        Logger.d(String.format("Deleting IOValue %d", id));
         return delete(TBL_IOVALUE, id);
     }
 
@@ -970,12 +968,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_SERVICEIO, ID, id), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor for getting serviceIO " + id);
+            Logger.e("Dead cursor for getting serviceIO " + id);
             return null;
         }
 
         if (c.getCount() == 0) {
-            Log.d(TAG, "Empty cursor for getting serviceIO " + id);
+            Logger.d("Empty cursor for getting serviceIO " + id);
             return null;
         }
 
@@ -1004,8 +1002,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (component.getID() == -1) { // This is a new one and it needs to be added from scratch
             addComponent(component);
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateComponent] Added " + component.getDescription().getName() +
+
+                Logger.d("DBUPDATE [updateComponent] Added " + component.getDescription().getName() +
                         " at " + component.getPosition() + " to " + component.getComposite().getName());
         } else {
             ContentValues values = new ContentValues();
@@ -1015,10 +1013,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             int ret = db.update(TBL_COMPONENT, values, ID + " = ?", new String[]{"" + component.getID()});
             if (ret != 1) {
-                Log.e(TAG, "Updated " + ret + " values for " + component.getID() + " (" + component.getDescription().getName() + ")");
+                Logger.e("Updated " + ret + " values for " + component.getID() + " (" + component.getDescription().getName() + ")");
             } else {
-                if (LOG)
-                    Log.d(TAG, "DBUPDATE [updateComponent] Updated " + component.getDescription().getName() +
+
+                    Logger.d("DBUPDATE [updateComponent] Updated " + component.getDescription().getName() +
                             " in " + component.getComposite().getName());
             }
 
@@ -1048,8 +1046,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (filter.getID() == -1) {
             long id = addFilter(filter);
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateFilter] Added a filter to " + filter.getComponent().getDescription().getName());
+
+                Logger.d("DBUPDATE [updateFilter] Added a filter to " + filter.getComponent().getDescription().getName());
             return id == -1 ? 1 : 0;
         }
 
@@ -1063,11 +1061,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int ret = db.update(TBL_IOFILTER, cv, ID + " = ?", new String[]{"" + filter.getID()});
         if (ret != 1) {
             failureCount++;
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateFilter] Failed to update " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
+
+                Logger.d("DBUPDATE [updateFilter] Failed to update " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
         } else {
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateFilter] Updated " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
+
+                Logger.d("DBUPDATE [updateFilter] Updated " + filter.getID() + " for " + filter.getComponent().getDescription().getName());
         }
 
         TST<IOFilter.ValueNode> nodes = filter.getValues();
@@ -1099,9 +1097,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int ret = db.update(TBL_VALUENODE, cv, ID + " = ?", new String[]{"" + valueNode.getID()});
         if (ret == 0) {
             failureCount++;
-            if (LOG) Log.d(TAG, "DBUPDATE [updateValueNode] Failed to update " + valueNode.getID());
+           Logger.d("DBUPDATE [updateValueNode] Failed to update " + valueNode.getID());
         } else {
-            if (LOG) Log.d(TAG, "DBUPDATE [updateValueNode] Updated " + valueNode.getID());
+           Logger.d("DBUPDATE [updateValueNode] Updated " + valueNode.getID());
         }
 
         ArrayList<IOValue> values = valueNode.getValues();
@@ -1145,10 +1143,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         value.setID(id);
 
         if (valueNode != null) {
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [addIOValue] Added " + id + " for " + valueNode.getFilter().getComponent().getDescription().getName() + "(" + valueNode.getFilter().getComponent().getID() + ")");
+
+                Logger.d("DBUPDATE [addIOValue] Added " + id + " for " + valueNode.getFilter().getComponent().getDescription().getName() + "(" + valueNode.getFilter().getComponent().getID() + ")");
         } else {
-            if (LOG) Log.d(TAG, "DBUPDATE [addIOValue] Added " + id);
+           Logger.d("DBUPDATE [addIOValue] Added " + id);
         }
 
         return id;
@@ -1161,13 +1159,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         if (value.getID() == -1) {
             addIOValue(value, null);
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateIOValue] Added " + value.getID() + " (" + (vn == null) + ")");
+
+                Logger.d("DBUPDATE [updateIOValue] Added " + value.getID() + " (" + (vn == null) + ")");
             return 0;
         }
 
         if (value.getServiceIO() == null) {
-            Log.e(TAG, "Errrrr");
+            Logger.e("Errrrr");
         }
 
         ContentValues values = new ContentValues();
@@ -1200,8 +1198,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         if (ret == 0) { // Does this mean nothing has changed, or there was nothing that matched?
             failureCount++;
         } else {
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateIOValue] Updated value " + value.getID() + " (" + vn + ")");
+
+                Logger.d("DBUPDATE [updateIOValue] Updated value " + value.getID() + " (" + vn + ")");
         }
 
         return failureCount;
@@ -1215,8 +1213,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         if (io.getID() == -1) {
             // This is a new one and it needs to be added from scratch
             addServiceIO(io);
-            if (LOG)
-                Log.d(TAG, "DBUPDATE [updateServiceIO] Added " + io.getDescription().getName() + " to " +
+
+                Logger.d("DBUPDATE [updateServiceIO] Added " + io.getDescription().getName() + " to " +
                         io.getComponent().getDescription().getName());
         } else {
 
@@ -1238,8 +1236,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (ret != 1) {
                 failureCount++;
             } else {
-                if (LOG)
-                    Log.d(TAG, "DBUPDATE [updateServiceIO] Updated " + io.getDescription().getName() + " in " +
+
+                    Logger.d("DBUPDATE [updateServiceIO] Updated " + io.getDescription().getName() + " in " +
                             io.getComponent().getDescription().getName());
             }
 
@@ -1258,7 +1256,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         int delCount = db.delete(TBL_IOCONNECTION, COMPOSITE_ID + " = " + cs.getID(), null);
 
-        if (LOG) Log.d(TAG, "DBUPDATE: [Wiring] Deleted " + delCount + " rows for " + cs.getName());
+       Logger.d("DBUPDATE: [Wiring] Deleted " + delCount + " rows for " + cs.getName());
 
         // This could be zero to be fair
         addIOConnections(cs);
@@ -1277,7 +1275,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 new String[]{"" + composite.getID()}, null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead for finding enabledness of " + composite.getName());
+            Logger.e("Cursor dead for finding enabledness of " + composite.getName());
             return false;
         }
 
@@ -1352,7 +1350,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (ioId != -1)
                 successCount++;
         }
-        if (LOG) Log.d(TAG, "DBUPDATE[addComponent] Added " + successCount + "/" + inputs.size() +
+       Logger.d("DBUPDATE[addComponent] Added " + successCount + "/" + inputs.size() +
                 " inputs to " + component.getDescription().getName() + "(" +
                 component.getID() + ")");
 
@@ -1363,7 +1361,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (ioId != -1)
                 successCount++;
         }
-        if (LOG) Log.d(TAG, "DBUPDATE[addComponent] Added " + successCount + "/" + outputs.size() +
+       Logger.d("DBUPDATE[addComponent] Added " + successCount + "/" + outputs.size() +
                 " outputs to " + component.getDescription().getName() + "(" +
                 component.getID() + ")");
 
@@ -1374,7 +1372,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (filterId != -1)
                 successCount++;
         }
-        if (LOG) Log.d(TAG, "DBUPDATE[addComponent] Added " + successCount + "/" + filters.size() +
+       Logger.d("DBUPDATE[addComponent] Added " + successCount + "/" + filters.size() +
                 " filters to " + component.getDescription().getName() + "(" +
                 component.getID() + ")");
 
@@ -1400,8 +1398,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (valueId != -1)
                 successCount++;
         }
-        if (LOG)
-            Log.d(TAG, "DBUPDATE[addFilter] Added " + successCount + " (out of " + nodes.size() +
+
+            Logger.d("DBUPDATE[addFilter] Added " + successCount + " (out of " + nodes.size() +
                     ") value nodes to " + filter.getComponent().getDescription().getName() +
                     "(" + filter.getComponent().getID() + ")");
 
@@ -1427,8 +1425,8 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             if (valueId != -1)
                 successCount++;
         }
-        if (LOG)
-            Log.d(TAG, "DBUPDATE[addValueNode] Added " + successCount + " (out of " + values.size() +
+
+            Logger.d("DBUPDATE[addValueNode] Added " + successCount + " (out of " + values.size() +
                     ") value nodes to " + valueNode.getFilter().getComponent().getDescription().getName()
                     + "(" + valueNode.getFilter().getComponent().getID() + ")");
 
@@ -1456,7 +1454,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
         long id = db.insertOrThrow(TBL_SERVICEIO, null, values);
         if (id == -1) {
-            Log.e(TAG, "Failed to add IO for " + io.getComponent().getID() + ": " + io.getDescription().getFriendlyName());
+            Logger.e("Failed to add IO for " + io.getComponent().getID() + ": " + io.getDescription().getFriendlyName());
             return id;
         }
 
@@ -1478,7 +1476,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, String.format("Cursor dead compositeExistsWithName %s", name));
+            Logger.e(String.format("Cursor dead compositeExistsWithName %s", name));
             return false;
         }
 
@@ -1523,10 +1521,10 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         int retval = db.update(TBL_APP, args, strFilter, null);
 
         if (retval == 0) {
-            Log.e(TAG, "Failed to update service " + packageName);
+            Logger.e("Failed to update service " + packageName);
             return false;
         } else {
-            Log.e(TAG, "Updated service " + packageName);
+            Logger.e("Updated service " + packageName);
             return true;
         }
     }
@@ -1625,7 +1623,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(q, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor null for " + q);
+            Logger.e("Cursor null for " + q);
             return logs;
         }
 
@@ -1705,7 +1703,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(q, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor null for " + q);
+            Logger.e("Cursor null for " + q);
             return logs;
         }
 
@@ -1722,7 +1720,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
                 long logCompositeId = c.getLong(c.getColumnIndex(TBL_COMPOSITE_EXECUTION_LOG + "_" + COMPOSITE_ID));
                 if (logCompositeId != cs.getID()) {
-                    Log.e(TAG, "log composite id isn't what we asked for, this is a problem..");
+                    Logger.e("log composite id isn't what we asked for, this is a problem..");
                     return logs;
                 }
 
@@ -1787,7 +1785,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: tag exists " + id);
+            Logger.e("Dead cursor: tag exists " + id);
             return null;
         }
 
@@ -1812,7 +1810,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: get tag " + t.getName());
+            Logger.e("Dead cursor: get tag " + t.getName());
             return null;
         }
 
@@ -1838,7 +1836,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.query(TBL_CATEGORY, null, null, null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: get categories");
+            Logger.e("Dead cursor: get categories");
             return cats;
         }
 
@@ -1878,12 +1876,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor for getting categories");
+            Logger.e("Dead cursor for getting categories");
             return cats;
         }
 
         if (c.getCount() == 0) {
-            Log.d(TAG, "Empty cursor for getting categories");
+            Logger.d("Empty cursor for getting categories");
             return cats;
         }
 
@@ -1946,13 +1944,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: category exists " + id);
+            Logger.e("Dead cursor: category exists " + id);
             return null;
         }
 
         if (c.getCount() == 0) {
             // Insert it?
-            Log.d(TAG, "Category doesn't exist for " + id);
+            Logger.d("Category doesn't exist for " + id);
             return new Category(Category.Factory.MISC);
         }
 
@@ -1973,7 +1971,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: get category " + cat.getName());
+            Logger.e("Dead cursor: get category " + cat.getName());
             return null;
         }
 
@@ -2035,7 +2033,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead for getTagsForComponent: " + className);
+            Logger.e("Cursor dead for getTagsForComponent: " + className);
             return tags;
         }
 
@@ -2107,7 +2105,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 null, null, null, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead for getIOsForType(" + id + "," + inputs + ")");
+            Logger.e("Cursor dead for getIOsForType(" + id + "," + inputs + ")");
             return ioIds;
         }
 
@@ -2141,7 +2139,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composite ids: " + query);
+            Logger.e("Cursor is null for getting composite ids: " + query);
             return ids;
         }
 
@@ -2201,7 +2199,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composites: " + query);
+            Logger.e("Cursor is null for getting composites: " + query);
             return composites;
         }
 
@@ -2273,7 +2271,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composite: " + query);
+            Logger.e("Cursor is null for getting composite: " + query);
             return null;
         }
 
@@ -2296,7 +2294,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long componentId = c.getLong(c.getColumnIndex(TBL_COMPONENT + "_" + ID));
             if (componentId == -1) {
                 String row = DatabaseUtils.dumpCurrentRowToString(c);
-                Log.e(TAG, "No component: " + row);
+                Logger.e("No component: " + row);
                 continue;
             }
 
@@ -2322,7 +2320,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composite: " + query);
+            Logger.e("Cursor is null for getting composite: " + query);
             return false;
         }
 
@@ -2336,7 +2334,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         do {
             long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
             if (compositeId != composite.getID()) {
-                Log.e(TAG, "IO Connect fail: composite IDs don't match. Expected " + composite.getID() + " and got " + compositeId);
+                Logger.e("IO Connect fail: composite IDs don't match. Expected " + composite.getID() + " and got " + compositeId);
                 allSuccess = false;
                 continue;
             }
@@ -2368,7 +2366,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(sql, null);
 
         if (c == null) {
-            Log.e(TAG, String.format("Cursor dead for atomicAtPosition: %s %d", className, position));
+            Logger.e(String.format("Cursor dead for atomicAtPosition: %s %d", className, position));
             return null;
         }
 
@@ -2397,7 +2395,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composite: " + query);
+            Logger.e("Cursor is null for getting composite: " + query);
             return null;
         }
 
@@ -2439,7 +2437,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting composite: " + query);
+            Logger.e("Cursor is null for getting composite: " + query);
             return null;
         }
 
@@ -2467,7 +2465,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
             if (ioComponentId != componentId) {
                 if (ioComponentId > 0)
-                    Log.w(TAG, "Component IDs don't match for ServiceIOs: expected" + componentId + " and got " + ioComponentId);
+                    Logger.w("Component IDs don't match for ServiceIOs: expected" + componentId + " and got " + ioComponentId);
                 continue;
             }
 
@@ -2510,7 +2508,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting filters: " + query);
+            Logger.e("Cursor is null for getting filters: " + query);
             return filters;
         }
 
@@ -2530,7 +2528,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
 
                 long componentId = c.getLong(c.getColumnIndex(TBL_IOFILTER + "_" + COMPONENT_ID));
                 if (componentId != component.getID()) {
-                    Log.e(TAG, "Something has gone horribly horribly wrong (component IDs don't match)");
+                    Logger.e("Something has gone horribly horribly wrong (component IDs don't match)");
                     return filters;
                 }
 
@@ -2544,7 +2542,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             long ioId = c.getLong(c.getColumnIndex(TBL_VALUENODE + "_" + IO_ID));
 
             if (filterId != currentFilter.getID()) {
-                Log.e(TAG, "Something has gone horribly horribly wrong (filter IDs don't match)");
+                Logger.e("Something has gone horribly horribly wrong (filter IDs don't match)");
                 return filters;
             }
 
@@ -2572,7 +2570,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor is null for getting values for filter: " + query);
+            Logger.e("Cursor is null for getting values for filter: " + query);
             return;
         }
 
@@ -2615,7 +2613,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead " + query);
+            Logger.e("Cursor dead " + query);
             return null;
         }
 
@@ -2629,13 +2627,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         long ioId = c.getLong(c.getColumnIndex(IO_ID));
 
         if (io.getID() != ioId) {
-            Log.e(TAG, "IO ids don't match, something has gone very very wrong");
+            Logger.e("IO ids don't match, something has gone very very wrong");
             return null;
         }
 
         long compositeId = c.getLong(c.getColumnIndex(COMPOSITE_ID));
         if (compositeId != io.getComponent().getComposite().getID()) {
-            Log.e(TAG, "composite ids don't match, something has gone slightly very wrong " + compositeId + " - " + io.getComponent().getComposite().getID());
+            Logger.e("composite ids don't match, something has gone slightly very wrong " + compositeId + " - " + io.getComponent().getComposite().getID());
             return null;
         }
 
@@ -2667,7 +2665,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (id < 1) {
-            Log.e(TAG, "ID is too small");
+            Logger.e("ID is too small");
             return null;
         }
 
@@ -2686,7 +2684,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead " + query);
+            Logger.e("Cursor dead " + query);
             return null;
         }
 
@@ -2741,7 +2739,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         }
 
         if (className == null) {
-            Log.e(TAG, "Classname is null..");
+            Logger.e("Classname is null..");
             return null;
         }
 
@@ -2763,7 +2761,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead " + query);
+            Logger.e("Cursor dead " + query);
             return null;
         }
 
@@ -2800,7 +2798,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                         currentComponent.getClassName()), null);
 
                 if (c2 == null) {
-                    Log.e(TAG, "Tag cursor dead for getting components w/ join");
+                    Logger.e("Tag cursor dead for getting components w/ join");
                     continue;
                 }
 
@@ -2821,7 +2819,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                         currentComponent.getClassName()), null);
 
                 if (c2 == null) {
-                    Log.e(TAG, "Category cursor dead for getting components w/ join");
+                    Logger.e("Category cursor dead for getting components w/ join");
                     continue;
                 }
 
@@ -2871,12 +2869,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         ArrayList<ServiceDescription> components = new ArrayList<>();
 
         if (c == null) {
-            Log.e(TAG, "Cursor dead " + query);
+            Logger.e("Cursor dead " + query);
             return components;
         }
 
         if (c.getCount() == 0) {
-            Log.e(TAG, "Cursor empty, this seems unlikely: " + query);
+            Logger.e("Cursor empty, this seems unlikely: " + query);
             return components;
         }
 
@@ -2939,7 +2937,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                         currentComponent.getClassName()), null);
 
                 if (c2 == null) {
-                    Log.e(TAG, "Tag cursor dead for getting components w/ join");
+                    Logger.e("Tag cursor dead for getting components w/ join");
                     continue;
                 }
 
@@ -2972,12 +2970,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_IOTYPE), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: Caching all the types");
+            Logger.e("Dead cursor: Caching all the types");
             return;
         }
 
         if (c.getCount() == 0) {
-            Log.w(TAG, "Empty cursor: Caching all the types");
+            Logger.w("Empty cursor: Caching all the types");
             return;
         }
 
@@ -2998,13 +2996,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_CATEGORY), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: Caching all the categories");
+            Logger.e("Dead cursor: Caching all the categories");
             return;
         }
 
         if (c.getCount() == 0) {
             // Insert it?
-            Log.w(TAG, "Empty cursor: Caching all the categories");
+            Logger.w("Empty cursor: Caching all the categories");
             return;
         }
 
@@ -3023,13 +3021,13 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(String.format("SELECT * FROM %s", TBL_TAG), null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: Caching all the tags");
+            Logger.e("Dead cursor: Caching all the tags");
             return;
         }
 
         if (c.getCount() == 0) {
             // Insert it?
-            Log.w(TAG, "Empty cursor: Caching all the tags");
+            Logger.w("Empty cursor: Caching all the tags");
             return;
         }
 
@@ -3054,12 +3052,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: instance running");
+            Logger.e("Dead cursor: instance running");
             return false;
         }
 
         if (c.getCount() == 0) {
-            Log.e(TAG, "There's no record of instanceId " + executionInstance + " for composite " + compositeId);
+            Logger.e("There's no record of instanceId " + executionInstance + " for composite " + compositeId);
             return false; // There's no record of this instance id
         }
 
@@ -3084,12 +3082,12 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: No composite to check termination");
+            Logger.e("Dead cursor: No composite to check termination");
             return true;
         }
 
         if (c.getCount() == 0) {
-            Log.w(TAG, "Empty cursor: Terminated?");
+            Logger.w("Empty cursor: Terminated?");
             return true;
         }
 
@@ -3204,7 +3202,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query, null);
 
         if (c == null) {
-            Log.e(TAG, "Dead cursor: Scheduled composites");
+            Logger.e("Dead cursor: Scheduled composites");
             return scheduledComposites;
         }
 
@@ -3254,9 +3252,9 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         if (num == 1) {
             return true;
         } else if (num > 1) {
-            Log.d(TAG, "Deleted too many, probably a foreign key problem");
+            Logger.d("Deleted too many, probably a foreign key problem");
         } else {
-            Log.d(TAG, "Didn't delete anything");
+            Logger.d("Didn't delete anything");
         }
         return false;
     }
@@ -3319,7 +3317,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_IO_SAMPLE, NAME, name, IO_DESCRIPTION_ID, iod.getID()), null);
 
         if (c == null) {
-            Log.e(TAG, "Nothing found for getting SampleValue without ID: " + iod.getFriendlyName() + "(" + name + ")");
+            Logger.e("Nothing found for getting SampleValue without ID: " + iod.getFriendlyName() + "(" + name + ")");
             return null;
         }
 
@@ -3349,7 +3347,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_IOTYPE, NAME, name, CLASSNAME, className), null);
 
         if (c == null) {
-            Log.e(TAG, "Nothing found for getting IOType without ID: " + className + "(" + name + ")");
+            Logger.e("Nothing found for getting IOType without ID: " + className + "(" + name + ")");
             return null;
         }
 
@@ -3379,7 +3377,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 TBL_IO_DESCRIPTION, NAME, name, CLASSNAME, className), null);
 
         if (c == null) {
-            Log.e(TAG, "Nothing found for getting IODescription without ID: " + className + "(" + name + ")");
+            Logger.e("Nothing found for getting IODescription without ID: " + className + "(" + name + ")");
             return null;
         }
 
@@ -3409,7 +3407,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(q, null);
 
         if (c == null) {
-            Log.e(TAG, "Cursor null for get next scheduled item");
+            Logger.e("Cursor null for get next scheduled item");
             return null;
         }
 

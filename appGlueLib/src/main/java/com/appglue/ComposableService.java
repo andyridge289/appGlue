@@ -12,9 +12,9 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.orhanobut.logger.Logger;
 
-import static com.appglue.Constants.TAG;
+import java.util.ArrayList;
 
 public abstract class ComposableService extends Service {
     public static final int MSG_NOTHING = 2;
@@ -51,13 +51,13 @@ public abstract class ComposableService extends Service {
 
     @Override
     public void onCreate() {
-        if (LOG) Log.d(TAG, "Service Created " + this.getClass().getCanonicalName());
+        Logger.d("Service Created " + this.getClass().getCanonicalName());
         messageReceiver = new Messenger(new IncomingHandler(this));
     }
 
     @Override
     public void onDestroy() {
-        if (LOG) Log.d(TAG, "Service destroyed " + this.getClass().getCanonicalName());
+        Logger.d("Service destroyed " + this.getClass().getCanonicalName());
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class ComposableService extends Service {
      */
     @Override
     public IBinder onBind(Intent intent) {
-        if (LOG) Log.d(TAG, "Service bound " + this.getClass().getCanonicalName());
+        Logger.d("Service bound " + this.getClass().getCanonicalName());
         return messageReceiver.getBinder();
     }
 
@@ -93,7 +93,7 @@ public abstract class ComposableService extends Service {
             messageSender.send(returnMessage);
         } catch (RemoteException e) {
             e.printStackTrace();
-            Log.e(TAG, "Failed to send data back");
+            Logger.e("Failed to send data back");
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class ComposableService extends Service {
         private final Bundle messageData;
 
         public Async(Message message) {
-            if (LOG) Log.d(TAG, "Hello Async");
+            Logger.d("Hello Async");
             messageType = message.what;
             messageData = message.getData();
         }
@@ -111,7 +111,7 @@ public abstract class ComposableService extends Service {
         protected Message doInBackground(Message... param) {
             ArrayList<Bundle> o = null;
 
-            if (LOG) Log.d(TAG, String.format("Received: %s", Library.printBundle(messageData)));
+            Logger.d(String.format("Received: %s", Library.printBundle(messageData)));
 
 
             switch (messageType) {
@@ -192,14 +192,13 @@ public abstract class ComposableService extends Service {
 
             try {
                 if (messageSender == null) {
-                    Log.e(TAG, "Message sender is dead");
+                    Logger.e("Message sender is dead");
                     return;
                 }
 
                 if (returnMessage.obj != null) {
                     Test.isValidBundle(-1, -1, returnMessage.getData(), false);
-                    if (LOG)
-                        Log.d(TAG, String.format("Sending back: %s", Library.printBundle(returnMessage.getData())));
+                    Logger.d(String.format("Sending back: %s", Library.printBundle(returnMessage.getData())));
                 }
 
                 messageSender.send(returnMessage);
@@ -218,7 +217,7 @@ public abstract class ComposableService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            if (LOG) Log.d(TAG, "Handling message");
+            Logger.d("Handling message");
             cs.messageSender = msg.replyTo;
             Async monkey = cs.new Async(msg);
             monkey.execute();

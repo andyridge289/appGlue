@@ -7,26 +7,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.appglue.description.AppDescription;
 import com.appglue.description.ServiceDescription;
 import com.appglue.library.LocalStorage;
 import com.appglue.services.triggers.HeadphoneTrigger;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import static com.appglue.Constants.ICON;
 import static com.appglue.Constants.JSON_APP;
 import static com.appglue.Constants.JSON_SERVICE;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 /***
  * This is the background service that is started when the app starts which listens for ComposableServices
@@ -72,7 +69,7 @@ public class RegistryService extends Service
 		@Override
 		public void onReceive(Context context, Intent intent) 
 		{	
-			if(LOG) Log.d(TAG, "Received broadcast");
+			Logger.d("Received broadcast");
 			String json = intent.getStringExtra(JSON_SERVICE);			
 			String icon = intent.getStringExtra(ICON);
 			
@@ -91,7 +88,7 @@ public class RegistryService extends Service
 				}
 				catch (IOException e)
 				{
-					Log.e(TAG, "File not found!!!!");
+					Logger.e("File not found!!!!");
 					e.printStackTrace();
 				}
 				
@@ -101,7 +98,7 @@ public class RegistryService extends Service
 			catch (JSONException e) 
 			{
 				e.printStackTrace();
-				Log.e(TAG, "Broadcast failed - bad parsing: " + e.getLocalizedMessage());
+				Logger.e("Broadcast failed - bad parsing: " + e.getLocalizedMessage());
 				return;
 			}
 

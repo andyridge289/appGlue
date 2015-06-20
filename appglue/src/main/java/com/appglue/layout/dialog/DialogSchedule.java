@@ -5,8 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,19 +17,17 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.appglue.layout.FragmentSchedule;
 import com.appglue.R;
 import com.appglue.engine.Schedule;
 import com.appglue.engine.Scheduler;
 import com.appglue.engine.model.CompositeService;
+import com.appglue.layout.FragmentSchedule;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 public class DialogSchedule extends AlertDialog {
 
@@ -96,8 +92,8 @@ public class DialogSchedule extends AlertDialog {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 CompositeService composite = (CompositeService) compositeNameSpinner.getSelectedItem();
                 item.setComposite(composite);
-                if (LOG)
-                    Log.d(TAG, "SCHEDULE: Set composite " + composite.getID() + "(" + composite.getName() + ")");
+
+                    Logger.d("SCHEDULE: Set composite " + composite.getID() + "(" + composite.getName() + ")");
             }
 
             @Override
@@ -142,7 +138,7 @@ public class DialogSchedule extends AlertDialog {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 WeekDay day = (WeekDay) weekSpinner.getSelectedItem();
                 item.setDayOfWeek(day.index);
-                if (LOG) Log.d(TAG, "SCHEDULE: Set day of week - " + day.name);
+               Logger.d("SCHEDULE: Set day of week - " + day.name);
             }
 
             @Override
@@ -158,7 +154,7 @@ public class DialogSchedule extends AlertDialog {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 item.setDayOfMonth(position + 1);
-                if (LOG) Log.d(TAG, "SCHEDULE: Set day of month - " + position + 1);
+               Logger.d("SCHEDULE: Set day of month - " + position + 1);
             }
 
             @Override
@@ -216,7 +212,7 @@ public class DialogSchedule extends AlertDialog {
                 }
 
                 item.setTimePeriod(tp);
-                if (LOG) Log.d(TAG, "Set time period " + tp.name);
+               Logger.d("Set time period " + tp.name);
             }
 
             @Override
@@ -378,12 +374,12 @@ public class DialogSchedule extends AlertDialog {
             intervalContainer.setVisibility(View.GONE);
             timeContainer.setVisibility(View.VISIBLE);
             item.setScheduleType(Schedule.ScheduleType.TIME);
-            if (LOG) Log.d(TAG, "SCHEDULE: Set type - time");
+           Logger.d("SCHEDULE: Set type - time");
         } else {
             intervalContainer.setVisibility(View.VISIBLE);
             timeContainer.setVisibility(View.GONE);
             item.setScheduleType(Schedule.ScheduleType.INTERVAL);
-            if (LOG) Log.d(TAG, "SCHEDULE: Set type - interval");
+           Logger.d("SCHEDULE: Set type - interval");
         }
     }
 

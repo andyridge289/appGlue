@@ -3,26 +3,25 @@ package com.appglue.layout;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.appglue.layout.adapter.AdapterComponentList;
 import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.engine.model.ComponentService;
+import com.appglue.layout.adapter.AdapterComponentList;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.POSITION;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.HAS_INPUTS;
 import static com.appglue.library.AppGlueConstants.HAS_OUTPUTS;
 import static com.appglue.library.AppGlueConstants.JUST_A_LIST;
@@ -108,7 +107,7 @@ public class FragmentComponentListLocal extends FragmentComponentList {
 
                     SparseArray<ComponentService> components = registry.getCurrent(false).getComponents();
 
-                    Log.w(TAG, "position is " + position + " and size is" + components.size());
+                    Logger.w("position is " + position + " and size is" + components.size());
 
                     if (position == -1) {
                         services = registry.getOutputOnlyComponents();

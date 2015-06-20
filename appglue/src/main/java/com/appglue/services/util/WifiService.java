@@ -3,14 +3,11 @@ package com.appglue.services.util;
 import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.appglue.ComposableService;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 public class WifiService extends ComposableService 
 {
@@ -26,7 +23,7 @@ public class WifiService extends ComposableService
 
         if (worked) {
             // Component success - WIFI
-            if(LOG) Log.d(TAG, "Did something to WiFi successfully.");
+            Logger.d("Did something to WiFi successfully.");
         } else {
             // Component failure - WIFI
             super.fail("WiFi failure, couldn't change state of adapter");

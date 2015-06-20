@@ -1,12 +1,9 @@
 package com.appglue.library;
 
-import android.util.Log;
-
 import com.appglue.BuildConfig;
+import com.orhanobut.logger.Logger;
 
 import java.util.List;
-
-import static com.appglue.Constants.TAG;
 
 /**
  *
@@ -17,7 +14,7 @@ public class Assert {
         if (BuildConfig.DEBUG) {
             throw new RuntimeException(message);
         } else {
-            Log.e(TAG, message);
+            Logger.e(message);
         }
         return true;
     }

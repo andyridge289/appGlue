@@ -1,12 +1,8 @@
 package com.appglue.engine.model;
 
-import android.util.Log;
-
 import com.appglue.IODescription;
 import com.appglue.description.datatypes.IOType;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class ServiceIO {
     private long id;
@@ -90,47 +86,47 @@ public class ServiceIO {
     public boolean equals(Object o) {
 
         if (o == null) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: null");
+            Logger.d("ServiceIO->Equals: null");
             return false;
         }
         if (!(o instanceof ServiceIO)) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: Not a ServiceIO");
+            Logger.d("ServiceIO->Equals: Not a ServiceIO");
             return false;
         }
         ServiceIO other = (ServiceIO) o;
 
         if (this.id != other.getID()) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: id");
+            Logger.d("ServiceIO->Equals: id");
             return false;
         }
 
         if (this.component.getID() != other.getComponent().getID()) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: component");
+            Logger.d("ServiceIO->Equals: component");
             return false;
         }
 
         if (this.ioDescription.getID() != other.getDescription().getID()) {
-            if (LOG) Log.d(TAG, "ServiceIO->Equals: description");
+            Logger.d("ServiceIO->Equals: description");
             return false;
         }
 
         if (this.hasValue()) {
             if (!value.equals(other.getValue())) {
-                if (LOG) Log.d(TAG, "ServiceIO->Equals: value");
+                Logger.d("ServiceIO->Equals: value");
                 return false;
             }
         }
 
         if (this.connection != null || other.getConnection() != null) {
             if ((this.connection == null && other.getConnection() != null) ||
-                (this.connection != null && other.getConnection() == null)) {
-                if (LOG)
-                    Log.d(TAG, "ServiceIO->Equals: connection null " + this.connection + " -- " + other.getConnection());
+                    (this.connection != null && other.getConnection() == null)) {
+
+                Logger.d("ServiceIO->Equals: connection null " + this.connection + " -- " + other.getConnection());
                 return false;
             }
 
             if (this.connection.getID() != other.getConnection().getID()) {
-                if (LOG) Log.d(TAG, "ServiceIO->Equals: connection");
+                Logger.d("ServiceIO->Equals: connection");
                 return false;
             }
         }

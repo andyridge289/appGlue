@@ -21,10 +21,10 @@ import com.appglue.engine.model.IOValue;
 import com.appglue.engine.model.ServiceIO;
 import com.appglue.layout.view.FilterValueView;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPONENT_ID;
 import static com.appglue.library.AppGlueConstants.FILTER_ID;
 
@@ -75,9 +75,9 @@ public class FragmentFilter extends Fragment implements AppGlueFragment {
                 filter = component.getFilter(filterId);
             }
 
-            Log.d(TAG, "Added filter to " + component.getID() + "( " + component.getDescription().getName() + ")");
+            Logger.d("Added filter to " + component.getID() + "( " + component.getDescription().getName() + ")");
         } else {
-            Log.e(TAG, "No arguments!");
+            Logger.e("No arguments!");
         }
     }
 

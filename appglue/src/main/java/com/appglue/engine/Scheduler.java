@@ -7,10 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.appglue.engine.model.CompositeService;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,7 +22,6 @@ import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EXECUTION_NUM;
 import static com.appglue.library.AppGlueConstants.TEST;
@@ -52,7 +51,7 @@ public class Scheduler extends BroadcastReceiver {
         int eNum = s.getExecutionNum();
         intent.putExtra(EXECUTION_NUM, eNum);
 
-        Log.d(TAG, "Putting: (" + intent.hashCode() + ")" + intent.getLongExtra(COMPOSITE_ID, -1) + ", " + intent.getLongExtra(ID, -1) + ", " +
+        Logger.d("Putting: (" + intent.hashCode() + ")" + intent.getLongExtra(COMPOSITE_ID, -1) + ", " + intent.getLongExtra(ID, -1) + ", " +
                 intent.getIntExtra(EXECUTION_NUM, -1));
 
         PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -64,14 +63,14 @@ public class Scheduler extends BroadcastReceiver {
             Calendar cal = new GregorianCalendar();
             cal.setTimeInMillis(s.getNextExecute());
             SimpleDateFormat sdf = new SimpleDateFormat("cccc d MMMM yyyy   HH:mm:ss");
-            Log.d(TAG, "Scheduled " + s.getComposite().getName() + " for " + sdf.format(cal.getTime()));
+            Logger.d("Scheduled " + s.getComposite().getName() + " for " + sdf.format(cal.getTime()));
             s.setScheduled(true);
         } else {
             manager.set(AlarmManager.RTC_WAKEUP, s.getNextExecute(), alarmIntent);
             Calendar cal = new GregorianCalendar();
             cal.setTimeInMillis(s.getNextExecute());
             SimpleDateFormat sdf = new SimpleDateFormat("cccc d MMMM yyyy   HH:mm:ss");
-            Log.d(TAG, "Scheduled " + s.getComposite().getName() + " for " + sdf.format(cal.getTime()));
+            Logger.d("Scheduled " + s.getComposite().getName() + " for " + sdf.format(cal.getTime()));
             s.setScheduled(true);
         }
 
@@ -98,8 +97,8 @@ public class Scheduler extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        Log.d(TAG, "Scheduler onReceive ");
-        Log.d(TAG, "Getting: (" + intent.hashCode() + ")" + intent.getLongExtra(COMPOSITE_ID, -1) + ", " +
+        Logger.d("Scheduler onReceive ");
+        Logger.d("Getting: (" + intent.hashCode() + ")" + intent.getLongExtra(COMPOSITE_ID, -1) + ", " +
                 intent.getLongExtra(ID, -1) + ", " + intent.getIntExtra(EXECUTION_NUM, -1));
 
         this.context = context;
@@ -124,13 +123,13 @@ public class Scheduler extends BroadcastReceiver {
                 registry.update(s);
 
                 Schedule t = registry.getSchedule(s.getID());
-                Log.d(TAG, String.format("old %d new %d", s.getExecutionNum(), t.getExecutionNum()));
+                Logger.d(String.format("old %d new %d", s.getExecutionNum(), t.getExecutionNum()));
 
                 schedule(s);
 
             } else if (s.getExecutionNum() != eNum) {
 
-                Log.w(TAG, "Wrong execution num: expected " + eNum + ", got " + s.getExecutionNum());
+                Logger.w("Wrong execution num: expected " + eNum + ", got " + s.getExecutionNum());
                 // We shouldn't have to do anything because we should have already re-scheduled it
             }
         }

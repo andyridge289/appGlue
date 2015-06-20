@@ -25,7 +25,6 @@
 
     <application
         android:name="com.appglue.AppGlue"
-        android:allowBackup="false"
         android:icon="@drawable/icon"
         android:label="@string/application_name"
         android:theme="@style/Theme.AppGlue" >

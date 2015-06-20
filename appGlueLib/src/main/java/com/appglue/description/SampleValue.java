@@ -1,9 +1,6 @@
 package com.appglue.description;
 
-import android.util.Log;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class SampleValue {
     private long id;
@@ -60,25 +57,25 @@ public class SampleValue {
 
     public boolean equals(Object o) {
         if (o == null) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: null");
+            Logger.d("IOValue->Equals: null");
             return false;
         }
 
         if (!(o instanceof SampleValue)) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: not IOValue");
+            Logger.d("IOValue->Equals: not IOValue");
             return false;
         }
 
         SampleValue other = (SampleValue) o;
 
         if (id != other.getID()) {
-            if (LOG) Log.d(TAG, "IOValue->Equals: id - [" + id + " :: " + other.getID() + "]");
+            Logger.d("IOValue->Equals: id - [" + id + " :: " + other.getID() + "]");
             return false;
         }
 
         if (!name.equals(other.getName())) {
-            if (LOG)
-                Log.d(TAG, "IOValue->Equals: name - [" + name + " :: " + other.getName() + "]");
+
+            Logger.d("IOValue->Equals: name - [" + name + " :: " + other.getName() + "]");
             return false;
         }
 

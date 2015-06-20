@@ -10,13 +10,12 @@ import com.appglue.ComposableService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.orhanobut.logger.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static com.appglue.Constants.TAG;
 
 public class LocationService extends ComposableService implements GoogleApiClient.ConnectionCallbacks,
 																  GoogleApiClient.OnConnectionFailedListener
@@ -111,7 +110,7 @@ public class LocationService extends ComposableService implements GoogleApiClien
 	}
 
     public void onConnectionSuspended(int cause) {
-        Log.d(TAG, "Connection suspended");
+        Logger.d("Connection suspended");
     }
 
 }

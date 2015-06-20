@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.appglue.Library;
+import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import static com.appglue.Constants.DIR_ICON;
-import static com.appglue.Constants.TAG;
 
 public class LocalStorage {
     private static LocalStorage localStorage = null;
@@ -28,9 +28,9 @@ public class LocalStorage {
         if (!f.isDirectory()) {
             boolean result = f.mkdirs();
             if (result)
-                Log.d(TAG, "mkdirs success");
+                Logger.d("mkdirs success");
             else
-                Log.d(TAG, "mkdirs failure");
+                Logger.d("mkdirs failure");
         }
 
 
@@ -55,7 +55,7 @@ public class LocalStorage {
         FileOutputStream fOut = new FileOutputStream(filename);
 
         if (img == null) {
-            Log.e(TAG, "img null in Write Icon");
+            Logger.e("img null in Write Icon");
             return "";
         }
 

@@ -23,12 +23,11 @@ import com.appglue.layout.view.VerticalTextView;
 import com.appglue.layout.view.WiringMap;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.appglue.Constants.INDEX;
-import static com.appglue.Constants.TAG;
 
 public class FragmentWiring extends Fragment {
     private int position;
@@ -165,7 +164,7 @@ public class FragmentWiring extends Fragment {
                     if(a != null) {
                         a.chooseComponentFromList(true, position);
                     } else {
-                        Log.d(TAG, "ActivityWiring is dead for choosing component");
+                        Logger.d("ActivityWiring is dead for choosing component");
                     }
                 }
             };
@@ -224,7 +223,7 @@ public class FragmentWiring extends Fragment {
                     if(a != null) {
                         a.chooseComponentFromList(false, position);
                     } else {
-                        Log.d(TAG, "ActivityWiring is dead for choosing component");
+                        Logger.d("ActivityWiring is dead for choosing component");
                     }
                 }
             };

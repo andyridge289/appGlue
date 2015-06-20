@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 
+import com.orhanobut.logger.Logger;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import static com.appglue.Constants.TAG;
 
 public class Image extends IOType {
 
@@ -46,7 +46,7 @@ public class Image extends IOType {
         String filename = getFilename();
 
         if (!(o instanceof Bitmap)) {
-            Log.e(TAG, "This is a problem");
+            Logger.e("This is a problem");
         }
 
         // Write the bitmap to the file
@@ -80,7 +80,7 @@ public class Image extends IOType {
             }
 
         } else {
-            Log.e(TAG, "It isn't a directory");
+            Logger.e("It isn't a directory");
             return filename + "0.png";
         }
     }

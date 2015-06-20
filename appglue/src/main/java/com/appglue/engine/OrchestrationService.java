@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.appglue.engine.model.CompositeService;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -16,8 +16,6 @@ import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.TEST;
 
@@ -33,7 +31,7 @@ public class OrchestrationService extends Service
     @Override
 	public int onStartCommand(Intent intent, int startId, int something)
 	{
-		if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": OrchestrationService.onStart() " + System.currentTimeMillis());
+		Logger.d(Thread.currentThread().getName() + ": OrchestrationService.onStart() " + System.currentTimeMillis());
 		
 		if(intent == null)
 			return -1;
@@ -43,7 +41,7 @@ public class OrchestrationService extends Service
 		
 		if(intentData == null)
 		{
-			Log.e(TAG, "INTENT DATA IS NULL. WHAT THE HELL");
+			Logger.e("INTENT DATA IS NULL. WHAT THE HELL");
 			return -1;
 		}
 		
@@ -72,7 +70,7 @@ public class OrchestrationService extends Service
 		@Override
 		protected Boolean doInBackground(Bundle... params) 
 		{
-			if(LOG) Log.d(TAG, Thread.currentThread().getName() + ": Runner.run() " + System.currentTimeMillis());
+			Logger.d(Thread.currentThread().getName() + ": Runner.run() " + System.currentTimeMillis());
 
             for (Bundle thing : params) {
                 final long compositeId = thing.getLong(COMPOSITE_ID, -1);
@@ -85,7 +83,7 @@ public class OrchestrationService extends Service
                 final CompositeService cs = test ? registry.getCurrent(true) : registry.getComposite(compositeId);
 
                 if (cs == null) {
-                    Log.e(TAG, "The composite is null. WHAT THE FUCK HAVE YOU DONE");
+                    Logger.e("The composite is null. WHAT THE FUCK HAVE YOU DONE");
                     return false;
                 }
 
@@ -114,7 +112,7 @@ public class OrchestrationService extends Service
                     return false;
                 }
 
-                if (LOG) Log.d(TAG, Thread.currentThread().getName() + ": Connection start " + startIndex);
+               Logger.d(Thread.currentThread().getName() + ": Connection start " + startIndex);
 
                 if (startIndex == -1 || startIndex == 0) {
                     connection.start();

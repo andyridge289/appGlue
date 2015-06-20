@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -14,8 +13,8 @@ import com.appglue.AppGlueFragment;
 import com.appglue.MainActivity;
 import com.appglue.R;
 import com.appglue.engine.model.CompositeService;
+import com.orhanobut.logger.Logger;
 
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.MODE;
 
@@ -45,7 +44,7 @@ public class FragmentComposites extends Fragment implements AppGlueFragment {
 
         if (getArguments() != null) {
             int mode = getArguments().getInt(MODE);
-            Log.d(TAG, "Got mode (args): " + (mode == MODE_COMPOSITE ? "COMPOSITE" : "LIST"));
+            Logger.d("Got mode (args): " + (mode == MODE_COMPOSITE ? "COMPOSITE" : "LIST"));
             setMode(mode);
         }
     }

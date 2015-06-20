@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -29,6 +28,7 @@ import com.appglue.layout.FragmentLog;
 import com.appglue.layout.FragmentSchedule;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
@@ -36,8 +36,6 @@ import static com.appglue.Constants.DATA;
 import static com.appglue.Constants.DURATION;
 import static com.appglue.Constants.INDEX;
 import static com.appglue.Constants.IS_LIST;
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.COMPOSITE_ID;
 import static com.appglue.library.AppGlueConstants.EDIT_EXISTING;
 import static com.appglue.library.AppGlueConstants.PREFS_HIDDEN;
@@ -396,7 +394,7 @@ public class MainActivity extends AppGlueActivity
         b.putInt(DURATION, 0);
         b.putBoolean(TEST, false);
 
-        if (LOG) Log.w(TAG, "Trying to run " + cs.getID() + " : " + cs.getName());
+        Logger.w("Trying to run " + cs.getID() + " : " + cs.getName());
 
         intentData.add(b);
         serviceIntent.putParcelableArrayListExtra(DATA, intentData);

@@ -1,14 +1,13 @@
 package com.appglue.description;
 
 import android.database.Cursor;
-import android.util.Log;
+
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 
 import static com.appglue.Constants.ID;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.TAG;
 
 public class Tag {
     private long id;
@@ -64,17 +63,17 @@ public class Tag {
 
     public boolean equals(Object o) {
         if (o == null) {
-            if (LOG) Log.d(TAG, "Tag->Equals: null");
+            Logger.d("Tag->Equals: null");
             return false;
         }
         if (!(o instanceof Tag)) {
-            if (LOG) Log.d(TAG, "Tag->Equals: Not a Tag");
+            Logger.d("Tag->Equals: Not a Tag");
             return false;
         }
         Tag other = (Tag) o;
 
         if (id == -1) {
-            Log.d(TAG, "-1 for " + name);
+            Logger.d("-1 for " + name);
         }
 
 //        if (this.id != other.getID()) {

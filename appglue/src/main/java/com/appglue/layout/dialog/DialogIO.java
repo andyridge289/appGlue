@@ -38,13 +38,11 @@ import com.appglue.layout.view.FilterValueView;
 import com.appglue.layout.adapter.FilterSampleAdapter;
 import com.appglue.library.FilterFactory;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 public class DialogIO extends AlertDialog {
 
@@ -266,7 +264,7 @@ public class DialogIO extends AlertDialog {
                 try {
                     resList.add(field.getInt(null));
                 } catch (Exception e) {
-                    Log.d(TAG, "Field access exception");
+                    Logger.d("Field access exception");
                 }
             }
 
@@ -413,7 +411,7 @@ public class DialogIO extends AlertDialog {
 
             positiveButton.setOnClickListener(v1 -> {
                 if (adapter.selectedIndex == -1) {
-                    if (LOG) Log.d(TAG, "No selected index");
+                   Logger.d("No selected index");
                     cancel();
                     return;
                 }
@@ -421,12 +419,12 @@ public class DialogIO extends AlertDialog {
                 // The app they want to load is selectedApp.packageName
                 ApplicationInfo selected = packages.get(adapter.selectedIndex);
                 if (selected == null) {
-                    if (LOG) Log.d(TAG, "No selected app info");
+                   Logger.d("No selected app info");
                     cancel();
                     return;
                 }
 
-                if (LOG) Log.d(TAG, "Setting package name to " + selected.packageName);
+               Logger.d("Setting package name to " + selected.packageName);
 
                 IOValue value = new IOValue(FilterFactory.NONE, selected.packageName, item);
                 item.setValue(value);
@@ -609,7 +607,7 @@ public class DialogIO extends AlertDialog {
                     IOValue value = new IOValue(FilterFactory.NONE, sampleValue, io);
                     item.setValue(value);
                 } else {
-                    Log.d(TAG, "Ummm");
+                    Logger.d("Ummm");
                 }
 
                 // The setting of the list values needs to move to the creating of the list. Do an invalidate

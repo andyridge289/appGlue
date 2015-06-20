@@ -2,20 +2,18 @@ package com.appglue.engine.model;
 
 import android.database.Cursor;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 import android.util.SparseArray;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.ID;
-import static com.appglue.Constants.LOG;
 import static com.appglue.Constants.NAME;
-import static com.appglue.Constants.TAG;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 
 public class CompositeService {
@@ -241,7 +239,7 @@ public class CompositeService {
             ComponentService toMove = components.get(i);
             components.put(i - 1, components.get(i));
             toMove.setPosition(i - 1);
-            Log.d(TAG, "Putting " + (i) + " in " + (i - 1));
+            Logger.d("Putting " + (i) + " in " + (i - 1));
         }
 
         this.components.remove(position);
@@ -257,7 +255,7 @@ public class CompositeService {
 
     public void addComponent(ComponentService component, int position) {
 
-        Log.d(TAG, String.format("Add component %s at %d", component.getDescription().getName(),
+        Logger.d(String.format("Add component %s at %d", component.getDescription().getName(),
                    position));
 
         synchronized (mComponentLock) {
@@ -267,7 +265,7 @@ public class CompositeService {
                 component.setComposite(this);
                 if (component.getID() != -1) {
                     componentSearch.put(component.getID(), component);
-                    Log.d(TAG, String.format("Add component %s to search [%d]", component.getDescription().getName(),
+                    Logger.d(String.format("Add component %s to search [%d]", component.getDescription().getName(),
                             position));
                 }
 
@@ -397,7 +395,7 @@ public class CompositeService {
 
     public void swap(int a, int b) {
 
-        Log.d(TAG, String.format("Pre-swap: %s -> %s", components.get(a).getDescription().getName(),
+        Logger.d(String.format("Pre-swap: %s -> %s", components.get(a).getDescription().getName(),
                                                        components.get(b).getDescription().getName()));
 
         ComponentService ath = components.get(a);
@@ -415,40 +413,40 @@ public class CompositeService {
             }
         }
 
-        Log.d(TAG, String.format("Post-swap: %s -> %s", components.get(a).getDescription().getName(),
+        Logger.d(String.format("Post-swap: %s -> %s", components.get(a).getDescription().getName(),
                 components.get(b).getDescription().getName()));
     }
 
     public boolean equals(Object o) {
 
         if (o == null) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: null");
+           Logger.d("CompositeService->Equals: null");
             return false;
         }
         if (!(o instanceof CompositeService)) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: Not a CompositeService");
+           Logger.d("CompositeService->Equals: Not a CompositeService");
             return false;
         }
         CompositeService other = (CompositeService) o;
 
         if (this.id != other.getID()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: id");
+           Logger.d("CompositeService->Equals: id");
             return false;
         }
 
         if (!this.name.equals(other.getName())) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: name " + name + " - " + other.getName());
+           Logger.d("CompositeService->Equals: name " + name + " - " + other.getName());
             return false;
         }
 
         if (!this.description.equals(other.getDescription())) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: description: " + description + " - " +
+           Logger.d("CompositeService->Equals: description: " + description + " - " +
                     other.getDescription());
             return false;
         }
 
         if (this.components.size() != other.getComponents().size()) {
-            if (LOG) Log.d(TAG, "CompositeService->Equals: not same num components: " +
+           Logger.d("CompositeService->Equals: not same num components: " +
                     components.size() + " - " + other.getComponents().size());
             return false;
         }
@@ -458,14 +456,14 @@ public class CompositeService {
             ComponentService otherComponent = other.getComponent(component.getID());
 
             if (otherComponent == null) {
-                if (LOG)
-                    Log.d(TAG, "CompositeService->Equals: other component null " + component.getID() +
+
+                    Logger.d("CompositeService->Equals: other component null " + component.getID() +
                                ": " + i + "(" + component.getDescription().getClassName() + ")");
             }
 
             if (!component.equals(otherComponent)) {
-                if (LOG)
-                    Log.d(TAG, "CompositeService->Equals: component " + component.getID() + ": " + i);
+
+                    Logger.d("CompositeService->Equals: component " + component.getID() + ": " + i);
                 return false;
             }
         }

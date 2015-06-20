@@ -6,28 +6,23 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.appglue.layout.adapter.AdapterComponentList;
-import com.appglue.layout.adapter.AdapterComponentListSearch;
 import com.appglue.R;
 import com.appglue.WiringActivity;
 import com.appglue.description.ServiceDescription;
+import com.appglue.layout.adapter.AdapterComponentList;
+import com.appglue.layout.adapter.AdapterComponentListSearch;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
-
 
 public class FragmentComponentListSearch extends FragmentComponentList {
 
@@ -91,7 +86,7 @@ public class FragmentComponentListSearch extends FragmentComponentList {
                     localAdapter.getFilter().filter(s);
                     localAdapter.notifyDataSetChanged();
                 } else {
-                    if (LOG) Log.d(TAG, "The local adapter is null.");
+                   Logger.d("The local adapter is null.");
                     // Do we just need to create a new one?
                 }
             }

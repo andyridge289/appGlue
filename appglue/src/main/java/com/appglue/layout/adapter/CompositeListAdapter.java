@@ -1,7 +1,6 @@
 package com.appglue.layout.adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +9,9 @@ import com.appglue.R;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.layout.FragmentCompositeList;
 import com.appglue.layout.holders.CompositeHolder;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.TAG;
 
 public class CompositeListAdapter extends RecyclerView.Adapter<CompositeHolder> {
 
@@ -33,7 +31,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<CompositeHolder> 
     public CompositeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_composite, parent, false);
 
-        Log.d(TAG, "Returning composite holder");
+        Logger.d("Returning composite holder");
         return new CompositeHolder(v, mFragment, this);
     }
 
@@ -48,7 +46,7 @@ public class CompositeListAdapter extends RecyclerView.Adapter<CompositeHolder> 
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "Returning size " + mItems.size());
+        Logger.d("Returning size " + mItems.size());
         return mItems.size();
     }
 

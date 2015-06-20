@@ -2,14 +2,11 @@ package com.appglue.services.util;
 
 import android.bluetooth.BluetoothAdapter;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.appglue.ComposableService;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-
-import static com.appglue.Constants.TAG;
-import static com.appglue.Constants.LOG;
 
 public class BluetoothService extends ComposableService 
 {
@@ -39,7 +36,7 @@ public class BluetoothService extends ComposableService
         if(worked)
 		{
 			// Component success - Bluetooth
-            if(LOG) Log.d(TAG, "Succeeded at Bluetooth-ing");
+            Logger.d("Succeeded at Bluetooth-ing");
 		}
 		else
 		{

@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class WifiTrigger extends GenericTrigger {
 
@@ -62,7 +61,7 @@ public class WifiTrigger extends GenericTrigger {
             return;
         }
 
-        Log.w(TAG, "Wifi on/off triggered " + System.currentTimeMillis());
+        Logger.w("Wifi on/off triggered " + System.currentTimeMillis());
         super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);
     }
 }

@@ -42,7 +42,7 @@ public class Network
 //		int errno = error.getInt(JSON_ERRNO);
 //		String errmsg = error.getString(JSON_ERRMSG);
 //
-//		Log.e(TAG, String.format("Network Fail - %s - %s", "" + errno, errmsg));
+//		Logger.e(String.format("Network Fail - %s - %s", "" + errno, errmsg));
 //	}
 	
 	private static String getFromResponse(HttpResponse response) throws IllegalStateException, IOException

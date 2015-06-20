@@ -2,16 +2,21 @@ package com.appglue;
 
 import android.database.Cursor;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Text;
-
-import static com.appglue.Constants.*;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+
+import static com.appglue.Constants.DESCRIPTION;
+import static com.appglue.Constants.FRIENDLY_NAME;
+import static com.appglue.Constants.IO_INDEX;
+import static com.appglue.Constants.I_OR_O;
+import static com.appglue.Constants.MANDATORY;
+import static com.appglue.Constants.NAME;
 
 /**
  * Description of the inputs and outputs of a component
@@ -163,66 +168,66 @@ public class IODescription
 
     public boolean equals(Object o) {
         if (o == null) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: null");
+            Logger.d("IODescription->Equals: null");
             return false;
         }
 
         if (!(o instanceof IODescription)) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: not IODescription");
+            Logger.d("IODescription->Equals: not IODescription");
             return false;
         }
 
         IODescription other = (IODescription) o;
 
         if (id != other.getID()) {
-            if (LOG)
-                Log.d(TAG, "IODescription->Equals: id - [" + id + " :: " + other.getID() + "]");
+
+            Logger.d("IODescription->Equals: id - [" + id + " :: " + other.getID() + "]");
             return false;
         }
 
         if (index != other.getIndex()) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: index");
+            Logger.d("IODescription->Equals: index");
             return false;
         }
 
         if (isInput != other.isInput()) {
-            if (LOG)
-                Log.d(TAG, "IODescription->Equals: is input [" + name + "] " + isInput + " - " + other.isInput());
+
+            Logger.d("IODescription->Equals: is input [" + name + "] " + isInput + " - " + other.isInput());
             return false;
         }
 
         if (!name.equals(other.getName())) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: name");
+            Logger.d("IODescription->Equals: name");
             return false;
         }
 
         if (!friendlyName.equals(other.getFriendlyName())) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: friendly name");
+            Logger.d("IODescription->Equals: friendly name");
             return false;
         }
 
         if (!type.equals(other.getType())) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: type");
+            Logger.d("IODescription->Equals: type");
             return false;
         }
 
         if (!description.equals(other.description())) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: description");
+            Logger.d("IODescription->Equals: description");
             return false;
         }
 
         if (!parent.getClassName().equals(other.parent.getClassName())) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: parent");
+            Logger.d("IODescription->Equals: parent");
             return false;
         }
 
         if (mandatory != other.mandatory) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: mandatory");
+            Logger.d("IODescription->Equals: mandatory");
             return false;
         }
 
         if (this.sampleValues.size() != other.getSampleValues().size()) {
-            if (LOG) Log.d(TAG, "IODescription->Equals: sample size");
+            Logger.d("IODescription->Equals: sample size");
             return false;
         }
 
@@ -230,8 +235,8 @@ public class IODescription
             SampleValue v = sampleSearch.valueAt(i);
 
             if (!v.equals(other.getSampleValue(v.getID()))) {
-                if (LOG)
-                    Log.d(TAG, "IODescription->Equals: sample value " + v.getID() + " (index " + i + ")");
+
+                Logger.d("IODescription->Equals: sample value " + v.getID() + " (index " + i + ")");
                 return false;
             }
         }

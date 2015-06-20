@@ -3,7 +3,6 @@ package com.appglue.layout.view;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -16,7 +15,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,20 +29,21 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.appglue.WiringActivity;
-import com.appglue.layout.FragmentWiring;
 import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.TST;
+import com.appglue.WiringActivity;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.description.datatypes.Set;
 import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.IOFilter;
 import com.appglue.engine.model.IOValue;
 import com.appglue.engine.model.ServiceIO;
+import com.appglue.layout.FragmentWiring;
 import com.appglue.layout.animation.WeightedExpandAnimation;
 import com.appglue.layout.dialog.DialogIO;
 import com.appglue.serviceregistry.Registry;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,11 +51,8 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static com.appglue.library.AppGlueConstants.FULL_ALPHA;
 import static com.appglue.library.AppGlueConstants.BASE_ALPHA;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
+import static com.appglue.library.AppGlueConstants.FULL_ALPHA;
 
 public class WiringMap extends LinearLayout implements Comparator<IODescription>, AbsListView.OnScrollListener {
 
@@ -222,7 +218,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             }
 
             if (first.hasFilters()) {
-                Log.d(TAG, first.getFilters().size() + " filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
+                Logger.d(first.getFilters().size() + " filters for " + first.getID() + "(" + first.getDescription().getName() + ")");
                 filterAdapter = new FilterAdapter(getContext(), first.getFilters());
                 filterList.setAdapter(filterAdapter);
                 filterList.setVisibility(View.VISIBLE);
@@ -357,8 +353,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             p.lineTo(path.end.x, path.end.y + inputOffset);
 
-            if (LOG)
-                Log.d(TAG, "Should be drawing path from [" + path.start.x + ", " + (path.start.y + outputOffset) +
+
+                Logger.d("Should be drawing path from [" + path.start.x + ", " + (path.start.y + outputOffset) +
                         "] to [" + path.end.x + ", " + (path.end.y + inputOffset) + "]");
 
             canvas.drawPath(p, paint);
@@ -379,10 +375,10 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
     @Override
     public int compare(IODescription a, IODescription b) {
         if (a.getType() == null)
-            Log.e(TAG, "a Type null");
+            Logger.e("a Type null");
 
         if (b.getType() == null)
-            Log.e(TAG, "b type null");
+            Logger.e("b type null");
 
         return a.getType().getClass().getCanonicalName().compareTo(b.getType().getClassName());
     }
@@ -401,7 +397,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                 continue; // Probably just try again at the next redraw. It probably doesn't like the animations
 
             if (connection.x == -1 || connection.y == -1) {
-                Log.e(TAG, "Path epic failure, not really sure why");
+                Logger.e("Path epic failure, not really sure why");
                 continue;
             }
 
@@ -644,7 +640,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     Handler h = new Handler();
                     h.postDelayed(new RedrawRunnable(out.getDescription().getIndex(),
                             in.getDescription().getIndex()), 200);
-                    Log.d(TAG, String.format("Connecting %d to %d", out.getDescription().getIndex(),
+                    Logger.d(String.format("Connecting %d to %d", out.getDescription().getIndex(),
                             in.getDescription().getIndex()));
 
                     outputs.remove(i);
@@ -751,7 +747,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
             endpoint.setOnClickListener(b -> {
                 if (inputConnection(position) || first == null || !first.getDescription().hasOutputs()) {
-                    if (LOG) Log.d(TAG, "No highlights");
+                   Logger.d("No highlights");
                 } else if (iSelected == null && oSelected == null) {
                     // If they click an output first then just work normally and connect it for them
                     setHighlight(iod.getType(), parent);
@@ -768,7 +764,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     iIndex = position;
                     activity.setStatus("Selected " + iod.getName());
                 } else if (oSelected != null && oSelected.getDescription().getType().equals(iod.getType()) && iSelected == null) {
-                    if (LOG) Log.d(TAG, "Input " + position + " We have a match");
+                   Logger.d("Input " + position + " We have a match");
 
                     // If the current input and output are in the connections list then do nothing. That would be stupid
                     if (checkConnection(oIndex, position) || inputConnection(position))
@@ -806,8 +802,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     Handler h = new Handler();
                     h.postDelayed(new RedrawRunnable(oIndex, iIndex), 200);
                 } else if (iSelected != null && oSelected == null) {
-                    if (LOG)
-                        Log.d(TAG, "Output " + position + " (output is null, input is not)");
+
+                        Logger.d("Output " + position + " (output is null, input is not)");
                     // This means that we need to deselect the current one?
                     setHighlight(null, parent);
 
@@ -986,13 +982,13 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
             endpoint.setVisibility(View.VISIBLE);
 
             endpoint.setOnClickListener(b -> {
-                if (LOG) Log.d(TAG, "Output " + position + " (" + oIndex + ", " + iIndex + ")");
+               Logger.d("Output " + position + " (" + oIndex + ", " + iIndex + ")");
 
                 if (second == null || !second.getDescription().hasInputs()) {
                     return;
                 }
                 if (iSelected == null && oSelected == null) {
-                    if (LOG) Log.d(TAG, "Output " + position + " (Both null)");
+                   Logger.d("Output " + position + " (Both null)");
                     // If they click an output first then just work normally and connect it for them
                     setHighlight(item.getDescription().getType(), parent);
                     b.setBackgroundColor(
@@ -1008,7 +1004,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     oIndex = position;
                     activity.setStatus("Selected " + item.getDescription().getName());
                 } else if (iSelected != null && iSelected.getDescription().getType().equals(item.getDescription().getType()) && oSelected == null) {
-                    if (LOG) Log.d(TAG, "Output " + position + " We have a match");
+                   Logger.d("Output " + position + " We have a match");
 
                     // If the current input and output are in the connections list then do nothing. That would be stupid
                     if (checkConnection(oIndex, position))
@@ -1049,8 +1045,8 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
                     Handler h = new Handler();
                     h.postDelayed(new RedrawRunnable(oIndex, iIndex), 200);
                 } else if (oSelected != null && iSelected == null) {
-                    if (LOG)
-                        Log.d(TAG, "Output " + position + " (input is null, output is not)");
+
+                        Logger.d("Output " + position + " (input is null, output is not)");
                     // This means that we need to deselect the current one?
                     setHighlight(null, parent);
 
@@ -1076,7 +1072,7 @@ public class WiringMap extends LinearLayout implements Comparator<IODescription>
 
                     redraw(true);
                 } else {
-                    if (LOG) Log.d(TAG, "Output " + position + " (else....)");
+                   Logger.d("Output " + position + " (else....)");
                     setHighlight(item.getDescription().getType(), parent);
 
                     b.setBackgroundColor(

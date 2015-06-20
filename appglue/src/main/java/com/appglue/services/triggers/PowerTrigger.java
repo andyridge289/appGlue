@@ -3,9 +3,8 @@ package com.appglue.services.triggers;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
-import static com.appglue.Constants.TAG;
+import com.orhanobut.logger.Logger;
 
 public class PowerTrigger extends GenericTrigger
 {
@@ -31,7 +30,7 @@ public class PowerTrigger extends GenericTrigger
 	    else
 	    {
 	    	// Do nothing
-            Log.d(TAG, "Hit else for Receiving power connections");
+            Logger.d("Hit else for Receiving power connections");
 	    }
 		
 		super.trigger(context, this.getClass().getCanonicalName(), data, false, 0);

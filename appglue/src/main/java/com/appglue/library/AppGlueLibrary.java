@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -22,6 +21,7 @@ import com.appglue.ComposableService;
 import com.appglue.R;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.datatypes.IOType;
+import com.orhanobut.logger.Logger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,9 +32,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
 
 public class AppGlueLibrary {
 
@@ -105,7 +102,7 @@ public class AppGlueLibrary {
                 json.put(key, stringThing);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "bundle to JSON string Fail");
+            Logger.e("bundle to JSON string Fail");
         }
         return json.toString();
     }
@@ -143,7 +140,7 @@ public class AppGlueLibrary {
         Set<String> bKeys = b.keySet();
 
         if (!aKeys.containsAll(bKeys) || !bKeys.containsAll(aKeys)) {
-            Log.d(TAG, "Bundle->equals: missing keys");
+            Logger.d("Bundle->equals: missing keys");
             return false;
         }
 
@@ -154,7 +151,7 @@ public class AppGlueLibrary {
 
             if (o instanceof Bundle) {
                 if (!bundlesEqual((Bundle) o, (Bundle) p)) {
-                    if (LOG) Log.d(TAG, "Bundle->equals: Bundles " + key + " not same");
+                   Logger.d("Bundle->equals: Bundles " + key + " not same");
                     return false;
                 }
             }
@@ -165,7 +162,7 @@ public class AppGlueLibrary {
                 ArrayList bl = (ArrayList) p;
 
                 if (al.size() != bl.size()) {
-                    if (LOG) Log.d(TAG, "Bundle->equals: " + key + " not same size");
+                   Logger.d("Bundle->equals: " + key + " not same size");
                     return false;
                 }
 
@@ -176,14 +173,14 @@ public class AppGlueLibrary {
 
                     if (q instanceof Bundle) {
                         if (!bundlesEqual((Bundle) q, (Bundle) r)) {
-                            if (LOG)
-                                Log.d(TAG, "Bundle->equals: Bundles in ArrayList -- " + key + " not same");
+
+                                Logger.d("Bundle->equals: Bundles in ArrayList -- " + key + " not same");
                             return false;
                         }
                     } else {
                         if (!q.equals(r)) {
-                            if (LOG)
-                                Log.d(TAG, "Bundle->equals: Objects in ArrayList -- " + key + "[" + i + "] not same");
+
+                                Logger.d("Bundle->equals: Objects in ArrayList -- " + key + "[" + i + "] not same");
                             return false;
                         }
                     }
@@ -192,7 +189,7 @@ public class AppGlueLibrary {
             }
 
             if (!a.get(key).equals(b.get(key))) {
-                if (LOG) Log.d(TAG, "Bundle->equals: " + key + " not same");
+               Logger.d("Bundle->equals: " + key + " not same");
                 return false;
             }
         }
@@ -215,7 +212,7 @@ public class AppGlueLibrary {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "JSON string to bundle Fail FUCKSTICKS");
+            Logger.e("JSON string to bundle Fail FUCKSTICKS");
         }
 
         return b;
@@ -302,7 +299,7 @@ public class AppGlueLibrary {
         numbers = AppGlueLibrary.validatePhoneNumbers(numbers);
 
         for (String number : numbers)
-            Log.d(TAG, name + ", " + number);
+            Logger.d(name + ", " + number);
 
         return new Pair<String, ArrayList<String>>(name, numbers);
     }

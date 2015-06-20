@@ -7,6 +7,7 @@ import com.appglue.ComposableService;
 import com.appglue.R;
 import com.appglue.description.datatypes.IOType;
 import com.appglue.library.Network;
+import com.orhanobut.logger.Logger;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
@@ -15,8 +16,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import static com.appglue.Constants.TAG;
 
 public class TubeService extends ComposableService {
     public static final IOType text = IOType.Factory.getType(IOType.Factory.TEXT);
@@ -77,7 +76,7 @@ public class TubeService extends ComposableService {
     }
 
     public ArrayList<Bundle> processOutput(String s) {
-        Log.d(TAG, s);
+        Logger.d(s);
         try {
             JSONObject json = new JSONObject(s);
             JSONArray lines = json.getJSONArray(TAG_LINES);

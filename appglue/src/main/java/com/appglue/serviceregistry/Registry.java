@@ -3,7 +3,6 @@ package com.appglue.serviceregistry;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.util.LongSparseArray;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.appglue.ComposableService;
@@ -17,14 +16,10 @@ import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.library.AppGlueLibrary;
 import com.appglue.library.LogItem;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.appglue.Constants.LOG;
-import static com.appglue.Constants.TAG;
-
-//import com.appglue.test.EngineTest;
 
 public class Registry {
     public static Registry registry = null;
@@ -201,7 +196,7 @@ public class Registry {
 
     public boolean delete(CompositeService cs) {
         if (cs.getID() == 1) {
-            Log.e(TAG, "You can't delete the temp");
+            Logger.e("You can't delete the temp");
             return false;
         }
 
@@ -273,8 +268,8 @@ public class Registry {
      */
     public long startComposite(CompositeService composite) {
         long execID = dbHandler.startComposite(composite);
-        if (LOG)
-            Log.d(TAG, "Started composite ID " + composite.getID() + "(" + composite.getName() + ") with execID " + execID);
+
+            Logger.d("Started composite ID " + composite.getID() + "(" + composite.getName() + ") with execID " + execID);
         return execID;
     }
 
@@ -313,7 +308,7 @@ public class Registry {
         if (logComponent && logComposite) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
+            Logger.e(String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
                     executionInstance, component.getDescription().getClassName(), inputData != null));
             return false;
         }
@@ -329,7 +324,7 @@ public class Registry {
         if (logComponent && logComposite) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
+            Logger.e(String.format("Failed to register component failure: %d, %d, %s, getInputs set: %b", composite.getID(),
                     executionInstance, component.getDescription().getClassName(), inputData != null));
             return false;
         }
@@ -345,7 +340,7 @@ public class Registry {
         if (logComponent && logComposite) {
             return true;
         } else {
-            Log.e(TAG, String.format("Failed to register message failure: %d, %d, %s, getInputs set: %b", composite.getID(),
+            Logger.e(String.format("Failed to register message failure: %d, %d, %s, getInputs set: %b", composite.getID(),
                     executionInstance, component.getDescription().getClassName(), inputData != null));
             return false;
         }
