@@ -1,38 +1,49 @@
 package com.appglue.engine;
 
+import com.appglue.db.AppGlueDB;
 import com.appglue.engine.model.CompositeService;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class Schedule {
+import static com.appglue.Constants.ID;
 
-    private long id = -1;
+@Table(databaseName = AppGlueDB.NAME)
+public class Schedule extends BaseModel {
+
+    @Column
+    @PrimaryKey(autoincrement = true)
+    private long id;
+
+    @ForeignKey(references = {
+            @ForeignKeyReference(columnName = "composite", columnType = Long.class,
+                    fieldIsPrivate = true, foreignColumnName = "id") },
+            tableClass = CompositeService.class, saveForeignKeyModel = true
+    )
     private CompositeService composite;
 
-    private ScheduleType type;
-
-    private long numeral;
-    private Interval interval;
-
-    private long lastExecuted;
-    private long nextExecute;
-    private int executionNum;
-
-    private boolean enabled;
-
-    private TimePeriod timePeriod;
-    private int minute;
-    private int hour;
-    private int dayOfWeek;
-    private int dayOfMonth;
-
-    private boolean scheduled;
-
+    @Column private ScheduleType type;
+    @Column private long numeral;
+    @Column private Interval interval;
+    @Column private long lastExecuted;
+    @Column private long nextExecute;
+    @Column private int executionNum;
+    @Column private boolean enabled;
+    @Column private TimePeriod timePeriod;
+    @Column private int minute;
+    @Column private int hour;
+    @Column private int dayOfWeek;
+    @Column private int dayOfMonth;
+    @Column private boolean scheduled;
 
     public Schedule() {
-        this.id = -1;
         this.composite = null;
         this.type = ScheduleType.TIME;
         this.numeral = 1;

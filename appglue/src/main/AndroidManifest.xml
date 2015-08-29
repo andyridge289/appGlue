@@ -24,7 +24,7 @@
     <permission android:name="com.appglue.permission.COMPOSE_ME_PLEASE" />
 
     <application
-        android:name="com.appglue.AppGlue"
+        android:name=".AppGlueApplication"
         android:icon="@drawable/icon"
         android:label="@string/application_name"
         android:theme="@style/Theme.AppGlue" >

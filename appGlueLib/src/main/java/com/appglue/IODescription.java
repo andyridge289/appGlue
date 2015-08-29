@@ -3,11 +3,18 @@ package com.appglue;
 import android.database.Cursor;
 import android.support.v4.util.LongSparseArray;
 
+import com.appglue.db.AppGlueDB;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
-import com.appglue.description.datatypes.IOType;
-import com.appglue.description.datatypes.Text;
+import com.appglue.description.IOType;
+import com.appglue.datatypes.Text;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
 
@@ -22,30 +29,34 @@ import static com.appglue.Constants.NAME;
  * Description of the inputs and outputs of a component
  */
 
-public class IODescription
+@Table(databaseName = AppGlueDB.NAME)
+public class IODescription extends BaseModel
 {
-    private long id;
+//    {CLASSNAME, "TEXT", TBL_SD, CLASSNAME},
+// User friendly name of the type
 
-    // The index of the IO in the list of IOs for the SD
-    private int index;
-    private boolean isInput;
+    @Column @PrimaryKey(autoincrement = true) private long id;
+    @Column private String name;
+    @Column private int index;
+    @Column private boolean isInput;
+    @Column private String friendlyName;
+    @Column private String description;
+    @Column private boolean mandatory;
+    @Column private String typeName;
 
-    // User friendly name of the type
-    private String name;
-    private String friendlyName;
-
-    // Java canonical name of the class
     private IOType type;
 
-    // A user friendly text description of the type
-    private String description;
-
+    @ForeignKey(references = {
+        @ForeignKeyReference(columnName = "serviceDescription", columnType = String.class,
+                             foreignColumnName = "className", fieldIsPrivate = true)
+        },
+        saveForeignKeyModel = true,
+        tableClass = ServiceDescription.class
+    )
     private ServiceDescription parent;
 
     private LongSparseArray<SampleValue> sampleSearch;
     private ArrayList<SampleValue> sampleValues;
-
-    private boolean mandatory;
 
     public IODescription() {
         this.id = -1;
@@ -88,7 +99,7 @@ public class IODescription
             return;
 
         for (SampleValue v : samples) {
-            sampleSearch.put(v.getID(), v);
+            sampleSearch.put(v.getId(), v);
         }
     }
 
@@ -109,8 +120,14 @@ public class IODescription
     public boolean isInput() {
         return this.isInput;
     }
+    public boolean getIsInput() { // Need this for dbflow
+        return this.isInput;
+    }
+    public void setIsInput(boolean isInput) { // DBFLOW
+        this.isInput = isInput;
+    }
 
-    public long getID() {
+    public long getId() {
         return id;
     }
 
@@ -158,7 +175,16 @@ public class IODescription
         this.type = type;
     }
 
-    public String description() {
+    public String getTypeName() {
+        return type.getClassName();
+    }
+
+    public void setTypeName(String typeName) {
+        this.type = IOType.Factory.getType(typeName);
+        this.typeName = typeName;
+    }
+
+    public String getDescription() {
         return description;
     }
 
@@ -179,9 +205,9 @@ public class IODescription
 
         IODescription other = (IODescription) o;
 
-        if (id != other.getID()) {
+        if (id != other.getId()) {
 
-            Logger.d("IODescription->Equals: id - [" + id + " :: " + other.getID() + "]");
+            Logger.d("IODescription->Equals: id - [" + id + " :: " + other.getId() + "]");
             return false;
         }
 
@@ -211,7 +237,7 @@ public class IODescription
             return false;
         }
 
-        if (!description.equals(other.description())) {
+        if (!description.equals(other.getDescription())) {
             Logger.d("IODescription->Equals: description");
             return false;
         }
@@ -234,9 +260,9 @@ public class IODescription
         for (int i = 0; i < sampleSearch.size(); i++) {
             SampleValue v = sampleSearch.valueAt(i);
 
-            if (!v.equals(other.getSampleValue(v.getID()))) {
+            if (!v.equals(other.getSampleValue(v.getId()))) {
 
-                Logger.d("IODescription->Equals: sample value " + v.getID() + " (index " + i + ")");
+                Logger.d("IODescription->Equals: sample value " + v.getId() + " (index " + i + ")");
                 return false;
             }
         }
@@ -245,6 +271,10 @@ public class IODescription
     }
 
     public boolean isMandatory() {
+        return mandatory;
+    }
+
+    public boolean getMandatory() { // DBFLOW
         return mandatory;
     }
 
@@ -266,7 +296,7 @@ public class IODescription
         this.sampleSearch = new LongSparseArray<>();
 
         for (SampleValue v : values) {
-            this.sampleSearch.put(v.getID(), v);
+            this.sampleSearch.put(v.getId(), v);
         }
         sampleValues = values;
     }
@@ -275,7 +305,7 @@ public class IODescription
         if (sampleSearch == null)
             sampleSearch = new LongSparseArray<>();
 
-        sampleSearch.put(value.getID(), value);
+        sampleSearch.put(value.getId(), value);
 
         if (sampleValues == null)
             sampleValues = new ArrayList<>();

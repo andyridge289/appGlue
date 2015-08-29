@@ -32,7 +32,7 @@ import com.appglue.R;
 import com.appglue.SystemFeature;
 import com.appglue.Test;
 import com.appglue.description.ServiceDescription;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.engine.model.IOFilter;

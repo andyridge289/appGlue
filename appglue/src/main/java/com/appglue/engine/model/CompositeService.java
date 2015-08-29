@@ -6,7 +6,12 @@ import android.util.SparseArray;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
+import com.appglue.db.AppGlueDB;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +21,15 @@ import static com.appglue.Constants.ID;
 import static com.appglue.Constants.NAME;
 import static com.appglue.library.AppGlueConstants.ENABLED;
 
-public class CompositeService {
+@Table(databaseName = AppGlueDB.NAME)
+public class CompositeService extends BaseModel {
 
+    @Column @PrimaryKey
     private long id;
-    private String name;
-    private String description;
 
-    private boolean enabled;
+    @Column private String name;
+    @Column private String description;
+    @Column private boolean enabled;
 
     public static final int TEMP_ID = 1;
     public static final String TEMP_NAME = "temp";

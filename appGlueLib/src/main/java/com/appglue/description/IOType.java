@@ -1,24 +1,36 @@
-package com.appglue.description.datatypes;
+package com.appglue.description;
 
 import android.os.Bundle;
 
+import com.appglue.db.AppGlueDB;
+import com.appglue.datatypes.App;
+import com.appglue.datatypes.Bool;
+import com.appglue.datatypes.Image;
+import com.appglue.datatypes.ImageDrawableResource;
+import com.appglue.datatypes.NumberInt;
+import com.appglue.datatypes.Password;
+import com.appglue.datatypes.PhoneNumber;
+import com.appglue.datatypes.Set;
+import com.appglue.datatypes.Text;
+import com.appglue.datatypes.URLObject;
+import com.appglue.datatypes.Username;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
-public abstract class IOType
-{
+public abstract class IOType extends BaseModel {
+
 	protected long id;
-
 	protected String name;
 	protected String className;
-
     protected Sensitivity sensitivity;
-
     protected boolean acceptsManual;
     protected int manualEditTextType = -1;
-
     protected boolean manualLookup;
 
-    enum Sensitivity {
+    public enum Sensitivity {
         NORMAL,
         SENSITIVE,
         PRIVATE
@@ -181,8 +193,7 @@ public abstract class IOType
         public static final String USERNAME = Username.class.getCanonicalName();
         public static final String PASSWORD = Password.class.getCanonicalName();
 
-        public static IOType getType(String name)
-		{
+        public static IOType getType(String name) {
             if(name.equals(TEXT))
                 return new Text();
             else if(name.equals(URL))

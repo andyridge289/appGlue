@@ -176,15 +176,15 @@ public class FragmentComponent extends Fragment implements AppGlueFragment {
         LayoutInflater vi = getActivity().getLayoutInflater();
         AppGlueLibrary.addFlagsToLayout(flagContainer, sd, vi, true, true);
 
-        if (sd.getApp() == null) {
+        if (sd.getAppDescription() == null) {
             appName.setText("");
         } else {
-            appName.setText(sd.getApp().getName());
+            appName.setText(sd.getAppDescription().getName());
         }
 
-        if (sd.getApp() != null) {
-            appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
-            appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getApp().iconLocation()));
+        if (sd.getAppDescription() != null) {
+            appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getAppDescription().iconLocation()));
+            appIcon.setImageBitmap(LocalStorage.getInstance().readIcon(sd.getAppDescription().iconLocation()));
         }
 
         ArrayList<IODescription> inputs = sd.getInputs();
@@ -212,11 +212,11 @@ public class FragmentComponent extends Fragment implements AppGlueFragment {
                     PackageManager pm = getActivity().getPackageManager();
 
                     if (pm != null) {
-                        Intent i = pm.getLaunchIntentForPackage(sd.getApp().getPackageName());
+                        Intent i = pm.getLaunchIntentForPackage(sd.getAppDescription().getPackageName());
                         getActivity().startActivity(i);
                     } else {
                         // Do something?
-                        Logger.e("Couldn't launch app because the package manager is null: " + sd.getApp().getPackageName());
+                        Logger.e("Couldn't launch app because the package manager is null: " + sd.getAppDescription().getPackageName());
                     }
                 } catch (Exception e) {
                     Logger.e("Trying to launch app? " + e.getMessage());
@@ -224,7 +224,7 @@ public class FragmentComponent extends Fragment implements AppGlueFragment {
             }
         });
 
-        if (sd.getApp().getPackageName().contains("com.appglue")) {
+        if (sd.getAppDescription().getPackageName().contains("com.appglue")) {
             launchAppButton.setTextColor(getResources().getColor(R.color.hexCCC));
             launchAppButton.setEnabled(false);
         }
@@ -232,7 +232,7 @@ public class FragmentComponent extends Fragment implements AppGlueFragment {
         viewAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((FragmentComponents) getParentFragment()).showApp(sd.getApp().getPackageName());
+                ((FragmentComponents) getParentFragment()).showApp(sd.getAppDescription().getPackageName());
             }
         });
 
@@ -338,7 +338,7 @@ public class FragmentComponent extends Fragment implements AppGlueFragment {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), io.getFriendlyName() + ": " + io.description(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), io.getFriendlyName() + ": " + io.getDescription(), Toast.LENGTH_LONG).show();
                 }
             });
 

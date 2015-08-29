@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.appglue.IODescription;
 import com.appglue.R;
 import com.appglue.description.ServiceDescription;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.appglue.engine.model.ComponentService;
 import com.appglue.layout.adapter.AdapterComponentList;
 import com.appglue.serviceregistry.Registry;

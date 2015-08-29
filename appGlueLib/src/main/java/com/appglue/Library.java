@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.appglue.description.SampleValue;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class Library {
 
             inputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}",
                     INPUT_NAME, input.getName(), FRIENDLY_NAME, input.getFriendlyName(), INPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(),
-                    INPUT_DESCRIPTION, input.description(), MANDATORY, input.isMandatory(), SAMPLES, sampleBuilder.toString()));
+                    INPUT_DESCRIPTION, input.getDescription(), MANDATORY, input.isMandatory(), SAMPLES, sampleBuilder.toString()));
 
             if (i < inputList.size() - 1)
                 inputBuilder.append(",");
@@ -109,7 +109,7 @@ public class Library {
             sampleBuilder.append("]");
 
             outputBuilder.append(String.format("{\"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\":\"%s\", \"%s\": %b, \"%s\": %s}",
-                    OUTPUT_NAME, output.getName(), FRIENDLY_NAME, output.getFriendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.description(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
+                    OUTPUT_NAME, output.getName(), FRIENDLY_NAME, output.getFriendlyName(), OUTPUT_TYPE, type.getName(), CLASSNAME, type.getClass().getCanonicalName(), OUTPUT_DESCRIPTION, output.getDescription(), MANDATORY, false, SAMPLES, sampleBuilder.toString()));
 
             if (i < outputList.size() - 1)
                 outputBuilder.append(",");

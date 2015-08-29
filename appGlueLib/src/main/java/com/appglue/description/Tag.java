@@ -2,15 +2,28 @@ package com.appglue.description;
 
 import android.database.Cursor;
 
+import com.appglue.db.AppGlueDB;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
 
 import static com.appglue.Constants.ID;
 import static com.appglue.Constants.NAME;
 
-public class Tag {
+// FIXME work out how the fuck to do many-many
+
+@Table(databaseName = AppGlueDB.NAME)
+public class Tag extends BaseModel {
+
+    @Column
+    @PrimaryKey(autoincrement = true)
     private long id;
+
+    @Column
     private String name;
 
     public Tag() {
@@ -32,11 +45,15 @@ public class Tag {
         return name;
     }
 
-    public long getID() {
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setID(long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

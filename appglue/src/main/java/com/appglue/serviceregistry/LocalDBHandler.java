@@ -21,7 +21,7 @@ import com.appglue.description.Category;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
 import com.appglue.description.Tag;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.appglue.engine.Schedule;
 import com.appglue.engine.model.ComponentService;
 import com.appglue.engine.model.CompositeService;
@@ -155,11 +155,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_COMPOSITE));
         db.execSQL(AppGlueLibrary.createTableString(TBL_COMPOSITE, COLS_COMPOSITE, null));
 
-        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_APP));
-        db.execSQL(AppGlueLibrary.createTableString(TBL_APP, COLS_APP, null));
+//        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_APP));
+//        db.execSQL(AppGlueLibrary.createTableString(TBL_APP, COLS_APP, null));
 
-        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SD));
-        db.execSQL(AppGlueLibrary.createTableString(TBL_SD, COLS_SD, null));
+//        db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_SD));
+//        db.execSQL(AppGlueLibrary.createTableString(TBL_SD, COLS_SD, null));
 
         db.execSQL(String.format("DROP TABLE IF EXISTS %s", TBL_IOTYPE));
         db.execSQL(AppGlueLibrary.createTableString(TBL_IOTYPE, COLS_IOTYPE, null));
@@ -334,11 +334,11 @@ public class LocalDBHandler extends SQLiteOpenHelper {
         try {
             db.insertOrThrow(TBL_SD, null, values);
 
-            if (sd.getApp() != null) {
+            if (sd.getAppDescription() != null) {
                 // Try to get the app out of the database
-                AppDescription app = getAppDescription(sd.getApp().getPackageName());
+                AppDescription app = getAppDescription(sd.getAppDescription().getPackageName());
                 if (app == null) {
-                    addAppDescription(sd.getApp());
+                    addAppDescription(sd.getAppDescription());
                 }
             }
 
@@ -389,7 +389,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             values.put(NAME, io.getName());
             values.put(FRIENDLY_NAME, io.getFriendlyName());
             values.put(IO_INDEX, io.getIndex());
-            values.put(DESCRIPTION, io.description());
+            values.put(DESCRIPTION, io.getDescription());
 
             if (!input)
                 values.put(MANDATORY, 0);
@@ -538,7 +538,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
             IOType type = getIOType(c.getLong(c.getColumnIndex(IO_TYPE)));
             String description = c.getString(c.getColumnIndex(DESCRIPTION));
 
-            IODescription io = new IODescription(id, name, friendlyName, index, type, description, sd, mandatory, new ArrayList<>(), input);
+            IODescription io = new IODescription(id, name, friendlyName, index, type, description, sd, mandatory, new ArrayList<SampleValue>(), input);
             getSampleValues(io);
 
             ios.add(io);
@@ -2779,7 +2779,7 @@ public class LocalDBHandler extends SQLiteOpenHelper {
                 // Create a new component based on this info
                 currentComponent = new ServiceDescription();
                 currentComponent.setInfo(TBL_SD + "_", c);
-                currentComponent.setApp(getApp(c.getString(c.getColumnIndex(TBL_SD + "_" + PACKAGENAME))));
+                currentComponent.setAppDescription(getApp(c.getString(c.getColumnIndex(TBL_SD + "_" + PACKAGENAME))));
 
                 // It shouldn't already be in there
                 componentMap.put(className, currentComponent);

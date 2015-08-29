@@ -1,7 +1,7 @@
 package com.appglue.engine.model;
 
 import com.appglue.IODescription;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.orhanobut.logger.Logger;
 
 public class ServiceIO {

@@ -1,19 +1,51 @@
 package com.appglue.engine.model;
 
 
+import android.app.Service;
 import android.support.v4.util.LongSparseArray;
 
+import com.appglue.IODescription;
 import com.appglue.TST;
+import com.appglue.db.AppGlueDB;
 import com.appglue.description.ServiceDescription;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import java.util.ArrayList;
 
-public class ComponentService {
+import dalvik.system.BaseDexClassLoader;
+
+import static com.appglue.Constants.CLASSNAME;
+import static com.appglue.Constants.ID;
+import static com.appglue.Constants.POSITION;
+
+@Table(databaseName = AppGlueDB.NAME)
+public class ComponentService extends BaseModel {
+
+    @Column
+    @PrimaryKey(autoincrement = true)
     private long id;
+
+    @ForeignKey(references = {
+        @ForeignKeyReference(columnName = "serviceDescription", columnType = String.class,
+                             fieldIsPrivate = true, foreignColumnName = "className") },
+        tableClass = Service.class, saveForeignKeyModel = true
+    )
     private ServiceDescription description;
 
+    @ForeignKey(references = {
+        @ForeignKeyReference(columnName = "composite", columnType = Long.class,
+                             fieldIsPrivate = true, foreignColumnName = "id") },
+        tableClass = CompositeService.class, saveForeignKeyModel = true
+    )
     private CompositeService composite;
+
+    @Column
     private int mPosition;
 
     private ArrayList<ServiceIO> inputs;

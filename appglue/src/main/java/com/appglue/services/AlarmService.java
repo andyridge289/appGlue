@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.appglue.ComposableService;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 
 import java.util.ArrayList;
 import java.util.Calendar;

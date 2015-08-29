@@ -1,11 +1,10 @@
 package com.appglue.services;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.appglue.library.Network;
 import com.orhanobut.logger.Logger;
 

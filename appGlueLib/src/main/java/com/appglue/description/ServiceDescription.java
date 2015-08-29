@@ -13,8 +13,14 @@ import com.appglue.Constants.ServiceType;
 import com.appglue.IODescription;
 import com.appglue.SystemFeature;
 import com.appglue.TST;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.db.AppGlueDB;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
+import com.raizlabs.android.dbflow.annotation.ForeignKeyReference;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,26 +57,25 @@ import static com.appglue.Constants.SERVICE_TYPE;
 import static com.appglue.Constants.SHORT_NAME;
 import static com.appglue.Constants.TAGS;
 
-public class ServiceDescription {
+@Table(databaseName = AppGlueDB.NAME)
+public class ServiceDescription extends BaseModel {
 
-    // The friendly name of the service
-    private String name = "";
-    private String shortName = "";
+    @Column @PrimaryKey protected String className = "";
+    @Column private String name = "";
+    @Column private String shortName = "";
+    @Column private int flags;
+    @Column private String description = "";
+    @Column private int minVersion = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    @Column private int featuresRequired = 0;
 
-    // The type of the service - either local or remote
-//    private ServiceType serviceType = ServiceType.IN_APP;
-    private int flags;
-
-    // The classname of the service itself
-    protected String className = "";
-
-    // The package that the service lives in - this should double as what to search for in the market
-    private String packageName = "com.appglue";
-
-    // A text description
-    private String description = "";
-
-    private int minVersion = Build.VERSION_CODES.ICE_CREAM_SANDWICH;
+    @ForeignKey(references = {
+        @ForeignKeyReference(columnName = "packageName", columnType = String.class,
+                             foreignColumnName = "packageName", fieldIsPrivate = true)
+        },
+        saveForeignKeyModel = true,
+        tableClass = AppDescription.class
+    )
+    @Column private AppDescription appDescription;
 
     // Inputs and getOutputs to/from the service
     private SparseArray<IODescription> inputs = new SparseArray<>();
@@ -85,23 +90,19 @@ public class ServiceDescription {
 
     // Representations of the icon of the service
     private AppDescription app = null;
-    private int featuresRequired = 0;
 
     private ServiceDescription(
-            String packageName, String className, String name, String shortName,
+            AppDescription app, String className, String name, String shortName,
             String description,
             ArrayList<IODescription> inputs, ArrayList<IODescription> outputs,
             ServiceType serviceType, int flags, int version, int features) {
         this.name = name;
         this.className = className;
-        this.packageName = packageName;
+        this.appDescription = app;
         this.description = description;
         this.shortName = shortName;
-
         this.setInputs(inputs);
         this.setOutputs(outputs);
-
-//        this.serviceType = serviceType;
         this.flags = flags;
         this.minVersion = version;
         this.featuresRequired = features;
@@ -110,13 +111,10 @@ public class ServiceDescription {
     public ServiceDescription() {
         this.name = "";
         this.className = "";
-        this.packageName = "";
+        this.appDescription = new AppDescriptionAppGlue();
         this.description = "";
-
         this.inputs = new SparseArray<>();
         this.outputs = new SparseArray<>();
-
-//        this.serviceType = ServiceType.ANY;
         this.flags = 0;
     }
 
@@ -127,18 +125,16 @@ public class ServiceDescription {
     public String getName() {
         return this.name;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getDescription() {
         return this.description;
     }
-
-//    public ServiceType getServiceType() {
-//        return serviceType;
-//    }
-//
-//    public void setServiceType(ServiceType type) {
-//        this.serviceType = type;
-//    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public boolean hasFlag(int flag) {
         return (this.flags & flag) == flag;
@@ -152,11 +148,11 @@ public class ServiceDescription {
     }
 
     public String getPackageName() {
-        return packageName;
+        return appDescription.getPackageName();
     }
 
     public void setLocation(String location) {
-        this.packageName = location;
+        this.appDescription = new AppDescriptionAppGlue();
     }
 
     public boolean hasInputs() {
@@ -238,8 +234,8 @@ public class ServiceDescription {
         }
 
         for (IODescription in : inputs) {
-            if (idSearchInputs.get(in.getID()) == null)
-                idSearchInputs.put(in.getID(), in);
+            if (idSearchInputs.get(in.getId()) == null)
+                idSearchInputs.put(in.getId(), in);
 
             if (nameSearchInputs.get(in.getName()) == null)
                 nameSearchInputs.put(in.getName(), in);
@@ -261,19 +257,18 @@ public class ServiceDescription {
         }
 
         for (IODescription out : outputs) {
-            if (idSearchOutputs.get(out.getID()) == null)
-                idSearchOutputs.put(out.getID(), out);
+            if (idSearchOutputs.get(out.getId()) == null)
+                idSearchOutputs.put(out.getId(), out);
 
             if (nameSearchOutputs.get(out.getName()) == null)
                 nameSearchOutputs.put(out.getName(), out);
         }
     }
 
-    public AppDescription getApp() {
+    public AppDescription getAppDescription() {
         return this.app;
     }
-
-    public void setApp(AppDescription app) {
+    public void setAppDescription(AppDescription app) {
         this.app = app;
     }
 
@@ -307,7 +302,7 @@ public class ServiceDescription {
     public Bundle toBundle() {
         Bundle b = new Bundle();
 
-        b.putString(PACKAGENAME, this.packageName);
+        b.putString(PACKAGENAME, this.appDescription.getIconLocation());
         b.putString(CLASSNAME, this.className);
         b.putString(NAME, this.name);
 
@@ -316,7 +311,7 @@ public class ServiceDescription {
         if (this.hasInputs()) {
             b.putString(INPUT_NAME, this.inputs.get(0).getName());
             b.putString(INPUT_TYPE, this.inputs.get(0).getType().getName());
-            b.putString(INPUT_DESCRIPTION, this.inputs.get(0).description());
+            b.putString(INPUT_DESCRIPTION, this.inputs.get(0).getDescription());
         } else {
             b.putString(INPUT_NAME, "");
             b.putString(INPUT_TYPE, "null");
@@ -326,7 +321,7 @@ public class ServiceDescription {
         if (this.hasOutputs()) {
             b.putString(OUTPUT_NAME, this.outputs.get(0).getName());
             b.putString(OUTPUT_TYPE, this.outputs.get(0).getType().getName());
-            b.putString(OUTPUT_DESCRIPTION, this.outputs.get(0).description());
+            b.putString(OUTPUT_DESCRIPTION, this.outputs.get(0).getDescription());
         } else {
             b.putString(OUTPUT_NAME, "");
             b.putString(OUTPUT_TYPE, "null");
@@ -390,7 +385,7 @@ public class ServiceDescription {
             return false;
         }
 
-        if (!this.packageName.equals(other.getPackageName())) {
+        if (!this.appDescription.equals(other.getPackageName())) {
             Logger.d("ServiceDescription->Equals: package name");
             return false;
         }
@@ -400,7 +395,7 @@ public class ServiceDescription {
             return false;
         }
 
-        if (!this.app.equals(other.getApp())) {
+        if (!this.app.equals(other.getAppDescription())) {
             Logger.d("ServiceDescription->Equals: app");
             return false;
         }
@@ -412,7 +407,7 @@ public class ServiceDescription {
         }
 
         for (int i = 0; i < inputs.size(); i++) {
-            if (!inputs.valueAt(i).equals(other.getInput(inputs.valueAt(i).getID()))) {
+            if (!inputs.valueAt(i).equals(other.getInput(inputs.valueAt(i).getId()))) {
                 Logger.d("ServiceDescription->Equals: input " + i);
                 return false;
             }
@@ -425,7 +420,7 @@ public class ServiceDescription {
         }
 
         for (int i = 0; i < outputs.size(); i++) {
-            if (!outputs.valueAt(i).equals(other.getOutput(outputs.valueAt(i).getID()))) {
+            if (!outputs.valueAt(i).equals(other.getOutput(outputs.valueAt(i).getId()))) {
                 Logger.d("ServiceDescription->Equals: output " + i);
                 return false;
             }
@@ -525,7 +520,7 @@ public class ServiceDescription {
     }
 
     public void setInfo(String prefix, Cursor c) {
-        this.packageName = c.getString(c.getColumnIndex(prefix + PACKAGENAME));
+//        this.appDescription = c.getString(c.getColumnIndex(prefix + PACKAGENAME));
         this.className = c.getString(c.getColumnIndex(prefix + CLASSNAME));
         this.name = c.getString(c.getColumnIndex(prefix + NAME));
         this.shortName = c.getString(c.getColumnIndex(prefix + SHORT_NAME));
@@ -543,11 +538,11 @@ public class ServiceDescription {
 
         if (input) {
             this.inputs.put(position, io);
-            this.idSearchInputs.put(io.getID(), io);
+            this.idSearchInputs.put(io.getId(), io);
             this.nameSearchInputs.put(io.getName(), io);
         } else {
             this.outputs.put(position, io);
-            this.idSearchOutputs.put(io.getID(), io);
+            this.idSearchOutputs.put(io.getId(), io);
             this.nameSearchOutputs.put(io.getName(), io);
         }
 
@@ -567,7 +562,7 @@ public class ServiceDescription {
         int version = c.getInt(c.getColumnIndex(prefix + MIN_VERSION));
         int features = c.getInt(c.getColumnIndex(prefix + FEATURES));
 
-        return new ServiceDescription(packageName, className, name, shortName, description, null, null,
+        return new ServiceDescription(new AppDescriptionAppGlue(), className, name, shortName, description, null, null,
                 ServiceDescription.getServiceType(serviceType), flags, version, features);
     }
 
@@ -624,7 +619,7 @@ public class ServiceDescription {
 
         ServiceType serviceType = ServiceType.LOCAL;
 
-        ServiceDescription sd = new ServiceDescription(packageName, className, name, shortName, description, null, null, serviceType, flags, version, features);
+        ServiceDescription sd = new ServiceDescription(new AppDescriptionAppGlue(), className, name, shortName, description, null, null, serviceType, flags, version, features);
 
         ArrayList<IODescription> inputs = parseIOFromNewJSON(json.getJSONArray(INPUTS), true, sd);
         ArrayList<IODescription> outputs = parseIOFromNewJSON(json.getJSONArray(OUTPUTS), false, sd);
@@ -652,13 +647,16 @@ public class ServiceDescription {
             sd.addCategory(sCat);
         }
 
-        sd.setApp(app);
+        sd.setAppDescription(app);
 
         return sd;
     }
 
     public String getShortName() {
         return shortName;
+    }
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 
     public ArrayList<Category> getCategories() {
@@ -675,9 +673,15 @@ public class ServiceDescription {
     public boolean matchesVersion() {
         return minVersion <= Build.VERSION.SDK_INT;
     }
+    public void setMinVersion(int minVersion) {
+        this.minVersion = minVersion;
+    }
 
     public int getFeaturesRequired() {
         return featuresRequired;
+    }
+    public void setFeaturesRequired(int featuresRequired) {
+        this.featuresRequired = featuresRequired;
     }
 
     public ArrayList<SystemFeature> missingFeatures(Context context) {

@@ -3,7 +3,6 @@ package com.appglue.layout;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -125,14 +124,14 @@ public class FragmentWiring extends Fragment {
             firstAdd.setVisibility(View.GONE);
 
             try {
-                AppDescription firstApp = first.getDescription().getApp();
+                AppDescription firstApp = first.getDescription().getAppDescription();
                 Bitmap b;
 
                 if (firstApp == null) {
                     firstIcon.setBackgroundResource(R.drawable.icon);
 
                 } else {
-                    String iconLocation = first.getDescription().getApp().iconLocation();
+                    String iconLocation = first.getDescription().getAppDescription().iconLocation();
                     if (iconLocation.equals("")) {
                         firstIcon.setBackgroundResource(R.drawable.icon);
                     }
@@ -184,7 +183,7 @@ public class FragmentWiring extends Fragment {
             secondAdd.setVisibility(View.GONE);
 
             try {
-                AppDescription secondApp = second.getDescription().getApp();
+                AppDescription secondApp = second.getDescription().getAppDescription();
                 Bitmap b;
 
                 if (secondApp == null) {

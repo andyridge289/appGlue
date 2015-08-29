@@ -10,7 +10,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.appglue.ComposableService;
 import com.appglue.R;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.appglue.library.AppGlueLibrary;
 
 import java.util.ArrayList;

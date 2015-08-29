@@ -194,7 +194,7 @@ public class FragmentComposite extends Fragment implements AppGlueFragment {
         }
 
         if (composite.getComponents().size() > 0) {
-            AppDescription app = composite.getComponents().get(0).getDescription().getApp();
+            AppDescription app = composite.getComponents().get(0).getDescription().getAppDescription();
             if (app == null || app.iconLocation() == null) {
                 compositeIcon.setBackgroundResource(R.drawable.icon);
             } else {
@@ -378,7 +378,7 @@ public class FragmentComposite extends Fragment implements AppGlueFragment {
             TextView name = (TextView) v.findViewById(R.id.component_name);
 
             try {
-                String iconLocation = composite.getComponents().get(0).getDescription().getApp().iconLocation();
+                String iconLocation = composite.getComponents().get(0).getDescription().getAppDescription().iconLocation();
                 Bitmap b = localStorage.readIcon(iconLocation);
 
                 if (b != null)

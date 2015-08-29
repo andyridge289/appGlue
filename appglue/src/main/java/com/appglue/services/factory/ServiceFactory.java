@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import com.appglue.ComposableService;
 import com.appglue.IODescription;
@@ -17,7 +16,7 @@ import com.appglue.R;
 import com.appglue.description.AppDescription;
 import com.appglue.description.SampleValue;
 import com.appglue.description.ServiceDescription;
-import com.appglue.description.datatypes.IOType;
+import com.appglue.description.IOType;
 import com.appglue.engine.model.CompositeService;
 import com.appglue.library.LocalStorage;
 import com.appglue.serviceregistry.Registry;

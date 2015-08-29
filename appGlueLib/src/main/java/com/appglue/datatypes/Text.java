@@ -1,7 +1,9 @@
-package com.appglue.description.datatypes;
+package com.appglue.datatypes;
 
 import android.os.Bundle;
 import android.text.InputType;
+
+import com.appglue.description.IOType;
 
 public class Text extends IOType
 {

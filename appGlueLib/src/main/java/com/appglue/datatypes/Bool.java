@@ -1,6 +1,8 @@
-package com.appglue.description.datatypes;
+package com.appglue.datatypes;
 
 import android.os.Bundle;
+
+import com.appglue.description.IOType;
 
 public class Bool extends IOType
 {

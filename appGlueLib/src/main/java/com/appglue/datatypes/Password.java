@@ -1,4 +1,4 @@
-package com.appglue.description.datatypes;
+package com.appglue.datatypes;
 
 public class Password extends Text
 {

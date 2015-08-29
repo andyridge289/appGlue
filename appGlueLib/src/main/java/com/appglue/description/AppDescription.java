@@ -2,7 +2,12 @@ package com.appglue.description;
 
 import android.database.Cursor;
 
+import com.appglue.db.AppGlueDB;
 import com.orhanobut.logger.Logger;
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,16 +15,17 @@ import org.json.JSONObject;
 import static com.appglue.Constants.DESCRIPTION;
 import static com.appglue.Constants.DEVELOPER;
 import static com.appglue.Constants.ICON;
+import static com.appglue.Constants.INSTALLED;
 import static com.appglue.Constants.NAME;
 import static com.appglue.Constants.PACKAGENAME;
 
-public class AppDescription {
-    private String name;
-    private String packageName;
-    private String developer;
-
-    private String iconLocation;
-    private String description;
+@Table(databaseName = AppGlueDB.NAME)
+public class AppDescription extends BaseModel {
+    @Column @PrimaryKey private String packageName;
+    @Column private String name;
+    @Column private String developer;
+    @Column private String iconLocation;
+    @Column private String description;
 
     public AppDescription() {
         this.name = "";

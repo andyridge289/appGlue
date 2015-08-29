@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
@@ -79,7 +78,7 @@ public class CompositeHolder extends RecyclerView.ViewHolder
     public void setIcon(CompositeService item) {
         SparseArray<ComponentService> components = item.getComponents();
 
-        AppDescription app = components.get(0).getDescription().getApp();
+        AppDescription app = components.get(0).getDescription().getAppDescription();
         if (app == null || app.iconLocation() == null) {
             mIcon.setBackgroundResource(R.drawable.icon);
         } else {

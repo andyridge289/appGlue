@@ -108,7 +108,7 @@ public class AdapterComponentList extends ArrayAdapter<ServiceDescription> {
             appIcon.setImageResource(missingFeatures.get(0).icon);
 
         } else {
-            AppDescription app = sd.getApp();
+            AppDescription app = sd.getAppDescription();
             if (app != null) {
                 String iconLocation = app.getIconLocation();
                 LocalStorage ls = LocalStorage.getInstance();

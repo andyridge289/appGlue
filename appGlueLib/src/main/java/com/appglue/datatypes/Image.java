@@ -1,11 +1,11 @@
-package com.appglue.description.datatypes;
+package com.appglue.datatypes;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 
+import com.appglue.description.IOType;
 import com.orhanobut.logger.Logger;
 
 import java.io.File;
